@@ -929,18 +929,29 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="past">Past</SelectItem>
                 <SelectItem value="present">Present</SelectItem>
                 <SelectItem value="future">Future</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Active Markets Counter - Right Side */}
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-muted-foreground">
-              31 Active Markets
-            </span>
+          {/* Active Markets Counter and Create Button - Right Side */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-muted-foreground">
+                31 Active Markets
+              </span>
+            </div>
+            <Button
+              className="font-medium gap-2 h-11 px-4 hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+              onClick={() => toast.success('Create Market feature coming soon!')}
+            >
+              <span className="text-lg">+</span>
+              Create Market
+            </Button>
           </div>
         </div>
       </div>
