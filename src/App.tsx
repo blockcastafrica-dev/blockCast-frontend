@@ -597,7 +597,7 @@ export default function App() {
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-2 flex items-center justify-center gap-2">
                   <Wallet className="h-8 w-8" />
-                  {formatCurrency(userProfile?.balance || 1.0)} USDT
+                  {formatCurrency(userProfile?.balance || 1.0)} USDC
                 </div>
                 <span className="text-sm text-muted-foreground">Starting Balance</span>
               </div>
