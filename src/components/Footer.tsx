@@ -92,7 +92,8 @@ export default function Footer({ onNavigate }: FooterProps) {
                 {...({} as any)}
                 variant="ghost"
                 size="sm"
-                className="p-2"
+                className="p-2 cursor-pointer"
+                onClick={() => window.open('https://x.com/BlockCastLive', '_blank')}
               >
                 <BsTwitterX className="h-4 w-4" />
               </Button>
