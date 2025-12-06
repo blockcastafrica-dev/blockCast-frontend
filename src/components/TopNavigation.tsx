@@ -60,6 +60,7 @@ export default function TopNavigation({
   userBalance,
 }: TopNavigationProps) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
@@ -100,6 +101,21 @@ export default function TopNavigation({
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleLogin = () => {
+    // Simulate login - in real app, this would authenticate the user
+    setIsLoggedIn(true);
+  };
+
+  const handleSignUp = () => {
+    // Simulate sign up - in real app, this would create a new account
+    setIsLoggedIn(true);
+  };
+
+  const handleSignOut = () => {
+    setIsLoggedIn(false);
+    navigate('/');
   };
 
   return (
@@ -216,89 +232,90 @@ export default function TopNavigation({
               )}
             </Button>
 
-            {/* Authentication buttons */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative p-2 cursor-pointer text-primary"
-            >
-              Login
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative p-2 bg-primary text-primary-foreground"
-            >
-              Sign Up
-            </Button>
-
-            {/* User Menu (Desktop) - Simplified */}
-            <div className="hidden lg:block">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="gap-2 px-2 py-1 cursor-pointer"
-                  >
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                        JD
-                      </AvatarFallback>
-                    </Avatar>
-                    <ChevronDown className="h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <div className="flex items-center gap-2 p-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                        JD
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">John Doe</p>
-                      <p className="text-xs text-muted-foreground">
-                        Truth Verifier
-                      </p>
+            {/* Conditional rendering based on login state */}
+            {!isLoggedIn ? (
+              // Logged out state - show Login and Sign Up buttons
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogin}
+                  className="relative px-4 py-2 cursor-pointer text-primary hover:bg-primary/10"
+                >
+                  Login
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSignUp}
+                  className="relative px-4 py-2 cursor-pointer"
+                  style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                >
+                  Sign Up
+                </Button>
+              </>
+            ) : (
+              // Logged in state - show user avatar dropdown
+              <div className="hidden lg:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="gap-2 px-2 py-1 cursor-pointer"
+                    >
+                      <Avatar className="h-6 w-6">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          JD
+                        </AvatarFallback>
+                      </Avatar>
+                      <ChevronDown className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <div className="flex items-center gap-2 p-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          JD
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium">John Doe</p>
+                        <p className="text-xs text-muted-foreground">
+                          Truth Verifier
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => handleNavClick("/settings", "profile")}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleNavClick("/settings", "portfolio")}
-                  >
-                    <History className="h-4 w-4 mr-2" />
-                    Activity
-                  </DropdownMenuItem>
-                  {/* <DropdownMenuSeparator /> */}
-                  {/* <DropdownMenuItem
-                    onClick={() => handleNavClick("/settings", "history")}
-                  >
-                    <History className="h-4 w-4 mr-2" />
-                    History
-                  </DropdownMenuItem> */}
-                  {/* <DropdownMenuSeparator /> */}
-                  <DropdownMenuItem onSelect={() => setIsVisible(true)}>
-                    {/* <HandCoins className="h-4 w-4 mr-2" /> */}
-                    <Wallet className="h-4 w-4 mr-2" />
-                    Fund Wallet
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleNavClick("/settings")}>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive">
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => handleNavClick("/settings", "profile")}
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleNavClick("/settings", "portfolio")}
+                    >
+                      <History className="h-4 w-4 mr-2" />
+                      Activity
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setIsVisible(true)}>
+                      <Wallet className="h-4 w-4 mr-2" />
+                      Fund Wallet
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => handleNavClick("/settings")}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive cursor-pointer"
+                      onClick={handleSignOut}
+                    >
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
 
             {/* Mobile Menu Toggle */}
             <div className="lg:hidden">
@@ -487,7 +504,8 @@ export default function TopNavigation({
                     {/* Sign Out */}
                     <Button
                       variant="outline"
-                      className="w-full mt-6 text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={handleSignOut}
+                      className="w-full mt-6 text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground cursor-pointer"
                     >
                       Sign Out
                     </Button>
