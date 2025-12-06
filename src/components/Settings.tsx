@@ -150,8 +150,8 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
             Profile
           </TabsTrigger>
           <TabsTrigger value="portfolio" className="gap-2">
-            <BriefcaseBusiness className="h-4 w-4" />
-            Portfolio
+            <History className="h-4 w-4" />
+            Activity
           </TabsTrigger>
           {/* <TabsTrigger value="history" className="gap-2">
             <History className="h-4 w-4" />
