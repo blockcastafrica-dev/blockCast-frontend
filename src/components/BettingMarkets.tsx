@@ -757,6 +757,107 @@ export const realTimeMarkets: BettingMarket[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1584433615985-a5b7e04b0e96?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYXRlcm5hbCUyMGhlYWx0aCUyMGFmcmljYSUyMGNhcmV8ZW58MXx8fHwxNzU1Nzg3Nzc4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
   },
+
+  // BUSINESS CATEGORY (2 markets)
+  {
+    id: "biz-african-startups-2025",
+    claim: "Will African tech startups raise over $5 billion in funding in 2025?",
+    category: "Business",
+    subcategory: "Startup Funding",
+    source: "African Tech Ecosystem",
+    description:
+      "Tracking venture capital investment in African technology startups for 2025.",
+    totalPool: 1890000,
+    yesPool: 1323000,
+    noPool: 567000,
+    yesOdds: 1.43,
+    noOdds: 3.33,
+    totalCasters: 14670,
+    expiresAt: new Date("2025-12-31"),
+    status: "active",
+    trending: false,
+    region: "Continental Africa",
+    marketType: "future",
+    confidenceLevel: "medium",
+    disputable: true,
+    imageUrl:
+      "https://images.unsplash.com/photo-1556761175-b413da4baf72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwc3RhcnR1cCUyMGJ1c2luZXNzfGVufDF8fHx8MTc1NTc4Nzc4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+  },
+  {
+    id: "biz-lagos-tech-hub-2025",
+    claim: "Will Lagos become Africa's leading tech hub by end of 2025?",
+    category: "Business",
+    subcategory: "Tech Ecosystem",
+    source: "African Business Review",
+    description:
+      "Verification on Lagos overtaking other African cities in tech innovation and startup growth.",
+    totalPool: 1560000,
+    yesPool: 1092000,
+    noPool: 468000,
+    yesOdds: 1.43,
+    noOdds: 3.33,
+    totalCasters: 12340,
+    expiresAt: new Date("2025-12-31"),
+    status: "active",
+    trending: false,
+    country: "Nigeria",
+    region: "West Africa",
+    marketType: "future",
+    confidenceLevel: "medium",
+    disputable: true,
+    imageUrl:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsYWdvcyUyMGNpdHklMjBidXNpbmVzc3xlbnwxfHx8fDE3NTU3ODc3ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  },
+
+  // BRAND CATEGORY (2 markets)
+  {
+    id: "brand-jumia-expansion-2025",
+    claim: "Will Jumia expand to 5 new African countries in 2025?",
+    category: "Brand",
+    subcategory: "E-commerce",
+    source: "Jumia Technologies",
+    description:
+      "Truth verification on Jumia's expansion strategy across African markets.",
+    totalPool: 1780000,
+    yesPool: 1246000,
+    noPool: 534000,
+    yesOdds: 1.43,
+    noOdds: 3.33,
+    totalCasters: 14560,
+    expiresAt: new Date("2025-12-31"),
+    status: "active",
+    trending: true,
+    region: "Continental Africa",
+    marketType: "future",
+    confidenceLevel: "high",
+    disputable: true,
+    imageUrl:
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlY29tbWVyY2UlMjBhZnJpY2F8ZW58MXx8fHwxNzU1Nzg3NzkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+  },
+  {
+    id: "brand-mtn-5g-rollout-2025",
+    claim: "Will MTN complete 5G rollout in 10 African countries by 2025?",
+    category: "Brand",
+    subcategory: "Telecommunications",
+    source: "MTN Group",
+    description:
+      "Verification of MTN's 5G network expansion plans across Africa.",
+    totalPool: 2100000,
+    yesPool: 1470000,
+    noPool: 630000,
+    yesOdds: 1.43,
+    noOdds: 3.33,
+    totalCasters: 17890,
+    expiresAt: new Date("2025-12-31"),
+    status: "active",
+    trending: false,
+    region: "Continental Africa",
+    marketType: "future",
+    confidenceLevel: "medium",
+    disputable: true,
+    imageUrl:
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHw1ZyUyMG5ldHdvcmslMjB0ZWxlY29tfGVufDF8fHx8MTc1NTc4Nzc5NHww&ixlib=rb-4.1.0&q=80&w=1080",
+  },
 ];
 
 export default function BettingMarkets({ onPlaceBet, userBalance, markets = realTimeMarkets }: BettingMarketsProps) {
