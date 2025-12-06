@@ -169,7 +169,7 @@ export const realTimeMarkets: BettingMarket[] = [
     id: "celeb-wizkid-collab-2025",
     claim:
       "Will Wizkid announce a collaboration with a major Hollywood artist in 2025?",
-    category: "Celebrity Gossip",
+    category: "Gossip",
     subcategory: "Music Collaborations",
     source: "Entertainment Weekly Africa",
     description:
@@ -195,7 +195,7 @@ export const realTimeMarkets: BettingMarket[] = [
     id: "celeb-lupita-marvel-2025",
     claim:
       "Will Lupita Nyong'o star in a major Marvel or DC project announcement in 2025?",
-    category: "Celebrity Gossip",
+    category: "Gossip",
     subcategory: "Film Casting",
     source: "Variety Entertainment",
     description:
@@ -221,7 +221,7 @@ export const realTimeMarkets: BettingMarket[] = [
     id: "celeb-black-panther-3-2025",
     claim:
       "Will Black Panther 3 be officially announced with an African director in 2025?",
-    category: "Celebrity Gossip",
+    category: "Gossip",
     subcategory: "Film Announcements",
     source: "Marvel Studios",
     description:
