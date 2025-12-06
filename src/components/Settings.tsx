@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import BettingPortfolio, { UserBet } from './BettingPortfolio';
 import VerificationHistory from './VerificationHistory';
 import type { VerificationResult } from './VerificationResults';
+import LocalCurrencyWallet from './LocalCurrencyWallet';
 // Import the accordion components
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 
@@ -32,6 +33,7 @@ interface SettingsProps {
 export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0, userBets = [], verificationHistory = [], onSelectVerification }: SettingsProps) {
   const { language, setLanguage, t } = useLanguage();
   const [activeTab, setActiveTab] = useState('profile');
+  const [isWalletVisible, setIsWalletVisible] = useState(false);
   const [notifications, setNotifications] = useState({
     truthMarkets: true,
     communityUpdates: true,
@@ -174,7 +176,11 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         </TabsList>
 
         <TabsContent value="portfolio" className="space-y-6">
-          <BettingPortfolio userBalance={userBalance} userBets={userBets} />
+          <BettingPortfolio
+            userBalance={userBalance}
+            userBets={userBets}
+            onAddFunds={() => setIsWalletVisible(true)}
+          />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
@@ -991,6 +997,14 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Fund Wallet Modal */}
+      {isWalletVisible && (
+        <LocalCurrencyWallet
+          visible={isWalletVisible}
+          onClose={() => setIsWalletVisible(false)}
+        />
+      )}
     </div>
   );
 }
