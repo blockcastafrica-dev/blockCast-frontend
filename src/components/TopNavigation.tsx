@@ -198,25 +198,29 @@ export default function TopNavigation({
               </DropdownMenuContent>
             </DropdownMenu> */}
 
-            {/* Balance (Desktop) - Compact */}
-            <div className="hidden lg:flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-md">
-              <Wallet className="h-3 w-3 text-primary" />
-              <span className="text-xs font-semibold text-foreground">
-                {userBalance.toFixed(3)}
-              </span>
-            </div>
+            {/* Balance (Desktop) - Only show when logged in */}
+            {isLoggedIn && (
+              <div className="hidden lg:flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-md">
+                <Wallet className="h-3 w-3 text-primary" />
+                <span className="text-xs font-semibold text-foreground">
+                  {userBalance.toFixed(3)}
+                </span>
+              </div>
+            )}
 
-            {/* Notifications - Compact */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative p-2 cursor-pointer"
-            >
-              <Bell className="h-4 w-4" />
-              <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 bg-secondary text-secondary-foreground text-xs flex items-center justify-center">
-                3
-              </Badge>
-            </Button>
+            {/* Notifications - Only show when logged in */}
+            {isLoggedIn && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="relative p-2 cursor-pointer"
+              >
+                <Bell className="h-4 w-4" />
+                <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 bg-secondary text-secondary-foreground text-xs flex items-center justify-center">
+                  3
+                </Badge>
+              </Button>
+            )}
 
             {/* Theme Toggle - Compact */}
             <Button
