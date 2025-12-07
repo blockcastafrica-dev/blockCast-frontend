@@ -62,6 +62,7 @@ import {
 } from "@/utils/marketData";
 import TextCounter from "./TextCounter";
 import Thumbnail from "./Thumbnail";
+import ShareModal from "./ShareModal";
 // import dispute from "../assets/dispute.svg";
 
 interface MarketPageProps {
@@ -104,6 +105,7 @@ export default function MarketPage({
   const [likedComments, setLikedComments] = useState<Set<string>>(new Set());
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<
     "dispute" | "overview" | "comments" | "rules" | "analysis"
   >(market.disputable ? "dispute" : "overview");
@@ -315,7 +317,13 @@ export default function MarketPage({
             />
           </Button>
 
-          <Button variant="ghost" size="sm" className="gap-1" {...({} as any)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1 cursor-pointer"
+            onClick={() => setShowShareModal(true)}
+            {...({} as any)}
+          >
             <Share2 className="h-4 w-4" />
             {t("share")}
           </Button>
@@ -1594,6 +1602,15 @@ export default function MarketPage({
           </div>
         )}
       </div>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <ShareModal
+          market={market}
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 }
