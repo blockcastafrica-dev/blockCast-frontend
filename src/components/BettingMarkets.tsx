@@ -1155,7 +1155,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Total Pool</span>
                     <span className="font-semibold">
-                      {formatCurrency(market.totalPool)} ETH
+                      {formatCurrency(market.totalPool)} USDC
                     </span>
                   </div>
 
@@ -1283,7 +1283,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     placeholder="Enter amount..."
                   />
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Balance: {userBalance.toFixed(3)} ETH</span>
+                    <span>Balance: {userBalance.toFixed(3)} USDC</span>
                     {betAmount && selectedMarket && (
                       <span>
                         Potential win:{" "}
@@ -1293,7 +1293,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                             ? selectedMarket.yesOdds
                             : selectedMarket.noOdds)
                         ).toFixed(3)}{" "}
-                        ETH
+                        USDC
                       </span>
                     )}
                   </div>
