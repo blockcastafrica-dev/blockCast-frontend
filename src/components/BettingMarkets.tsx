@@ -1271,7 +1271,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="betAmount">Amount (ETH)</Label>
+                  <Label htmlFor="betAmount">Amount (USDC)</Label>
                   <Input
                     id="betAmount"
                     type="number"
