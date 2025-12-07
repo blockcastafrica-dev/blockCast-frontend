@@ -139,7 +139,7 @@ export default function ShareModal({ isOpen, onClose, market }: ShareModalProps)
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Earn 0.1 USDC when your friend places their first bet!
+              Earn 0.1 USDT when your friend places their first bet!
             </p>
           </div>
 

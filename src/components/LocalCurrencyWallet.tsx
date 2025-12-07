@@ -110,7 +110,7 @@ const paymentProviders: PaymentProvider[] = [
     type: "crypto",
     fees: "0.5%",
     processingTime: "Instant",
-    supportedCurrencies: ["ETH", "USDC", "DAI"],
+    supportedCurrencies: ["ETH", "USDT", "DAI"],
     popular: true,
   },
   {
@@ -190,7 +190,7 @@ export default function LocalCurrencyWallet({
   const widgetRef = useRef<HTMLDivElement>(null);
   const dragHandleRef = useRef<HTMLDivElement>(null);
 
-  const ethPrice = 3200; // Mock USDC price in USD
+  const ethPrice = 3200; // Mock USDT price in USD
 
   // Load saved position from localStorage
   useEffect(() => {
@@ -357,7 +357,7 @@ export default function LocalCurrencyWallet({
     toast.success(
       <div className="flex items-center gap-2">
         <Wallet className="h-4 w-4 text-primary" />
-        <span>Wallet funded with {calculateETH()} USDC! 💰</span>
+        <span>Wallet funded with {calculateETH()} USDT! 💰</span>
       </div>
     );
 
@@ -537,7 +537,7 @@ export default function LocalCurrencyWallet({
                         You'll receive:
                       </span>
                       <span className="font-bold text-primary">
-                        {calculateETH()} USDC
+                        {calculateETH()} USDT
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
@@ -609,7 +609,7 @@ export default function LocalCurrencyWallet({
                   className="w-full h-10 cursor-pointer"
                 >
                   <Wallet className="h-4 w-4 mr-2" />
-                  Fund Wallet with {calculateETH()} USDC
+                  Fund Wallet with {calculateETH()} USDT
                 </Button>
 
                 {/* Help Section - Compact */}

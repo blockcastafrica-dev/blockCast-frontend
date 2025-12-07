@@ -203,7 +203,7 @@ export default function BettingPortfolio({
               </span>
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {userBalance.toFixed(3)} USDC
+              {userBalance.toFixed(3)} USDT
             </p>
             <p className="text-sm text-muted-foreground">Ready for casting</p>
           </CardContent>
@@ -216,7 +216,7 @@ export default function BettingPortfolio({
               <span className="font-semibold text-secondary">Total Cast</span>
             </div>
             <p className="text-2xl font-bold text-foreground">
-              {totalCastAmount.toFixed(3)} USDC
+              {totalCastAmount.toFixed(3)} USDT
             </p>
             <p className="text-sm text-muted-foreground">
               Across {userBets.length} positions
@@ -253,7 +253,7 @@ export default function BettingPortfolio({
               }`}
             >
               {totalPnL >= 0 ? "+" : ""}
-              {totalPnL.toFixed(3)} USDC
+              {totalPnL.toFixed(3)} USDT
             </p>
             <p className="text-sm text-muted-foreground">
               {winRate.toFixed(1)}% win rate
@@ -378,7 +378,7 @@ export default function BettingPortfolio({
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-green-500">
-                    {totalPotentialWinnings.toFixed(2)} USDC
+                    {totalPotentialWinnings.toFixed(2)} USDT
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Potential Winnings
@@ -444,7 +444,7 @@ export default function BettingPortfolio({
                         <div className="flex items-center gap-2 mt-1">
                           {getPositionBadge(cast.position)}
                           <span className="text-sm text-muted-foreground">
-                            {cast.amount} USDC @ {cast.odds || 2.0}x
+                            {cast.amount} USDT @ {cast.odds || 2.0}x
                           </span>
                         </div>
                       </div>
@@ -460,14 +460,14 @@ export default function BettingPortfolio({
                         }`}
                       >
                         {cast.status === "won" && cast.actualWinning
-                          ? `+${cast.actualWinning.toFixed(3)} USDC`
+                          ? `+${cast.actualWinning.toFixed(3)} USDT`
                           : cast.status === "lost"
-                          ? `-${cast.amount.toFixed(3)} USDC`
+                          ? `-${cast.amount.toFixed(3)} USDT`
                           : `${(
                               cast.potentialWinning ||
                               cast.potentialReturn ||
                               0
-                            ).toFixed(3)} USDC`}
+                            ).toFixed(3)} USDT`}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {formatTimeAgo(cast.placedAt)}
@@ -531,7 +531,7 @@ export default function BettingPortfolio({
                             Cast Amount:
                           </span>
                           <div className="font-semibold text-foreground">
-                            {cast.amount} USDC
+                            {cast.amount} USDT
                           </div>
                         </div>
                         <div>
@@ -550,7 +550,7 @@ export default function BettingPortfolio({
                               cast.potentialReturn ||
                               0
                             ).toFixed(3)}{" "}
-                            USDC
+                            USDT
                           </div>
                         </div>
                         <div>
@@ -629,7 +629,7 @@ export default function BettingPortfolio({
                             Cast Amount:
                           </span>
                           <div className="font-semibold text-foreground">
-                            {cast.amount} USDC
+                            {cast.amount} USDT
                           </div>
                         </div>
                         <div>
@@ -676,8 +676,8 @@ export default function BettingPortfolio({
                             {cast.status === "won"
                               ? `+${(cast.actualWinning! - cast.amount).toFixed(
                                   3
-                                )} USDC`
-                              : `-${cast.amount.toFixed(3)} USDC`}
+                                )} USDT`
+                              : `-${cast.amount.toFixed(3)} USDT`}
                           </div>
                         </div>
                       </div>

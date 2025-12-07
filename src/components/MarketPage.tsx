@@ -175,7 +175,7 @@ export default function MarketPage({
 
     // Success feedback
     toast.success(
-      `Truth position cast: ${position.toUpperCase()} with ${amount} USDC`
+      `Truth position cast: ${position.toUpperCase()} with ${amount} USDT`
     );
   };
 
@@ -220,7 +220,7 @@ export default function MarketPage({
     setProfitCalculation(null);
 
     toast.success(
-      `Custom truth position cast: ${castPosition.toUpperCase()} with ${amount} USDC`
+      `Custom truth position cast: ${castPosition.toUpperCase()} with ${amount} USDT`
     );
   };
 
@@ -1137,7 +1137,7 @@ export default function MarketPage({
                     {t("castYourPosition")}
                   </CardTitle>
                   <CardDescription>
-                    {t("currentBalance")}: {userBalance.toFixed(3)} USDC
+                    {t("currentBalance")}: {userBalance.toFixed(3)} USDT
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -1164,7 +1164,7 @@ export default function MarketPage({
                           <span className="text-primary font-semibold">
                             TRUE
                           </span>
-                          <span className="ml-2">{amount} USDC</span>
+                          <span className="ml-2">{amount} USDT</span>
                         </Button>
                       ))}
                     </div>
@@ -1191,7 +1191,7 @@ export default function MarketPage({
                           <span className="text-secondary font-semibold">
                             FALSE
                           </span>
-                          <span className="ml-2">{amount} USDC</span>
+                          <span className="ml-2">{amount} USDT</span>
                         </Button>
                       ))}
                     </div>
@@ -1240,7 +1240,7 @@ export default function MarketPage({
                                 Your Stake:
                               </span>
                               <span className="font-medium">
-                                {profitCalculation.amount.toFixed(3)} USDC
+                                {profitCalculation.amount.toFixed(3)} USDT
                               </span>
                             </div>
                             <div className="flex justify-between">
@@ -1260,7 +1260,7 @@ export default function MarketPage({
                                 Potential Return:
                               </span>
                               <span className="font-medium text-green-400">
-                                {profitCalculation.potential.toFixed(3)} USDC
+                                {profitCalculation.potential.toFixed(3)} USDT
                               </span>
                             </div>
                             <div className="flex justify-between border-t border-border pt-1 mt-2">
@@ -1268,7 +1268,7 @@ export default function MarketPage({
                                 Profit if Correct:
                               </span>
                               <span className="font-bold text-green-400">
-                                +{profitCalculation.profit.toFixed(3)} USDC
+                                +{profitCalculation.profit.toFixed(3)} USDT
                               </span>
                             </div>
                             <div className="flex justify-between">
@@ -1276,7 +1276,7 @@ export default function MarketPage({
                                 Loss if Wrong:
                               </span>
                               <span className="font-bold text-red-400">
-                                -{profitCalculation.amount.toFixed(3)} USDC
+                                -{profitCalculation.amount.toFixed(3)} USDT
                               </span>
                             </div>
                           </div>
@@ -1308,7 +1308,7 @@ export default function MarketPage({
                           ? market.yesOdds
                           : market.noOdds)
                       ).toFixed(3)}{" "}
-                      USDC
+                      USDT
                     </div>
                   </div>
                 )} */}
@@ -1382,7 +1382,7 @@ export default function MarketPage({
                     Sell Your Position
                   </CardTitle>
                   <CardDescription>
-                    {t("currentBalance")}: {userBalance.toFixed(3)} USDC
+                    {t("currentBalance")}: {userBalance.toFixed(3)} USDT
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -1409,7 +1409,7 @@ export default function MarketPage({
                           <span className="text-primary font-semibold">
                             TRUE
                           </span>
-                          <span className="ml-2">{amount} USDC</span>
+                          <span className="ml-2">{amount} USDT</span>
                         </Button>
                       ))}
                     </div>
@@ -1436,7 +1436,7 @@ export default function MarketPage({
                           <span className="text-secondary font-semibold">
                             FALSE
                           </span>
-                          <span className="ml-2">{amount} USDC</span>
+                          <span className="ml-2">{amount} USDT</span>
                         </Button>
                       ))}
                     </div>
@@ -1485,7 +1485,7 @@ export default function MarketPage({
                                 Your Stake:
                               </span>
                               <span className="font-medium">
-                                {profitCalculation.amount.toFixed(3)} USDC
+                                {profitCalculation.amount.toFixed(3)} USDT
                               </span>
                             </div>
                             <div className="flex justify-between">
@@ -1505,7 +1505,7 @@ export default function MarketPage({
                                 Potential Return:
                               </span>
                               <span className="font-medium text-green-400">
-                                {profitCalculation.potential.toFixed(3)} USDC
+                                {profitCalculation.potential.toFixed(3)} USDT
                               </span>
                             </div>
                             <div className="flex justify-between border-t border-border pt-1 mt-2">
@@ -1513,7 +1513,7 @@ export default function MarketPage({
                                 Profit if Correct:
                               </span>
                               <span className="font-bold text-green-400">
-                                +{profitCalculation.profit.toFixed(3)} USDC
+                                +{profitCalculation.profit.toFixed(3)} USDT
                               </span>
                             </div>
                             <div className="flex justify-between">
@@ -1521,7 +1521,7 @@ export default function MarketPage({
                                 Loss if Wrong:
                               </span>
                               <span className="font-bold text-red-400">
-                                -{profitCalculation.amount.toFixed(3)} USDC
+                                -{profitCalculation.amount.toFixed(3)} USDT
                               </span>
                             </div>
                           </div>
@@ -1554,7 +1554,7 @@ export default function MarketPage({
                           ? market.yesOdds
                           : market.noOdds)
                       ).toFixed(3)}{" "}
-                      USDC
+                      USDT
                     </div>
                   </div>
                 )} */}
