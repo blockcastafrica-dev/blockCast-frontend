@@ -335,6 +335,56 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
               <Button className="w-full">Save Profile Changes</Button>
             </CardContent>
           </Card>
+
+          {/* Language & Region */}
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Languages className="h-5 w-5" />
+                Language & Region
+              </CardTitle>
+              <CardDescription>
+                Customize your language and currency preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Interface Language</Label>
+                  <Select value={language} onValueChange={handleLanguageChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {languageOptions.map((lang) => (
+                        <SelectItem key={lang.code} value={lang.code}>
+                          <span className="mr-2">{lang.flag}</span>
+                          {lang.native}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Currency Display</Label>
+                  <Select defaultValue="usd">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="usd">USD ($)</SelectItem>
+                      <SelectItem value="ngn">Nigerian Naira (₦)</SelectItem>
+                      <SelectItem value="kes">Kenyan Shilling (KSh)</SelectItem>
+                      <SelectItem value="zar">South African Rand (R)</SelectItem>
+                      <SelectItem value="ghs">Ghanaian Cedi (₵)</SelectItem>
+                      <SelectItem value="xof">CFA Franc (CFA)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-6">
@@ -351,70 +401,6 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
               <div>
                 <Accordion type="single" collapsible className="col-span-3">
                   <div className="accordion-container">
-                    <AccordionItem
-                      value="language-region"
-                      className="accordion-item-custom border rounded-lg hover:bg-accent transition-colors [&[data-state=open]]:border-primary [&[data-state=open]]:bg-accent group"
-                    >
-                      <AccordionTrigger className="p-4 hover:no-underline">
-                        <div className="flex items-center gap-2">
-                          <Languages className="h-5 w-5 text-primary" />
-                          <h4 className="font-semibold text-foreground">
-                            Language & Region
-                          </h4>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-4 pb-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 border-t pt-4">
-                          <div className="space-y-2">
-                            <Label>Interface Language</Label>
-                            <Select
-                              value={language}
-                              onValueChange={handleLanguageChange}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {languageOptions.map((lang) => (
-                                  <SelectItem key={lang.code} value={lang.code}>
-                                    <span className="mr-2">{lang.flag}</span>
-                                    {lang.native}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label>Currency Display</Label>
-                            <Select defaultValue="usd">
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="usd">USD ($)</SelectItem>
-                                <SelectItem value="ngn">
-                                  Nigerian Naira (₦)
-                                </SelectItem>
-                                <SelectItem value="kes">
-                                  Kenyan Shilling (KSh)
-                                </SelectItem>
-                                <SelectItem value="zar">
-                                  South African Rand (R)
-                                </SelectItem>
-                                <SelectItem value="ghs">
-                                  Ghanaian Cedi (₵)
-                                </SelectItem>
-                                <SelectItem value="xof">
-                                  CFA Franc (CFA)
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
                     <AccordionItem
                       value="appearance"
                       className="accordion-item-custom border rounded-lg hover:bg-accent transition-colors [&[data-state=open]]:border-primary [&[data-state=open]]:bg-accent group"
