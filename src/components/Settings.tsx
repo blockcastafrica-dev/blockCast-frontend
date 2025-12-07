@@ -8,7 +8,7 @@ import { Switch } from './ui/switch';
 import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Settings as SettingsIcon, User, Bell, Shield, Globe, Palette, Database, Smartphone, Languages, Moon, Sun, Volume2, VolumeX, Wallet, History, BriefcaseBusiness } from 'lucide-react';
+import { Settings as SettingsIcon, User, Bell, Shield, Globe, Database, Smartphone, Languages, Moon, Sun, Volume2, VolumeX, Wallet, History, BriefcaseBusiness } from 'lucide-react';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { useLanguage } from './LanguageContext';
 import { toast } from 'sonner';
@@ -157,10 +157,6 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
             <History className="h-4 w-4" />
             History
           </TabsTrigger> */}
-          <TabsTrigger value="preferences" className="gap-2">
-            <Palette className="h-4 w-4" />
-            Preferences
-          </TabsTrigger>
           <TabsTrigger value="notifications" className="gap-2">
             <Bell className="h-4 w-4" />
             Notifications
@@ -365,191 +361,6 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
               </div>
 
               <Button className="w-full">Save Profile Changes</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="preferences" className="space-y-6">
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle>Application Preferences</CardTitle>
-              <CardDescription>
-                Customize your Blockcast experience
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Accordion with Custom Grid Styling */}
-              {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-5"> */}
-              <div>
-                <Accordion type="single" collapsible className="col-span-3">
-                  <div className="accordion-container">
-                    <AccordionItem
-                      value="appearance"
-                      className="accordion-item-custom border rounded-lg hover:bg-accent transition-colors [&[data-state=open]]:border-primary [&[data-state=open]]:bg-accent group"
-                    >
-                      <AccordionTrigger className="p-4 hover:no-underline">
-                        <div className="flex items-center gap-2">
-                          <Palette className="h-5 w-5 text-primary" />
-                          <h4 className="font-semibold text-foreground">
-                            Appearance
-                          </h4>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-4 pb-4">
-                        <div className="space-y-4 mt-2 border-t pt-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label>Dark Mode</Label>
-                              <p className="text-sm text-muted-foreground">
-                                Use dark theme for better night viewing
-                              </p>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              asChild={false}
-                              onClick={onToggleDarkMode}
-                              className="gap-2"
-                            >
-                              {isDarkMode ? (
-                                <Moon className="h-4 w-4" />
-                              ) : (
-                                <Sun className="h-4 w-4" />
-                              )}
-                              {isDarkMode ? "Dark" : "Light"}
-                            </Button>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label>Compact Mode</Label>
-                              <p className="text-sm text-muted-foreground">
-                                Show more content in less space
-                              </p>
-                            </div>
-                            <Switch />
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label>Sound Effects</Label>
-                              <p className="text-sm text-muted-foreground">
-                                Play sounds for interactions
-                              </p>
-                            </div>
-                            <Switch
-                              checked={notifications.soundEnabled}
-                              onCheckedChange={(checked: boolean) =>
-                                handleNotificationChange(
-                                  "soundEnabled",
-                                  checked
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem
-                      value="mobile"
-                      className="accordion-item-custom border rounded-lg hover:bg-accent transition-colors [&[data-state=open]]:border-primary [&[data-state=open]]:bg-accent group"
-                    >
-                      <AccordionTrigger className="p-4 hover:no-underline">
-                        <div className="flex items-center gap-2">
-                          <Smartphone className="h-5 w-5 text-primary" />
-                          <h4 className="font-semibold text-foreground">
-                            Mobile Experience
-                          </h4>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-4 pb-4">
-                        <div className="space-y-4 mt-2 border-t pt-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label>Auto-rotate</Label>
-                              <p className="text-sm text-muted-foreground">
-                                Automatically rotate content on mobile
-                              </p>
-                            </div>
-                            <Switch defaultChecked />
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <Label>Haptic Feedback</Label>
-                              <p className="text-sm text-muted-foreground">
-                                Vibrate on interactions (mobile only)
-                              </p>
-                            </div>
-                            <Switch defaultChecked />
-                          </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    {/* Second row items */}
-                    <div className="accordion-item-custom border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer group">
-                      <div className="flex items-center gap-2">
-                        <Bell className="h-5 w-5 text-primary" />
-                        <h4 className="font-semibold text-foreground">
-                          Notifications
-                        </h4>
-                      </div>
-                    </div>
-
-                    <div className="accordion-item-custom border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer group">
-                      <div className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-primary" />
-                        <h4 className="font-semibold text-foreground">
-                          Security
-                        </h4>
-                      </div>
-                    </div>
-
-                    <div className="accordion-item-custom border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer group">
-                      <div className="flex items-center gap-2">
-                        <Database className="h-5 w-5 text-primary" />
-                        <h4 className="font-semibold text-foreground">
-                          Data Management
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-                </Accordion>
-              </div>
-
-              <Separator />
-
-              {/* Mobile Settings */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Smartphone className="h-5 w-5 text-primary" />
-                  <h4 className="font-semibold text-foreground">
-                    Mobile Experience
-                  </h4>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Auto-rotate</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Automatically rotate content on mobile
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Haptic Feedback</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Vibrate on interactions (mobile only)
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </div>
             </CardContent>
           </Card>
         </TabsContent>
