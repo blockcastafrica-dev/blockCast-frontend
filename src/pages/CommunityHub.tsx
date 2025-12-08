@@ -659,7 +659,7 @@ export default function Social() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-primary mb-1 flex items-center gap-2">
+          <h1 className="text-2xl font-bold gradient-text mb-1 flex items-center gap-2">
             <Users className="h-7 w-7" />
             African Truth Community
           </h1>
@@ -669,11 +669,11 @@ export default function Social() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button className="gap-2 bg-secondary hover:bg-secondary/90">
+          <Button className="gap-2 bg-secondary hover:bg-secondary/90 neon-glow">
             <UserPlus className="h-4 w-4" />
             Invite Friends
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2 glass-card">
             <Gift className="h-4 w-4" />
             Refer & Earn
           </Button>
@@ -1054,7 +1054,7 @@ export default function Social() {
 
         <TabsContent value="feed" className="space-y-6 mt-8">
           {/* Create Post */}
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm p-4">
+          <Card className="glass-card p-4 shimmer">
             <div className="flex items-center gap-8">
               <Button onClick={handleToggleModal} className="cursor-pointer">
                 <Plus className="h-4 w-4 mr-2" />
@@ -1276,7 +1276,7 @@ export default function Social() {
 
         {/******************* AI Learning starts *************************/}
         <TabsContent value="ai-learning" className="space-y-6 mt-8">
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+          <Card className="glass-card shimmer">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Brain className="h-6 w-6 text-secondary" />

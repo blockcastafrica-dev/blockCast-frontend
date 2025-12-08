@@ -163,7 +163,7 @@ export default function TruthMarketsPage() {
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-primary mb-1 flex items-center gap-2">
+          <h1 className="text-2xl font-bold gradient-text mb-1 flex items-center gap-2">
             <TrendingUp className="h-7 w-7" />
             Truth Markets
           </h1>
@@ -172,7 +172,7 @@ export default function TruthMarketsPage() {
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="bg-gradient-to-r from-primary/10 to-secondary/10 px-4 py-2 rounded-lg border border-primary/20">
+          <div className="glass-card px-4 py-2 rounded-lg neon-glow">
             <div className="text-sm text-muted-foreground">Your Balance</div>
             <div className="text-xl font-bold text-primary">{userBalance.toFixed(3)} ETH</div>
           </div>
@@ -213,7 +213,7 @@ export default function TruthMarketsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-lg border border-primary/20">
+        <div className="glass-card p-4 rounded-lg pulse-glow">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-5 w-5 text-primary" />
             <span className="font-semibold text-primary">Active Markets</span>
@@ -221,8 +221,8 @@ export default function TruthMarketsPage() {
           <p className="text-2xl font-bold text-foreground">{markets.length}</p>
           <p className="text-sm text-muted-foreground">Open for betting</p>
         </div>
-        
-        <div className="bg-gradient-to-br from-secondary/10 to-secondary/5 p-4 rounded-lg border border-secondary/20">
+
+        <div className="glass-card p-4 rounded-lg pulse-glow">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="h-5 w-5 text-secondary" />
             <span className="font-semibold text-secondary">Total Volume</span>
@@ -232,8 +232,8 @@ export default function TruthMarketsPage() {
           </p>
           <p className="text-sm text-muted-foreground">ETH locked</p>
         </div>
-        
-        <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 p-4 rounded-lg border border-green-500/20">
+
+        <div className="glass-card p-4 rounded-lg pulse-glow">
           <div className="flex items-center gap-2 mb-2">
             <Users className="h-5 w-5 text-green-500" />
             <span className="font-semibold text-green-500">Participants</span>
@@ -243,8 +243,8 @@ export default function TruthMarketsPage() {
           </p>
           <p className="text-sm text-muted-foreground">Active verifiers</p>
         </div>
-        
-        <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 p-4 rounded-lg border border-yellow-500/20">
+
+        <div className="glass-card p-4 rounded-lg pulse-glow">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="h-5 w-5 text-yellow-500" />
             <span className="font-semibold text-yellow-500">Avg Accuracy</span>
@@ -257,9 +257,9 @@ export default function TruthMarketsPage() {
       {/* Markets List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredMarkets.map((market) => (
-          <Card 
-            key={market.id} 
-            className="border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+          <Card
+            key={market.id}
+            className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all shimmer"
             onClick={() => navigate(`/market/${market.id}`)}
           >
             {market.imageUrl && (
@@ -347,22 +347,22 @@ export default function TruthMarketsPage() {
                     <Progress value={calculateProbability(market.yesPool, market.totalPool)} className="h-2 [&>div]:bg-green-500" />
                     
                     <div className="flex gap-2 pt-2">
-                      <Button 
+                      <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           handlePlaceBet(market.id, 'yes', 0.01);
                         }}
-                        className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                        className="flex-1 bg-green-500 hover:bg-green-600 text-white neon-glow"
                         size="sm"
                       >
                         Bet 0.01 ETH
                       </Button>
-                      <Button 
+                      <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           handlePlaceBet(market.id, 'yes', 0.05);
                         }}
-                        className="flex-1 bg-green-500/80 hover:bg-green-600 text-white"
+                        className="flex-1 bg-green-500/80 hover:bg-green-600 text-white neon-glow"
                         size="sm"
                       >
                         Bet 0.05 ETH
@@ -389,22 +389,22 @@ export default function TruthMarketsPage() {
                     <Progress value={calculateProbability(market.noPool, market.totalPool)} className="h-2 [&>div]:bg-red-500" />
                     
                     <div className="flex gap-2 pt-2">
-                      <Button 
+                      <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           handlePlaceBet(market.id, 'no', 0.01);
                         }}
-                        className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                        className="flex-1 bg-red-500 hover:bg-red-600 text-white neon-glow"
                         size="sm"
                       >
                         Bet 0.01 ETH
                       </Button>
-                      <Button 
+                      <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           handlePlaceBet(market.id, 'no', 0.05);
                         }}
-                        className="flex-1 bg-red-500/80 hover:bg-red-600 text-white"
+                        className="flex-1 bg-red-500/80 hover:bg-red-600 text-white neon-glow"
                         size="sm"
                       >
                         Bet 0.05 ETH

@@ -200,7 +200,7 @@ export default function TopNavigation({
 
             {/* Balance (Desktop) - Only show when logged in */}
             {isLoggedIn && (
-              <div className="hidden lg:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-md">
+              <div className="hidden lg:flex items-center gap-2 glass-card px-4 py-2 rounded-md">
                 <Wallet className="h-4 w-4 text-primary" />
                 <span className="text-sm font-semibold text-foreground">
                   {userBalance.toFixed(3)}
@@ -213,7 +213,7 @@ export default function TopNavigation({
               <Button
                 onClick={() => setIsVisible(true)}
                 size="sm"
-                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
+                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer neon-glow"
                 style={{ backgroundColor: '#06f6ff', color: '#000000' }}
               >
                 <span className="text-lg font-bold leading-none">+</span>
