@@ -200,12 +200,25 @@ export default function TopNavigation({
 
             {/* Balance (Desktop) - Only show when logged in */}
             {isLoggedIn && (
-              <div className="hidden lg:flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-md">
-                <Wallet className="h-3 w-3 text-primary" />
-                <span className="text-xs font-semibold text-foreground">
+              <div className="hidden lg:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-md">
+                <Wallet className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold text-foreground">
                   {userBalance.toFixed(3)}
                 </span>
               </div>
+            )}
+
+            {/* Add Funds Button - Show when logged in (Desktop only) */}
+            {isLoggedIn && (
+              <Button
+                onClick={() => setIsVisible(true)}
+                size="sm"
+                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
+                style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+              >
+                <span className="text-lg font-bold leading-none">+</span>
+                <span className="font-medium">Add Funds</span>
+              </Button>
             )}
 
             {/* Notifications - Only show when logged in */}

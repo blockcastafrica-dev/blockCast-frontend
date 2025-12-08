@@ -16,6 +16,7 @@ import BettingPortfolio, { UserBet } from './BettingPortfolio';
 import VerificationHistory from './VerificationHistory';
 import type { VerificationResult } from './VerificationResults';
 import LocalCurrencyWallet from './LocalCurrencyWallet';
+import WithdrawWallet from './WithdrawWallet';
 // Import the accordion components
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 
@@ -34,6 +35,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
   const { language, setLanguage, t } = useLanguage();
   const [activeTab, setActiveTab] = useState('profile');
   const [isWalletVisible, setIsWalletVisible] = useState(false);
+  const [isWithdrawVisible, setIsWithdrawVisible] = useState(false);
   const [notifications, setNotifications] = useState({
     truthMarkets: true,
     communityUpdates: true,
@@ -176,6 +178,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
             userBalance={userBalance}
             userBets={userBets}
             onAddFunds={() => setIsWalletVisible(true)}
+            onWithdraw={() => setIsWithdrawVisible(true)}
           />
         </TabsContent>
 
@@ -782,6 +785,12 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         <LocalCurrencyWallet
           visible={isWalletVisible}
           onClose={() => setIsWalletVisible(false)}
+        />
+      )}
+      {isWithdrawVisible && (
+        <WithdrawWallet
+          visible={isWithdrawVisible}
+          onClose={() => setIsWithdrawVisible(false)}
         />
       )}
     </div>

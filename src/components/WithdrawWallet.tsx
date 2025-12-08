@@ -1,0 +1,790 @@
+import { useState, useRef, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Separator } from "./ui/separator";
+import {
+  Wallet,
+  CreditCard,
+  ArrowUpDown,
+  Zap,
+  Shield,
+  Globe,
+  CheckCircle,
+  AlertCircle,
+  ExternalLink,
+  Smartphone,
+  GripVertical,
+  Minimize2,
+  Maximize2,
+  X,
+  ArrowDownToLine,
+} from "lucide-react";
+import { toast } from "sonner";
+
+interface CurrencyOption {
+  code: string;
+  name: string;
+  symbol: string;
+  flag: string;
+  rate: number; // Rate to USD
+}
+
+interface PaymentProvider {
+  id: string;
+  name: string;
+  logo: string;
+  type: "crypto" | "local" | "mobile";
+  fees: string;
+  processingTime: string;
+  supportedCurrencies: string[];
+  popular?: boolean;
+}
+
+interface Position {
+  x: number;
+  y: number;
+}
+
+const africanCurrencies: CurrencyOption[] = [
+  {
+    code: "NGN",
+    name: "Nigerian Naira",
+    symbol: "₦",
+    flag: "🇳🇬",
+    rate: 0.0012,
+  },
+  {
+    code: "KES",
+    name: "Kenyan Shilling",
+    symbol: "KSh",
+    flag: "🇰🇪",
+    rate: 0.0077,
+  },
+  {
+    code: "ZAR",
+    name: "South African Rand",
+    symbol: "R",
+    flag: "🇿🇦",
+    rate: 0.055,
+  },
+  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", flag: "🇬🇭", rate: 0.082 },
+  {
+    code: "ETB",
+    name: "Ethiopian Birr",
+    symbol: "Br",
+    flag: "🇪🇹",
+    rate: 0.018,
+  },
+  { code: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸", rate: 1.0 },
+];
+
+const paymentProviders: PaymentProvider[] = [
+  {
+    id: "metamask",
+    name: "MetaMask",
+    logo: "🦊",
+    type: "crypto",
+    fees: "0.5%",
+    processingTime: "Instant",
+    supportedCurrencies: ["ETH", "USDT", "DAI"],
+    popular: true,
+  },
+  {
+    id: "yellowcard",
+    name: "Yellow Card",
+    logo: "💳",
+    type: "local",
+    fees: "1.5%",
+    processingTime: "2-5 minutes",
+    supportedCurrencies: ["NGN", "KES", "ZAR", "GHS"],
+    popular: true,
+  },
+  {
+    id: "binance",
+    name: "Binance Pay",
+    logo: "🟡",
+    type: "crypto",
+    fees: "0.1%",
+    processingTime: "Instant",
+    supportedCurrencies: ["BNB", "USDT", "ETH"],
+  },
+  {
+    id: "flutterwave",
+    name: "Flutterwave",
+    logo: "💸",
+    type: "local",
+    fees: "2.5%",
+    processingTime: "5-10 minutes",
+    supportedCurrencies: ["NGN", "KES", "ZAR", "GHS", "ETB"],
+  },
+  {
+    id: "mpesa",
+    name: "M-Pesa",
+    logo: "📱",
+    type: "mobile",
+    fees: "1.0%",
+    processingTime: "1-3 minutes",
+    supportedCurrencies: ["KES"],
+  },
+  {
+    id: "mtn",
+    name: "MTN Mobile Money",
+    logo: "📲",
+    type: "mobile",
+    fees: "1.2%",
+    processingTime: "2-5 minutes",
+    supportedCurrencies: ["GHS", "NGN"],
+  },
+];
+
+interface WithdrawWalletProps {
+  visible?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
+}
+
+export default function WithdrawWallet({
+  visible,
+  onClose,
+  onOpen,
+}: WithdrawWalletProps) {
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyOption>(
+    africanCurrencies[0]
+  );
+  const [amount, setAmount] = useState<string>("");
+  const [selectedProvider, setSelectedProvider] =
+    useState<PaymentProvider | null>(null);
+  const [showProviderDialog, setShowProviderDialog] = useState(false);
+
+  // Floating widget state
+  const [position, setPosition] = useState<Position>({ x: 20, y: 20 });
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
+
+  const widgetRef = useRef<HTMLDivElement>(null);
+  const dragHandleRef = useRef<HTMLDivElement>(null);
+
+  const ethPrice = 3200; // Mock USDT price in USD
+
+  // Load saved position from localStorage
+  useEffect(() => {
+    const savedPosition = localStorage.getItem("withdrawWidgetPosition");
+    const savedMinimized = localStorage.getItem("withdrawWidgetMinimized");
+
+    if (savedPosition) {
+      try {
+        const pos = JSON.parse(savedPosition);
+        setPosition(pos);
+      } catch (e) {
+        console.warn("Failed to parse saved position");
+      }
+    }
+
+    if (savedMinimized) {
+      setIsMinimized(JSON.parse(savedMinimized));
+    }
+  }, []);
+
+  // Save position to localStorage
+  useEffect(() => {
+    localStorage.setItem("withdrawWidgetPosition", JSON.stringify(position));
+  }, [position]);
+
+  useEffect(() => {
+    localStorage.setItem("withdrawWidgetMinimized", JSON.stringify(isMinimized));
+  }, [isMinimized]);
+
+
+  // Drag functionality
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!widgetRef.current) return;
+
+    const rect = widgetRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+    setIsDragging(true);
+
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const widgetWidth = isMinimized ? 300 : 400;
+    const widgetHeight = isMinimized ? 60 : 600;
+
+    let newX = e.clientX - dragOffset.x;
+    let newY = e.clientY - dragOffset.y;
+
+    // Constrain to viewport
+    newX = Math.max(0, Math.min(newX, viewportWidth - widgetWidth));
+    newY = Math.max(0, Math.min(newY, viewportHeight - widgetHeight));
+
+    setPosition({ x: newX, y: newY });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Touch support for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!widgetRef.current) return;
+
+    const touch = e.touches[0];
+    const rect = widgetRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    });
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging) return;
+
+    const touch = e.touches[0];
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const widgetWidth = isMinimized ? 300 : 400;
+    const widgetHeight = isMinimized ? 60 : 600;
+
+    let newX = touch.clientX - dragOffset.x;
+    let newY = touch.clientY - dragOffset.y;
+
+    // Constrain to viewport
+    newX = Math.max(0, Math.min(newX, viewportWidth - widgetWidth));
+    newY = Math.max(0, Math.min(newY, viewportHeight - widgetHeight));
+
+    setPosition({ x: newX, y: newY });
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Event listeners
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleTouchEnd);
+
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+      };
+    }
+  }, [isDragging, dragOffset]);
+
+  const calculateLocalCurrency = () => {
+    if (!amount || isNaN(Number(amount))) return "0.00";
+    const usdAmount = Number(amount) * ethPrice;
+    const localAmount = usdAmount / selectedCurrency.rate;
+    return localAmount.toFixed(2);
+  };
+
+  const calculateFees = () => {
+    if (!selectedProvider || !amount || isNaN(Number(amount))) return "0.00";
+    const usdAmount = Number(amount) * ethPrice;
+    const feePercentage =
+      parseFloat(selectedProvider.fees.replace("%", "")) / 100;
+    return (usdAmount * feePercentage).toFixed(2);
+  };
+
+  const handleConnect = (provider: PaymentProvider) => {
+    setSelectedProvider(provider);
+    setShowProviderDialog(false);
+
+    toast.success(
+      <div className="flex items-center gap-2">
+        <CheckCircle className="h-4 w-4 text-green-500" />
+        <span>Connected to {provider.name}! 🎉</span>
+      </div>
+    );
+  };
+
+  const handleWithdraw = () => {
+    if (!amount || !selectedProvider) {
+      toast.error("Please enter amount and select payment method");
+      return;
+    }
+
+    toast.success(
+      <div className="flex items-center gap-2">
+        <ArrowDownToLine className="h-4 w-4 text-primary" />
+        <span>
+          Withdrawal of {amount} USDT initiated! You'll receive{" "}
+          {selectedCurrency.symbol}
+          {calculateLocalCurrency()}
+        </span>
+      </div>
+    );
+
+    setAmount("");
+  };
+
+  const getProvidersByType = (type: string) => {
+    return paymentProviders.filter((p) => p.type === type);
+  };
+
+  const toggleMinimize = () => {
+    setIsMinimized(!isMinimized);
+  };
+
+  const closeWidget = () => {
+    setIsVisible(false);
+    if (onClose) onClose();
+  };
+
+  // If parent passed a visibility prop, prefer it (controlled)
+  const effectiveVisible = typeof visible === "boolean" ? visible : isVisible;
+
+  // Don't render if not visible
+  if (!effectiveVisible) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Floating Widget */}
+      <div
+        ref={widgetRef}
+        className={`fixed z-50 transition-all duration-300 ${
+          isDragging ? "cursor-grabbing" : ""
+        }`}
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          width: isMinimized ? "320px" : "400px",
+          maxHeight: isMinimized ? "60px" : "90vh",
+          zIndex: 9999,
+        }}
+      >
+        <Card className="shadow-2xl border-2 border-primary/20 bg-card/95 backdrop-blur-sm overflow-hidden">
+          {/* Header with drag handle */}
+          <div
+            ref={dragHandleRef}
+            className={`flex items-center justify-between p-3 bg-gradient-to-r from-primary/10 to-secondary/10 border-b border-border/50 ${
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+          >
+            <div className="flex items-center gap-2">
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+              <ArrowDownToLine className="h-5 w-5 text-primary" />
+              <span className="font-semibold text-primary">Withdraw Funds</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleMinimize}
+                className="h-8 w-8 p-0 hover:bg-muted/50"
+              >
+                {isMinimized ? (
+                  <Maximize2 className="h-4 w-4" />
+                ) : (
+                  <Minimize2 className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={closeWidget}
+                className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Minimized state */}
+          {isMinimized && (
+            <div className="p-3">
+              <p className="text-sm text-muted-foreground">
+                Convert crypto to local currency • Click to expand
+              </p>
+            </div>
+          )}
+
+          {/* Full content */}
+          {!isMinimized && (
+            <div className="max-h-[calc(90vh-80px)] overflow-y-auto">
+              <CardContent className="space-y-4 p-4">
+                {/* Amount Input - USDT */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">
+                    Withdraw Amount (USDT)
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                      USDT
+                    </span>
+                    <Input
+                      type="number"
+                      placeholder="0.000"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="font-semibold"
+                      style={{ paddingLeft: "4.5rem" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Currency Selection */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">
+                    To (Local Currency)
+                  </Label>
+                  <Select
+                    value={selectedCurrency.code}
+                    onValueChange={(value) => {
+                      const currency = africanCurrencies.find(
+                        (c) => c.code === value
+                      );
+                      if (currency) setSelectedCurrency(currency);
+                    }}
+                  >
+                    <div className="w-full">
+                      <SelectTrigger>
+                        <SelectValue>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">
+                              {selectedCurrency.flag}
+                            </span>
+                            <span>{selectedCurrency.code}</span>
+                          </div>
+                        </SelectValue>
+                      </SelectTrigger>
+                    </div>
+                    <SelectContent
+                      style={{ zIndex: 10001 }}
+                      className="max-h-60 overflow-y-auto"
+                    >
+                      {africanCurrencies.map((currency) => (
+                        <SelectItem key={currency.code} value={currency.code}>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{currency.flag}</span>
+                            <span className="font-medium">{currency.code}</span>
+                            <span className="text-muted-foreground text-sm">
+                              ({currency.name})
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Conversion Result */}
+                {amount && (
+                  <div className="bg-muted/30 rounded-lg p-3 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">
+                        You'll receive:
+                      </span>
+                      <span className="font-bold text-primary">
+                        {selectedCurrency.symbol}
+                        {calculateLocalCurrency()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">
+                        USD equivalent:
+                      </span>
+                      <span className="font-medium">
+                        ${(Number(amount) * ethPrice).toFixed(2)}
+                      </span>
+                    </div>
+                    {selectedProvider && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">
+                          Fees ({selectedProvider.fees}):
+                        </span>
+                        <span className="font-medium text-orange-400">
+                          ${calculateFees()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Payment Provider Selection */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Payment Method</Label>
+                  {selectedProvider ? (
+                    <div className="p-3 border border-border rounded-lg bg-primary/5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">
+                            {selectedProvider.logo}
+                          </span>
+                          <div>
+                            <p className="font-medium text-sm">
+                              {selectedProvider.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {selectedProvider.fees} fee •{" "}
+                              {selectedProvider.processingTime}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowProviderDialog(true)}
+                        >
+                          Change
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      className="w-full h-10 border-dashed hover:text-white active:text-muted-foreground cursor-pointer"
+                      onClick={() => setShowProviderDialog(true)}
+                    >
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Select Payment Method
+                    </Button>
+                  )}
+                </div>
+
+                {/* Withdraw Button */}
+                <Button
+                  onClick={handleWithdraw}
+                  disabled={!amount || !selectedProvider}
+                  className="w-full h-10 cursor-pointer"
+                  variant="outline"
+                >
+                  <ArrowDownToLine className="h-4 w-4 mr-2" />
+                  Withdraw {amount || "0.000"} USDT
+                </Button>
+
+                {/* Help Section - Compact */}
+                <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
+                  <div className="flex items-start gap-2">
+                    <Shield className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-primary text-sm">
+                        Secure Withdrawals
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        Enter the amount in USDT, select your local currency,
+                        and choose your preferred payment method. Funds will be
+                        sent to your account.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </div>
+          )}
+        </Card>
+      </div>
+
+      {/* Payment Provider Dialog */}
+      <Dialog open={showProviderDialog} onOpenChange={setShowProviderDialog}>
+        <DialogContent style={{ zIndex: 9999 }} className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Choose Payment Method</DialogTitle>
+            <DialogDescription>
+              Select how you'd like to receive your funds. Different methods
+              support different currencies.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="local" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-muted">
+              <TabsTrigger value="local">Local Banks</TabsTrigger>
+              <TabsTrigger value="mobile">Mobile Money</TabsTrigger>
+              <TabsTrigger value="crypto">Crypto Wallets</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="local" className="space-y-4 mt-6">
+              <div className="grid gap-4">
+                {getProvidersByType("local").map((provider) => (
+                  <Card
+                    key={provider.id}
+                    className="cursor-pointer hover:bg-muted/30 transition-colors"
+                  >
+                    <CardContent
+                      className="p-4"
+                      onClick={() => handleConnect(provider)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{provider.logo}</span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-semibold">{provider.name}</p>
+                              {provider.popular && (
+                                <Badge variant="secondary" className="text-xs">
+                                  Popular
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {provider.fees} fee • {provider.processingTime}
+                            </p>
+                            <div className="flex gap-2 mt-1">
+                              {provider.supportedCurrencies
+                                .slice(0, 3)
+                                .map((curr) => (
+                                  <Badge
+                                    key={curr}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
+                                    {curr}
+                                  </Badge>
+                                ))}
+                            </div>
+                          </div>
+                        </div>
+                        <Button size="sm">Connect</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="mobile" className="space-y-4 mt-6">
+              <div className="grid gap-4">
+                {getProvidersByType("mobile").map((provider) => (
+                  <Card
+                    key={provider.id}
+                    className="cursor-pointer hover:bg-muted/30 transition-colors"
+                  >
+                    <CardContent
+                      className="p-4"
+                      onClick={() => handleConnect(provider)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{provider.logo}</span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-semibold">{provider.name}</p>
+                              <Badge variant="outline" className="text-xs">
+                                <Smartphone className="h-3 w-3 mr-1" />
+                                Mobile
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {provider.fees} fee • {provider.processingTime}
+                            </p>
+                            <div className="flex gap-2 mt-1">
+                              {provider.supportedCurrencies.map((curr) => (
+                                <Badge
+                                  key={curr}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
+                                  {curr}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <Button size="sm">Connect</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="crypto" className="space-y-4 mt-6">
+              <div className="grid gap-4">
+                {getProvidersByType("crypto").map((provider) => (
+                  <Card
+                    key={provider.id}
+                    className="cursor-pointer hover:bg-muted/30 transition-colors"
+                  >
+                    <CardContent
+                      className="p-4"
+                      onClick={() => handleConnect(provider)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{provider.logo}</span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-semibold">{provider.name}</p>
+                              {provider.popular && (
+                                <Badge variant="secondary" className="text-xs">
+                                  Popular
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {provider.fees} fee • {provider.processingTime}
+                            </p>
+                            <div className="flex gap-2 mt-1">
+                              {provider.supportedCurrencies.map((curr) => (
+                                <Badge
+                                  key={curr}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
+                                  {curr}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <Button size="sm">Connect</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
