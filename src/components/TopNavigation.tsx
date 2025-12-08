@@ -213,7 +213,7 @@ export default function TopNavigation({
               <Button
                 onClick={() => setIsVisible(true)}
                 size="sm"
-                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer neon-glow"
+                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
                 style={{ backgroundColor: '#06f6ff', color: '#000000' }}
               >
                 <span className="text-lg font-bold leading-none">+</span>

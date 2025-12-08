@@ -659,7 +659,7 @@ export default function Social() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold gradient-text mb-1 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-primary mb-1 flex items-center gap-2">
             <Users className="h-7 w-7" />
             African Truth Community
           </h1>
@@ -669,7 +669,7 @@ export default function Social() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button className="gap-2 bg-secondary hover:bg-secondary/90 neon-glow">
+          <Button className="gap-2 bg-secondary hover:bg-secondary/90">
             <UserPlus className="h-4 w-4" />
             Invite Friends
           </Button>
