@@ -1516,8 +1516,9 @@ export default function Social() {
                   className="border-border/50 bg-card/80 backdrop-blur-sm"
                 >
                   <CardContent className="p-6">
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+                      {/* Left: Rank, Avatar, Username */}
+                      <div className="flex items-center gap-3 flex-shrink-0">
                         <div className="text-2xl font-bold text-primary">
                           #{index + 1}
                         </div>
@@ -1530,7 +1531,7 @@ export default function Social() {
                           <h3 className="font-semibold text-foreground">
                             {author.username}
                           </h3>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             {getReputationBadge(author.reputation)}
                             <Badge variant="outline" className="text-xs">
                               {author.country}
@@ -1538,37 +1539,35 @@ export default function Social() {
                           </div>
                         </div>
                       </div>
-                      {/* grid grid-cols-2 md:grid-cols-3 gap-4 */}
-                      <div className="flex-1 flex flex-col md:flex-row justify-center gap-8 text-center">
-                        <div>
-                          <div className="text-xl font-bold text-primary">
-                            {author.verifiedClaims}
+
+                      {/* Right: Stats and Follow Button */}
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 flex-1 w-full lg:w-auto">
+                        {/* Stats */}
+                        <div className="grid grid-cols-2 sm:flex sm:flex-row gap-4 sm:gap-6 text-center w-full sm:w-auto">
+                          <div>
+                            <div className="text-xl font-bold text-primary">
+                              {author.verifiedClaims}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Verifications
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            Verifications
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xl font-bold text-secondary">
-                            {(85 + Math.random() * 15).toFixed(1)}%Share with
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Accuracy
-                          </div>
-                        </div>
-                        <div className="hidden md:block">
-                          <div className="text-xl font-bold text-green-500">
-                            {Math.floor(author.verifiedClaims * 23.4)}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Truth Score
+                          <div>
+                            <div className="text-xl font-bold text-secondary">
+                              {(85 + Math.random() * 15).toFixed(1)}%
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Accuracy
+                            </div>
                           </div>
                         </div>
+
+                        {/* Follow Button */}
+                        <Button variant="outline" size="sm" className="w-full sm:w-auto flex-shrink-0">
+                          <Star className="h-4 w-4 mr-2" />
+                          Follow
+                        </Button>
                       </div>
-                      <Button variant="outline" size="sm">
-                        <Star className="h-4 w-4 mr-2" />
-                        Follow
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>
