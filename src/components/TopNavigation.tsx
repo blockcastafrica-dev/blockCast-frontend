@@ -392,7 +392,7 @@ export default function TopNavigation({
                       <span className="font-medium">Balance</span>
                     </div>
                     <span className="font-bold text-primary">
-                      {userBalance.toFixed(3)} ETH
+                      {userBalance.toFixed(3)} USDT
                     </span>
                   </div>
 
@@ -400,7 +400,6 @@ export default function TopNavigation({
                     onClick={() => handleNavClick("/settings", "profile")}
                     className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
                   >
-                    {/* <HandCoins className="size-6 text-primary" /> */}
                     <User className="h-4 w-4 text-primary" />
                     <span className="text-md text-muted-foreground">
                       Profile
@@ -411,10 +410,9 @@ export default function TopNavigation({
                     onClick={() => handleNavClick("/settings", "portfolio")}
                     className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
                   >
-                    {/* <HandCoins className="size-6 text-primary" /> */}
-                    <BriefcaseBusiness className="size-4 text-primary" />
+                    <History className="size-4 text-primary" />
                     <span className="text-md text-muted-foreground">
-                      Portfolio
+                      Activity
                     </span>
                   </div>
 
@@ -425,21 +423,19 @@ export default function TopNavigation({
                     }}
                     className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
                   >
-                    {/* <HandCoins className="size-6 text-primary" /> */}
-                    <HandCoins className="size-4 text-primary" />
+                    <Wallet className="h-4 w-4 text-primary" />
                     <span className="text-md text-muted-foreground">
                       Fund Wallet
                     </span>
                   </div>
 
                   <div
-                    onClick={() => handleNavClick("/settings", "history")}
+                    onClick={() => handleNavClick("/settings")}
                     className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
                   >
-                    {/* <HandCoins className="size-6 text-primary" /> */}
-                    <History className="size-4 text-primary" />
+                    <Settings className="size-4 text-primary" />
                     <span className="text-md text-muted-foreground">
-                      History
+                      Settings
                     </span>
                   </div>
 
