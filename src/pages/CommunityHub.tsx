@@ -673,7 +673,7 @@ export default function Social() {
             <UserPlus className="h-4 w-4" />
             Invite Friends
           </Button>
-          <Button variant="outline" className="gap-2 glass-card">
+          <Button variant="outline" className="gap-2">
             <Gift className="h-4 w-4" />
             Refer & Earn
           </Button>
@@ -1054,7 +1054,7 @@ export default function Social() {
 
         <TabsContent value="feed" className="space-y-6 mt-8">
           {/* Create Post */}
-          <Card className="glass-card p-4 shimmer">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm p-4">
             <div className="flex items-center gap-8">
               <Button onClick={handleToggleModal} className="cursor-pointer">
                 <Plus className="h-4 w-4 mr-2" />
@@ -1276,7 +1276,7 @@ export default function Social() {
 
         {/******************* AI Learning starts *************************/}
         <TabsContent value="ai-learning" className="space-y-6 mt-8">
-          <Card className="glass-card shimmer">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Brain className="h-6 w-6 text-secondary" />

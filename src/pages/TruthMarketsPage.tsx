@@ -259,7 +259,7 @@ export default function TruthMarketsPage() {
         {filteredMarkets.map((market) => (
           <Card
             key={market.id}
-            className="glass-card overflow-hidden cursor-pointer hover:shadow-lg transition-all shimmer"
+            className="border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden cursor-pointer hover:shadow-lg transition-all"
             onClick={() => navigate(`/market/${market.id}`)}
           >
             {market.imageUrl && (

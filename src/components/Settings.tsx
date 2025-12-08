@@ -194,7 +194,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         </TabsContent>
 
         <TabsContent value="wallet" className="space-y-6">
-          <Card className="glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Wallet className="h-6 w-6 text-primary" />
@@ -329,7 +329,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         </TabsContent>
 
         <TabsContent value="profile" className="space-y-6">
-          <Card className="glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
               <CardDescription>
@@ -508,7 +508,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">
-          <Card className="glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>
               <CardDescription>
@@ -683,7 +683,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         </TabsContent>
 
         <TabsContent value="privacy" className="space-y-6">
-          <Card className="glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Privacy & Security</CardTitle>
               <CardDescription>
@@ -823,7 +823,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         </TabsContent>
 
         <TabsContent value="data" className="space-y-6">
-          <Card className="glass-card">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Data Management</CardTitle>
               <CardDescription>

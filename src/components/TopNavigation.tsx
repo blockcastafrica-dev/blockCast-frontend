@@ -200,7 +200,7 @@ export default function TopNavigation({
 
             {/* Balance (Desktop) - Only show when logged in */}
             {isLoggedIn && (
-              <div className="hidden lg:flex items-center gap-2 glass-card px-4 py-2 rounded-md">
+              <div className="hidden lg:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-md">
                 <Wallet className="h-4 w-4 text-primary" />
                 <span className="text-sm font-semibold text-foreground">
                   {userBalance.toFixed(3)}
