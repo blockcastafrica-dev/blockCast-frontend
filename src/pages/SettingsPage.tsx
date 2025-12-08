@@ -231,39 +231,6 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="portfolio" className="space-y-6">
-          {/* Fund/Withdraw Actions Card */}
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wallet className="h-6 w-6 text-primary" />
-                Truth Casting Portfolio
-              </CardTitle>
-              <CardDescription>
-                Track your truth verification positions • Monitor accuracy • Manage funds
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => setShowFundWallet(true)}
-                  className="gap-2 px-4 py-2 cursor-pointer"
-                  style={{ backgroundColor: '#06f6ff', color: '#000000' }}
-                >
-                  <span className="text-lg font-bold leading-none">+</span>
-                  <span className="font-medium">Add Funds</span>
-                </Button>
-                <Button
-                  onClick={() => setShowWithdraw(true)}
-                  variant="outline"
-                  className="gap-2 px-4 py-2 cursor-pointer"
-                >
-                  <span className="text-lg font-bold leading-none">−</span>
-                  <span className="font-medium">Withdraw</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
           <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Portfolio Settings</CardTitle>

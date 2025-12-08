@@ -166,32 +166,6 @@ export default function BettingPortfolio({
     <div className="space-y-6 mx-auto">
       {" "}
       {/* max-w-6xl */}
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-primary mb-1 flex items-center gap-2">
-            <Wallet className="h-7 w-7" />
-            Truth Casting Portfolio
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Track your truth verification positions • Monitor accuracy • Manage
-            funds
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Button
-            onClick={handleAddFunds}
-            className="gap-2 bg-primary hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
-            Add Funds
-          </Button>
-          <Button onClick={handleWithdraw} variant="outline" className="gap-2">
-            <Minus className="h-4 w-4" />
-            Withdraw
-          </Button>
-        </div>
-      </div>
       {/* Balance & Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-border/50 bg-card/80 backdrop-blur-sm">

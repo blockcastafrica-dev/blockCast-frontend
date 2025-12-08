@@ -146,10 +146,14 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
 
       {/* Settings Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex w-full flex-wrap items-center justify-center">
+        <TabsList className="grid grid-cols-3 w-full lg:flex lg:flex-wrap lg:items-center lg:justify-center">
           <TabsTrigger value="profile" className="gap-2">
             <User className="h-4 w-4" />
             Profile
+          </TabsTrigger>
+          <TabsTrigger value="wallet" className="gap-2">
+            <Wallet className="h-4 w-4" />
+            My Wallet
           </TabsTrigger>
           <TabsTrigger value="portfolio" className="gap-2">
             <History className="h-4 w-4" />
@@ -187,6 +191,141 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
             verificationHistory={verificationHistory}
             onSelectVerification={onSelectVerification}
           />
+        </TabsContent>
+
+        <TabsContent value="wallet" className="space-y-6">
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="h-6 w-6 text-primary" />
+                My Wallet
+              </CardTitle>
+              <CardDescription>
+                Manage your funds, view balance, and transaction history
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Balance Display */}
+              <div className="p-6 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+                <div className="text-sm text-muted-foreground mb-1">Total Balance</div>
+                <div className="text-4xl font-bold text-primary mb-4">
+                  {userBalance.toFixed(3)} USDT
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => setIsWalletVisible(true)}
+                    className="gap-2 px-4 py-2 cursor-pointer flex-1"
+                    style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                  >
+                    <span className="text-lg font-bold leading-none">+</span>
+                    <span className="font-medium">Add Funds</span>
+                  </Button>
+                  <Button
+                    onClick={() => setIsWithdrawVisible(true)}
+                    className="gap-2 px-4 py-2 cursor-pointer flex-1 bg-muted hover:bg-muted/80 text-foreground border border-border"
+                  >
+                    <span className="text-lg font-bold leading-none">−</span>
+                    <span className="font-medium">Withdraw</span>
+                  </Button>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Wallet Address */}
+              <div className="space-y-4">
+                <h4 className="font-medium">Wallet Address</h4>
+                <div className="p-4 bg-muted/20 rounded-lg border border-border">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground mb-1">USDT Address (ERC-20)</p>
+                      <p className="font-mono text-sm break-all">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb');
+                        toast.success('Address copied to clipboard');
+                      }}
+                      className="ml-2 cursor-pointer"
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Quick Stats */}
+              <div className="space-y-4">
+                <h4 className="font-medium">Quick Stats</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                    <div className="text-2xl font-bold text-foreground">15</div>
+                    <div className="text-sm text-muted-foreground">Total Deposits</div>
+                  </div>
+                  <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                    <div className="text-2xl font-bold text-foreground">8</div>
+                    <div className="text-sm text-muted-foreground">Total Withdrawals</div>
+                  </div>
+                  <div className="p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                    <div className="text-2xl font-bold text-foreground">23</div>
+                    <div className="text-sm text-muted-foreground">Transactions</div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Recent Transactions */}
+              <div className="space-y-4">
+                <h4 className="font-medium">Recent Transactions</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <span className="text-green-500 text-lg">+</span>
+                      </div>
+                      <div>
+                        <div className="font-medium">Deposit</div>
+                        <div className="text-sm text-muted-foreground">Dec 7, 2025 • 3:45 PM</div>
+                      </div>
+                    </div>
+                    <div className="text-green-500 font-semibold">+50.00 USDT</div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <span className="text-red-500 text-lg">−</span>
+                      </div>
+                      <div>
+                        <div className="font-medium">Withdrawal</div>
+                        <div className="text-sm text-muted-foreground">Dec 6, 2025 • 1:20 PM</div>
+                      </div>
+                    </div>
+                    <div className="text-red-500 font-semibold">-25.00 USDT</div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <span className="text-green-500 text-lg">+</span>
+                      </div>
+                      <div>
+                        <div className="font-medium">Deposit</div>
+                        <div className="text-sm text-muted-foreground">Dec 5, 2025 • 10:15 AM</div>
+                      </div>
+                    </div>
+                    <div className="text-green-500 font-semibold">+100.00 USDT</div>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full cursor-pointer">
+                  View All Transactions
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="profile" className="space-y-6">
