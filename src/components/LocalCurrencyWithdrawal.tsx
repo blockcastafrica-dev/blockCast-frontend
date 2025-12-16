@@ -282,7 +282,7 @@ export default function LocalCurrencyWithdrawal({
               <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{userBalance.toFixed(6)} USDT</p>
             </div>
             <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
-              <Wallet className="h-8 w-8 text-purple-400" />
+              <Wallet className="h-8 w-8 text-white" />
             </div>
           </div>
         </div>
@@ -336,35 +336,42 @@ export default function LocalCurrencyWithdrawal({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:from-purple-500/30 group-hover:to-pink-500/30 flex items-center justify-center border border-purple-500/30 transition-all">
-                            <Icon className="h-7 w-7 text-purple-400" />
+                            <Icon className="h-7 w-7 text-white" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <p className="font-semibold">{method.name}</p>
+                              <p className="font-bold text-white group-hover:text-purple-400 transition-colors">{method.name}</p>
                               {method.popular && (
-                                <Badge variant="secondary" className="text-xs">
+                                <Badge
+                                  className="text-xs border"
+                                  style={{
+                                    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                                    color: 'rgb(34, 211, 238)',
+                                    borderColor: 'rgba(6, 182, 212, 0.5)'
+                                  }}
+                                >
                                   Popular
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-slate-400">
                               {method.description}
                             </p>
                             <div className="flex items-center gap-3 mt-1">
-                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <span className="text-xs text-slate-400 flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
                                 {method.processingTime}
                               </span>
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-xs text-slate-400">
                                 Fee: {method.fees}
                               </span>
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-xs text-slate-400">
                                 Min: ${method.minAmount}
                               </span>
                             </div>
                           </div>
                         </div>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                        <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </CardContent>
                   </Card>
@@ -397,7 +404,7 @@ export default function LocalCurrencyWithdrawal({
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    {selectedMethod.icon && <selectedMethod.icon className="h-5 w-5 text-primary" />}
+                    {selectedMethod.icon && <selectedMethod.icon className="h-5 w-5 text-white" />}
                   </div>
                   <div>
                     <p className="font-medium text-sm">{selectedMethod.name}</p>

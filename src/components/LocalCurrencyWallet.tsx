@@ -338,13 +338,20 @@ export default function LocalCurrencyWallet({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
-                            <Icon className="h-7 w-7 text-cyan-400" />
+                            <Icon className="h-7 w-7 text-white" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <p className="font-bold text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
                               {method.popular && (
-                                <Badge variant="secondary" className="text-xs">
+                                <Badge
+                                  className="text-xs border"
+                                  style={{
+                                    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                                    color: 'rgb(34, 211, 238)',
+                                    borderColor: 'rgba(6, 182, 212, 0.5)'
+                                  }}
+                                >
                                   Popular
                                 </Badge>
                               )}
@@ -353,17 +360,17 @@ export default function LocalCurrencyWallet({
                               {method.description}
                             </p>
                             <div className="flex items-center gap-3 mt-2">
-                              <span className="text-xs text-cyan-400 flex items-center gap-1 font-medium">
+                              <span className="text-xs text-slate-400 flex items-center gap-1 font-medium">
                                 <Zap className="h-3 w-3" />
                                 {method.processingTime}
                               </span>
-                              <span className="text-xs text-purple-400 font-medium">
+                              <span className="text-xs text-slate-400 font-medium">
                                 Fee: {method.fees}
                               </span>
                             </div>
                           </div>
                         </div>
-                        <ArrowRight className="h-5 w-5 text-cyan-500 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="h-5 w-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </CardContent>
                   </Card>
@@ -374,7 +381,7 @@ export default function LocalCurrencyWallet({
             <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl p-4 border border-cyan-500/30 backdrop-blur-sm">
               <div className="flex items-start gap-3">
                 <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
-                  <Shield className="h-5 w-5 text-cyan-400 flex-shrink-0" />
+                  <Shield className="h-5 w-5 text-white flex-shrink-0" />
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-cyan-400">
@@ -397,7 +404,7 @@ export default function LocalCurrencyWallet({
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center border border-cyan-500/30">
-                    {selectedMethod.icon && <selectedMethod.icon className="h-6 w-6 text-cyan-400" />}
+                    {selectedMethod.icon && <selectedMethod.icon className="h-6 w-6 text-white" />}
                   </div>
                   <div>
                     <p className="font-bold text-white">{selectedMethod.name}</p>
