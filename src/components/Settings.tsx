@@ -194,107 +194,93 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         </TabsContent>
 
         <TabsContent value="wallet" className="space-y-6">
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wallet className="h-6 w-6 text-primary" />
-                My Wallet
-              </CardTitle>
-              <CardDescription>
-                Manage your funds, view balance, and transaction history
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Balance Display */}
-              <div className="p-6 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
-                <div className="text-sm text-muted-foreground mb-1">Total Balance</div>
-                <div className="text-4xl font-bold text-primary mb-4">
-                  {userBalance.toFixed(3)} USDT
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    onClick={() => setIsWalletVisible(true)}
-                    className="gap-2 px-4 py-2 cursor-pointer flex-1"
-                    style={{ backgroundColor: '#06f6ff', color: '#000000' }}
-                  >
-                    <span className="text-lg font-bold leading-none">+</span>
-                    <span className="font-medium">Add Funds</span>
-                  </Button>
-                  <Button
-                    onClick={() => setIsWithdrawVisible(true)}
-                    className="gap-2 px-4 py-2 cursor-pointer flex-1 bg-muted hover:bg-muted/80 text-foreground border border-border"
-                  >
-                    <span className="text-lg font-bold leading-none">−</span>
-                    <span className="font-medium">Withdraw</span>
-                  </Button>
-                </div>
+          {/* Balance Display */}
+          <div className="border border-border rounded-xl bg-transparent">
+            <CardContent className="p-6">
+              <div className="text-sm text-muted-foreground mb-1">Total Balance</div>
+              <div className="text-4xl font-bold text-primary mb-4">
+                {userBalance.toFixed(3)} USDT
               </div>
-
-              <Separator />
-
-              {/* Wallet Address */}
-              <div className="space-y-4">
-                <h4 className="font-medium">Wallet Address</h4>
-                <div className="p-4 bg-muted/20 rounded-lg border border-border">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground mb-1">USDT Address (ERC-20)</p>
-                      <p className="font-mono text-sm break-all">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        navigator.clipboard.writeText('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb');
-                        toast.success('Address copied to clipboard');
-                      }}
-                      className="ml-2 cursor-pointer"
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Recent Transactions */}
-              <div className="space-y-4">
-                <h4 className="font-medium">Recent Transactions</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg border border-border">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Deposit</p>
-                      <p className="text-xs text-muted-foreground">Mobile Money • 2 hours ago</p>
-                    </div>
-                    <span className="text-sm font-semibold text-green-500">+50.00 USDT</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg border border-border">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Withdrawal</p>
-                      <p className="text-xs text-muted-foreground">Bank Transfer • 1 day ago</p>
-                    </div>
-                    <span className="text-sm font-semibold text-red-500">-25.00 USDT</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg border border-border">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Deposit</p>
-                      <p className="text-xs text-muted-foreground">Crypto Wallet • 3 days ago</p>
-                    </div>
-                    <span className="text-sm font-semibold text-green-500">+100.00 USDT</span>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full" asChild={false}>
-                  View All Transactions
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={() => setIsWalletVisible(true)}
+                  className="gap-2 px-4 py-2 cursor-pointer flex-1"
+                  style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                >
+                  <span className="text-lg font-bold leading-none">+</span>
+                  <span className="font-medium">Add Funds</span>
+                </Button>
+                <Button
+                  onClick={() => setIsWithdrawVisible(true)}
+                  className="gap-2 px-4 py-2 cursor-pointer flex-1 bg-muted hover:bg-muted/80 text-foreground border border-border"
+                >
+                  <span className="text-lg font-bold leading-none">−</span>
+                  <span className="font-medium">Withdraw</span>
                 </Button>
               </div>
-
             </CardContent>
-          </Card>
+          </div>
+
+          {/* Wallet Address */}
+          <div className="border border-border rounded-xl bg-transparent">
+            <CardContent className="p-6 space-y-4">
+              <h4 className="font-medium text-foreground">Wallet Address</h4>
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground mb-1">USDT Address (ERC-20)</p>
+                  <p className="font-mono text-sm break-all">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb');
+                    toast.success('Address copied to clipboard');
+                  }}
+                  className="ml-2 cursor-pointer"
+                >
+                  Copy
+                </Button>
+              </div>
+            </CardContent>
+          </div>
+
+          {/* Recent Transactions */}
+          <div className="border border-border rounded-xl bg-transparent">
+            <CardContent className="p-6 space-y-4">
+              <h4 className="font-medium text-foreground">Recent Transactions</h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Deposit</p>
+                    <p className="text-xs text-muted-foreground">Mobile Money • 2 hours ago</p>
+                  </div>
+                  <span className="text-sm font-semibold text-green-500">+50.00 USDT</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Withdrawal</p>
+                    <p className="text-xs text-muted-foreground">Bank Transfer • 1 day ago</p>
+                  </div>
+                  <span className="text-sm font-semibold text-red-500">-25.00 USDT</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Deposit</p>
+                    <p className="text-xs text-muted-foreground">Crypto Wallet • 3 days ago</p>
+                  </div>
+                  <span className="text-sm font-semibold text-green-500">+100.00 USDT</span>
+                </div>
+              </div>
+              <Button variant="outline" className="w-full" asChild={false}>
+                View All Transactions
+              </Button>
+            </CardContent>
+          </div>
         </TabsContent>
 
         <TabsContent value="profile" className="space-y-6">
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+          <div className="border border-border rounded-xl bg-transparent">
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
               <CardDescription>
@@ -469,11 +455,11 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
 
               <Button className="w-full">Save Profile Changes</Button>
             </CardContent>
-          </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+          <div className="border border-border rounded-xl bg-transparent">
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>
               <CardDescription>
@@ -644,11 +630,11 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="privacy" className="space-y-6">
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+          <div className="border border-border rounded-xl bg-transparent">
             <CardHeader>
               <CardTitle>Privacy & Security</CardTitle>
               <CardDescription>
@@ -784,11 +770,11 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="data" className="space-y-6">
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+          <div className="border border-border rounded-xl bg-transparent">
             <CardHeader>
               <CardTitle>Data Management</CardTitle>
               <CardDescription>
@@ -880,7 +866,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </div>
         </TabsContent>
       </Tabs>
 

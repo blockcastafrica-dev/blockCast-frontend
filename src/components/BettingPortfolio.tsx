@@ -10,7 +10,13 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Separator } from "./ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import {
   Wallet,
   TrendingUp,
@@ -73,7 +79,6 @@ export default function BettingPortfolio({
     (() => {
       window.alert("Withdraw functionality coming soon!");
     });
-  const [activeTab, setActiveTab] = useState("overview");
 
   // Calculate portfolio stats
   const totalCastAmount = userBets.reduce((sum, cast) => sum + cast.amount, 0);
@@ -164,512 +169,199 @@ export default function BettingPortfolio({
 
   return (
     <div className="space-y-6 mx-auto">
-      {" "}
-      {/* max-w-6xl */}
-      {/* Balance & Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Wallet className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-primary">
-                Available Balance
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-foreground">
-              {userBalance.toFixed(3)} USDT
-            </p>
-            <p className="text-sm text-muted-foreground">Ready for casting</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Vote className="h-5 w-5 text-secondary" />
-              <span className="font-semibold text-secondary">Total Cast</span>
-            </div>
-            <p className="text-2xl font-bold text-foreground">
-              {totalCastAmount.toFixed(3)} USDT
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Across {userBets.length} positions
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Target className="h-5 w-5 text-green-500" />
-              <span className="font-semibold text-green-500">
-                Truth Accuracy
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-foreground">
-              {truthAccuracy}%
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Verification success rate
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-5 w-5 text-yellow-500" />
-              <span className="font-semibold text-yellow-500">P&L</span>
-            </div>
-            <p
-              className={`text-2xl font-bold ${
-                totalPnL >= 0 ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {totalPnL >= 0 ? "+" : ""}
-              {totalPnL.toFixed(3)} USDT
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {winRate.toFixed(1)}% win rate
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-      {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview" className="gap-2">
-            <PieChart className="h-4 w-4" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="active" className="gap-2">
-            <Activity className="h-4 w-4" />
-            Active Casts ({activeCasts.length})
-          </TabsTrigger>
-          <TabsTrigger value="history" className="gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Cast History
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          {/* Portfolio Performance */}
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Truth Casting Performance
-              </CardTitle>
-              <CardDescription>
-                Your verification accuracy and earnings overview
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-foreground">
-                    Position Distribution
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm">TRUE Positions</span>
-                      <span className="font-medium text-primary">
-                        {userBets.filter((c) => c.position === "yes").length}{" "}
-                        casts
-                      </span>
-                    </div>
-                    <Progress
-                      value={
-                        (userBets.filter((c) => c.position === "yes").length /
-                          userBets.length) *
-                        100
-                      }
-                      className="h-2"
-                    />
-
-                    <div className="flex justify-between">
-                      <span className="text-sm">FALSE Positions</span>
-                      <span className="font-medium text-secondary">
-                        {userBets.filter((c) => c.position === "no").length}{" "}
-                        casts
-                      </span>
-                    </div>
-                    <Progress
-                      value={
-                        (userBets.filter((c) => c.position === "no").length /
-                          userBets.length) *
-                        100
-                      }
-                      className="h-2 [&>div]:bg-secondary"
-                    />
-                  </div>
+          {/* Balance & Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="border border-border rounded-xl bg-transparent">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Wallet className="h-5 w-5 text-primary" />
+                  <span className="font-semibold text-primary">
+                    Available Balance
+                  </span>
                 </div>
-
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-foreground">
-                    Cast Results
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Won Casts</span>
-                      <span className="font-medium text-green-500">
-                        {wonCasts.length} / {resolvedCasts.length}
-                      </span>
-                    </div>
-                    <Progress
-                      value={winRate}
-                      className="h-2 [&>div]:bg-green-500"
-                    />
-
-                    <div className="flex justify-between">
-                      <span className="text-sm">Active Casts</span>
-                      <span className="font-medium text-yellow-500">
-                        {activeCasts.length} pending
-                      </span>
-                    </div>
-                    <Progress
-                      value={
-                        userBets.length > 0
-                          ? (activeCasts.length / userBets.length) * 100
-                          : 0
-                      }
-                      className="h-2 [&>div]:bg-yellow-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-primary">
-                    {activeCasts.length}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Active Casts
-                  </div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-500">
-                    {totalPotentialWinnings.toFixed(2)} USDT
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Potential Winnings
-                  </div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-secondary">
-                    {userBets.length > 0
-                      ? (
-                          (userBets.filter((c) => c.position === "yes").length /
-                            userBets.length) *
-                          100
-                        ).toFixed(0)
-                      : 0}
-                    %
-                  </div>
-                  <div className="text-sm text-muted-foreground">TRUE Bias</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-yellow-500">
-                    {
-                      userBets.filter(
-                        (c) =>
-                          c.status === "active" &&
-                          c.expiresAt &&
-                          new Date(c.expiresAt).getTime() - Date.now() <
-                            7 * 24 * 60 * 60 * 1000
-                      ).length
-                    }
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Recent Activity
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity */}
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Recent Truth Casts
-              </CardTitle>
-              <CardDescription>
-                Your latest verification positions
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {userBets.slice(0, 5).map((cast) => (
-                  <div
-                    key={cast.id}
-                    className="flex items-center justify-between p-3 bg-muted/20 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      {getStatusIcon(cast.status)}
-                      <div>
-                        <p className="font-medium text-foreground line-clamp-1">
-                          {cast.marketClaim || "Market position"}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          {getPositionBadge(cast.position)}
-                          <span className="text-sm text-muted-foreground">
-                            {cast.amount} USDT @ {cast.odds || 2.0}x
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div
-                        className={`font-semibold ${
-                          cast.status === "won"
-                            ? "text-green-500"
-                            : cast.status === "lost"
-                            ? "text-red-500"
-                            : "text-yellow-500"
-                        }`}
-                      >
-                        {cast.status === "won" && cast.actualWinning
-                          ? `+${cast.actualWinning.toFixed(3)} USDT`
-                          : cast.status === "lost"
-                          ? `-${cast.amount.toFixed(3)} USDT`
-                          : `${(
-                              cast.potentialWinning ||
-                              cast.potentialReturn ||
-                              0
-                            ).toFixed(3)} USDT`}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {formatTimeAgo(cast.placedAt)}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="active" className="space-y-4">
-          {activeCasts.length === 0 ? (
-            <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-              <CardContent className="p-8 text-center">
-                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                  <Vote className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-medium mb-2 text-foreground">
-                  No Active Truth Casts
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  You don't have any active truth verification positions right
-                  now.
+                <p className="text-2xl font-bold text-foreground">
+                  {userBalance.toFixed(3)} USDT
                 </p>
-                <Button
-                  onClick={() => window.location.reload()}
-                  className="gap-2"
+                <p className="text-sm text-muted-foreground">Ready for casting</p>
+              </CardContent>
+            </div>
+
+            <div className="border border-border rounded-xl bg-transparent">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Vote className="h-5 w-5 text-secondary" />
+                  <span className="font-semibold text-secondary">Total Cast</span>
+                </div>
+                <p className="text-2xl font-bold text-foreground">
+                  {totalCastAmount.toFixed(3)} USDT
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Across {userBets.length} positions
+                </p>
+              </CardContent>
+            </div>
+
+            <div className="border border-border rounded-xl bg-transparent">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="h-5 w-5 text-green-500" />
+                  <span className="font-semibold text-green-500">
+                    Truth Accuracy
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-foreground">
+                  {truthAccuracy}%
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Verification success rate
+                </p>
+              </CardContent>
+            </div>
+
+            <div className="border border-border rounded-xl bg-transparent">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="h-5 w-5 text-yellow-500" />
+                  <span className="font-semibold text-yellow-500">P&L</span>
+                </div>
+                <p
+                  className={`text-2xl font-bold ${
+                    totalPnL >= 0 ? "text-green-500" : "text-red-500"
+                  }`}
                 >
-                  <Zap className="h-4 w-4" />
-                  Browse Truth Markets
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            activeCasts.map((cast) => (
-              <Card
-                key={cast.id}
-                className="border-border/50 bg-card/80 backdrop-blur-sm"
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center gap-2">
-                        {getStatusBadge(cast.status)}
-                        {getPositionBadge(cast.position)}
-                        <Badge variant="outline" className="gap-1">
-                          <Clock className="h-3 w-3" />
-                          {formatTimeAgo(cast.placedAt)}
-                        </Badge>
-                      </div>
-
-                      <h3 className="font-semibold text-foreground leading-tight">
-                        {cast.marketClaim}
-                      </h3>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">
-                            Cast Amount:
-                          </span>
-                          <div className="font-semibold text-foreground">
-                            {cast.amount} USDT
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Odds:</span>
-                          <div className="font-semibold text-foreground">
-                            {cast.odds}x
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">
-                            Potential Win:
-                          </span>
-                          <div className="font-semibold text-green-500">
-                            {(
-                              cast.potentialWinning ||
-                              cast.potentialReturn ||
-                              0
-                            ).toFixed(3)}{" "}
-                            USDT
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">
-                            Position:
-                          </span>
-                          <div
-                            className={`font-semibold ${
-                              cast.position === "yes"
-                                ? "text-primary"
-                                : "text-secondary"
-                            }`}
-                          >
-                            {cast.position === "yes" ? "TRUE" : "FALSE"}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <Eye className="h-3 w-3" />
-                        View Market
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="history" className="space-y-4">
-          {resolvedCasts.length === 0 ? (
-            <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-              <CardContent className="p-8 text-center">
-                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                  <BarChart3 className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-medium mb-2 text-foreground">
-                  No Cast History
-                </h3>
-                <p className="text-muted-foreground">
-                  Your resolved truth verification positions will appear here.
+                  {totalPnL >= 0 ? "+" : ""}
+                  {totalPnL.toFixed(3)} USDT
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {winRate.toFixed(1)}% win rate
                 </p>
               </CardContent>
-            </Card>
-          ) : (
-            resolvedCasts.map((cast) => (
-              <Card
-                key={cast.id}
-                className="border-border/50 bg-card/80 backdrop-blur-sm"
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center gap-2">
-                        {getStatusBadge(cast.status)}
-                        {getPositionBadge(cast.position)}
-                        <Badge variant="outline" className="gap-1">
-                          <Clock className="h-3 w-3" />
-                          Resolved{" "}
-                          {cast.resolvedAt
-                            ? formatTimeAgo(cast.resolvedAt)
-                            : "Recently"}
-                        </Badge>
-                      </div>
+            </div>
+          </div>
 
-                      <h3 className="font-semibold text-foreground leading-tight">
-                        {cast.marketClaim}
-                      </h3>
+          {/* Search and Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search predictions"
+                className="w-full h-9 px-3 pl-10 py-2 bg-input-background dark:bg-input/30 dark:hover:bg-input/50 border border-input rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-ring/50 focus:border-ring transition-[color,box-shadow] hover:bg-input/50"
+              />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                <svg className="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+            <Select defaultValue="all">
+              <SelectTrigger>
+                <SelectValue placeholder="All Topics" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Topics</SelectItem>
+                <SelectItem value="politics">Politics</SelectItem>
+                <SelectItem value="sports">Sports</SelectItem>
+                <SelectItem value="technology">Technology</SelectItem>
+                <SelectItem value="entertainment">Entertainment</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select defaultValue="newest">
+              <SelectTrigger>
+                <SelectValue placeholder="Newest" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+                <SelectItem value="highest">Highest Value</SelectItem>
+                <SelectItem value="lowest">Lowest Value</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">
-                            Cast Amount:
+          {/* Portfolio/Positions Table */}
+          <div className="border border-border rounded-xl overflow-hidden bg-transparent">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1200px] bg-transparent">
+                <thead className="bg-transparent">
+                  <tr className="border-b border-border">
+                    <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground w-[28%]">Market</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[7%]">Token</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[10%]">Outcome</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[9%]">Invested</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[13%]">Position</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[10%]">Final value</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[8%]">PNL</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[10%]">Date</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[5%]">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border bg-transparent">
+                  {userBets.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-6 py-16 text-center">
+                        <p className="text-muted-foreground">No markets found. Try changing the filters.</p>
+                      </td>
+                    </tr>
+                  ) : (
+                    userBets.map((bet) => (
+                      <tr key={bet.id} className="transition-colors">
+                        <td className="px-6 py-4 text-sm">
+                          <p className="text-foreground font-medium line-clamp-2">{bet.marketClaim || "Market position"}</p>
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          <span className="text-muted-foreground">USDT</span>
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          {getPositionBadge(bet.position)}
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          <span className="text-foreground">{bet.amount.toFixed(2)}</span>
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(bet.status)}
+                            <span className="text-muted-foreground text-xs whitespace-nowrap">@ {bet.odds || 2.0}x</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          <span className="text-foreground">
+                            {bet.status === 'won'
+                              ? (bet.actualWinning || 0).toFixed(2)
+                              : bet.status === 'active'
+                              ? (bet.potentialWinning || bet.potentialReturn || 0).toFixed(2)
+                              : '0.00'
+                            }
                           </span>
-                          <div className="font-semibold text-foreground">
-                            {cast.amount} USDT
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Odds:</span>
-                          <div className="font-semibold text-foreground">
-                            {cast.odds}x
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">
-                            Position:
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          <span className={`font-semibold whitespace-nowrap ${
+                            bet.status === 'won' ? 'text-green-500' :
+                            bet.status === 'lost' ? 'text-red-500' :
+                            'text-yellow-500'
+                          }`}>
+                            {bet.status === 'won'
+                              ? `+${((bet.actualWinning || 0) - bet.amount).toFixed(2)}`
+                              : bet.status === 'lost'
+                              ? `-${bet.amount.toFixed(2)}`
+                              : '---'
+                            }
                           </span>
-                          <div
-                            className={`font-semibold ${
-                              cast.position === "yes"
-                                ? "text-primary"
-                                : "text-secondary"
-                            }`}
-                          >
-                            {cast.position === "yes" ? "TRUE" : "FALSE"}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Result:</span>
-                          <div
-                            className={`font-semibold ${
-                              cast.status === "won"
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }`}
-                          >
-                            {cast.status === "won" ? "CORRECT" : "INCORRECT"}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">P&L:</span>
-                          <div
-                            className={`font-semibold ${
-                              cast.status === "won"
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }`}
-                          >
-                            {cast.status === "won"
-                              ? `+${(cast.actualWinning! - cast.amount).toFixed(
-                                  3
-                                )} USDT`
-                              : `-${cast.amount.toFixed(3)} USDT`}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <Eye className="h-3 w-3" />
-                        View Details
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </TabsContent>
-      </Tabs>
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          <span className="text-muted-foreground whitespace-nowrap">{formatTimeAgo(bet.placedAt)}</span>
+                        </td>
+                        <td className="px-4 py-4 text-sm">
+                          <Button variant="ghost" size="sm" className="h-8 px-2">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
     </div>
   );
 }

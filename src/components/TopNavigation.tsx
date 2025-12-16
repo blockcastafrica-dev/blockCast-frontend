@@ -232,28 +232,17 @@ export default function TopNavigation({
               </div>
             )}
 
-            {/* Add Funds & Withdraw Buttons - Show when logged in (Desktop only) */}
+            {/* Add Funds Button - Show when logged in (Desktop only) */}
             {isLoggedIn && (
-              <>
-                <Button
-                  onClick={() => setIsVisible(true)}
-                  size="sm"
-                  className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
-                  style={{ backgroundColor: '#06f6ff', color: '#000000' }}
-                >
-                  <span className="text-lg font-bold leading-none">+</span>
-                  <span className="font-medium">Add Funds</span>
-                </Button>
-                <Button
-                  onClick={() => setIsWithdrawalVisible(true)}
-                  size="sm"
-                  variant="outline"
-                  className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer border-primary/30 hover:bg-primary/10"
-                >
-                  <TrendingUp className="h-4 w-4 rotate-180" />
-                  <span className="font-medium">Withdraw</span>
-                </Button>
-              </>
+              <Button
+                onClick={() => setIsVisible(true)}
+                size="sm"
+                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
+                style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+              >
+                <span className="text-lg font-bold leading-none">+</span>
+                <span className="font-medium">Add Funds</span>
+              </Button>
             )}
 
             {/* Notifications - Only show when logged in */}
@@ -360,10 +349,6 @@ export default function TopNavigation({
                     <DropdownMenuItem onSelect={() => setIsVisible(true)}>
                       <Wallet className="h-4 w-4 mr-2" />
                       Fund Wallet
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setIsWithdrawalVisible(true)}>
-                      <TrendingUp className="h-4 w-4 mr-2 rotate-180" />
-                      Withdraw
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleNavClick("/settings")}>
