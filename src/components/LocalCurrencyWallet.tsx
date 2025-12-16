@@ -101,15 +101,6 @@ const paymentMethods: PaymentMethod[] = [
     popular: true,
   },
   {
-    id: "bank",
-    name: "Bank Transfer",
-    description: "Direct bank transfer using local banking",
-    icon: Building2,
-    type: "bank",
-    fees: "1.5%",
-    processingTime: "2-5 mins",
-  },
-  {
     id: "mobile",
     name: "Mobile Money",
     description: "M-Pesa, MTN Mobile Money, and more",
@@ -283,43 +274,47 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Wallet className="h-5 w-5 text-primary" />
-            Fund Your Wallet
+          <DialogTitle className="flex items-center gap-3 text-2xl">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
+              <Wallet className="h-6 w-6 text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-bold">
+              Fund Your Wallet
+            </span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-300">
             Add funds to start betting on truth markets
           </DialogDescription>
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
-                      ? "bg-primary border-primary text-primary-foreground"
-                      : "border-muted-foreground/30 text-muted-foreground"
+                      ? "bg-gradient-to-br from-cyan-500 to-purple-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/50"
+                      : "border-slate-600 text-slate-500 bg-slate-800/50"
                   }`}
                 >
                   {step > s ? (
-                    <Check className="h-5 w-5" />
+                    <Check className="h-6 w-6" />
                   ) : (
-                    <span className="font-semibold">{s}</span>
+                    <span className="font-bold text-lg">{s}</span>
                   )}
                 </div>
-                <span className="text-xs mt-1 text-muted-foreground">
+                <span className={`text-xs mt-2 font-medium ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
               {s < totalSteps && (
                 <div
-                  className={`h-0.5 flex-1 mx-2 transition-all ${
-                    step > s ? "bg-primary" : "bg-muted-foreground/30"
+                  className={`h-1 flex-1 mx-2 transition-all rounded-full ${
+                    step > s ? "bg-gradient-to-r from-cyan-500 to-purple-500" : "bg-slate-700"
                   }`}
                 />
               )}
@@ -336,39 +331,39 @@ export default function LocalCurrencyWallet({
                 return (
                   <Card
                     key={method.id}
-                    className="cursor-pointer hover:border-primary hover:bg-primary/5 transition-all"
+                    className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Icon className="h-6 w-6 text-primary" />
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
+                            <Icon className="h-7 w-7 text-cyan-400" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <p className="font-semibold">{method.name}</p>
+                              <p className="font-bold text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
                               {method.popular && (
                                 <Badge variant="secondary" className="text-xs">
                                   Popular
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-slate-400">
                               {method.description}
                             </p>
-                            <div className="flex items-center gap-3 mt-1">
-                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <div className="flex items-center gap-3 mt-2">
+                              <span className="text-xs text-cyan-400 flex items-center gap-1 font-medium">
                                 <Zap className="h-3 w-3" />
                                 {method.processingTime}
                               </span>
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-xs text-purple-400 font-medium">
                                 Fee: {method.fees}
                               </span>
                             </div>
                           </div>
                         </div>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                        <ArrowRight className="h-5 w-5 text-cyan-500 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </CardContent>
                   </Card>
@@ -376,14 +371,16 @@ export default function LocalCurrencyWallet({
               })}
             </div>
 
-            <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl p-4 border border-cyan-500/30 backdrop-blur-sm">
               <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
+                  <Shield className="h-5 w-5 text-cyan-400 flex-shrink-0" />
+                </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-primary">
-                    Secure & Fast Deposits
+                  <h4 className="font-bold text-sm text-cyan-400">
+                    🔒 Secure & Fast Deposits
                   </h4>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-slate-400 mt-1">
                     All deposits are secured with bank-grade encryption. Your funds
                     are automatically converted to USDT for betting.
                   </p>
@@ -396,15 +393,15 @@ export default function LocalCurrencyWallet({
         {/* Step 2: Enter Amount */}
         {step === 2 && selectedMethod && (
           <div className="space-y-4">
-            <Card className="bg-muted/30">
+            <Card className="bg-slate-900 border-cyan-500/40">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    {selectedMethod.icon && <selectedMethod.icon className="h-5 w-5 text-primary" />}
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center border border-cyan-500/30">
+                    {selectedMethod.icon && <selectedMethod.icon className="h-6 w-6 text-cyan-400" />}
                   </div>
                   <div>
-                    <p className="font-medium text-sm">{selectedMethod.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-bold text-white">{selectedMethod.name}</p>
+                    <p className="text-xs text-cyan-400">
                       {selectedMethod.fees} fee • {selectedMethod.processingTime}
                     </p>
                   </div>
@@ -413,7 +410,7 @@ export default function LocalCurrencyWallet({
             </Card>
 
             <div className="space-y-2">
-              <Label>Select Currency</Label>
+              <Label className="text-slate-200 font-medium">Select Currency</Label>
               <Select
                 value={selectedCurrency.code}
                 onValueChange={(value) => {
@@ -446,7 +443,7 @@ export default function LocalCurrencyWallet({
             </div>
 
             <div className="space-y-2">
-              <Label>Amount to Deposit</Label>
+              <Label className="text-slate-200 font-medium">Amount to Deposit</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base font-medium text-muted-foreground pointer-events-none">
                   {selectedCurrency.symbol}
@@ -463,28 +460,28 @@ export default function LocalCurrencyWallet({
             </div>
 
             {amount && Number(amount) > 0 && (
-              <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
-                <CardContent className="p-4 space-y-2">
+              <Card className="bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10 border-cyan-500/30 backdrop-blur-sm shadow-xl shadow-cyan-500/10">
+                <CardContent className="p-5 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-slate-400 font-medium">
                       You'll receive
                     </span>
-                    <span className="text-lg font-bold text-primary">
+                    <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                       {calculateUSDT()} USDT
                     </span>
                   </div>
-                  <Separator />
+                  <Separator className="bg-slate-700" />
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">USD equivalent</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400">USD equivalent</span>
+                    <span className="font-semibold text-white">
                       ${(Number(amount) * selectedCurrency.rate).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">
+                    <span className="text-slate-400">
                       Processing fee ({selectedMethod.fees})
                     </span>
-                    <span className="font-medium text-orange-500">
+                    <span className="font-semibold text-orange-400">
                       ${calculateFees()}
                     </span>
                   </div>
@@ -493,14 +490,18 @@ export default function LocalCurrencyWallet({
             )}
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={handleBack} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className="flex-1 border-cyan-500/30 hover:bg-slate-800/50 hover:border-cyan-500/50 transition-all"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
               <Button
                 onClick={handleNext}
                 disabled={!amount || Number(amount) <= 0}
-                className="flex-1"
+                className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 border-0 shadow-lg shadow-cyan-500/30 transition-all"
               >
                 Continue
                 <ArrowRight className="h-4 w-4 ml-2" />
@@ -856,11 +857,18 @@ export default function LocalCurrencyWallet({
             )}
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={handleBack} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className="flex-1 border-cyan-500/30 hover:bg-slate-800/50 hover:border-cyan-500/50 transition-all"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
-              <Button onClick={handleComplete} className="flex-1">
+              <Button
+                onClick={handleComplete}
+                className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 border-0 shadow-lg shadow-cyan-500/30 transition-all"
+              >
                 <CheckCircle className="h-4 w-4 mr-2" />
                 I've Sent the Payment
               </Button>

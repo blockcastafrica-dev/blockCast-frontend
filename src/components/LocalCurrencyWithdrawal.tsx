@@ -259,54 +259,60 @@ export default function LocalCurrencyWithdrawal({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <TrendingDown className="h-5 w-5 text-primary" />
-            Withdraw Funds
+          <DialogTitle className="flex items-center gap-3 text-2xl">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
+              <TrendingDown className="h-6 w-6 text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-bold">
+              Withdraw Funds
+            </span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-300">
             Withdraw your winnings to your preferred payment method
           </DialogDescription>
         </DialogHeader>
 
         {/* Balance Display */}
-        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 border border-primary/20">
+        <div className="bg-slate-900 rounded-xl p-5 border-2 border-purple-500/40 shadow-xl shadow-purple-500/20">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Available Balance</p>
-              <p className="text-2xl font-bold text-primary">{userBalance.toFixed(6)} USDT</p>
+              <p className="text-sm text-slate-400 font-medium">Available Balance</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{userBalance.toFixed(6)} USDT</p>
             </div>
-            <Wallet className="h-8 w-8 text-primary/50" />
+            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
+              <Wallet className="h-8 w-8 text-purple-400" />
+            </div>
           </div>
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 p-4 rounded-xl bg-slate-900 border border-purple-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
-                      ? "bg-primary border-primary text-primary-foreground"
-                      : "border-muted-foreground/30 text-muted-foreground"
+                      ? "bg-gradient-to-br from-purple-500 to-pink-500 border-purple-400 text-white shadow-lg shadow-purple-500/50"
+                      : "border-slate-600 text-slate-500 bg-slate-800/50"
                   }`}
                 >
                   {step > s ? (
-                    <Check className="h-5 w-5" />
+                    <Check className="h-6 w-6" />
                   ) : (
-                    <span className="font-semibold">{s}</span>
+                    <span className="font-bold text-lg">{s}</span>
                   )}
                 </div>
-                <span className="text-xs mt-1 text-muted-foreground">
+                <span className={`text-xs mt-2 font-medium ${step >= s ? "text-purple-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
               {s < totalSteps && (
                 <div
-                  className={`h-0.5 flex-1 mx-2 transition-all ${
-                    step > s ? "bg-primary" : "bg-muted-foreground/30"
+                  className={`h-1 flex-1 mx-2 transition-all rounded-full ${
+                    step > s ? "bg-gradient-to-r from-purple-500 to-pink-500" : "bg-slate-700"
                   }`}
                 />
               )}
@@ -323,14 +329,14 @@ export default function LocalCurrencyWithdrawal({
                 return (
                   <Card
                     key={method.id}
-                    className="cursor-pointer hover:border-primary hover:bg-primary/5 transition-all"
+                    className="cursor-pointer hover:border-purple-500/60 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Icon className="h-6 w-6 text-primary" />
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:from-purple-500/30 group-hover:to-pink-500/30 flex items-center justify-center border border-purple-500/30 transition-all">
+                            <Icon className="h-7 w-7 text-purple-400" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">

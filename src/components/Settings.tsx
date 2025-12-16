@@ -258,72 +258,37 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
 
               <Separator />
 
-              {/* Quick Stats */}
-              <div className="space-y-4">
-                <h4 className="font-medium">Quick Stats</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                    <div className="text-2xl font-bold text-foreground">15</div>
-                    <div className="text-sm text-muted-foreground">Total Deposits</div>
-                  </div>
-                  <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
-                    <div className="text-2xl font-bold text-foreground">8</div>
-                    <div className="text-sm text-muted-foreground">Total Withdrawals</div>
-                  </div>
-                  <div className="p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                    <div className="text-2xl font-bold text-foreground">23</div>
-                    <div className="text-sm text-muted-foreground">Transactions</div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
               {/* Recent Transactions */}
               <div className="space-y-4">
                 <h4 className="font-medium">Recent Transactions</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <span className="text-green-500 text-lg">+</span>
-                      </div>
-                      <div>
-                        <div className="font-medium">Deposit</div>
-                        <div className="text-sm text-muted-foreground">Dec 7, 2025 • 3:45 PM</div>
-                      </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg border border-border">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Deposit</p>
+                      <p className="text-xs text-muted-foreground">Mobile Money • 2 hours ago</p>
                     </div>
-                    <div className="text-green-500 font-semibold">+50.00 USDT</div>
+                    <span className="text-sm font-semibold text-green-500">+50.00 USDT</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                        <span className="text-red-500 text-lg">−</span>
-                      </div>
-                      <div>
-                        <div className="font-medium">Withdrawal</div>
-                        <div className="text-sm text-muted-foreground">Dec 6, 2025 • 1:20 PM</div>
-                      </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg border border-border">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Withdrawal</p>
+                      <p className="text-xs text-muted-foreground">Bank Transfer • 1 day ago</p>
                     </div>
-                    <div className="text-red-500 font-semibold">-25.00 USDT</div>
+                    <span className="text-sm font-semibold text-red-500">-25.00 USDT</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <span className="text-green-500 text-lg">+</span>
-                      </div>
-                      <div>
-                        <div className="font-medium">Deposit</div>
-                        <div className="text-sm text-muted-foreground">Dec 5, 2025 • 10:15 AM</div>
-                      </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg border border-border">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Deposit</p>
+                      <p className="text-xs text-muted-foreground">Crypto Wallet • 3 days ago</p>
                     </div>
-                    <div className="text-green-500 font-semibold">+100.00 USDT</div>
+                    <span className="text-sm font-semibold text-green-500">+100.00 USDT</span>
                   </div>
                 </div>
-                <Button variant="outline" className="w-full cursor-pointer">
+                <Button variant="outline" className="w-full" asChild={false}>
                   View All Transactions
                 </Button>
               </div>
+
             </CardContent>
           </Card>
         </TabsContent>
