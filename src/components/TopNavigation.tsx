@@ -25,6 +25,8 @@ import {
   BriefcaseBusiness,
   History,
   User,
+  Copy,
+  Check,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -47,6 +49,7 @@ import blockcastLogo from "@/assets/4714a7efb088ecf7991d3a7cb494d86ff45fc844.png
 // import FooterAccordion from './FooterAccordion';
 import NavAccordion from "./NavAccordion";
 import LocalCurrencyWallet from "./LocalCurrencyWallet";
+import LocalCurrencyWithdrawal from "./LocalCurrencyWithdrawal";
 
 interface TopNavigationProps {
   isDarkMode: boolean;
@@ -65,6 +68,27 @@ export default function TopNavigation({
   const navigate = useNavigate();
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
+  const [isWithdrawalVisible, setIsWithdrawalVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Generate or get wallet address (in real app, this would come from wallet connection)
+  const walletAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
+
+  // Copy wallet address to clipboard
+  const handleCopyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(walletAddress);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  // Format wallet address for display (shortened)
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
   // Simplified main navigation - only core features
   const mainNavItems = [
@@ -208,17 +232,28 @@ export default function TopNavigation({
               </div>
             )}
 
-            {/* Add Funds Button - Show when logged in (Desktop only) */}
+            {/* Add Funds & Withdraw Buttons - Show when logged in (Desktop only) */}
             {isLoggedIn && (
-              <Button
-                onClick={() => setIsVisible(true)}
-                size="sm"
-                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
-                style={{ backgroundColor: '#06f6ff', color: '#000000' }}
-              >
-                <span className="text-lg font-bold leading-none">+</span>
-                <span className="font-medium">Add Funds</span>
-              </Button>
+              <>
+                <Button
+                  onClick={() => setIsVisible(true)}
+                  size="sm"
+                  className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
+                  style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                >
+                  <span className="text-lg font-bold leading-none">+</span>
+                  <span className="font-medium">Add Funds</span>
+                </Button>
+                <Button
+                  onClick={() => setIsWithdrawalVisible(true)}
+                  size="sm"
+                  variant="outline"
+                  className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer border-primary/30 hover:bg-primary/10"
+                >
+                  <TrendingUp className="h-4 w-4 rotate-180" />
+                  <span className="font-medium">Withdraw</span>
+                </Button>
+              </>
             )}
 
             {/* Notifications - Only show when logged in */}
@@ -287,18 +322,26 @@ export default function TopNavigation({
                       <ChevronDown className="h-3 w-3" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuContent align="end" className="w-56">
                     <div className="flex items-center gap-2 p-2">
                       <Avatar className="h-6 w-6">
                         <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           JD
                         </AvatarFallback>
                       </Avatar>
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">John Doe</p>
-                        <p className="text-xs text-muted-foreground">
-                          Truth Verifier
-                        </p>
+                        <button
+                          onClick={handleCopyAddress}
+                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
+                        >
+                          <span className="font-mono">{formatAddress(walletAddress)}</span>
+                          {copied ? (
+                            <Check className="h-3 w-3 text-green-500" />
+                          ) : (
+                            <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          )}
+                        </button>
                       </div>
                     </div>
                     <DropdownMenuSeparator />
@@ -317,6 +360,10 @@ export default function TopNavigation({
                     <DropdownMenuItem onSelect={() => setIsVisible(true)}>
                       <Wallet className="h-4 w-4 mr-2" />
                       Fund Wallet
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setIsWithdrawalVisible(true)}>
+                      <TrendingUp className="h-4 w-4 mr-2 rotate-180" />
+                      Withdraw
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleNavClick("/settings")}>
@@ -366,11 +413,19 @@ export default function TopNavigation({
                         JD
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <p className="font-medium">John Doe</p>
-                      <p className="text-sm text-muted-foreground">
-                        Truth Verifier
-                      </p>
+                      <button
+                        onClick={handleCopyAddress}
+                        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
+                      >
+                        <span className="font-mono">{formatAddress(walletAddress)}</span>
+                        {copied ? (
+                          <Check className="h-3 w-3 text-green-500" />
+                        ) : (
+                          <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        )}
+                      </button>
                     </div>
 
                     <Button
@@ -430,15 +485,12 @@ export default function TopNavigation({
                   </div>
 
                   <div
-                    onClick={() => {
-                      setIsVisible(true);
-                      handleNavClick();
-                    }}
+                    onClick={() => handleNavClick("/settings", "wallet")}
                     className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
                   >
                     <Wallet className="h-4 w-4 text-primary" />
                     <span className="text-md text-muted-foreground">
-                      Fund Wallet
+                      My Wallet
                     </span>
                   </div>
 
@@ -640,6 +692,13 @@ export default function TopNavigation({
         <LocalCurrencyWallet
           visible={isVisible}
           onClose={() => setIsVisible(false)}
+        />
+      )}
+      {isWithdrawalVisible && (
+        <LocalCurrencyWithdrawal
+          visible={isWithdrawalVisible}
+          onClose={() => setIsWithdrawalVisible(false)}
+          userBalance={userBalance}
         />
       )}
     </>
