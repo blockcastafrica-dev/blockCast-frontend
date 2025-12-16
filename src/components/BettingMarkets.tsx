@@ -1071,9 +1071,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {sortedMarkets.map((market) => (
-            <Card
+            <div
               key={market.id}
-              className={`relative overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group border-border hover:border-primary/50 `}
+              className={`relative overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group border border-border hover:border-primary/50 rounded-xl bg-transparent`}
               onClick={() => navigate(`/market/${market.id}`)}
             >
               {/* ${market.trending ? "trending-corner" : ""} */}
@@ -1226,7 +1226,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   </Button>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           ))}
         </div>
       )}

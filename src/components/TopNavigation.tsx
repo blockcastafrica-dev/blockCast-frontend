@@ -346,9 +346,11 @@ export default function TopNavigation({
                       <History className="h-4 w-4 mr-2" />
                       Activity
                     </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setIsVisible(true)}>
+                    <DropdownMenuItem
+                      onClick={() => handleNavClick("/settings", "wallet")}
+                    >
                       <Wallet className="h-4 w-4 mr-2" />
-                      Fund Wallet
+                      My Wallet
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleNavClick("/settings")}>
@@ -359,7 +361,7 @@ export default function TopNavigation({
                       className="text-destructive cursor-pointer"
                       onClick={handleSignOut}
                     >
-                      Sign Out
+                      Log Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -551,13 +553,13 @@ export default function TopNavigation({
                       </Select>
                     </div> */}
 
-                    {/* Sign Out */}
+                    {/* Log Out */}
                     <Button
                       variant="outline"
                       onClick={handleSignOut}
                       className="w-full mt-6 text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground cursor-pointer"
                     >
-                      Sign Out
+                      Log Out
                     </Button>
                   </div>
                 </SheetContent>

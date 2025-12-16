@@ -331,7 +331,7 @@ export default function MarketPage({
       </div>
 
       {/* Market Header Card */}
-      <Card className="overflow-hidden">
+      <div className="overflow-hidden border border-border rounded-xl bg-transparent">
         {market.imageUrl && (
           <div className="relative h-48 overflow-hidden">
             <img
@@ -479,7 +479,7 @@ export default function MarketPage({
             </div>
           </div>
         </CardContent>
-      </Card>
+      </div>
 
       {/* Tab Navigation */}
       <div className="flex flex-wrap items-center gap-1 p-2 bg-muted/50 rounded-lg">
@@ -533,7 +533,7 @@ export default function MarketPage({
           {/* Verify Truth Tab*/}
           {activeTab === "dispute" && market.disputable && (
             <>
-              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+              <div className="border border-border rounded-xl bg-transparent">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-semibold">
                     <MessageCircle className="h-5 w-5" />
@@ -664,10 +664,10 @@ export default function MarketPage({
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
+              </div>
 
               {/************************** Market Activity Timeline **************************/}
-              <Card className="mt-8">
+              <div className="mt-8 border border-border rounded-xl bg-transparent">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-semibold">
                     <Clock4 className="h-4 w-4" />
@@ -753,10 +753,10 @@ export default function MarketPage({
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </div>
 
               {/************************** Market Description**************************/}
-              <Card className="mt-8">
+              <div className="mt-8 border border-border rounded-xl bg-transparent">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-semibold">
                     <Target className="h-4 w-4" />
@@ -820,13 +820,13 @@ export default function MarketPage({
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </div>
             </>
           )}
 
           {/* Overview Tab */}
           {activeTab === "overview" && (
-            <Card>
+            <div className="border border-border rounded-xl bg-transparent">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5" />
@@ -878,12 +878,12 @@ export default function MarketPage({
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           )}
 
           {/* Comments Tab */}
           {activeTab === "comments" && (
-            <Card>
+            <div className="border border-border rounded-xl bg-transparent">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageCircle className="h-5 w-5" />
@@ -997,12 +997,12 @@ export default function MarketPage({
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </div>
           )}
 
           {/* Rules Tab */}
           {activeTab === "rules" && (
-            <Card>
+            <div className="border border-border rounded-xl bg-transparent">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Scale className="h-5 w-5" />
@@ -1043,12 +1043,12 @@ export default function MarketPage({
                   );
                 })}
               </CardContent>
-            </Card>
+            </div>
           )}
 
           {/* AI Analysis Tab */}
           {activeTab === "analysis" && (
-            <Card>
+            <div className="border border-border rounded-xl bg-transparent">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5" />
@@ -1102,7 +1102,7 @@ export default function MarketPage({
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </div>
           )}
         </div>
 
@@ -1111,7 +1111,7 @@ export default function MarketPage({
           <div className="space-y-6">
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <Card>
+              <div className="border border-border rounded-xl bg-transparent">
                 <CardHeader>
                   <div className="flex justify-center gap-4 mb-2">
                     <button
@@ -1350,12 +1350,12 @@ export default function MarketPage({
                     </div>
                   </CardContent>
                 </CardContent>
-              </Card>
+              </div>
             )}
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <Card>
+              <div className="border border-border rounded-xl bg-transparent">
                 <CardHeader>
                   <div className="flex justify-center gap-4 mb-2">
                     <button
@@ -1596,9 +1596,9 @@ export default function MarketPage({
                     </div>
                   </CardContent>
                 </CardContent>
-              </Card>
+              </div>
             )}
-            {/* <Card></Card> */}
+            {/* <Card></div> */}
           </div>
         )}
       </div>
