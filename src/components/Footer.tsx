@@ -151,16 +151,16 @@ export default function Footer({ onNavigate }: FooterProps) {
                 // { label: "Fact Verification", icon: Shield, page: "verify" },
                 { label: "Community Hub", icon: Users, page: "community" },
               ].map((item) => (
-                <Button
-                  {...({} as any)}
+                <div
                   key={item.label}
-                  variant="ghost"
                   onClick={() => handleLinkClick(item.page)}
-                  className="w-full justify-start gap-2 h-auto p-2 text-muted-foreground hover:text-foreground"
+                  className="w-full flex items-center gap-2 h-auto p-2 text-muted-foreground cursor-pointer text-sm relative z-10"
+                  role="button"
+                  tabIndex={0}
                 >
                   <item.icon className="h-4 w-4" />
                   {item.label}
-                </Button>
+                </div>
               ))}
             </div>
           </div>
@@ -175,16 +175,15 @@ export default function Footer({ onNavigate }: FooterProps) {
                 // { label: "Fact Verification", icon: Shield, page: "verify" },
                 // { label: "Help Center", icon: Users, page: "community" },
               ].map((item) => (
-                <Button
-                  {...({} as any)}
+                <div
                   key={item.label}
-                  variant="ghost"
                   onClick={() => handleLinkClick(item.page)}
-                  className="w-full justify-start gap-2 h-auto p-2 text-muted-foreground hover:text-foreground"
+                  className="w-full flex items-center gap-2 h-auto p-2 text-muted-foreground cursor-pointer text-sm relative z-10"
+                  role="button"
+                  tabIndex={0}
                 >
-                  {/* <item.icon className="h-4 w-4" /> */}
                   {item.label}
-                </Button>
+                </div>
               ))}
             </div>
           </div>
@@ -201,15 +200,15 @@ export default function Footer({ onNavigate }: FooterProps) {
                 { label: "Terms & conditions", page: "terms" },
                 // { label: "Help Center", page: "help" },
               ].map((item) => (
-                <Button
-                  {...({} as any)}
+                <div
                   key={item.label}
-                  variant="ghost"
                   onClick={() => handleLinkClick(item.page)}
-                  className="w-full justify-start h-auto p-2 text-muted-foreground hover:text-foreground"
+                  className="w-full flex items-center h-auto p-2 text-muted-foreground cursor-pointer text-sm relative z-10"
+                  role="button"
+                  tabIndex={0}
                 >
                   {item.label}
-                </Button>
+                </div>
               ))}
             </div>
           </div>

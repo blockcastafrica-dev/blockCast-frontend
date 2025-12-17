@@ -3,30 +3,37 @@ import { Button } from "@/components/ui/button";
 
 import { ChevronDown} from "lucide-react";
 
-const FooterAccordion = ({ handleLinkClick }) => {
+const FooterAccordion = ({ handleLinkClick, enableMobileHover = false }) => {
   const [toggleSupport, setToggleSupport] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState(null);
 
     const handleToggleSupport = () => {
       setToggleSupport(!toggleSupport);
     };
 
+  // Mobile hover classes for dropdown items
+  const mobileItemHover = enableMobileHover
+    ? "rounded-md"
+    : "";
 
   return (
-    <div className="space-y-4 footer-accordion">
+    <div className="footer-accordion">
       <div
         onClick={handleToggleSupport}
-        className="flex items-center justify-between cursor-pointer border rounded-lg p-2 text-muted-foreground"
+        className="flex items-center justify-between gap-2 px-2 ml-2 cursor-pointer transition-all"
       >
-        <h4 className="font-semibold">Support & Legal</h4>
+        <span className="text-md text-muted-foreground transition-colors">
+          Support & Legal
+        </span>
         <ChevronDown
-          className={`h-5 w-5 transform transition-transform duration-300  ${
+          className={`h-4 w-4 text-primary transform transition-transform duration-300 ${
             toggleSupport ? "arrow" : ""
           }`}
         />
       </div>
       <div
-        className={`space-y-2 overflow-hidden transition-all duration-500 ease-in-out ${
-          toggleSupport ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`overflow-hidden transition-all duration-500 ease-in-out ${
+          toggleSupport ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
         }`}
       >
         {[
@@ -35,15 +42,30 @@ const FooterAccordion = ({ handleLinkClick }) => {
           { label: "Privacy Policy", page: "privacy" },
           { label: "Terms of Service", page: "terms" },
           { label: "Help Center", page: "contact" },
-        ].map((item) => (
-          <Button
+        ].map((item, index) => (
+          <div
             key={item.label}
-            variant="ghost"
             onClick={() => handleLinkClick(item.page)}
-            className="w-full justify-start h-auto p-2 text-muted-foreground hover:text-foreground cursor-pointer"
+            onMouseEnter={() => enableMobileHover && setHoveredItem(index)}
+            onMouseLeave={() => enableMobileHover && setHoveredItem(null)}
+            className={`flex items-center gap-2 px-2 ml-6 cursor-pointer py-1 transition-all ${mobileItemHover}`}
+            style={
+              enableMobileHover && hoveredItem === index
+                ? { backgroundColor: 'rgba(6, 182, 212, 0.2)' }
+                : {}
+            }
           >
-            {item.label}
-          </Button>
+            <span
+              className="text-sm text-muted-foreground transition-colors"
+              style={
+                enableMobileHover && hoveredItem === index
+                  ? { color: '#06b6d4' }
+                  : {}
+              }
+            >
+              {item.label}
+            </span>
+          </div>
         ))}
       </div>
     </div>

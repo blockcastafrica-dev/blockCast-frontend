@@ -1117,11 +1117,13 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   )}
                 </div>
               )}
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <Badge variant="outline" className="text-xs shrink-0">
-                    {market.category}
-                  </Badge>
+              <CardHeader className="pb-2">
+                {/* 1. Market Title - Well Aligned */}
+                <div className="relative mb-3 flex items-start gap-2">
+                  <CardTitle className="text-sm md:text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors text-left flex-1">
+                    {getClaimText(market)}
+                  </CardTitle>
+                  {/* Share Button - Aligned with Title */}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -1129,53 +1131,23 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       e.stopPropagation();
                       handleShareMarket(market);
                     }}
-                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                     {...({} as any)}
                   >
                     <Share2 className="h-4 w-4" />
                   </Button>
                 </div>
-
-                <CardTitle className="text-sm md:text-base leading-tight line-clamp-3 group-hover:text-primary transition-colors">
-                  {getClaimText(market)}
-                </CardTitle>
-
-                <CardDescription className="text-xs text-muted-foreground line-clamp-2 flex justify-between items-center">
-                  Source: {market.source}
-                  {market.disputable && (
-                    <span className="ml-2 px-1.5 py-0.5 bg-yellow-100 text-yellow-800 text-[10px] font-medium rounded-full">
-                      Disputable
-                    </span>
-                  )}
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Pool Information */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Total Pool</span>
-                    <span className="font-semibold">
-                      {formatCurrency(market.totalPool)} USDT
-                    </span>
-                  </div>
+                {/* 2. Progress Bar with Inline Percentages */}
+                <div className="flex items-center gap-2">
+                  {/* Left Percentage (True) */}
+                  <span className="text-xs text-muted-foreground shrink-0 min-w-[40px] text-left">
+                    {((market.yesPool / market.totalPool) * 100).toFixed(1)}%
+                  </span>
 
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      <span className="text-muted-foreground">
-                        {formatCurrency(market.totalCasters)} verifiers
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      <span className="text-muted-foreground">
-                        {formatTimeRemaining(market.expiresAt)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Pool Distribution */}
-                  <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                  {/* Progress Bar */}
+                  <div className="flex-1 bg-muted rounded-full h-3 overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-green-500 to-green-400 transition-all duration-500"
                       style={{
@@ -1183,19 +1155,14 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       }}
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>
-                      True:{" "}
-                      {((market.yesPool / market.totalPool) * 100).toFixed(1)}%
-                    </span>
-                    <span>
-                      False:{" "}
-                      {((market.noPool / market.totalPool) * 100).toFixed(1)}%
-                    </span>
-                  </div>
+
+                  {/* Right Percentage (False) */}
+                  <span className="text-xs text-muted-foreground shrink-0 min-w-[40px] text-right">
+                    {((market.noPool / market.totalPool) * 100).toFixed(1)}%
+                  </span>
                 </div>
 
-                {/* Betting Buttons - Mobile Optimized */}
+                {/* 4. Betting Buttons - Mobile Optimized */}
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant="outline"
@@ -1224,6 +1191,46 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     <TrendingDown className="h-3 w-3 mr-1" />
                     False {market.noOdds.toFixed(2)}x
                   </Button>
+                </div>
+
+                {/* Separator Line */}
+                <div className="h-px bg-border"></div>
+
+                {/* 5. Market Info - Category, Pool, Expire, Disputable (Below Buttons) */}
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  {/* Left Side: Category, Disputable */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Category */}
+                    <Badge variant="outline" className="text-xs shrink-0 whitespace-nowrap">
+                      {market.category}
+                    </Badge>
+
+                    {/* Disputable */}
+                    {market.disputable && (
+                      <Badge className="text-xs bg-yellow-100 text-yellow-800 border-yellow-300 shrink-0 whitespace-nowrap">
+                        Disputable
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Right Side: Pool and Expire Date */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {/* Total Pool */}
+                    <div className="flex items-center gap-1 text-xs shrink-0 whitespace-nowrap">
+                      <span className="text-muted-foreground">Pool:</span>
+                      <span className="font-semibold">
+                        {formatCurrency(market.totalPool)} USDT
+                      </span>
+                    </div>
+
+                    {/* Expire Date */}
+                    <div className="flex items-center gap-1 text-xs shrink-0 whitespace-nowrap">
+                      <Clock className="h-3 w-3 shrink-0" />
+                      <span className="text-muted-foreground">
+                        {formatTimeRemaining(market.expiresAt)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </div>
@@ -1258,9 +1265,18 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </span>
                   </Button>
                   <Button
-                    variant={betPosition === "no" ? "default" : "outline"}
+                    variant="outline"
                     onClick={() => setBetPosition("no")}
                     className="h-auto p-3 flex-col gap-1"
+                    style={
+                      betPosition === "no"
+                        ? {
+                            backgroundColor: "#5b3ae8",
+                            borderColor: "#5b3ae8",
+                            color: "#f9f9ff",
+                          }
+                        : {}
+                    }
                     {...({} as any)}
                   >
                     <span className="text-lg">False</span>
@@ -1271,6 +1287,13 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 </div>
 
                 <div className="space-y-2">
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold tracking-tight">Available Balance</h3>
+                      <span className="text-xl font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
+                    </div>
+                  </div>
+
                   <Label htmlFor="betAmount">Amount (USDT)</Label>
                   <Input
                     id="betAmount"
@@ -1280,23 +1303,45 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     max={userBalance}
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
-                    placeholder="Enter amount..."
+                    placeholder="USDT 0.00"
+                    className="text-center"
                   />
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Balance: {userBalance.toFixed(3)} USDT</span>
-                    {betAmount && selectedMarket && (
-                      <span>
-                        Potential win:{" "}
-                        {(
-                          parseFloat(betAmount) *
-                          (betPosition === "yes"
-                            ? selectedMarket.yesOdds
-                            : selectedMarket.noOdds)
-                        ).toFixed(3)}{" "}
-                        USDT
-                      </span>
-                    )}
-                  </div>
+
+                  {/* Profit Calculator */}
+                  {betAmount && selectedMarket && parseFloat(betAmount) > 0 && (
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-2 shadow-sm">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Stake</span>
+                        <span className="font-bold">{parseFloat(betAmount).toFixed(2)} USDT</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Odds</span>
+                        <span className="font-bold text-primary">
+                          {(betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)}x
+                        </span>
+                      </div>
+                      <div className="h-px bg-green-500/20" />
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Return</span>
+                        <span className="font-bold">
+                          {(
+                            parseFloat(betAmount) *
+                            (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)
+                          ).toFixed(2)} USDT
+                        </span>
+                      </div>
+                      <div className="flex justify-between pt-1">
+                        <span className="font-semibold text-sm">Profit</span>
+                        <span className="font-bold text-green-500 text-base">
+                          +{(
+                            parseFloat(betAmount) *
+                            (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) -
+                            parseFloat(betAmount)
+                          ).toFixed(2)} USDT
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </AlertDialogDescription>

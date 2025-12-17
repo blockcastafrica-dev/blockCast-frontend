@@ -1111,15 +1111,15 @@ export default function MarketPage({
           <aside className="lg:sticky lg:top-6 self-start h-fit max-h-[calc(100vh-3rem)] overflow-visible">
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <div className="rounded-2xl bg-card/95 border border-border/50 shadow-2xl overflow-hidden backdrop-blur-lg hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.3)] hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5">
+              <div className="rounded-2xl bg-black shadow-2xl overflow-hidden hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.3)] hover:-translate-y-1 transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex border-b border-border bg-muted/30">
+                <div className="flex border-b border-border">
                   <button
                     onClick={() => setCastInterface("buy")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isBuying
-                        ? "text-primary bg-card border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                        ? "text-primary border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     Buy
@@ -1128,8 +1128,8 @@ export default function MarketPage({
                     onClick={() => setCastInterface("sell")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isSelling
-                        ? "text-secondary bg-card border-b-2 border-secondary -mb-px"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                        ? "text-secondary border-b-2 border-secondary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     Sell
@@ -1243,7 +1243,7 @@ export default function MarketPage({
                     {/* Amount Input */}
                     <Input
                       type="number"
-                      placeholder="Enter amount..."
+                      placeholder="USDT 0.00"
                       step="0.01"
                       min="0"
                       value={castAmount}
@@ -1290,15 +1290,15 @@ export default function MarketPage({
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <div className="rounded-2xl bg-card/95 border border-border/50 shadow-2xl overflow-hidden backdrop-blur-lg hover:shadow-[0_20px_50px_rgba(239,_68,_68,_0.3)] hover:border-secondary/50 hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5">
+              <div className="rounded-2xl bg-black shadow-2xl overflow-hidden hover:shadow-[0_20px_50px_rgba(239,_68,_68,_0.3)] hover:-translate-y-1 transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex border-b border-border bg-muted/30">
+                <div className="flex border-b border-border">
                   <button
                     onClick={() => setCastInterface("buy")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isBuying
-                        ? "text-primary bg-card border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                        ? "text-primary border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     Buy
@@ -1307,8 +1307,8 @@ export default function MarketPage({
                     onClick={() => setCastInterface("sell")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isSelling
-                        ? "text-secondary bg-card border-b-2 border-secondary -mb-px"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                        ? "text-secondary border-b-2 border-secondary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     Sell
@@ -1422,7 +1422,7 @@ export default function MarketPage({
                     {/* Amount Input */}
                     <Input
                       type="number"
-                      placeholder="Enter amount..."
+                      placeholder="USDT 0.00"
                       step="0.01"
                       min="0"
                       value={castAmount}

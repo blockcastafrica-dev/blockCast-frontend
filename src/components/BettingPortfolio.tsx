@@ -255,14 +255,20 @@ export default function BettingPortfolio({
             </div>
             <Select defaultValue="all">
               <SelectTrigger>
-                <SelectValue placeholder="All Topics" />
+                <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Topics</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="brand">Brand</SelectItem>
+                <SelectItem value="business">Business</SelectItem>
+                <SelectItem value="climate">Climate</SelectItem>
+                <SelectItem value="entertainment">Entertainment</SelectItem>
+                <SelectItem value="finance">Finance</SelectItem>
+                <SelectItem value="gossip">Gossip</SelectItem>
+                <SelectItem value="health">Health</SelectItem>
                 <SelectItem value="politics">Politics</SelectItem>
                 <SelectItem value="sports">Sports</SelectItem>
                 <SelectItem value="technology">Technology</SelectItem>
-                <SelectItem value="entertainment">Entertainment</SelectItem>
               </SelectContent>
             </Select>
             <Select defaultValue="newest">

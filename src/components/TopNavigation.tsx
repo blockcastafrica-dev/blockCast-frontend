@@ -27,6 +27,7 @@ import {
   User,
   Copy,
   Check,
+  LogOut,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -46,10 +47,12 @@ import {
 import { useLanguage } from "./LanguageContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import blockcastLogo from "@/assets/4714a7efb088ecf7991d3a7cb494d86ff45fc844.png";
-// import FooterAccordion from './FooterAccordion';
+import FooterAccordion from './FooterAccordion';
 import NavAccordion from "./NavAccordion";
 import LocalCurrencyWallet from "./LocalCurrencyWallet";
 import LocalCurrencyWithdrawal from "./LocalCurrencyWithdrawal";
+import { BsTwitterX } from "react-icons/bs";
+import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
 
 interface TopNavigationProps {
   isDarkMode: boolean;
@@ -404,7 +407,7 @@ export default function TopNavigation({
                       <p className="font-medium">John Doe</p>
                       <button
                         onClick={handleCopyAddress}
-                        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
                       >
                         <span className="font-mono">{formatAddress(walletAddress)}</span>
                         {copied ? (
@@ -481,34 +484,55 @@ export default function TopNavigation({
                     </span>
                   </div>
 
-                  <div
-                    onClick={() => handleNavClick("/settings")}
-                    className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
-                  >
-                    <Settings className="size-4 text-primary" />
-                    <span className="text-md text-muted-foreground">
-                      Settings
-                    </span>
+                  {/* Support & Legal Links */}
+                  <div className="mt-4">
+                    <FooterAccordion
+                      handleLinkClick={(page) => {
+                        handleNavClick(`/${page}`);
+                      }}
+                      enableMobileHover={true}
+                    />
                   </div>
 
-                  {/* <div
-                    onClick={onToggleDarkMode}
-                    className="flex items-center gap-2 p-2 ml-2 cursor-pointer"
-                  >
-                    {isDarkMode ? (
-                      <Sun className="size-4 text-primary" />
-                    ) : (
-                      <Moon className="size-4 text-primary" />
-                    )}
-                    <span className="text-md text-muted-foreground">
-                      {isDarkMode ? "Light theme" : "Dark theme"}
-                    </span>
-                  </div> */}
-
-                  {/* Support & Legal Links */}
-                  {/* <FooterAccordion handleLinkClick={(page) => {
-                    handleNavClick(`/${page}`);
-                  }} /> */}
+                  {/* Social Media Links - Mobile Only */}
+                  <div className="mt-4 px-2">
+                    <h4 className="text-sm font-semibold mb-3 text-foreground">Connect With Us</h4>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        {...({} as any)}
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors"
+                        onClick={() => window.open('https://x.com/BlockCastLive', '_blank')}
+                      >
+                        <BsTwitterX className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        {...({} as any)}
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors"
+                      >
+                        <FaDiscord className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        {...({} as any)}
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors"
+                      >
+                        <FaTiktok className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        {...({} as any)}
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors"
+                      >
+                        <FaTelegramPlane className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </div>
 
                   {/* Settings dropdown menu */}
                   {/* <NavAccordion
@@ -524,14 +548,6 @@ export default function TopNavigation({
                   /> */}
 
                   <div className="fixed bottom-0 mb-6">
-                    {/* Support & Legal Links */}
-                    <NavAccordion
-                      handleLinkClick={(page) => {
-                        handleNavClick(`/${page}`);
-                      }}
-                      accordionTitle={"Support & Legal"}
-                    />
-
                     {/* Language Selector Mobile */}
                     {/* <div className="mt-3">
                       <Select
@@ -554,13 +570,15 @@ export default function TopNavigation({
                     </div> */}
 
                     {/* Log Out */}
-                    <Button
-                      variant="outline"
+                    <div
                       onClick={handleSignOut}
-                      className="w-full mt-6 text-destructive border-destructive/30 hover:bg-destructive hover:text-destructive-foreground cursor-pointer"
+                      className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
                     >
-                      Log Out
-                    </Button>
+                      <LogOut className="h-4 w-4 text-primary" />
+                      <span className="text-md text-muted-foreground">
+                        Log Out
+                      </span>
+                    </div>
                   </div>
                 </SheetContent>
               </Sheet>
