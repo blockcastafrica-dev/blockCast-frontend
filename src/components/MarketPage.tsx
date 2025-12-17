@@ -1108,494 +1108,332 @@ export default function MarketPage({
 
         {/* Sidebar - Casting Interface */}
         {market.disputable || (
-          <div className="space-y-6">
+          <div className="space-y-6 sticky bottom-4 lg:static z-10 mb-4 lg:mb-0">
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <div className="border border-border rounded-xl bg-transparent">
-                <CardHeader>
-                  <div className="flex justify-center gap-4 mb-2">
-                    <button
-                      onClick={() => setCastInterface("buy")}
-                      className={`${
-                        isBuying ? "text-primary" : "text-[#fff]"
-                      } cursor-pointer`}
-                    >
-                      Buy
-                    </button>
-                    <button
-                      onClick={() => setCastInterface("sell")}
-                      className={`${
-                        isSelling ? "text-primary" : "text-[#fff]"
-                      } cursor-pointer`}
-                    >
-                      Sell
-                    </button>
+              <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+                {/* Tabs */}
+                <div className="flex border-b border-border">
+                  <button
+                    onClick={() => setCastInterface("buy")}
+                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                      isBuying
+                        ? "text-foreground border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    onClick={() => setCastInterface("sell")}
+                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                      isSelling
+                        ? "text-foreground border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Sell
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold">{t("castYourPosition")}</span>
+                    <span className="font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
                   </div>
-                  <Separator />
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5" />
-                    {t("castYourPosition")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("currentBalance")}: {userBalance.toFixed(3)} USDT
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Quick Cast Buttons */}
+
+                  {/* Quick Amount */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium">
-                      {t("quickCastTruth")}
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Quick Amount</span>
+                      <span className="text-xs font-semibold text-muted-foreground">TRUE {market.yesOdds.toFixed(2)}x · FALSE {market.noOdds.toFixed(2)}x</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
                       {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <Button
+                        <button
                           key={`yes-${amount}`}
-                          variant="outline"
-                          size="sm"
-                          className="bg-primary/5 border-primary/20 hover:bg-primary/10 transition-colors"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             handleQuickCast("yes", amount);
                           }}
                           disabled={amount > userBalance}
-                          {...({} as any)}
+                          className="py-4 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          <span className="text-primary font-semibold">
-                            TRUE
-                          </span>
-                          <span className="ml-2">{amount} USDT</span>
-                        </Button>
+                          <div className="text-base font-bold text-primary">{amount} USDT</div>
+                          <div className="text-xs text-primary/70 mt-1">TRUE</div>
+                        </button>
                       ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">
-                      {t("quickCastFalse")}
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2">
                       {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <Button
+                        <button
                           key={`no-${amount}`}
-                          variant="outline"
-                          size="sm"
-                          className="bg-secondary/5 border-secondary/20 hover:bg-secondary/10 transition-colors"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             handleQuickCast("no", amount);
                           }}
                           disabled={amount > userBalance}
-                          {...({} as any)}
+                          className="py-4 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          <span className="text-secondary font-semibold">
-                            FALSE
-                          </span>
-                          <span className="ml-2">{amount} USDT</span>
-                        </Button>
+                          <div className="text-base font-bold text-secondary">{amount} USDT</div>
+                          <div className="text-xs text-secondary/70 mt-1">FALSE</div>
+                        </button>
                       ))}
                     </div>
                   </div>
-                  <Separator />
-                  {/* Custom Cast */}
+
+                  {/* Custom Amount */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium">
-                      {t("customAmount")}
-                    </Label>
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Select
-                          value={castPosition}
-                          onValueChange={(value: any) =>
-                            handlePositionChange(value)
-                          }
-                        >
-                          <SelectTrigger className="w-24" {...({} as any)}>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="yes">{t("truth")}</SelectItem>
-                            <SelectItem value="no">{t("false")}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Input
-                          type="number"
-                          placeholder="0.00"
-                          step="0.01"
-                          min="0"
-                          value={castAmount}
-                          onChange={(e) => handleAmountChange(e.target.value)}
-                          className="flex-1"
-                        />
-                      </div>
-                      {/* Real-time Profit Calculator */}
-                      {profitCalculation && (
-                        <div className="p-3 bg-muted/30 rounded-lg border border-border">
-                          <h4 className="text-sm font-medium mb-2 text-primary">
-                            Profit Calculator
-                          </h4>
-                          <div className="space-y-1 text-xs">
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Your Stake:
-                              </span>
-                              <span className="font-medium">
-                                {profitCalculation.amount.toFixed(3)} USDT
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Odds:
-                              </span>
-                              <span className="font-medium">
-                                {(castPosition === "yes"
-                                  ? market.yesOdds
-                                  : market.noOdds
-                                ).toFixed(2)}
-                                x
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Potential Return:
-                              </span>
-                              <span className="font-medium text-green-400">
-                                {profitCalculation.potential.toFixed(3)} USDT
-                              </span>
-                            </div>
-                            <div className="flex justify-between border-t border-border pt-1 mt-2">
-                              <span className="text-muted-foreground">
-                                Profit if Correct:
-                              </span>
-                              <span className="font-bold text-green-400">
-                                +{profitCalculation.profit.toFixed(3)} USDT
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Loss if Wrong:
-                              </span>
-                              <span className="font-bold text-red-400">
-                                -{profitCalculation.amount.toFixed(3)} USDT
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Custom Amount</div>
+                    <div className="flex gap-3 items-stretch">
+                      <Select
+                        value={castPosition}
+                        onValueChange={(value: any) =>
+                          handlePositionChange(value)
+                        }
+                      >
+                        <SelectTrigger className="w-44 min-h-[56px] text-base font-semibold" {...({} as any)}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">{t("truth")}</SelectItem>
+                          <SelectItem value="no">{t("false")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                        value={castAmount}
+                        onChange={(e) => handleAmountChange(e.target.value)}
+                        className="flex-1 min-h-[56px] text-lg font-semibold"
+                      />
                     </div>
+
+                    {/* Profit Calculator */}
+                    {profitCalculation && (
+                      <div className="p-4 rounded-xl bg-muted/30 border border-border space-y-3">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Stake</span>
+                          <span className="font-bold">{profitCalculation.amount.toFixed(2)} USDT</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Odds</span>
+                          <span className="font-bold text-primary">{(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x</span>
+                        </div>
+                        <div className="h-px bg-border" />
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Return</span>
+                          <span className="font-bold">{profitCalculation.potential.toFixed(2)} USDT</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-semibold">Profit</span>
+                          <span className="font-bold text-green-500 text-lg">+{profitCalculation.profit.toFixed(2)} USDT</span>
+                        </div>
+                      </div>
+                    )}
+
                     <Button
                       onClick={handleCustomCast}
-                      className="w-full gap-2"
+                      className="w-full h-14 text-base font-bold rounded-xl"
                       disabled={
                         !castAmount || parseFloat(castAmount) > userBalance
                       }
                     >
-                      <Target className="h-4 w-4" />
                       {t("castPosition")}
                     </Button>
                   </div>
-                  <Separator />
-                  {/* Potential Return */}
-                  {/* {castAmount && !isNaN(parseFloat(castAmount)) && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">
-                      {t("potential_return")}
-                    </div>
-                    <div className="font-semibold text-green-400">
-                      {(
-                        parseFloat(castAmount) *
-                        (castPosition === "yes"
-                          ? market.yesOdds
-                          : market.noOdds)
-                      ).toFixed(3)}{" "}
-                      USDT
+
+                  {/* Market Info */}
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Market Info</div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVolume")}</div>
+                        <div className="text-base font-bold">{formatCurrency(market.totalPool)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVerifiers")}</div>
+                        <div className="text-base font-bold">{formatNumber(market.totalCasters)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("market_age")}</div>
+                        <div className="text-base font-bold">5 days</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("liquidity")}</div>
+                        <div className="text-base font-bold text-green-500">High</div>
+                      </div>
                     </div>
                   </div>
-                )} */}
-
-                  {/* Market Stats */}
-                  <CardHeader className="p-1">
-                    <CardTitle className="text-base">
-                      {t("marketStatistics")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3 px-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("totalVolume")}
-                      </span>
-                      <span className="font-medium">
-                        {formatCurrency(market.totalPool)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("totalVerifiers")}
-                      </span>
-                      <span className="font-medium">
-                        {formatNumber(market.totalCasters)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("market_age")}
-                      </span>
-                      <span className="font-medium">5 days</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("liquidity")}
-                      </span>
-                      <span className="font-medium text-green-500">High</span>
-                    </div>
-                  </CardContent>
-                </CardContent>
+                </div>
               </div>
             )}
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <div className="border border-border rounded-xl bg-transparent">
-                <CardHeader>
-                  <div className="flex justify-center gap-4 mb-2">
-                    <button
-                      onClick={() => setCastInterface("buy")}
-                      className={`${
-                        isBuying ? "text-primary" : "text-[#fff]"
-                      } cursor-pointer`}
-                    >
-                      Buy
-                    </button>
-                    <button
-                      onClick={() => setCastInterface("sell")}
-                      className={`${
-                        isSelling ? "text-primary" : "text-[#fff]"
-                      } cursor-pointer`}
-                    >
-                      Sell
-                    </button>
+              <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+                {/* Tabs */}
+                <div className="flex border-b border-border">
+                  <button
+                    onClick={() => setCastInterface("buy")}
+                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                      isBuying
+                        ? "text-foreground border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    onClick={() => setCastInterface("sell")}
+                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                      isSelling
+                        ? "text-foreground border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Sell
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold">Sell Your Position</span>
+                    <span className="font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
                   </div>
-                  <Separator />
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5" />
-                    {/* {t("castYourPosition")} */}
-                    Sell Your Position
-                  </CardTitle>
-                  <CardDescription>
-                    {t("currentBalance")}: {userBalance.toFixed(3)} USDT
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Quick Cast Buttons */}
+
+                  {/* Quick Amount */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium">
-                      {t("quickCastTruth")}
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Quick Amount</span>
+                      <span className="text-xs font-semibold text-muted-foreground">TRUE {market.yesOdds.toFixed(2)}x · FALSE {market.noOdds.toFixed(2)}x</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
                       {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <Button
+                        <button
                           key={`yes-${amount}`}
-                          variant="outline"
-                          size="sm"
-                          className="bg-primary/5 border-primary/20 hover:bg-primary/10 transition-colors"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             handleQuickCast("yes", amount);
                           }}
                           disabled={amount > userBalance}
-                          {...({} as any)}
+                          className="py-4 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          <span className="text-primary font-semibold">
-                            TRUE
-                          </span>
-                          <span className="ml-2">{amount} USDT</span>
-                        </Button>
+                          <div className="text-base font-bold text-primary">{amount} USDT</div>
+                          <div className="text-xs text-primary/70 mt-1">TRUE</div>
+                        </button>
                       ))}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">
-                      {t("quickCastFalse")}
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2">
                       {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <Button
+                        <button
                           key={`no-${amount}`}
-                          variant="outline"
-                          size="sm"
-                          className="bg-secondary/5 border-secondary/20 hover:bg-secondary/10 transition-colors"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             handleQuickCast("no", amount);
                           }}
                           disabled={amount > userBalance}
-                          {...({} as any)}
+                          className="py-4 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          <span className="text-secondary font-semibold">
-                            FALSE
-                          </span>
-                          <span className="ml-2">{amount} USDT</span>
-                        </Button>
+                          <div className="text-base font-bold text-secondary">{amount} USDT</div>
+                          <div className="text-xs text-secondary/70 mt-1">FALSE</div>
+                        </button>
                       ))}
                     </div>
                   </div>
-                  <Separator />
-                  {/* Custom Cast */}
+
+                  {/* Custom Amount */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium">
-                      {t("customAmount")}
-                    </Label>
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Select
-                          value={castPosition}
-                          onValueChange={(value: any) =>
-                            handlePositionChange(value)
-                          }
-                        >
-                          <SelectTrigger className="w-24" {...({} as any)}>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="yes">{t("truth")}</SelectItem>
-                            <SelectItem value="no">{t("false")}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Input
-                          type="number"
-                          placeholder="0.00"
-                          step="0.01"
-                          min="0"
-                          value={castAmount}
-                          onChange={(e) => handleAmountChange(e.target.value)}
-                          className="flex-1"
-                        />
-                      </div>
-                      {/* Real-time Profit Calculator */}
-                      {profitCalculation && (
-                        <div className="p-3 bg-muted/30 rounded-lg border border-border">
-                          <h4 className="text-sm font-medium mb-2 text-primary">
-                            Profit Calculator
-                          </h4>
-                          <div className="space-y-1 text-xs">
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Your Stake:
-                              </span>
-                              <span className="font-medium">
-                                {profitCalculation.amount.toFixed(3)} USDT
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Odds:
-                              </span>
-                              <span className="font-medium">
-                                {(castPosition === "yes"
-                                  ? market.yesOdds
-                                  : market.noOdds
-                                ).toFixed(2)}
-                                x
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Potential Return:
-                              </span>
-                              <span className="font-medium text-green-400">
-                                {profitCalculation.potential.toFixed(3)} USDT
-                              </span>
-                            </div>
-                            <div className="flex justify-between border-t border-border pt-1 mt-2">
-                              <span className="text-muted-foreground">
-                                Profit if Correct:
-                              </span>
-                              <span className="font-bold text-green-400">
-                                +{profitCalculation.profit.toFixed(3)} USDT
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">
-                                Loss if Wrong:
-                              </span>
-                              <span className="font-bold text-red-400">
-                                -{profitCalculation.amount.toFixed(3)} USDT
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Custom Amount</div>
+                    <div className="flex gap-3 items-stretch">
+                      <Select
+                        value={castPosition}
+                        onValueChange={(value: any) =>
+                          handlePositionChange(value)
+                        }
+                      >
+                        <SelectTrigger className="w-44 min-h-[56px] text-base font-semibold" {...({} as any)}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">{t("truth")}</SelectItem>
+                          <SelectItem value="no">{t("false")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                        value={castAmount}
+                        onChange={(e) => handleAmountChange(e.target.value)}
+                        className="flex-1 min-h-[56px] text-lg font-semibold"
+                      />
                     </div>
+
+                    {/* Profit Calculator */}
+                    {profitCalculation && (
+                      <div className="p-4 rounded-xl bg-muted/30 border border-border space-y-3">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Stake</span>
+                          <span className="font-bold">{profitCalculation.amount.toFixed(2)} USDT</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Odds</span>
+                          <span className="font-bold text-primary">{(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x</span>
+                        </div>
+                        <div className="h-px bg-border" />
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Return</span>
+                          <span className="font-bold">{profitCalculation.potential.toFixed(2)} USDT</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-semibold">Profit</span>
+                          <span className="font-bold text-green-500 text-lg">+{profitCalculation.profit.toFixed(2)} USDT</span>
+                        </div>
+                      </div>
+                    )}
+
                     <Button
                       onClick={handleCustomCast}
-                      className="w-full gap-2"
+                      className="w-full h-14 text-base font-bold rounded-xl"
                       disabled={
                         !castAmount || parseFloat(castAmount) > userBalance
                       }
                     >
-                      <Target className="h-4 w-4" />
-                      {/* {t("castPosition")} */}
                       Sell Position
                     </Button>
                   </div>
-                  <Separator />
-                  {/* Potential Return */}
-                  {/* {castAmount && !isNaN(parseFloat(castAmount)) && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">
-                      {t("potential_return")}
-                    </div>
-                    <div className="font-semibold text-green-400">
-                      {(
-                        parseFloat(castAmount) *
-                        (castPosition === "yes"
-                          ? market.yesOdds
-                          : market.noOdds)
-                      ).toFixed(3)}{" "}
-                      USDT
+
+                  {/* Market Info */}
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Market Info</div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVolume")}</div>
+                        <div className="text-base font-bold">{formatCurrency(market.totalPool)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVerifiers")}</div>
+                        <div className="text-base font-bold">{formatNumber(market.totalCasters)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("market_age")}</div>
+                        <div className="text-base font-bold">5 days</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1.5">{t("liquidity")}</div>
+                        <div className="text-base font-bold text-green-500">High</div>
+                      </div>
                     </div>
                   </div>
-                )} */}
-
-                  {/* Market Stats */}
-                  <CardHeader className="p-1">
-                    <CardTitle className="text-base">
-                      {t("marketStatistics")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3 px-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("totalVolume")}
-                      </span>
-                      <span className="font-medium">
-                        {formatCurrency(market.totalPool)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("totalVerifiers")}
-                      </span>
-                      <span className="font-medium">
-                        {formatNumber(market.totalCasters)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("market_age")}
-                      </span>
-                      <span className="font-medium">5 days</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {t("liquidity")}
-                      </span>
-                      <span className="font-medium text-green-500">High</span>
-                    </div>
-                  </CardContent>
-                </CardContent>
+                </div>
               </div>
             )}
             {/* <Card></div> */}
