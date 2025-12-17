@@ -277,7 +277,7 @@ export default function MarketPage({
   };
 
   return (
-    <div className="space-y-6 mx-auto"> {/*max-w-6xl --removed*/}
+    <div className="space-y-4 mx-auto scroll-smooth"> {/*max-w-6xl --removed*/}
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button
@@ -526,7 +526,7 @@ export default function MarketPage({
       <div
         className={`grid grid-cols-1 lg:${
           market.disputable ? "grid-cols-2" : "grid-cols-3"
-        } gap-6`}
+        } gap-4 items-start relative`}
       >
         {/* Main Content */}
         <div className="lg:col-span-2">
@@ -1108,28 +1108,28 @@ export default function MarketPage({
 
         {/* Sidebar - Casting Interface */}
         {market.disputable || (
-          <div className="space-y-6 sticky bottom-4 lg:static z-10 mb-4 lg:mb-0">
+          <aside className="lg:sticky lg:top-6 self-start h-fit max-h-[calc(100vh-3rem)] overflow-visible">
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+              <div className="rounded-2xl bg-card/95 border border-border/50 shadow-2xl overflow-hidden backdrop-blur-lg hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.3)] hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5">
                 {/* Tabs */}
-                <div className="flex border-b border-border">
+                <div className="flex border-b border-border bg-muted/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isBuying
-                        ? "text-foreground border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-primary bg-card border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >
                     Buy
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isSelling
-                        ? "text-foreground border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-secondary bg-card border-b-2 border-secondary -mb-px"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >
                     Sell
@@ -1139,16 +1139,29 @@ export default function MarketPage({
                 {/* Content */}
                 <div className="p-6 space-y-6">
                   {/* Header */}
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold">{t("castYourPosition")}</span>
-                    <span className="font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
+                  <div className="flex items-center justify-between pb-2 border-b border-border/30">
+                    <h2 className="text-lg font-bold tracking-tight">{t("castYourPosition")}</h2>
+                  </div>
+
+                  {/* Odds Display - Modern */}
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/50 backdrop-blur-sm">
+                    <h3 className="text-sm font-semibold tracking-tight mb-4 text-center">Current Odds</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-3 rounded-xl bg-primary/10 border border-primary/30 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="text-xs text-primary/70 mb-1 font-medium">TRUE</div>
+                        <div className="text-2xl font-bold text-primary">{market.yesOdds.toFixed(2)}x</div>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-secondary/10 border border-secondary/30 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="text-xs text-secondary/70 mb-1 font-medium">FALSE</div>
+                        <div className="text-2xl font-bold text-secondary">{market.noOdds.toFixed(2)}x</div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Quick Amount */}
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Quick Amount</span>
-                      <span className="text-xs font-semibold text-muted-foreground">TRUE {market.yesOdds.toFixed(2)}x · FALSE {market.noOdds.toFixed(2)}x</span>
+                      <h3 className="text-sm font-semibold tracking-tight">Quick Amount</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {quickCastAmounts.slice(0, 4).map((amount) => (
@@ -1160,9 +1173,9 @@ export default function MarketPage({
                             handleQuickCast("yes", amount);
                           }}
                           disabled={amount > userBalance}
-                          className="py-4 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="py-3 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                         >
-                          <div className="text-base font-bold text-primary">{amount} USDT</div>
+                          <div className="text-sm font-bold text-primary">{amount} USDT</div>
                           <div className="text-xs text-primary/70 mt-1">TRUE</div>
                         </button>
                       ))}
@@ -1175,47 +1188,72 @@ export default function MarketPage({
                             handleQuickCast("no", amount);
                           }}
                           disabled={amount > userBalance}
-                          className="py-4 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="py-3 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                         >
-                          <div className="text-base font-bold text-secondary">{amount} USDT</div>
+                          <div className="text-sm font-bold text-secondary">{amount} USDT</div>
                           <div className="text-xs text-secondary/70 mt-1">FALSE</div>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Custom Amount */}
-                  <div className="space-y-3">
-                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Custom Amount</div>
-                    <div className="flex gap-3 items-stretch">
-                      <Select
-                        value={castPosition}
-                        onValueChange={(value: any) =>
-                          handlePositionChange(value)
-                        }
-                      >
-                        <SelectTrigger className="w-44 min-h-[56px] text-base font-semibold" {...({} as any)}>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="yes">{t("truth")}</SelectItem>
-                          <SelectItem value="no">{t("false")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="number"
-                        placeholder="0.00"
-                        step="0.01"
-                        min="0"
-                        value={castAmount}
-                        onChange={(e) => handleAmountChange(e.target.value)}
-                        className="flex-1 min-h-[56px] text-lg font-semibold"
-                      />
+                  {/* Divider */}
+                  <div className="relative py-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border/50"></div>
                     </div>
+                  </div>
+
+                  {/* Available Balance */}
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold tracking-tight">Available Balance</h3>
+                      <span className="text-xl font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
+                    </div>
+                  </div>
+
+                  {/* Custom Amount */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold tracking-tight">Custom Amount</h3>
+
+                    {/* Position Selection Buttons */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => handlePositionChange("yes")}
+                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                          castPosition === "yes"
+                            ? "bg-primary text-primary-foreground border-2 border-primary shadow-primary/20"
+                            : "bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 hover:shadow-md"
+                        }`}
+                      >
+                        True
+                      </button>
+                      <button
+                        onClick={() => handlePositionChange("no")}
+                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                          castPosition === "no"
+                            ? "bg-secondary text-secondary-foreground border-2 border-secondary shadow-secondary/20"
+                            : "bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20 hover:shadow-md"
+                        }`}
+                      >
+                        False
+                      </button>
+                    </div>
+
+                    {/* Amount Input */}
+                    <Input
+                      type="number"
+                      placeholder="Enter amount..."
+                      step="0.01"
+                      min="0"
+                      value={castAmount}
+                      onChange={(e) => handleAmountChange(e.target.value)}
+                      className="w-full h-12 text-base font-semibold text-center"
+                    />
 
                     {/* Profit Calculator */}
                     {profitCalculation && (
-                      <div className="p-4 rounded-xl bg-muted/30 border border-border space-y-3">
+                      <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-2 shadow-sm">
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Stake</span>
                           <span className="font-bold">{profitCalculation.amount.toFixed(2)} USDT</span>
@@ -1224,21 +1262,21 @@ export default function MarketPage({
                           <span className="text-muted-foreground">Odds</span>
                           <span className="font-bold text-primary">{(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x</span>
                         </div>
-                        <div className="h-px bg-border" />
+                        <div className="h-px bg-green-500/20" />
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Return</span>
                           <span className="font-bold">{profitCalculation.potential.toFixed(2)} USDT</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="font-semibold">Profit</span>
-                          <span className="font-bold text-green-500 text-lg">+{profitCalculation.profit.toFixed(2)} USDT</span>
+                        <div className="flex justify-between pt-1">
+                          <span className="font-semibold text-sm">Profit</span>
+                          <span className="font-bold text-green-500 text-base">+{profitCalculation.profit.toFixed(2)} USDT</span>
                         </div>
                       </div>
                     )}
 
                     <Button
                       onClick={handleCustomCast}
-                      className="w-full h-14 text-base font-bold rounded-xl"
+                      className="w-full h-12 text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                       disabled={
                         !castAmount || parseFloat(castAmount) > userBalance
                       }
@@ -1246,54 +1284,31 @@ export default function MarketPage({
                       {t("castPosition")}
                     </Button>
                   </div>
-
-                  {/* Market Info */}
-                  <div className="space-y-4 pt-4 border-t border-border">
-                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Market Info</div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVolume")}</div>
-                        <div className="text-base font-bold">{formatCurrency(market.totalPool)}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVerifiers")}</div>
-                        <div className="text-base font-bold">{formatNumber(market.totalCasters)}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("market_age")}</div>
-                        <div className="text-base font-bold">5 days</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("liquidity")}</div>
-                        <div className="text-base font-bold text-green-500">High</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+              <div className="rounded-2xl bg-card/95 border border-border/50 shadow-2xl overflow-hidden backdrop-blur-lg hover:shadow-[0_20px_50px_rgba(239,_68,_68,_0.3)] hover:border-secondary/50 hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5">
                 {/* Tabs */}
-                <div className="flex border-b border-border">
+                <div className="flex border-b border-border bg-muted/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isBuying
-                        ? "text-foreground border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-primary bg-card border-b-2 border-primary -mb-px"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >
                     Buy
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-4 text-base font-semibold transition-colors ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
                       isSelling
-                        ? "text-foreground border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-secondary bg-card border-b-2 border-secondary -mb-px"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >
                     Sell
@@ -1301,18 +1316,31 @@ export default function MarketPage({
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-6">
+                <div className="p-4 space-y-4">
                   {/* Header */}
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold">Sell Your Position</span>
-                    <span className="font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
+                    <span className="text-sm font-semibold">Sell Your Position</span>
+                  </div>
+
+                  {/* Odds Display - Modern */}
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/50 backdrop-blur-sm">
+                    <h3 className="text-sm font-semibold tracking-tight mb-4 text-center">Current Odds</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-3 rounded-xl bg-primary/10 border border-primary/30 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="text-xs text-primary/70 mb-1 font-medium">TRUE</div>
+                        <div className="text-2xl font-bold text-primary">{market.yesOdds.toFixed(2)}x</div>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-secondary/10 border border-secondary/30 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="text-xs text-secondary/70 mb-1 font-medium">FALSE</div>
+                        <div className="text-2xl font-bold text-secondary">{market.noOdds.toFixed(2)}x</div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Quick Amount */}
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Quick Amount</span>
-                      <span className="text-xs font-semibold text-muted-foreground">TRUE {market.yesOdds.toFixed(2)}x · FALSE {market.noOdds.toFixed(2)}x</span>
+                      <h3 className="text-sm font-semibold tracking-tight">Quick Amount</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {quickCastAmounts.slice(0, 4).map((amount) => (
@@ -1324,9 +1352,9 @@ export default function MarketPage({
                             handleQuickCast("yes", amount);
                           }}
                           disabled={amount > userBalance}
-                          className="py-4 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="py-3 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                         >
-                          <div className="text-base font-bold text-primary">{amount} USDT</div>
+                          <div className="text-sm font-bold text-primary">{amount} USDT</div>
                           <div className="text-xs text-primary/70 mt-1">TRUE</div>
                         </button>
                       ))}
@@ -1339,47 +1367,72 @@ export default function MarketPage({
                             handleQuickCast("no", amount);
                           }}
                           disabled={amount > userBalance}
-                          className="py-4 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="py-3 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                         >
-                          <div className="text-base font-bold text-secondary">{amount} USDT</div>
+                          <div className="text-sm font-bold text-secondary">{amount} USDT</div>
                           <div className="text-xs text-secondary/70 mt-1">FALSE</div>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Custom Amount */}
-                  <div className="space-y-3">
-                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Custom Amount</div>
-                    <div className="flex gap-3 items-stretch">
-                      <Select
-                        value={castPosition}
-                        onValueChange={(value: any) =>
-                          handlePositionChange(value)
-                        }
-                      >
-                        <SelectTrigger className="w-44 min-h-[56px] text-base font-semibold" {...({} as any)}>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="yes">{t("truth")}</SelectItem>
-                          <SelectItem value="no">{t("false")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="number"
-                        placeholder="0.00"
-                        step="0.01"
-                        min="0"
-                        value={castAmount}
-                        onChange={(e) => handleAmountChange(e.target.value)}
-                        className="flex-1 min-h-[56px] text-lg font-semibold"
-                      />
+                  {/* Divider */}
+                  <div className="relative py-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border/50"></div>
                     </div>
+                  </div>
+
+                  {/* Available Balance */}
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold tracking-tight">Available Balance</h3>
+                      <span className="text-xl font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
+                    </div>
+                  </div>
+
+                  {/* Custom Amount */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold tracking-tight">Custom Amount</h3>
+
+                    {/* Position Selection Buttons */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => handlePositionChange("yes")}
+                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                          castPosition === "yes"
+                            ? "bg-primary text-primary-foreground border-2 border-primary shadow-primary/20"
+                            : "bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 hover:shadow-md"
+                        }`}
+                      >
+                        True
+                      </button>
+                      <button
+                        onClick={() => handlePositionChange("no")}
+                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                          castPosition === "no"
+                            ? "bg-secondary text-secondary-foreground border-2 border-secondary shadow-secondary/20"
+                            : "bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20 hover:shadow-md"
+                        }`}
+                      >
+                        False
+                      </button>
+                    </div>
+
+                    {/* Amount Input */}
+                    <Input
+                      type="number"
+                      placeholder="Enter amount..."
+                      step="0.01"
+                      min="0"
+                      value={castAmount}
+                      onChange={(e) => handleAmountChange(e.target.value)}
+                      className="w-full h-12 text-base font-semibold text-center"
+                    />
 
                     {/* Profit Calculator */}
                     {profitCalculation && (
-                      <div className="p-4 rounded-xl bg-muted/30 border border-border space-y-3">
+                      <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-2 shadow-sm">
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Stake</span>
                           <span className="font-bold">{profitCalculation.amount.toFixed(2)} USDT</span>
@@ -1388,21 +1441,21 @@ export default function MarketPage({
                           <span className="text-muted-foreground">Odds</span>
                           <span className="font-bold text-primary">{(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x</span>
                         </div>
-                        <div className="h-px bg-border" />
+                        <div className="h-px bg-green-500/20" />
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Return</span>
                           <span className="font-bold">{profitCalculation.potential.toFixed(2)} USDT</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="font-semibold">Profit</span>
-                          <span className="font-bold text-green-500 text-lg">+{profitCalculation.profit.toFixed(2)} USDT</span>
+                        <div className="flex justify-between pt-1">
+                          <span className="font-semibold text-sm">Profit</span>
+                          <span className="font-bold text-green-500 text-base">+{profitCalculation.profit.toFixed(2)} USDT</span>
                         </div>
                       </div>
                     )}
 
                     <Button
                       onClick={handleCustomCast}
-                      className="w-full h-14 text-base font-bold rounded-xl"
+                      className="w-full h-12 text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                       disabled={
                         !castAmount || parseFloat(castAmount) > userBalance
                       }
@@ -1410,34 +1463,11 @@ export default function MarketPage({
                       Sell Position
                     </Button>
                   </div>
-
-                  {/* Market Info */}
-                  <div className="space-y-4 pt-4 border-t border-border">
-                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Market Info</div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVolume")}</div>
-                        <div className="text-base font-bold">{formatCurrency(market.totalPool)}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("totalVerifiers")}</div>
-                        <div className="text-base font-bold">{formatNumber(market.totalCasters)}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("market_age")}</div>
-                        <div className="text-base font-bold">5 days</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1.5">{t("liquidity")}</div>
-                        <div className="text-base font-bold text-green-500">High</div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
             {/* <Card></div> */}
-          </div>
+          </aside>
         )}
       </div>
 
