@@ -1147,11 +1147,19 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   </span>
 
                   {/* Progress Bar */}
-                  <div className="flex-1 bg-muted rounded-full h-3 overflow-hidden">
+                  <div className="flex-1 rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10">
                     <div
-                      className="h-full bg-gradient-to-r from-green-500 to-green-400 transition-all duration-500"
+                      className="h-full transition-all duration-500"
                       style={{
                         width: `${(market.yesPool / market.totalPool) * 100}%`,
+                        background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)',
+                      }}
+                    />
+                    <div
+                      className="h-full transition-all duration-500"
+                      style={{
+                        width: `${(market.noPool / market.totalPool) * 100}%`,
+                        background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)',
                       }}
                     />
                   </div>
@@ -1171,7 +1179,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       e.stopPropagation();
                       handleOpenBetDialog(market, "yes");
                     }}
-                    className="flex-1 bg-green-500/10 border-green-500/30 hover:bg-green-500/20 text-green-400 hover:text-green-300 h-9 text-xs md:text-sm"
+                    className="flex-1 bg-transparent border-2 border-primary/50 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary h-10 text-xs md:text-sm font-bold uppercase tracking-wide shadow-lg shadow-primary/20 transition-all"
                     {...({} as any)}
                   >
                     <TrendingUp className="h-3 w-3 mr-1" />
@@ -1185,7 +1193,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       e.stopPropagation();
                       handleOpenBetDialog(market, "no");
                     }}
-                    className="flex-1 bg-red-500/10 border-red-500/30 hover:bg-red-500/20 text-red-400 hover:text-red-300 h-9 text-xs md:text-sm"
+                    className="flex-1 bg-transparent border-2 border-secondary/50 hover:border-secondary hover:bg-secondary/5 text-secondary hover:text-secondary h-10 text-xs md:text-sm font-bold uppercase tracking-wide shadow-lg shadow-secondary/20 transition-all"
                     {...({} as any)}
                   >
                     <TrendingDown className="h-3 w-3 mr-1" />
@@ -1294,7 +1302,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </span>
                   </div>
                   <div className="relative">
-                    <span className="absolute top-1/2 -translate-y-1/2 text-xl font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px' }}>
+                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px', fontSize: '24px' }}>
                       USDT
                     </span>
                     <Input
@@ -1306,8 +1314,8 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                         setBetAmount(value);
                       }}
                       placeholder="0.00"
-                      className="pr-6 text-2xl font-bold text-white text-left"
-                      style={{ paddingLeft: '110px' }}
+                      className="pr-6 font-bold text-white text-left"
+                      style={{ paddingLeft: '110px', fontSize: '24px' }}
                     />
                   </div>
 

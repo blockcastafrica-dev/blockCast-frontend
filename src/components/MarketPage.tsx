@@ -1213,7 +1213,7 @@ export default function MarketPage({
                       </span>
                     </div>
                     <div className="relative">
-                      <span className="absolute top-1/2 -translate-y-1/2 text-xl font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px' }}>
+                      <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px', fontSize: '24px' }}>
                         USDT
                       </span>
                       <Input
@@ -1224,7 +1224,7 @@ export default function MarketPage({
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-16 pr-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px' }}
+                        className="w-full h-16 pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px', fontSize: '24px' }}
                       />
                     </div>
                   </div>
@@ -1391,7 +1391,7 @@ export default function MarketPage({
                       </span>
                     </div>
                     <div className="relative">
-                      <span className="absolute top-1/2 -translate-y-1/2 text-xl font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px' }}>
+                      <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px', fontSize: '24px' }}>
                         USDT
                       </span>
                       <Input
@@ -1402,7 +1402,7 @@ export default function MarketPage({
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-16 pr-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px' }}
+                        className="w-full h-16 pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px', fontSize: '24px' }}
                       />
                     </div>
                   </div>
