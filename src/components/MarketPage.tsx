@@ -1278,9 +1278,10 @@ export default function MarketPage({
                   <Button
                     onClick={handleCustomCast}
                     disabled={!castAmount || parseFloat(castAmount) > userBalance}
-                    className="w-full h-14 text-base font-bold rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-500 transition-all shadow-lg shadow-blue-500/20 disabled:shadow-none text-white"
+                    className="relative w-full h-14 text-lg font-bold rounded-2xl cursor-pointer"
+                    style={{ backgroundColor: '#06f6ff', color: '#000000' }}
                   >
-                    {t("castPosition")}
+                    Cast Position
                   </Button>
                 </div>
               </div>
@@ -1455,9 +1456,10 @@ export default function MarketPage({
                   <Button
                     onClick={handleCustomCast}
                     disabled={!castAmount || parseFloat(castAmount) > userBalance}
-                    className="w-full h-14 text-base font-bold rounded-2xl bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-500 hover:to-pink-400 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-500 transition-all shadow-lg shadow-pink-500/20 disabled:shadow-none text-white"
+                    className="relative w-full h-14 text-lg font-bold rounded-2xl cursor-pointer"
+                    style={{ backgroundColor: '#06f6ff', color: '#000000' }}
                   >
-                    Sell Position
+                    Cast Position
                   </Button>
                 </div>
               </div>
