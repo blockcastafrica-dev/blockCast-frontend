@@ -1113,36 +1113,34 @@ export default function MarketPage({
             {castInterface === "buy" && (
               <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex border-b border-zinc-800/30">
+                <div className="flex gap-6 border-b border-zinc-800/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
                       isBuying
-                        ? "text-white bg-blue-500/5"
+                        ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Buy
                     {isBuying && (
                       <div
-                        className="absolute bottom-0 left-0 right-0 h-0.5"
-                        style={{ backgroundColor: '#3b82f6' }}
+                        className="absolute bottom-0 left-0 right-0 h-1 bg-primary"
                       ></div>
                     )}
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
                       isSelling
-                        ? "text-white bg-pink-500/5"
+                        ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Sell
                     {isSelling && (
                       <div
-                        className="absolute bottom-0 left-0 right-0 h-0.5"
-                        style={{ backgroundColor: '#ec4899' }}
+                        className="absolute bottom-0 left-0 right-0 h-1 bg-primary"
                       ></div>
                     )}
                   </button>
@@ -1211,19 +1209,22 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <h3 className="text-base font-medium text-white text-left">Amount</h3>
                       <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
-                        Available {userBalance.toFixed(2)} USDT
+                        Available USDT {userBalance.toFixed(2)}
                       </span>
                     </div>
                     <div className="relative">
+                      <span className="absolute top-1/2 -translate-y-1/2 text-xl font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px' }}>
+                        USDT
+                      </span>
                       <Input
                         type="text"
-                        placeholder="0.00 USDT"
-                        value={castAmount ? `${castAmount} USDT` : ""}
+                        placeholder="0.00"
+                        value={castAmount}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-16 px-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        className="w-full h-16 pr-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px' }}
                       />
                     </div>
                   </div>
@@ -1289,36 +1290,34 @@ export default function MarketPage({
             {castInterface === "sell" && (
               <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex border-b border-zinc-800/30">
+                <div className="flex gap-6 border-b border-zinc-800/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
                       isBuying
-                        ? "text-white bg-blue-500/5"
+                        ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Buy
                     {isBuying && (
                       <div
-                        className="absolute bottom-0 left-0 right-0 h-0.5"
-                        style={{ backgroundColor: '#3b82f6' }}
+                        className="absolute bottom-0 left-0 right-0 h-1 bg-primary"
                       ></div>
                     )}
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
                       isSelling
-                        ? "text-white bg-pink-500/5"
+                        ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Sell
                     {isSelling && (
                       <div
-                        className="absolute bottom-0 left-0 right-0 h-0.5"
-                        style={{ backgroundColor: '#ec4899' }}
+                        className="absolute bottom-0 left-0 right-0 h-1 bg-primary"
                       ></div>
                     )}
                   </button>
@@ -1387,19 +1386,22 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <h3 className="text-base font-medium text-white text-left">Amount</h3>
                       <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
-                        Available {userBalance.toFixed(2)} USDT
+                        Available USDT {userBalance.toFixed(2)}
                       </span>
                     </div>
                     <div className="relative">
+                      <span className="absolute top-1/2 -translate-y-1/2 text-xl font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px' }}>
+                        USDT
+                      </span>
                       <Input
                         type="text"
-                        placeholder="0.00 USDT"
-                        value={castAmount ? `${castAmount} USDT` : ""}
+                        placeholder="0.00"
+                        value={castAmount}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-16 px-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        className="w-full h-16 pr-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px' }}
                       />
                     </div>
                   </div>
