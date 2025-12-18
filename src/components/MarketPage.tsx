@@ -1111,25 +1111,25 @@ export default function MarketPage({
           <aside className="lg:sticky lg:top-6 self-start h-fit max-h-[calc(100vh-3rem)] overflow-visible">
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <div className="rounded-2xl bg-black shadow-2xl overflow-hidden hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.3)] hover:-translate-y-1 transition-all duration-300">
+              <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex border-b border-border">
+                <div className="flex bg-zinc-950/50 border-b border-zinc-800/50">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
+                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
                       isBuying
-                        ? "text-primary border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-white bg-gradient-to-b from-blue-500/10 to-transparent border-b-2 border-blue-500"
+                        : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/30"
                     }`}
                   >
                     Buy
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
+                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
                       isSelling
-                        ? "text-secondary border-b-2 border-secondary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-white bg-gradient-to-b from-pink-500/10 to-transparent border-b-2 border-pink-500"
+                        : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/30"
                     }`}
                   >
                     Sell
@@ -1137,178 +1137,163 @@ export default function MarketPage({
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-6">
-                  {/* Header */}
-                  <div className="flex items-center justify-between pb-2 border-b border-border/30">
-                    <h2 className="text-lg font-bold tracking-tight">{t("castYourPosition")}</h2>
-                  </div>
-
-                  {/* Odds Display - Modern */}
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/50 backdrop-blur-sm">
-                    <h3 className="text-sm font-semibold tracking-tight mb-4 text-center">Current Odds</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-3 rounded-xl bg-primary/10 border border-primary/30 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="text-xs text-primary/70 mb-1 font-medium">TRUE</div>
-                        <div className="text-2xl font-bold text-primary">{market.yesOdds.toFixed(2)}x</div>
-                      </div>
-                      <div className="text-center p-3 rounded-xl bg-secondary/10 border border-secondary/30 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="text-xs text-secondary/70 mb-1 font-medium">FALSE</div>
-                        <div className="text-2xl font-bold text-secondary">{market.noOdds.toFixed(2)}x</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quick Amount */}
+                <div className="p-6 space-y-4">
+                  {/* Percentage Bar */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold tracking-tight">Quick Amount</h3>
+                      <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold" style={{ color: '#c084fc' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <button
-                          key={`yes-${amount}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleQuickCast("yes", amount);
-                          }}
-                          disabled={amount > userBalance}
-                          className="py-3 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
-                        >
-                          <div className="text-sm font-bold text-primary">{amount} USDT</div>
-                          <div className="text-xs text-primary/70 mt-1">TRUE</div>
-                        </button>
-                      ))}
-                      {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <button
-                          key={`no-${amount}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleQuickCast("no", amount);
-                          }}
-                          disabled={amount > userBalance}
-                          className="py-3 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
-                        >
-                          <div className="text-sm font-bold text-secondary">{amount} USDT</div>
-                          <div className="text-xs text-secondary/70 mt-1">FALSE</div>
-                        </button>
-                      ))}
+                    <div className="relative h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          width: `${(market.yesPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(to right, #22d3ee, #06b6d4, #c084fc)'
+                        }}
+                      />
                     </div>
                   </div>
 
-                  {/* Divider */}
-                  <div className="relative py-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border/50"></div>
-                    </div>
-                  </div>
-
-                  {/* Available Balance */}
-                  <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold tracking-tight">Available Balance</h3>
-                      <span className="text-xl font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
-                    </div>
-                  </div>
-
-                  {/* Custom Amount */}
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-semibold tracking-tight">Custom Amount</h3>
-
-                    {/* Position Selection Buttons */}
+                  {/* Pick a Side */}
+                  <div className="space-y-3 pt-3">
+                    <h3 className="text-base font-medium text-white text-left">Pick a side</h3>
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => handlePositionChange("yes")}
-                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
                           castPosition === "yes"
-                            ? "bg-primary text-primary-foreground border-2 border-primary shadow-primary/20"
-                            : "bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 hover:shadow-md"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
                         }`}
+                        style={castPosition === "yes" ? {
+                          background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                          borderColor: 'rgba(34, 211, 238, 0.6)',
+                          color: '#22d3ee',
+                          boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                        } : {}}
                       >
-                        True
+                        TRUE
                       </button>
                       <button
                         onClick={() => handlePositionChange("no")}
-                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
                           castPosition === "no"
-                            ? "bg-secondary text-secondary-foreground border-2 border-secondary shadow-secondary/20"
-                            : "bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20 hover:shadow-md"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
                         }`}
+                        style={castPosition === "no" ? {
+                          background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                          borderColor: 'rgba(192, 132, 252, 0.6)',
+                          color: '#c084fc',
+                          boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                        } : {}}
                       >
-                        False
+                        FALSE
                       </button>
                     </div>
-
-                    {/* Amount Input */}
-                    <Input
-                      type="number"
-                      placeholder="USDT 0.00"
-                      step="0.01"
-                      min="0"
-                      value={castAmount}
-                      onChange={(e) => handleAmountChange(e.target.value)}
-                      className="w-full h-12 text-base font-semibold text-center"
-                    />
-
-                    {/* Profit Calculator */}
-                    {profitCalculation && (
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-2 shadow-sm">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Stake</span>
-                          <span className="font-bold">{profitCalculation.amount.toFixed(2)} USDT</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Odds</span>
-                          <span className="font-bold text-primary">{(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x</span>
-                        </div>
-                        <div className="h-px bg-green-500/20" />
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Return</span>
-                          <span className="font-bold">{profitCalculation.potential.toFixed(2)} USDT</span>
-                        </div>
-                        <div className="flex justify-between pt-1">
-                          <span className="font-semibold text-sm">Profit</span>
-                          <span className="font-bold text-green-500 text-base">+{profitCalculation.profit.toFixed(2)} USDT</span>
-                        </div>
-                      </div>
-                    )}
-
-                    <Button
-                      onClick={handleCustomCast}
-                      className="w-full h-12 text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                      disabled={
-                        !castAmount || parseFloat(castAmount) > userBalance
-                      }
-                    >
-                      {t("castPosition")}
-                    </Button>
                   </div>
+
+                  {/* Amount Input */}
+                  <div className="space-y-3 pt-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-medium text-white text-left">Amount</h3>
+                      <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                        Available ${userBalance.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        placeholder="$0.00"
+                        value={castAmount ? `$${castAmount}` : ""}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9.]/g, '');
+                          handleAmountChange(value);
+                        }}
+                        className="w-full h-16 px-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Market Info */}
+                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Price change</span>
+                      <span className="text-base font-medium text-white text-right">
+                        ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} → ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Shares</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Avg. price</span>
+                      <span className="text-base font-medium text-white text-right">
+                        ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Fee Info */}
+                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base text-white text-left font-normal">Fee</span>
+                        <AlertCircle className="w-4 h-4 text-zinc-500" />
+                      </div>
+                      <span className="text-base font-medium text-white text-right">3%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Max profit</span>
+                      <span className="text-base font-semibold text-emerald-400 text-right">
+                        ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(2) : "0.00"}%)
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Max payout</span>
+                      <span className="text-base font-medium text-white text-right">
+                        ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    onClick={handleCustomCast}
+                    disabled={!castAmount || parseFloat(castAmount) > userBalance}
+                    className="w-full h-14 text-base font-bold rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-500 transition-all shadow-lg shadow-blue-500/20 disabled:shadow-none text-white"
+                  >
+                    {t("castPosition")}
+                  </Button>
                 </div>
               </div>
             )}
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <div className="rounded-2xl bg-black shadow-2xl overflow-hidden hover:shadow-[0_20px_50px_rgba(239,_68,_68,_0.3)] hover:-translate-y-1 transition-all duration-300">
+              <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex border-b border-border">
+                <div className="flex bg-zinc-950/50 border-b border-zinc-800/50">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
+                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
                       isBuying
-                        ? "text-primary border-b-2 border-primary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-white bg-gradient-to-b from-blue-500/10 to-transparent border-b-2 border-blue-500"
+                        : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/30"
                     }`}
                   >
                     Buy
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-4 text-base font-semibold transition-all duration-300 relative ${
+                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
                       isSelling
-                        ? "text-secondary border-b-2 border-secondary -mb-px"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-white bg-gradient-to-b from-pink-500/10 to-transparent border-b-2 border-pink-500"
+                        : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/30"
                     }`}
                   >
                     Sell
@@ -1316,153 +1301,138 @@ export default function MarketPage({
                 </div>
 
                 {/* Content */}
-                <div className="p-4 space-y-4">
-                  {/* Header */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold">Sell Your Position</span>
-                  </div>
-
-                  {/* Odds Display - Modern */}
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-muted/40 to-muted/20 border border-border/50 backdrop-blur-sm">
-                    <h3 className="text-sm font-semibold tracking-tight mb-4 text-center">Current Odds</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-3 rounded-xl bg-primary/10 border border-primary/30 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="text-xs text-primary/70 mb-1 font-medium">TRUE</div>
-                        <div className="text-2xl font-bold text-primary">{market.yesOdds.toFixed(2)}x</div>
-                      </div>
-                      <div className="text-center p-3 rounded-xl bg-secondary/10 border border-secondary/30 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="text-xs text-secondary/70 mb-1 font-medium">FALSE</div>
-                        <div className="text-2xl font-bold text-secondary">{market.noOdds.toFixed(2)}x</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quick Amount */}
+                <div className="p-6 space-y-4">
+                  {/* Percentage Bar */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold tracking-tight">Quick Amount</h3>
+                      <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold" style={{ color: '#c084fc' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <button
-                          key={`yes-${amount}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleQuickCast("yes", amount);
-                          }}
-                          disabled={amount > userBalance}
-                          className="py-3 px-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
-                        >
-                          <div className="text-sm font-bold text-primary">{amount} USDT</div>
-                          <div className="text-xs text-primary/70 mt-1">TRUE</div>
-                        </button>
-                      ))}
-                      {quickCastAmounts.slice(0, 4).map((amount) => (
-                        <button
-                          key={`no-${amount}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleQuickCast("no", amount);
-                          }}
-                          disabled={amount > userBalance}
-                          className="py-3 px-3 rounded-xl bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 hover:border-secondary transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
-                        >
-                          <div className="text-sm font-bold text-secondary">{amount} USDT</div>
-                          <div className="text-xs text-secondary/70 mt-1">FALSE</div>
-                        </button>
-                      ))}
+                    <div className="relative h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          width: `${(market.yesPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(to right, #22d3ee, #06b6d4, #c084fc)'
+                        }}
+                      />
                     </div>
                   </div>
 
-                  {/* Divider */}
-                  <div className="relative py-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border/50"></div>
-                    </div>
-                  </div>
-
-                  {/* Available Balance */}
-                  <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold tracking-tight">Available Balance</h3>
-                      <span className="text-xl font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
-                    </div>
-                  </div>
-
-                  {/* Custom Amount */}
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-semibold tracking-tight">Custom Amount</h3>
-
-                    {/* Position Selection Buttons */}
+                  {/* Pick a Side */}
+                  <div className="space-y-3 pt-3">
+                    <h3 className="text-base font-medium text-white text-left">Pick a side</h3>
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => handlePositionChange("yes")}
-                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
                           castPosition === "yes"
-                            ? "bg-primary text-primary-foreground border-2 border-primary shadow-primary/20"
-                            : "bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 hover:shadow-md"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
                         }`}
+                        style={castPosition === "yes" ? {
+                          background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                          borderColor: 'rgba(34, 211, 238, 0.6)',
+                          color: '#22d3ee',
+                          boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                        } : {}}
                       >
-                        True
+                        TRUE
                       </button>
                       <button
                         onClick={() => handlePositionChange("no")}
-                        className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all shadow-sm ${
+                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
                           castPosition === "no"
-                            ? "bg-secondary text-secondary-foreground border-2 border-secondary shadow-secondary/20"
-                            : "bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20 hover:shadow-md"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
                         }`}
+                        style={castPosition === "no" ? {
+                          background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                          borderColor: 'rgba(192, 132, 252, 0.6)',
+                          color: '#c084fc',
+                          boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                        } : {}}
                       >
-                        False
+                        FALSE
                       </button>
                     </div>
-
-                    {/* Amount Input */}
-                    <Input
-                      type="number"
-                      placeholder="USDT 0.00"
-                      step="0.01"
-                      min="0"
-                      value={castAmount}
-                      onChange={(e) => handleAmountChange(e.target.value)}
-                      className="w-full h-12 text-base font-semibold text-center"
-                    />
-
-                    {/* Profit Calculator */}
-                    {profitCalculation && (
-                      <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-2 shadow-sm">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Stake</span>
-                          <span className="font-bold">{profitCalculation.amount.toFixed(2)} USDT</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Odds</span>
-                          <span className="font-bold text-primary">{(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x</span>
-                        </div>
-                        <div className="h-px bg-green-500/20" />
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Return</span>
-                          <span className="font-bold">{profitCalculation.potential.toFixed(2)} USDT</span>
-                        </div>
-                        <div className="flex justify-between pt-1">
-                          <span className="font-semibold text-sm">Profit</span>
-                          <span className="font-bold text-green-500 text-base">+{profitCalculation.profit.toFixed(2)} USDT</span>
-                        </div>
-                      </div>
-                    )}
-
-                    <Button
-                      onClick={handleCustomCast}
-                      className="w-full h-12 text-base font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                      disabled={
-                        !castAmount || parseFloat(castAmount) > userBalance
-                      }
-                    >
-                      Sell Position
-                    </Button>
                   </div>
+
+                  {/* Amount Input */}
+                  <div className="space-y-3 pt-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-medium text-white text-left">Amount</h3>
+                      <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                        Available ${userBalance.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        placeholder="$0.00"
+                        value={castAmount ? `$${castAmount}` : ""}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9.]/g, '');
+                          handleAmountChange(value);
+                        }}
+                        className="w-full h-16 px-6 text-2xl font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Market Info */}
+                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Price change</span>
+                      <span className="text-base font-medium text-white text-right">
+                        ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} → ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Shares</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Avg. price</span>
+                      <span className="text-base font-medium text-white text-right">
+                        ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Fee Info */}
+                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base text-white text-left font-normal">Fee</span>
+                        <AlertCircle className="w-4 h-4 text-zinc-500" />
+                      </div>
+                      <span className="text-base font-medium text-white text-right">3%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Max profit</span>
+                      <span className="text-base font-semibold text-emerald-400 text-right">
+                        ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(2) : "0.00"}%)
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Max payout</span>
+                      <span className="text-base font-medium text-white text-right">
+                        ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    onClick={handleCustomCast}
+                    disabled={!castAmount || parseFloat(castAmount) > userBalance}
+                    className="w-full h-14 text-base font-bold rounded-2xl bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-500 hover:to-pink-400 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-500 transition-all shadow-lg shadow-pink-500/20 disabled:shadow-none text-white"
+                  >
+                    Sell Position
+                  </Button>
                 </div>
               </div>
             )}
