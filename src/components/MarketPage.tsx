@@ -1113,34 +1113,39 @@ export default function MarketPage({
             {castInterface === "buy" && (
               <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex bg-zinc-950/50 relative">
+                <div className="flex border-b border-zinc-800/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isBuying
                         ? "text-white"
-                        : "text-zinc-500 hover:text-zinc-300"
+                        : "text-zinc-600 hover:text-zinc-400"
                     }`}
                   >
                     Buy
                     {isBuying && (
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+                      <div
+                        className="absolute bottom-0 left-0 right-0 h-0.5"
+                        style={{ backgroundColor: '#3b82f6' }}
+                      ></div>
                     )}
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isSelling
                         ? "text-white"
-                        : "text-zinc-500 hover:text-zinc-300"
+                        : "text-zinc-600 hover:text-zinc-400"
                     }`}
                   >
                     Sell
                     {isSelling && (
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-pink-500"></div>
+                      <div
+                        className="absolute bottom-0 left-0 right-0 h-0.5"
+                        style={{ backgroundColor: '#ec4899' }}
+                      ></div>
                     )}
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 h-px bg-zinc-800/50"></div>
                 </div>
 
                 {/* Content */}
@@ -1284,34 +1289,39 @@ export default function MarketPage({
             {castInterface === "sell" && (
               <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex bg-zinc-950/50 relative">
+                <div className="flex border-b border-zinc-800/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isBuying
                         ? "text-white"
-                        : "text-zinc-500 hover:text-zinc-300"
+                        : "text-zinc-600 hover:text-zinc-400"
                     }`}
                   >
                     Buy
                     {isBuying && (
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+                      <div
+                        className="absolute bottom-0 left-0 right-0 h-0.5"
+                        style={{ backgroundColor: '#3b82f6' }}
+                      ></div>
                     )}
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`flex-1 py-5 text-sm font-bold transition-all duration-300 relative cursor-pointer ${
+                    className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isSelling
                         ? "text-white"
-                        : "text-zinc-500 hover:text-zinc-300"
+                        : "text-zinc-600 hover:text-zinc-400"
                     }`}
                   >
                     Sell
                     {isSelling && (
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-pink-500"></div>
+                      <div
+                        className="absolute bottom-0 left-0 right-0 h-0.5"
+                        style={{ backgroundColor: '#ec4899' }}
+                      ></div>
                     )}
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 h-px bg-zinc-800/50"></div>
                 </div>
 
                 {/* Content */}
