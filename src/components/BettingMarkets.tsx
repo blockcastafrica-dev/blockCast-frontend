@@ -1197,9 +1197,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 <div className="h-px bg-border"></div>
 
                 {/* 5. Market Info - Category, Pool, Expire, Disputable (Below Buttons) */}
-                <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <div className="flex items-center justify-between gap-4">
                   {/* Left Side: Category, Disputable */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2">
                     {/* Category */}
                     <Badge variant="outline" className="text-xs shrink-0 whitespace-nowrap">
                       {market.category}
@@ -1214,9 +1214,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   </div>
 
                   {/* Right Side: Pool and Expire Date */}
-                  <div className="flex items-center gap-3 justify-end">
+                  <div className="flex items-center gap-2 shrink-0">
                     {/* Total Pool */}
-                    <div className="flex items-center gap-1 text-xs shrink-0 whitespace-nowrap">
+                    <div className="flex items-center gap-1 text-xs whitespace-nowrap">
                       <span className="text-muted-foreground">Pool:</span>
                       <span className="font-semibold">
                         {formatCurrency(market.totalPool)} USDT
@@ -1224,7 +1224,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </div>
 
                     {/* Expire Date */}
-                    <div className="flex items-center gap-1 text-xs shrink-0 whitespace-nowrap">
+                    <div className="flex items-center gap-1 text-xs whitespace-nowrap">
                       <Clock className="h-3 w-3 shrink-0" />
                       <span className="text-muted-foreground">
                         {formatTimeRemaining(market.expiresAt)}
