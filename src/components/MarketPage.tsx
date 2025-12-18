@@ -1199,14 +1199,14 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <h3 className="text-base font-medium text-white text-left">Amount</h3>
                       <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
-                        Available ${userBalance.toFixed(2)}
+                        Available {userBalance.toFixed(2)} USDT
                       </span>
                     </div>
                     <div className="relative">
                       <Input
                         type="text"
-                        placeholder="$0.00"
-                        value={castAmount ? `$${castAmount}` : ""}
+                        placeholder="0.00 USDT"
+                        value={castAmount ? `${castAmount} USDT` : ""}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
@@ -1221,7 +1221,7 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Price change</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} → ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}
+                        {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} USDT → {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} USDT
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -1233,7 +1233,7 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Avg. price</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
+                        {profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
@@ -1250,13 +1250,13 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Max profit</span>
                       <span className="text-base font-semibold text-emerald-400 text-right">
-                        ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(2) : "0.00"}%)
+                        {profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} USDT ({profitCalculation ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(2) : "0.00"}%)
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Max payout</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
+                        {profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
@@ -1363,14 +1363,14 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <h3 className="text-base font-medium text-white text-left">Amount</h3>
                       <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
-                        Available ${userBalance.toFixed(2)}
+                        Available {userBalance.toFixed(2)} USDT
                       </span>
                     </div>
                     <div className="relative">
                       <Input
                         type="text"
-                        placeholder="$0.00"
-                        value={castAmount ? `$${castAmount}` : ""}
+                        placeholder="0.00 USDT"
+                        value={castAmount ? `${castAmount} USDT` : ""}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
@@ -1385,7 +1385,7 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Price change</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} → ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}
+                        {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} USDT → {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} USDT
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -1397,7 +1397,7 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Avg. price</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
+                        {profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
@@ -1414,13 +1414,13 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Max profit</span>
                       <span className="text-base font-semibold text-emerald-400 text-right">
-                        ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(2) : "0.00"}%)
+                        {profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} USDT ({profitCalculation ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(2) : "0.00"}%)
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Max payout</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
+                        {profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
