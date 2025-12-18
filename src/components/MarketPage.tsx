@@ -1118,8 +1118,8 @@ export default function MarketPage({
                     onClick={() => setCastInterface("buy")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isBuying
-                        ? "text-white"
-                        : "text-zinc-600 hover:text-zinc-400"
+                        ? "text-white bg-blue-500/5"
+                        : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Buy
@@ -1134,8 +1134,8 @@ export default function MarketPage({
                     onClick={() => setCastInterface("sell")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isSelling
-                        ? "text-white"
-                        : "text-zinc-600 hover:text-zinc-400"
+                        ? "text-white bg-pink-500/5"
+                        : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Sell
@@ -1294,8 +1294,8 @@ export default function MarketPage({
                     onClick={() => setCastInterface("buy")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isBuying
-                        ? "text-white"
-                        : "text-zinc-600 hover:text-zinc-400"
+                        ? "text-white bg-blue-500/5"
+                        : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Buy
@@ -1310,8 +1310,8 @@ export default function MarketPage({
                     onClick={() => setCastInterface("sell")}
                     className={`flex-1 py-4 text-base font-semibold transition-all duration-200 relative ${
                       isSelling
-                        ? "text-white"
-                        : "text-zinc-600 hover:text-zinc-400"
+                        ? "text-white bg-pink-500/5"
+                        : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
                     }`}
                   >
                     Sell
