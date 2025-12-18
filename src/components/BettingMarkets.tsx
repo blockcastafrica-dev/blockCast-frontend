@@ -1286,62 +1286,76 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   </Button>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-sm">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-base font-medium text-white text-left">Amount</h3>
+                    <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                      Available USDT {userBalance.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute top-1/2 -translate-y-1/2 text-xl font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px' }}>
+                      USDT
+                    </span>
+                    <Input
+                      id="betAmount"
+                      type="text"
+                      value={betAmount}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9.]/g, '');
+                        setBetAmount(value);
+                      }}
+                      placeholder="0.00"
+                      className="pr-6 text-2xl font-bold text-white text-left"
+                      style={{ paddingLeft: '110px' }}
+                    />
+                  </div>
+
+                  {/* Market Info */}
+                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold tracking-tight">Available Balance</h3>
-                      <span className="text-xl font-bold text-primary">{userBalance.toFixed(2)} USDT</span>
+                      <span className="text-base text-white text-left font-normal">Price change</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {selectedMarket && (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)} USDT → {selectedMarket && (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)} USDT
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Shares</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {betAmount && selectedMarket ? Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)) : 0}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Avg. price</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {betAmount && selectedMarket ? (parseFloat(betAmount) / Math.max(1, Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)))).toFixed(2) : "0.00"} USDT
+                      </span>
                     </div>
                   </div>
 
-                  <Label htmlFor="betAmount">Amount (USDT)</Label>
-                  <Input
-                    id="betAmount"
-                    type="number"
-                    step="0.001"
-                    min="0.001"
-                    max={userBalance}
-                    value={betAmount}
-                    onChange={(e) => setBetAmount(e.target.value)}
-                    placeholder="USDT 0.00"
-                    className="text-center"
-                  />
-
-                  {/* Profit Calculator */}
-                  {betAmount && selectedMarket && parseFloat(betAmount) > 0 && (
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-2 shadow-sm">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Stake</span>
-                        <span className="font-bold">{parseFloat(betAmount).toFixed(2)} USDT</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Odds</span>
-                        <span className="font-bold text-primary">
-                          {(betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)}x
-                        </span>
-                      </div>
-                      <div className="h-px bg-green-500/20" />
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Return</span>
-                        <span className="font-bold">
-                          {(
-                            parseFloat(betAmount) *
-                            (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)
-                          ).toFixed(2)} USDT
-                        </span>
-                      </div>
-                      <div className="flex justify-between pt-1">
-                        <span className="font-semibold text-sm">Profit</span>
-                        <span className="font-bold text-green-500 text-base">
-                          +{(
-                            parseFloat(betAmount) *
-                            (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) -
-                            parseFloat(betAmount)
-                          ).toFixed(2)} USDT
-                        </span>
-                      </div>
+                  {/* Fee Info */}
+                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Fee</span>
+                      <span className="text-base font-medium text-white text-right">3%</span>
                     </div>
-                  )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Max profit</span>
+                      <span className="text-base font-semibold text-emerald-400 text-right">
+                        {betAmount && selectedMarket ? (
+                          parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)
+                        ).toFixed(2) : "0.00"} USDT ({betAmount && selectedMarket ? (
+                          ((parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)) / parseFloat(betAmount)) * 100
+                        ).toFixed(2) : "0.00"}%)
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Max payout</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {betAmount && selectedMarket ? (parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)).toFixed(2) : "0.00"} USDT
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </AlertDialogDescription>
