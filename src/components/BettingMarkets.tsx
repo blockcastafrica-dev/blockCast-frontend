@@ -1197,7 +1197,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 <div className="h-px bg-border"></div>
 
                 {/* 5. Market Info - Category, Pool, Expire, Disputable (Below Buttons) */}
-                <div className="flex items-center justify-between gap-2">
+                <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
                   {/* Left Side: Category, Disputable */}
                   <div className="flex items-center gap-2 flex-wrap">
                     {/* Category */}
@@ -1214,7 +1214,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   </div>
 
                   {/* Right Side: Pool and Expire Date */}
-                  <div className="flex items-center gap-3 ml-auto">
+                  <div className="flex items-center gap-3 justify-end">
                     {/* Total Pool */}
                     <div className="flex items-center gap-1 text-xs shrink-0 whitespace-nowrap">
                       <span className="text-muted-foreground">Pool:</span>
