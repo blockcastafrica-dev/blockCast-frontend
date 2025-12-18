@@ -1197,26 +1197,26 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 <div className="h-px bg-border"></div>
 
                 {/* 5. Market Info - Category, Pool, Expire, Disputable (Below Buttons) */}
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center justify-between gap-2 min-h-[24px]">
                   {/* Left Side: Category, Disputable */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1">
                     {/* Category */}
-                    <Badge variant="outline" className="text-xs shrink-0 whitespace-nowrap">
+                    <Badge variant="outline" className="text-xs h-6 px-2 flex items-center shrink-0 whitespace-nowrap">
                       {market.category}
                     </Badge>
 
                     {/* Disputable */}
                     {market.disputable && (
-                      <Badge className="text-xs bg-yellow-100 text-yellow-800 border-yellow-300 shrink-0 whitespace-nowrap">
+                      <Badge className="text-xs h-6 px-2 flex items-center bg-yellow-100 text-yellow-800 border-yellow-300 shrink-0 whitespace-nowrap">
                         Disputable
                       </Badge>
                     )}
                   </div>
 
                   {/* Right Side: Pool and Expire Date */}
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {/* Total Pool */}
-                    <div className="flex items-center gap-1 text-xs whitespace-nowrap">
+                    <div className="flex items-center gap-1 text-xs whitespace-nowrap h-6">
                       <span className="text-muted-foreground">Pool:</span>
                       <span className="font-semibold">
                         {formatCurrency(market.totalPool)} USDT
@@ -1224,7 +1224,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </div>
 
                     {/* Expire Date */}
-                    <div className="flex items-center gap-1 text-xs whitespace-nowrap">
+                    <div className="flex items-center gap-1 text-xs whitespace-nowrap h-6">
                       <Clock className="h-3 w-3 shrink-0" />
                       <span className="text-muted-foreground">
                         {formatTimeRemaining(market.expiresAt)}
