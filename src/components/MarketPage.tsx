@@ -108,7 +108,7 @@ export default function MarketPage({
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<
-    "dispute" | "overview" | "comments" | "rules" | "analysis" | "activity"
+    "dispute" | "overview" | "comments" | "analysis" | "activity"
   >(market.disputable ? "dispute" : "overview");
   const [claim, setClaim] = useState<string>("");
   const [isTrue, setIsTrue] = useState<string>("");
@@ -497,7 +497,6 @@ export default function MarketPage({
             icon: Activity,
           },
           { id: "analysis", label: t("aiAnalysis"), icon: Zap },
-          { id: "rules", label: t("rules"), icon: Scale },
           {
             id: "comments",
             label: t("Comments"),
@@ -855,15 +854,60 @@ export default function MarketPage({
                 <Separator />
 
                 <div>
-                  <h3 className="font-semibold mb-2">
-                    {t("verificationMethodology")}
-                  </h3>
+                  <h3 className="font-semibold mb-2">AI Verification Process</h3>
                   <p className="text-muted-foreground">
                     This market uses AI-powered truth verification combined with
                     community consensus. Our system analyzes multiple credible
                     sources, cross-references data, and incorporates expert
                     analysis to determine the most accurate outcome.
                   </p>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Source of Credibility</h3>
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-primary" />
+                    <span className="text-muted-foreground">{market.source}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    All data is sourced from verified and authoritative organizations
+                    to ensure accuracy and reliability.
+                  </p>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Resolution Authority</h3>
+                  <p className="text-muted-foreground">
+                    Market resolution is determined by AI analysis of official sources
+                    and verified data. In case of disputes, our multi-layer verification
+                    system reviews additional evidence and expert input.
+                  </p>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="font-semibold mb-2">Resolution Timeline</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Market Closes:</span>
+                      <span className="text-sm text-muted-foreground">
+                        {market.expiresAt.toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Resolution Period:</span>
+                      <span className="text-sm text-muted-foreground">
+                        24-48 hours after market closes
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <Separator />
@@ -1120,52 +1164,6 @@ export default function MarketPage({
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </div>
-          )}
-
-          {/* Rules Tab */}
-          {activeTab === "rules" && (
-            <div className="border border-border rounded-xl bg-transparent">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Scale className="h-5 w-5" />
-                  {t("marketRules")} & {t("conditions")}
-                </CardTitle>
-                <CardDescription>{t("marketRulesDescription")}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {rules.map((rule) => {
-                  const Icon = getRuleIcon(rule.category);
-                  return (
-                    <div
-                      key={rule.id}
-                      className="p-4 border border-border rounded-lg"
-                    >
-                      <div className="flex items-start gap-3">
-                        <Icon
-                          className={`h-5 w-5 mt-0.5 ${getRuleColor(
-                            rule.category
-                          )}`}
-                        />
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold">{rule.title}</h4>
-                            <Badge
-                              variant="outline"
-                              className="text-xs capitalize"
-                            >
-                              {rule.category}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            {rule.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
               </CardContent>
             </div>
           )}
