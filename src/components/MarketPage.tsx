@@ -1154,24 +1154,31 @@ export default function MarketPage({
                       <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
                       <span className="text-4xl font-bold" style={{ color: '#c084fc' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
-                    <div className="relative h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
+                    <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
                       <div
-                        className="absolute inset-0"
+                        className="h-full transition-all duration-500"
                         style={{
                           width: `${(market.yesPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(to right, #22d3ee, #06b6d4, #c084fc)'
+                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
+                        }}
+                      />
+                      <div
+                        className="h-full transition-all duration-500"
+                        style={{
+                          width: `${(market.noPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
                         }}
                       />
                     </div>
                   </div>
 
                   {/* Pick a Side */}
-                  <div className="space-y-3 pt-3">
-                    <h3 className="text-base font-medium text-white text-left">Pick a side</h3>
+                  <div className="space-y-2 pt-2">
+                    <h3 className="text-sm font-medium text-white text-left">Pick a side</h3>
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => handlePositionChange("yes")}
-                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
+                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           castPosition === "yes"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
@@ -1187,7 +1194,7 @@ export default function MarketPage({
                       </button>
                       <button
                         onClick={() => handlePositionChange("no")}
-                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
+                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           castPosition === "no"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
@@ -1332,24 +1339,31 @@ export default function MarketPage({
                       <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
                       <span className="text-4xl font-bold" style={{ color: '#c084fc' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
-                    <div className="relative h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
+                    <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
                       <div
-                        className="absolute inset-0"
+                        className="h-full transition-all duration-500"
                         style={{
                           width: `${(market.yesPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(to right, #22d3ee, #06b6d4, #c084fc)'
+                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
+                        }}
+                      />
+                      <div
+                        className="h-full transition-all duration-500"
+                        style={{
+                          width: `${(market.noPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
                         }}
                       />
                     </div>
                   </div>
 
                   {/* Pick a Side */}
-                  <div className="space-y-3 pt-3">
-                    <h3 className="text-base font-medium text-white text-left">Pick a side</h3>
+                  <div className="space-y-2 pt-2">
+                    <h3 className="text-sm font-medium text-white text-left">Pick a side</h3>
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => handlePositionChange("yes")}
-                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
+                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           castPosition === "yes"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
@@ -1365,7 +1379,7 @@ export default function MarketPage({
                       </button>
                       <button
                         onClick={() => handlePositionChange("no")}
-                        className={`py-5 px-5 rounded-2xl text-lg font-bold transition-all text-center cursor-pointer ${
+                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           castPosition === "no"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"

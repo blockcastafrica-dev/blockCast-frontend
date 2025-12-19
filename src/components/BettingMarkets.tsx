@@ -1142,7 +1142,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 {/* 2. Progress Bar with Inline Percentages */}
                 <div className="flex items-center gap-2">
                   {/* Left Percentage (True) */}
-                  <span className="text-xs text-muted-foreground shrink-0 min-w-[40px] text-left">
+                  <span className="text-xs text-white shrink-0 min-w-[40px] text-left">
                     {((market.yesPool / market.totalPool) * 100).toFixed(1)}%
                   </span>
 
@@ -1165,7 +1165,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   </div>
 
                   {/* Right Percentage (False) */}
-                  <span className="text-xs text-muted-foreground shrink-0 min-w-[40px] text-right">
+                  <span className="text-xs text-white shrink-0 min-w-[40px] text-right">
                     {((market.noPool / market.totalPool) * 100).toFixed(1)}%
                   </span>
                 </div>
@@ -1261,37 +1261,52 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    variant={betPosition === "yes" ? "default" : "outline"}
+                  <button
                     onClick={() => setBetPosition("yes")}
-                    className="h-auto p-3 flex-col gap-1"
-                    {...({} as any)}
+                    className="py-3 px-4 rounded-full border-2 transition-all text-center cursor-pointer flex flex-col items-center justify-center gap-0.5"
+                    style={
+                      betPosition === "yes"
+                        ? {
+                            background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                            borderColor: 'rgba(34, 211, 238, 0.6)',
+                            color: '#22d3ee',
+                            boxShadow: '0 0 20px rgba(34, 211, 238, 0.4), 0 0 40px rgba(34, 211, 238, 0.2), 0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                          }
+                        : {
+                            background: 'rgba(39, 39, 42, 0.5)',
+                            borderColor: 'rgba(113, 113, 122, 0.5)',
+                            color: 'rgba(161, 161, 170, 1)'
+                          }
+                    }
                   >
-                    <span className="text-lg">True</span>
-                    <span className="text-sm opacity-80">
+                    <span className="text-base font-bold uppercase tracking-wide">True</span>
+                    <span className="text-xs font-medium" style={{ opacity: 0.8 }}>
                       {selectedMarket?.yesOdds.toFixed(2)}x odds
                     </span>
-                  </Button>
-                  <Button
-                    variant="outline"
+                  </button>
+                  <button
                     onClick={() => setBetPosition("no")}
-                    className="h-auto p-3 flex-col gap-1"
+                    className="py-3 px-4 rounded-full border-2 transition-all text-center cursor-pointer flex flex-col items-center justify-center gap-0.5"
                     style={
                       betPosition === "no"
                         ? {
-                            backgroundColor: "#5b3ae8",
-                            borderColor: "#5b3ae8",
-                            color: "#f9f9ff",
+                            background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                            borderColor: 'rgba(192, 132, 252, 0.6)',
+                            color: '#c084fc',
+                            boxShadow: '0 0 20px rgba(192, 132, 252, 0.4), 0 0 40px rgba(192, 132, 252, 0.2), 0 10px 15px -3px rgba(192, 132, 252, 0.25)'
                           }
-                        : {}
+                        : {
+                            background: 'rgba(39, 39, 42, 0.5)',
+                            borderColor: 'rgba(113, 113, 122, 0.5)',
+                            color: 'rgba(161, 161, 170, 1)'
+                          }
                     }
-                    {...({} as any)}
                   >
-                    <span className="text-lg">False</span>
-                    <span className="text-sm opacity-80">
+                    <span className="text-base font-bold uppercase tracking-wide">False</span>
+                    <span className="text-xs font-medium" style={{ opacity: 0.8 }}>
                       {selectedMarket?.noOdds.toFixed(2)}x odds
                     </span>
-                  </Button>
+                  </button>
                 </div>
 
                 <div className="space-y-3">
