@@ -49,6 +49,7 @@ import {
   Scale,
   MessagesSquare,
   Clock4,
+  Activity,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/components/LanguageContext";
@@ -107,7 +108,7 @@ export default function MarketPage({
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<
-    "dispute" | "overview" | "comments" | "rules" | "analysis"
+    "dispute" | "overview" | "comments" | "rules" | "analysis" | "activity"
   >(market.disputable ? "dispute" : "overview");
   const [claim, setClaim] = useState<string>("");
   const [isTrue, setIsTrue] = useState<string>("");
@@ -490,6 +491,11 @@ export default function MarketPage({
             icon: MessagesSquare,
           },
           { id: "overview", label: t("Overview"), icon: Target },
+          !market.disputable && {
+            id: "activity",
+            label: "Activity",
+            icon: Activity,
+          },
           { id: "analysis", label: t("aiAnalysis"), icon: Zap },
           { id: "rules", label: t("rules"), icon: Scale },
           {
@@ -877,6 +883,124 @@ export default function MarketPage({
                     </span>
                   </div>
                 </div>
+              </CardContent>
+            </div>
+          )}
+
+          {/* Activity Tab */}
+          {activeTab === "activity" && !market.disputable && (
+            <div className="border border-border rounded-xl bg-transparent">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Market Activity
+                </CardTitle>
+                <CardDescription>Recent trading positions and transactions</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {/* Activity Feed */}
+                {[
+                  {
+                    id: "1",
+                    wallet: "0x7835...892f",
+                    action: "bought",
+                    shares: 143,
+                    position: "no",
+                    price: 0.28,
+                    total: 39.8,
+                    time: "25 minutes ago",
+                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1"
+                  },
+                  {
+                    id: "2",
+                    wallet: "0x66CE...A2E3",
+                    action: "bought",
+                    shares: 93.1,
+                    position: "no",
+                    price: 0.27,
+                    total: 25.4,
+                    time: "2 hours ago",
+                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2"
+                  },
+                  {
+                    id: "3",
+                    wallet: "freedom",
+                    action: "bought",
+                    shares: 101,
+                    position: "no",
+                    price: 0.26,
+                    total: 26.6,
+                    time: "2 hours ago",
+                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3"
+                  },
+                  {
+                    id: "4",
+                    wallet: "Senzer",
+                    action: "sold",
+                    shares: 81.6,
+                    position: "yes",
+                    price: 0.75,
+                    total: 61.3,
+                    time: "2 hours ago",
+                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=4"
+                  },
+                  {
+                    id: "5",
+                    wallet: "wildegou",
+                    action: "sold",
+                    shares: 178,
+                    position: "no",
+                    price: 0.25,
+                    total: 44.9,
+                    time: "5 hours ago",
+                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=5"
+                  },
+                  {
+                    id: "6",
+                    wallet: "KnightXBT",
+                    action: "bought",
+                    shares: 132,
+                    position: "yes",
+                    price: 0.76,
+                    total: 100,
+                    time: "5 hours ago",
+                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=6"
+                  },
+                ].map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex gap-3 p-4 rounded-lg bg-card/30 hover:bg-card/50 transition-colors border border-border/50"
+                  >
+                    <Avatar className="h-10 w-10 shrink-0">
+                      <AvatarImage src={activity.avatar} />
+                      <AvatarFallback>
+                        {activity.wallet.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap leading-relaxed">
+                        <span className="font-semibold text-base">{activity.wallet}</span>
+                        <span className="text-sm text-muted-foreground">{activity.action}</span>
+                        <span className="font-bold text-base">{activity.shares}</span>
+                        <span className="text-sm text-muted-foreground">shares of</span>
+                        <Badge
+                          variant={activity.position === "yes" ? "default" : "secondary"}
+                          className="text-xs shrink-0"
+                        >
+                          {activity.position === "yes" ? "True" : "False"}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">
+                          at ${activity.price.toFixed(2)} (${activity.total.toFixed(1)})
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 self-start">
+                      {activity.time}
+                    </span>
+                  </div>
+                ))}
               </CardContent>
             </div>
           )}
