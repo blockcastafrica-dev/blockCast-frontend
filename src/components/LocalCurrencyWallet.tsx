@@ -359,14 +359,34 @@ export default function LocalCurrencyWallet({
                             <p className="text-sm text-slate-400">
                               {method.description}
                             </p>
-                            <div className="flex items-center gap-3 mt-2">
-                              <span className="text-xs text-slate-400 flex items-center gap-1 font-medium">
-                                <Zap className="h-3 w-3" />
-                                {method.processingTime}
-                              </span>
-                              <span className="text-xs text-slate-400 font-medium">
-                                Fee: {method.fees}
-                              </span>
+                            <div className="flex items-center justify-between mt-2">
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-slate-400 flex items-center gap-1 font-medium">
+                                  <Zap className="h-3 w-3" />
+                                  {method.processingTime}
+                                </span>
+                                <span className="text-xs text-slate-400 font-medium">
+                                  Fee: {method.fees}
+                                </span>
+                              </div>
+                              {method.id === "card" && (
+                                <div className="flex items-center gap-2">
+                                  {/* Visa Logo */}
+                                  <div className="h-10 w-16 rounded flex items-center justify-center p-0.5">
+                                    <svg viewBox="0 0 48 32" className="h-full w-full">
+                                      <path fill="#FFFFFF" d="M20.2 14.7l-1.4 6.8h-2.3l1.4-6.8h2.3zm11.8 4.4l1.2-3.3.7 3.3h-1.9zm2.6 2.4h2.1l-1.8-6.8h-2c-.4 0-.8.2-1 .6l-3.4 6.2h2.4l.5-1.3h3l.2 1.3zm-7-2.3c0-1.8-2.5-1.9-2.4-2.7 0-.2.2-.5.8-.6.3-.1 1-.1 1.8.3l.3-1.5c-.4-.2-1-.3-1.7-.3-2.3 0-3.9 1.2-3.9 2.9 0 1.3 1.1 2 2 2.4.9.4 1.2.7 1.2 1.1 0 .6-.7.9-1.4.9-.8 0-1.3-.1-2-.5l-.4 1.6c.5.2 1.3.4 2.2.4 2.4 0 4-1.2 4-3zm-10.6-4.5l-3.7 6.8h-2.4l-1.8-7c-.1-.4-.3-.5-.7-.7-.6-.3-1.7-.5-2.6-.7l.1-.3h4.5c.6 0 1.1.4 1.2 1l1.1 5.9 2.8-6.9h2.5z"/>
+                                    </svg>
+                                  </div>
+                                  {/* Mastercard Logo */}
+                                  <div className="h-10 w-16 bg-white rounded flex items-center justify-center overflow-hidden p-0.5">
+                                    <svg viewBox="0 0 48 32" className="h-full w-full">
+                                      <circle cx="18" cy="16" r="10" fill="#EB001B"/>
+                                      <circle cx="30" cy="16" r="10" fill="#F79E1B"/>
+                                      <path d="M24 8.7c-1.9 1.7-3.1 4.2-3.1 7s1.2 5.3 3.1 7c1.9-1.7 3.1-4.2 3.1-7s-1.2-5.3-3.1-7z" fill="#FF5F00"/>
+                                    </svg>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
