@@ -276,7 +276,7 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[90vw] sm:max-w-[600px] max-h-[80vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3 sm:p-6 gap-2 sm:gap-4">
+      <DialogContent className="w-[min(90vw,600px)] max-h-[80vh] sm:max-h-[85vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3 sm:p-6 gap-2 sm:gap-4">
         <DialogHeader className="space-y-1 sm:space-y-2">
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl md:text-2xl">
             <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
@@ -292,12 +292,12 @@ export default function LocalCurrencyWallet({
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-1 sm:mb-4 p-2 sm:p-3 md:p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-2 sm:mb-4 p-2 sm:p-3 md:p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
                       ? "bg-gradient-to-br from-cyan-500 to-purple-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/50"
                       : "border-slate-600 text-slate-500 bg-slate-800/50"
@@ -309,7 +309,7 @@ export default function LocalCurrencyWallet({
                     <span className="font-bold text-sm sm:text-lg">{s}</span>
                   )}
                 </div>
-                <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 font-medium ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
+                <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
