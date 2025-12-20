@@ -279,10 +279,10 @@ export default function LocalCurrencyWithdrawal({
           width: '100vw',
           height: '100vh',
           transform: 'none',
-          paddingTop: '80px',
-          paddingBottom: '20px',
-          paddingLeft: '12px',
-          paddingRight: '12px',
+          paddingTop: '16px',
+          paddingBottom: '16px',
+          paddingLeft: '16px',
+          paddingRight: '16px',
         } : undefined}
         className="sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
       >
