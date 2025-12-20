@@ -259,7 +259,7 @@ export default function LocalCurrencyWithdrawal({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[98vw] sm:max-w-[600px] max-h-[45vh] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl p-3 sm:p-6 gap-1.5 sm:gap-4">
+      <DialogContent className="w-[98vw] sm:max-w-[600px] max-h-[420px] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl p-2.5 sm:p-6 gap-1 sm:gap-4">
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-3 text-sm sm:text-xl md:text-2xl">
             <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
@@ -288,7 +288,7 @@ export default function LocalCurrencyWithdrawal({
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between my-4 mx-2 sm:mx-0 sm:my-0 sm:mb-4 md:mb-6 p-1.5 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-purple-500/40 px-1 sm:px-0 py-3 sm:py-0">
+        <div className="flex items-center justify-between my-2 mx-2 sm:mx-0 sm:my-0 sm:mb-4 md:mb-6 p-1.5 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-purple-500/40 px-1 sm:px-0 py-2 sm:py-0">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
@@ -322,7 +322,7 @@ export default function LocalCurrencyWithdrawal({
 
         {/* Step 1: Choose Withdrawal Method */}
         {step === 1 && (
-          <div className="space-y-2 sm:space-y-4 px-2 sm:px-0 py-4 sm:py-0">
+          <div className="space-y-2 sm:space-y-4 px-2 sm:px-0 py-2 sm:py-0">
             <div className="space-y-3 sm:space-y-3">
               {withdrawalMethods.map((method) => {
                 const Icon = method.icon;
