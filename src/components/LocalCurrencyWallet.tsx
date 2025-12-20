@@ -301,7 +301,7 @@ export default function LocalCurrencyWallet({
         className="sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
-          <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl mx-2 sm:mx-0">
+          <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl justify-center sm:justify-start">
             <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
               <Wallet className="h-3.5 w-3.5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
             </div>
@@ -309,7 +309,7 @@ export default function LocalCurrencyWallet({
               Fund Your Wallet
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300 text-[10px] sm:text-sm md:text-base mx-2 sm:mx-0">
+          <DialogDescription className="text-slate-300 text-[10px] sm:text-sm md:text-base">
             Add funds to start betting
           </DialogDescription>
         </DialogHeader>
