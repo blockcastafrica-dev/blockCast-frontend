@@ -150,16 +150,6 @@ export default function LocalCurrencyWithdrawal({
 
   // Card details state
   const [cardLast4, setCardLast4] = useState<string>("");
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const calculateLocalAmount = () => {
     if (!amount || isNaN(Number(amount))) return "0.00";
@@ -270,18 +260,7 @@ export default function LocalCurrencyWithdrawal({
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        style={isMobile ? {
-          position: 'fixed',
-          top: '80px',
-          left: '16px',
-          right: '16px',
-          bottom: '100px',
-          width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 180px)',
-          transform: 'none !important',
-          padding: '20px',
-        } : undefined}
-        className="sm:max-w-[600px] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
+        className="!top-[80px] !left-4 !right-4 !bottom-[100px] !max-h-[calc(100vh-180px)] !translate-x-0 !translate-y-0 sm:!top-[50%] sm:!left-[50%] sm:!right-auto sm:!bottom-auto sm:!max-h-[90vh] sm:!-translate-x-1/2 sm:!-translate-y-1/2 sm:max-w-[600px] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg p-5 sm:p-6"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-3 text-sm sm:text-xl md:text-2xl">
