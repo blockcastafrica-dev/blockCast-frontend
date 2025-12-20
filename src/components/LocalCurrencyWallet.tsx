@@ -276,23 +276,23 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[96vw] sm:max-w-[600px] max-h-[75vh] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-2 sm:p-6 gap-1 sm:gap-4">
-        <DialogHeader className="space-y-0.5 sm:space-y-2">
-          <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
+      <DialogContent className="w-[96vw] sm:max-w-[600px] max-h-[70vh] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-1.5 sm:p-6 gap-0.5 sm:gap-4">
+        <DialogHeader className="space-y-0 sm:space-y-2">
+          <DialogTitle className="flex items-center gap-1 sm:gap-2 text-xs sm:text-xl md:text-2xl">
             <div className="p-0.5 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
-              <Wallet className="h-3.5 w-3.5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
+              <Wallet className="h-3 w-3 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
             </div>
             <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-bold">
               Fund Your Wallet
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300 text-[10px] sm:text-sm md:text-base">
+          <DialogDescription className="text-slate-300 text-[9px] sm:text-sm md:text-base hidden sm:block">
             Add funds to start betting on truth markets
           </DialogDescription>
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-1 sm:mb-4 p-1 sm:p-3 md:p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-0.5 sm:mb-4 p-1 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
@@ -326,8 +326,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-1 sm:space-y-4">
-            <div className="space-y-1 sm:space-y-3">
+          <div className="space-y-0.5 sm:space-y-4">
+            <div className="space-y-0.5 sm:space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -336,18 +336,18 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-2 sm:p-4">
-                      <div className="flex items-start sm:items-center justify-between gap-1.5 sm:gap-3">
-                        <div className="flex items-start sm:items-center gap-1.5 sm:gap-3 flex-1 min-w-0">
-                          <div className="w-9 h-9 sm:w-14 sm:h-14 flex-shrink-0 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
-                            <Icon className="h-4 w-4 sm:h-7 sm:w-7 text-white" />
+                    <CardContent className="p-1.5 sm:p-4">
+                      <div className="flex items-start sm:items-center justify-between gap-1 sm:gap-3">
+                        <div className="flex items-start sm:items-center gap-1 sm:gap-3 flex-1 min-w-0">
+                          <div className="w-8 h-8 sm:w-14 sm:h-14 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
+                            <Icon className="h-3.5 w-3.5 sm:h-7 sm:w-7 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
-                              <p className="font-bold text-xs sm:text-base text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
+                            <div className="flex flex-wrap items-center gap-0.5 sm:gap-2 mb-0 sm:mb-1">
+                              <p className="font-bold text-[11px] sm:text-base text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
                               {method.popular && (
                                 <Badge
-                                  className="text-[9px] sm:text-xs border whitespace-nowrap px-1 py-0 sm:px-2 sm:py-0.5"
+                                  className="text-[8px] sm:text-xs border whitespace-nowrap px-1 py-0 sm:px-2 sm:py-0.5"
                                   style={{
                                     backgroundColor: 'rgba(6, 182, 212, 0.2)',
                                     color: 'rgb(34, 211, 238)',
@@ -359,7 +359,7 @@ export default function LocalCurrencyWallet({
                               )}
                               {method.comingSoon && (
                                 <Badge
-                                  className="text-[9px] sm:text-xs border whitespace-nowrap px-1 py-0 sm:px-2 sm:py-0.5"
+                                  className="text-[8px] sm:text-xs border whitespace-nowrap px-1 py-0 sm:px-2 sm:py-0.5"
                                   style={{
                                     backgroundColor: 'rgba(168, 85, 247, 0.2)',
                                     color: 'rgb(192, 132, 252)',
@@ -370,16 +370,16 @@ export default function LocalCurrencyWallet({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-[10px] sm:text-sm text-slate-400 line-clamp-2 mb-1 sm:mb-2">
+                            <p className="text-[9px] sm:text-sm text-slate-400 line-clamp-1 mb-0.5 sm:mb-2">
                               {method.description}
                             </p>
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
-                              <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
-                                <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 font-medium whitespace-nowrap">
-                                  <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0" />
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 sm:gap-2">
+                              <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+                                <span className="text-[9px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 font-medium whitespace-nowrap">
+                                  <Zap className="h-2 w-2 sm:h-3 sm:w-3 flex-shrink-0" />
                                   {method.processingTime}
                                 </span>
-                                <span className="text-[10px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
+                                <span className="text-[9px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
                                   Fee: {method.fees}
                                 </span>
                               </div>
@@ -443,7 +443,7 @@ export default function LocalCurrencyWallet({
                             </div>
                           </div>
                         </div>
-                        <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-0.5 sm:mt-0" />
+                        <ArrowRight className="h-3 w-3 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-0.5 sm:mt-0" />
                       </div>
                     </CardContent>
                   </Card>
@@ -451,18 +451,17 @@ export default function LocalCurrencyWallet({
               })}
             </div>
 
-            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl p-2 sm:p-4 border border-cyan-500/30 backdrop-blur-sm">
-              <div className="flex items-start gap-1.5 sm:gap-3">
-                <div className="p-1 sm:p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
-                  <Shield className="h-3 w-3 sm:h-5 sm:w-5 text-white flex-shrink-0" />
+            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg p-1.5 sm:p-4 border border-cyan-500/30 backdrop-blur-sm">
+              <div className="flex items-start gap-1 sm:gap-3">
+                <div className="p-0.5 sm:p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
+                  <Shield className="h-2.5 w-2.5 sm:h-5 sm:w-5 text-white flex-shrink-0" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[10px] sm:text-sm text-cyan-400">
+                  <h4 className="font-bold text-[9px] sm:text-sm text-cyan-400">
                     🔒 Secure & Fast Deposits
                   </h4>
-                  <p className="text-[9px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
-                    All deposits are secured with bank-grade encryption. Your funds
-                    are automatically converted to USDT for betting.
+                  <p className="text-[8px] sm:text-xs text-slate-400 mt-0 sm:mt-1">
+                    Deposits secured with bank-grade encryption. Funds automatically converted to USDT.
                   </p>
                 </div>
               </div>
