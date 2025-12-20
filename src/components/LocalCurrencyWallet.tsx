@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -154,6 +154,16 @@ export default function LocalCurrencyWallet({
   const [cardName, setCardName] = useState<string>("");
   const [cardExpiry, setCardExpiry] = useState<string>("");
   const [cardCVV, setCardCVV] = useState<string>("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const depositAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
   const bankAccountNumber = "1234567890";
@@ -277,7 +287,7 @@ export default function LocalCurrencyWallet({
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        style={{
+        style={isMobile ? {
           position: 'fixed',
           top: 0,
           left: 0,
@@ -288,8 +298,10 @@ export default function LocalCurrencyWallet({
           transform: 'none',
           paddingTop: 'max(env(safe-area-inset-top), 3rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)',
-        }}
-        className="sm:!static sm:!top-[50%] sm:!left-[50%] sm:!translate-x-[-50%] sm:!translate-y-[-50%] sm:w-auto sm:h-auto sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl px-3 sm:p-6 gap-2 sm:gap-4 sm:rounded-lg rounded-none"
+          paddingLeft: '0.75rem',
+          paddingRight: '0.75rem',
+        } : undefined}
+        className="sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
