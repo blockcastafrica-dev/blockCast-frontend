@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowUp, ArrowDown, Share2 } from 'lucide-react';
+import { ArrowUp, ArrowDown, Share2, Heart, Bookmark } from 'lucide-react';
 import blockcastLogo from '/Users/camille/Desktop/dossier sans titre 2/dossier sans titre/blockcast logo dark BG.svg';
 
 interface ProbabilityChartProps {
@@ -12,6 +12,11 @@ interface ProbabilityChartProps {
   yesPool?: number;
   noPool?: number;
   onShare?: () => void;
+  isLiked?: boolean;
+  onLikeToggle?: () => void;
+  likeCount?: number;
+  isBookmarked?: boolean;
+  onBookmarkToggle?: () => void;
 }
 
 // Generate mock historical data for the chart with visible trends
@@ -69,7 +74,12 @@ export default function ProbabilityChart({
   totalPool,
   yesPool,
   noPool,
-  onShare
+  onShare,
+  isLiked,
+  onLikeToggle,
+  likeCount,
+  isBookmarked,
+  onBookmarkToggle
 }: ProbabilityChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>('7D');
 
@@ -131,7 +141,7 @@ export default function ProbabilityChart({
           </div>
         </div>
 
-        {/* Legend & Share */}
+        {/* Legend & Actions */}
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5">
@@ -143,17 +153,44 @@ export default function ProbabilityChart({
               <span className="text-slate-300">No {noPercentage.toFixed(1)}%</span>
             </div>
           </div>
-          {onShare && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onShare}
-              className="text-slate-400 hover:text-white h-8 px-3"
-            >
-              <Share2 className="h-4 w-4 mr-1.5" />
-              Share
-            </Button>
-          )}
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1">
+            {onLikeToggle && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onLikeToggle}
+                className={`text-slate-400 hover:text-white h-8 px-3 ${isLiked ? 'text-red-500' : ''}`}
+              >
+                <Heart className={`h-4 w-4 mr-1.5 ${isLiked ? 'fill-current' : ''}`} />
+                {likeCount}
+              </Button>
+            )}
+
+            {onBookmarkToggle && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onBookmarkToggle}
+                className="text-slate-400 hover:text-white h-8 px-2"
+              >
+                <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
+              </Button>
+            )}
+
+            {onShare && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onShare}
+                className="text-slate-400 hover:text-white h-8 px-3"
+              >
+                <Share2 className="h-4 w-4 mr-1.5" />
+                Share
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

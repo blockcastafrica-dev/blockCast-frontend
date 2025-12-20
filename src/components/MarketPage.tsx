@@ -293,43 +293,6 @@ export default function MarketPage({
           {t("backToMarkets")}
         </Button>
 
-        <div className="flex-1" />
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsLiked(!isLiked)}
-            className={`gap-1 ${isLiked ? "text-red-500" : ""}`}
-            {...({} as any)}
-          >
-            <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-            {formatNumber(Math.floor(Math.random() * 500) + 100)}
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsBookmarked(!isBookmarked)}
-            className={`gap-1 ${isBookmarked ? "text-primary" : ""}`}
-            {...({} as any)}
-          >
-            <Bookmark
-              className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`}
-            />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1 cursor-pointer"
-            onClick={() => setShowShareModal(true)}
-            {...({} as any)}
-          >
-            <Share2 className="h-4 w-4" />
-            {t("share")}
-          </Button>
-        </div>
       </div>
 
       {/* Market Header Card */}
@@ -381,7 +344,7 @@ export default function MarketPage({
               </p>
 
               {/* Location & Source */}
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4" />
                   <span>{market.country || market.region}</span>
@@ -396,17 +359,31 @@ export default function MarketPage({
                     {t("expiresIn")} {getTimeRemaining(market.expiresAt)}
                   </span>
                 </div>
+                {/* Pool Volume */}
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  <span>
+                    ${(market.totalPool / 1000).toFixed(1)}k Pool
+                  </span>
+                </div>
               </div>
 
-              {/* Probability Chart */}
-              <ProbabilityChart
-                yesPercentage={(market.yesPool / market.totalPool) * 100}
-                noPercentage={(market.noPool / market.totalPool) * 100}
-                totalPool={market.totalPool}
-                yesPool={market.yesPool}
-                noPool={market.noPool}
-                onShare={() => setShowShareModal(true)}
-              />
+              {/* Probability Chart - with extra top spacing on mobile */}
+              <div className="mt-6 sm:mt-4">
+                <ProbabilityChart
+                  yesPercentage={(market.yesPool / market.totalPool) * 100}
+                  noPercentage={(market.noPool / market.totalPool) * 100}
+                  totalPool={market.totalPool}
+                  yesPool={market.yesPool}
+                  noPool={market.noPool}
+                  onShare={() => setShowShareModal(true)}
+                  isLiked={isLiked}
+                  onLikeToggle={() => setIsLiked(!isLiked)}
+                  likeCount={formatNumber(Math.floor(Math.random() * 500) + 100)}
+                  isBookmarked={isBookmarked}
+                  onBookmarkToggle={() => setIsBookmarked(!isBookmarked)}
+                />
+              </div>
             </div>
           </div>
         </CardContent>
