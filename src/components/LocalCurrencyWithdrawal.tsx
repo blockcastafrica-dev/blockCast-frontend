@@ -259,7 +259,21 @@ export default function LocalCurrencyWithdrawal({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="!fixed !top-0 !left-0 !right-0 !bottom-0 !translate-x-0 !translate-y-0 w-screen h-screen sm:!static sm:!top-[50%] sm:!left-[50%] sm:!translate-x-[-50%] sm:!translate-y-[-50%] sm:w-auto sm:h-auto sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl pt-[env(safe-area-inset-top,1rem)] pb-[env(safe-area-inset-bottom,1rem)] px-3 sm:p-6 gap-2 sm:gap-4 sm:rounded-lg rounded-none">
+      <DialogContent
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          transform: 'none',
+          paddingTop: 'max(env(safe-area-inset-top), 3rem)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)',
+        }}
+        className="sm:!static sm:!top-[50%] sm:!left-[50%] sm:!translate-x-[-50%] sm:!translate-y-[-50%] sm:w-auto sm:h-auto sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl px-3 sm:p-6 gap-2 sm:gap-4 sm:rounded-lg rounded-none"
+      >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-3 text-sm sm:text-xl md:text-2xl">
             <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
