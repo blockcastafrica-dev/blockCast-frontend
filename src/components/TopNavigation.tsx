@@ -361,9 +361,10 @@ export default function TopNavigation({
                       Settings
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      className="text-destructive cursor-pointer"
+                      className="cursor-pointer"
                       onClick={handleSignOut}
                     >
+                      <LogOut className="h-4 w-4 mr-2" />
                       Log Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
