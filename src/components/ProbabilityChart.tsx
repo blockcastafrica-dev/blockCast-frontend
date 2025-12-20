@@ -3,7 +3,6 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tool
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowUp, ArrowDown, Share2, Heart, Bookmark } from 'lucide-react';
-import blockcastLogo from '/Users/camille/Desktop/dossier sans titre 2/dossier sans titre/blockcast logo dark BG.svg';
 
 interface ProbabilityChartProps {
   yesPercentage: number;
@@ -197,30 +196,23 @@ export default function ProbabilityChart({
       {/* Separator */}
       <Separator className="my-4" />
 
-      {/* Time range selector with Logo */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 overflow-x-auto">
-          {timeRanges.map((range) => (
-            <Button
-              key={range}
-              variant={timeRange === range ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setTimeRange(range)}
-              className={`flex-shrink-0 px-4 rounded-full ${
-                timeRange === range
-                  ? 'bg-white text-black hover:bg-white/90'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              }`}
-            >
-              {range}
-            </Button>
-          ))}
-        </div>
-
-        {/* BlockCast Logo */}
-        <div className="flex-shrink-0 opacity-30">
-          <img src={blockcastLogo} alt="BlockCast" className="h-8 w-auto" />
-        </div>
+      {/* Time range selector */}
+      <div className="flex items-center gap-2 overflow-x-auto mb-4">
+        {timeRanges.map((range) => (
+          <Button
+            key={range}
+            variant={timeRange === range ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setTimeRange(range)}
+            className={`flex-shrink-0 px-4 rounded-full ${
+              timeRange === range
+                ? 'bg-white text-black hover:bg-white/90'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            {range}
+          </Button>
+        ))}
       </div>
 
       {/* Chart */}
