@@ -276,9 +276,9 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[min(90vw,600px)] max-h-[80vh] sm:max-h-[85vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3 sm:p-6 gap-2 sm:gap-4">
-        <DialogHeader className="space-y-1 sm:space-y-2">
-          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl md:text-2xl">
+      <DialogContent className="w-[min(95vw,600px)] max-h-[85vh] sm:max-h-[85vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3 sm:p-6 gap-2 sm:gap-4">
+        <DialogHeader className="space-y-0.5 sm:space-y-2">
+          <DialogTitle className="flex items-center gap-2 text-base sm:text-xl md:text-2xl">
             <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
               <Wallet className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
             </div>
@@ -286,7 +286,7 @@ export default function LocalCurrencyWallet({
               Fund Your Wallet
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300 text-xs sm:text-sm md:text-base">
+          <DialogDescription className="text-slate-300 text-[11px] sm:text-sm md:text-base">
             Add funds to start betting on truth markets
           </DialogDescription>
         </DialogHeader>
@@ -326,8 +326,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-3 sm:space-y-4">
-            <div className="space-y-2 sm:space-y-3">
+          <div className="space-y-2 sm:space-y-4">
+            <div className="space-y-1.5 sm:space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -370,10 +370,10 @@ export default function LocalCurrencyWallet({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-slate-400 line-clamp-2 mb-2">
+                            <p className="text-xs sm:text-sm text-slate-400 line-clamp-2 mb-1.5 sm:mb-2">
                               {method.description}
                             </p>
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
                               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                                 <span className="text-xs text-slate-400 flex items-center gap-1 font-medium whitespace-nowrap">
                                   <Zap className="h-3 w-3 flex-shrink-0" />
