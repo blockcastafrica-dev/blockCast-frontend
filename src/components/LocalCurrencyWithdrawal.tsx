@@ -259,36 +259,36 @@ export default function LocalCurrencyWithdrawal({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[96vw] sm:max-w-[600px] max-h-[75vh] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl p-2 sm:p-6 gap-1 sm:gap-4">
-        <DialogHeader className="space-y-0.5 sm:space-y-2">
-          <DialogTitle className="flex items-center gap-1.5 sm:gap-3 text-sm sm:text-xl md:text-2xl">
+      <DialogContent className="w-[96vw] sm:max-w-[600px] max-h-[70vh] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl p-1.5 sm:p-6 gap-0.5 sm:gap-4">
+        <DialogHeader className="space-y-0 sm:space-y-2">
+          <DialogTitle className="flex items-center gap-1 sm:gap-3 text-xs sm:text-xl md:text-2xl">
             <div className="p-0.5 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
-              <TrendingDown className="h-3.5 w-3.5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
+              <TrendingDown className="h-3 w-3 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
             </div>
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-bold">
               Withdraw Funds
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300 text-[10px] sm:text-sm md:text-base">
+          <DialogDescription className="text-slate-300 text-[9px] sm:text-sm md:text-base hidden sm:block">
             Withdraw your winnings to your preferred payment method
           </DialogDescription>
         </DialogHeader>
 
         {/* Balance Display */}
-        <div className="bg-slate-900 rounded-xl p-2 sm:p-5 border-2 border-purple-500/40 shadow-xl shadow-purple-500/20">
+        <div className="bg-slate-900 rounded-lg p-1.5 sm:p-5 border border-purple-500/40 shadow-xl shadow-purple-500/20">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] sm:text-sm text-slate-400 font-medium">Available Balance</p>
-              <p className="text-lg sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{userBalance.toFixed(6)} USDT</p>
+              <p className="text-[9px] sm:text-sm text-slate-400 font-medium">Available Balance</p>
+              <p className="text-sm sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{userBalance.toFixed(6)} USDT</p>
             </div>
-            <div className="p-1.5 sm:p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
-              <Wallet className="h-5 w-5 sm:h-8 sm:w-8 text-white" />
+            <div className="p-1 sm:p-3 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
+              <Wallet className="h-4 w-4 sm:h-8 sm:w-8 text-white" />
             </div>
           </div>
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-1 sm:mb-4 md:mb-6 p-1 sm:p-3 md:p-4 rounded-xl bg-slate-900 border border-purple-500/40">
+        <div className="flex items-center justify-between mb-0.5 sm:mb-4 md:mb-6 p-1 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-purple-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
@@ -322,8 +322,8 @@ export default function LocalCurrencyWithdrawal({
 
         {/* Step 1: Choose Withdrawal Method */}
         {step === 1 && (
-          <div className="space-y-1 sm:space-y-4">
-            <div className="space-y-1 sm:space-y-3">
+          <div className="space-y-0.5 sm:space-y-4">
+            <div className="space-y-0.5 sm:space-y-3">
               {withdrawalMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -332,18 +332,18 @@ export default function LocalCurrencyWithdrawal({
                     className="cursor-pointer hover:border-purple-500/60 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-2 sm:p-4">
-                      <div className="flex items-start sm:items-center justify-between gap-1.5 sm:gap-3">
-                        <div className="flex items-start sm:items-center gap-1.5 sm:gap-3 flex-1 min-w-0">
-                          <div className="w-9 h-9 sm:w-14 sm:h-14 flex-shrink-0 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:from-purple-500/30 group-hover:to-pink-500/30 flex items-center justify-center border border-purple-500/30 transition-all">
-                            <Icon className="h-4 w-4 sm:h-7 sm:w-7 text-white" />
+                    <CardContent className="p-1.5 sm:p-4">
+                      <div className="flex items-start sm:items-center justify-between gap-1 sm:gap-3">
+                        <div className="flex items-start sm:items-center gap-1 sm:gap-3 flex-1 min-w-0">
+                          <div className="w-8 h-8 sm:w-14 sm:h-14 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:from-purple-500/30 group-hover:to-pink-500/30 flex items-center justify-center border border-purple-500/30 transition-all">
+                            <Icon className="h-3.5 w-3.5 sm:h-7 sm:w-7 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
-                              <p className="font-bold text-xs sm:text-base text-white group-hover:text-purple-400 transition-colors">{method.name}</p>
+                            <div className="flex flex-wrap items-center gap-0.5 sm:gap-2 mb-0 sm:mb-1">
+                              <p className="font-bold text-[11px] sm:text-base text-white group-hover:text-purple-400 transition-colors">{method.name}</p>
                               {method.popular && (
                                 <Badge
-                                  className="text-[9px] sm:text-xs border px-1 py-0 sm:px-2 sm:py-0.5"
+                                  className="text-[8px] sm:text-xs border px-1 py-0 sm:px-2 sm:py-0.5"
                                   style={{
                                     backgroundColor: 'rgba(6, 182, 212, 0.2)',
                                     color: 'rgb(34, 211, 238)',
@@ -354,24 +354,24 @@ export default function LocalCurrencyWithdrawal({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-[10px] sm:text-sm text-slate-400 line-clamp-2 mb-1 sm:mb-1">
+                            <p className="text-[9px] sm:text-sm text-slate-400 line-clamp-1 mb-0.5 sm:mb-1">
                               {method.description}
                             </p>
-                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 mt-0.5 sm:mt-1">
-                              <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
-                                <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+                              <span className="text-[9px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
+                                <Clock className="h-2 w-2 sm:h-3 sm:w-3" />
                                 {method.processingTime}
                               </span>
-                              <span className="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap">
+                              <span className="text-[9px] sm:text-xs text-slate-400 whitespace-nowrap">
                                 Fee: {method.fees}
                               </span>
-                              <span className="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap">
+                              <span className="text-[9px] sm:text-xs text-slate-400 whitespace-nowrap">
                                 Min: ${method.minAmount}
                               </span>
                             </div>
                           </div>
                         </div>
-                        <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-0.5 sm:mt-0" />
+                        <ArrowRight className="h-3 w-3 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-0.5 sm:mt-0" />
                       </div>
                     </CardContent>
                   </Card>
@@ -379,17 +379,17 @@ export default function LocalCurrencyWithdrawal({
               })}
             </div>
 
-            <div className="bg-blue-500/10 rounded-lg p-2 sm:p-4 border border-blue-500/20">
-              <div className="flex items-start gap-1.5 sm:gap-3">
-                <AlertCircle className="h-3 w-3 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+            <div className="bg-blue-500/10 rounded-lg p-1.5 sm:p-4 border border-blue-500/20">
+              <div className="flex items-start gap-1 sm:gap-3">
+                <AlertCircle className="h-2.5 w-2.5 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-[10px] sm:text-sm text-blue-500">
+                  <h4 className="font-semibold text-[9px] sm:text-sm text-blue-500">
                     Withdrawal Information
                   </h4>
-                  <ul className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-2 space-y-0.5 sm:space-y-1">
-                    <li>• Withdrawals are processed within the stated timeframe</li>
-                    <li>• Additional verification may be required for large amounts</li>
-                    <li>• Network fees apply for crypto withdrawals</li>
+                  <ul className="text-[8px] sm:text-xs text-muted-foreground mt-0 sm:mt-2 space-y-0 sm:space-y-1">
+                    <li>• Processed within stated timeframe</li>
+                    <li>• Verification may be required</li>
+                    <li>• Network fees apply for crypto</li>
                   </ul>
                 </div>
               </div>
