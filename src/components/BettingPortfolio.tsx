@@ -170,69 +170,69 @@ export default function BettingPortfolio({
   return (
     <div className="space-y-6 mx-auto">
           {/* Balance & Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
             <div className="border border-border rounded-xl bg-transparent">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Wallet className="h-5 w-5 text-primary" />
-                  <span className="font-semibold text-primary">
+              <CardContent className="p-3 md:p-4">
+                <div className="flex items-center gap-2 mb-1 md:mb-2">
+                  <Wallet className="h-4 w-4 md:h-5 md:w-5 text-primary flex-shrink-0" />
+                  <span className="font-semibold text-xs md:text-sm text-primary">
                     Available Balance
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl md:text-2xl font-bold text-foreground break-words">
                   {userBalance.toFixed(3)} USDT
                 </p>
-                <p className="text-sm text-muted-foreground">Ready for casting</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Ready for casting</p>
               </CardContent>
             </div>
 
             <div className="border border-border rounded-xl bg-transparent">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Vote className="h-5 w-5 text-secondary" />
-                  <span className="font-semibold text-secondary">Total Cast</span>
+              <CardContent className="p-3 md:p-4">
+                <div className="flex items-center gap-2 mb-1 md:mb-2">
+                  <Vote className="h-4 w-4 md:h-5 md:w-5 text-secondary flex-shrink-0" />
+                  <span className="font-semibold text-xs md:text-sm text-secondary">Total Cast</span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl md:text-2xl font-bold text-foreground break-words">
                   {totalCastAmount.toFixed(3)} USDT
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Across {userBets.length} positions
                 </p>
               </CardContent>
             </div>
 
             <div className="border border-border rounded-xl bg-transparent">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Target className="h-5 w-5 text-green-500" />
-                  <span className="font-semibold text-green-500">
+              <CardContent className="p-3 md:p-4">
+                <div className="flex items-center gap-2 mb-1 md:mb-2">
+                  <Target className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
+                  <span className="font-semibold text-xs md:text-sm text-green-500">
                     Truth Accuracy
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl md:text-2xl font-bold text-foreground">
                   {truthAccuracy}%
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Verification success rate
                 </p>
               </CardContent>
             </div>
 
             <div className="border border-border rounded-xl bg-transparent">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-5 w-5 text-yellow-500" />
-                  <span className="font-semibold text-yellow-500">P&L</span>
+              <CardContent className="p-3 md:p-4">
+                <div className="flex items-center gap-2 mb-1 md:mb-2">
+                  <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-yellow-500 flex-shrink-0" />
+                  <span className="font-semibold text-xs md:text-sm text-yellow-500">P&L</span>
                 </div>
                 <p
-                  className={`text-2xl font-bold ${
+                  className={`text-xl md:text-2xl font-bold break-words ${
                     totalPnL >= 0 ? "text-green-500" : "text-red-500"
                   }`}
                 >
                   {totalPnL >= 0 ? "+" : ""}
                   {totalPnL.toFixed(3)} USDT
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   {winRate.toFixed(1)}% win rate
                 </p>
               </CardContent>
@@ -284,21 +284,21 @@ export default function BettingPortfolio({
             </Select>
           </div>
 
-          {/* Portfolio/Positions Table */}
-          <div className="border border-border rounded-xl overflow-hidden bg-transparent">
+          {/* Portfolio/Positions Table - Desktop */}
+          <div className="hidden lg:block border border-border rounded-xl overflow-hidden bg-transparent">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1200px] bg-transparent">
+              <table className="w-full bg-transparent">
                 <thead className="bg-transparent">
                   <tr className="border-b border-border">
-                    <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground w-[28%]">Market</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[7%]">Token</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[10%]">Outcome</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[9%]">Invested</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[13%]">Position</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[10%]">Final value</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[8%]">PNL</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[10%]">Date</th>
-                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground w-[5%]">Action</th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">Market</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">Token</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">Outcome</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">Invested</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">Position</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">Final value</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">PNL</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">Date</th>
+                    <th className="px-4 py-4 text-left text-sm font-medium text-muted-foreground">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border bg-transparent">
@@ -367,6 +367,80 @@ export default function BettingPortfolio({
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Portfolio/Positions Cards - Mobile */}
+          <div className="lg:hidden space-y-3">
+            {userBets.length === 0 ? (
+              <div className="border border-border rounded-xl p-8 text-center bg-transparent">
+                <p className="text-muted-foreground">No markets found. Try changing the filters.</p>
+              </div>
+            ) : (
+              userBets.map((bet) => (
+                <div key={bet.id} className="border border-border rounded-xl p-4 bg-transparent space-y-3">
+                  {/* Market Title */}
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm font-medium text-foreground flex-1 break-words">
+                      {bet.marketClaim || "Market position"}
+                    </p>
+                    {getStatusBadge(bet.status)}
+                  </div>
+
+                  {/* Position and Token */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {getPositionBadge(bet.position)}
+                    <span className="text-xs text-muted-foreground">•</span>
+                    <span className="text-xs text-muted-foreground">USDT</span>
+                    <span className="text-xs text-muted-foreground">•</span>
+                    <span className="text-xs text-muted-foreground">@ {bet.odds || 2.0}x</span>
+                  </div>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Invested</p>
+                      <p className="text-sm font-semibold text-foreground">{bet.amount.toFixed(2)} USDT</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Final Value</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {bet.status === 'won'
+                          ? (bet.actualWinning || 0).toFixed(2)
+                          : bet.status === 'active'
+                          ? (bet.potentialWinning || bet.potentialReturn || 0).toFixed(2)
+                          : '0.00'
+                        } USDT
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">PNL</p>
+                      <p className={`text-sm font-semibold ${
+                        bet.status === 'won' ? 'text-green-500' :
+                        bet.status === 'lost' ? 'text-red-500' :
+                        'text-yellow-500'
+                      }`}>
+                        {bet.status === 'won'
+                          ? `+${((bet.actualWinning || 0) - bet.amount).toFixed(2)}`
+                          : bet.status === 'lost'
+                          ? `-${bet.amount.toFixed(2)}`
+                          : '---'
+                        }
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Date</p>
+                      <p className="text-sm font-semibold text-foreground">{formatTimeAgo(bet.placedAt)}</p>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <Button variant="outline" size="sm" className="w-full">
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Details
+                  </Button>
+                </div>
+              ))
+            )}
           </div>
     </div>
   );
