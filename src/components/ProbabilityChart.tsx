@@ -219,8 +219,8 @@ export default function ProbabilityChart({
       {/* Chart */}
       <div className="w-full bg-black/30 rounded-lg p-4 relative">
         {/* BlockCast Logo - Top Right */}
-        <div className="absolute top-3 right-3 opacity-20 hover:opacity-30 transition-opacity">
-          <img src={blockcastLogo} alt="BlockCast" className="h-6 w-auto" />
+        <div className="absolute top-3 right-3 opacity-40 hover:opacity-60 transition-opacity z-10">
+          <img src={blockcastLogo} alt="BlockCast" className="h-8 w-auto" />
         </div>
 
         {filteredData && filteredData.length > 0 ? (
