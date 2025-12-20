@@ -110,7 +110,7 @@ export default function ProbabilityChart({
 
   // Determine which outcome is leading
   const isNoLeading = noPercentage > yesPercentage;
-  const leadingOutcome = isNoLeading ? 'Wrong' : 'True';
+  const leadingOutcome = isNoLeading ? 'False' : 'True';
   const leadingPercentage = isNoLeading ? noPercentage : yesPercentage;
 
   const formatCurrency = (amount: number): string => {
@@ -150,7 +150,7 @@ export default function ProbabilityChart({
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#e879f9' }}></div>
-              <span className="text-slate-300">Wrong {noPercentage.toFixed(1)}%</span>
+              <span className="text-slate-300">False {noPercentage.toFixed(1)}%</span>
             </div>
           </div>
 
@@ -274,7 +274,7 @@ export default function ProbabilityChart({
                 stroke="#e879f9"
                 strokeWidth={3}
                 dot={false}
-                name="Wrong"
+                name="False"
               />
             </LineChart>
           </ResponsiveContainer>
