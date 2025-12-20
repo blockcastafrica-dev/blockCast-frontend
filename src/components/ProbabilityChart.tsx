@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tool
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowUp, ArrowDown, Share2, Heart, Bookmark } from 'lucide-react';
+import blockcastLogo from '@/assets/blockcast logo dark BG.svg';
 
 interface ProbabilityChartProps {
   yesPercentage: number;
@@ -217,6 +218,10 @@ export default function ProbabilityChart({
 
       {/* Chart */}
       <div className="w-full bg-black/30 rounded-lg p-4 relative">
+        {/* BlockCast Logo - Top Right */}
+        <div className="absolute top-3 right-3 opacity-20 hover:opacity-30 transition-opacity">
+          <img src={blockcastLogo} alt="BlockCast" className="h-6 w-auto" />
+        </div>
 
         {filteredData && filteredData.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
