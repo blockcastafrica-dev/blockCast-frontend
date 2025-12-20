@@ -272,17 +272,14 @@ export default function LocalCurrencyWithdrawal({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100vw',
-          height: '100vh',
+          top: '64px',
+          left: '16px',
+          right: '16px',
+          bottom: '80px',
+          width: 'calc(100vw - 32px)',
+          maxHeight: 'calc(100vh - 144px)',
           transform: 'none',
-          paddingTop: '16px',
-          paddingBottom: '16px',
-          paddingLeft: '16px',
-          paddingRight: '16px',
+          padding: '20px',
         } : undefined}
         className="sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
       >
