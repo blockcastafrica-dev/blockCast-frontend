@@ -384,9 +384,9 @@ export default function LocalCurrencyWallet({
                                 </span>
                               </div>
                               {method.id === "card" && (
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-1 sm:gap-1.5">
                                   {/* Visa Logo */}
-                                  <div className="h-7 w-12 sm:h-10 sm:w-16 rounded flex items-center justify-center flex-shrink-0">
+                                  <div className="h-8 w-14 sm:h-10 sm:w-16 rounded flex items-center justify-center flex-shrink-0">
                                     <svg viewBox="0 0 141.732 141.732" className="h-full w-full">
                                       <g fill="#FFFFFF">
                                         <path d="M62.935 89.571h-9.733l6.083-37.384h9.734zM45.014 52.187L35.735 77.9l-1.098-5.537.001.002-3.275-16.812s-.396-3.366-4.617-3.366h-15.34l-.18.633s4.691.976 10.181 4.273l8.456 32.479h10.141l15.485-37.385H45.014zM121.569 89.571h8.937l-7.792-37.385h-7.824c-3.613 0-4.493 2.786-4.493 2.786L95.881 89.571h10.146l2.029-5.553h12.373l1.14 5.553zm-10.71-13.224l5.114-13.99 2.877 13.99h-7.991zM96.642 61.177l1.389-8.028s-4.286-1.63-8.754-1.63c-4.83 0-16.3 2.111-16.3 12.376 0 9.658 13.462 9.778 13.462 14.851s-12.075 4.164-16.06.965l-1.447 8.394s4.346 2.111 10.986 2.111c6.642 0 16.662-3.439 16.662-12.799 0-9.72-13.583-10.625-13.583-14.851.001-4.227 9.48-3.684 13.645-1.389z"/>
@@ -394,7 +394,7 @@ export default function LocalCurrencyWallet({
                                     </svg>
                                   </div>
                                   {/* Mastercard Logo */}
-                                  <div className="h-7 w-12 sm:h-10 sm:w-16 bg-white rounded flex items-center justify-center overflow-hidden p-0.5 flex-shrink-0">
+                                  <div className="h-8 w-14 sm:h-10 sm:w-16 bg-white rounded flex items-center justify-center overflow-hidden p-0.5 flex-shrink-0">
                                     <svg viewBox="0 0 48 32" className="h-full w-full">
                                       <circle cx="18" cy="16" r="10" fill="#EB001B"/>
                                       <circle cx="30" cy="16" r="10" fill="#F79E1B"/>
@@ -404,9 +404,9 @@ export default function LocalCurrencyWallet({
                                 </div>
                               )}
                               {method.id === "crypto" && (
-                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                <div className="flex items-center gap-1 sm:gap-1.5">
                                   {/* MetaMask Logo */}
-                                  <div className="h-6 w-6 sm:h-8 sm:w-8 rounded flex items-center justify-center p-0.5 flex-shrink-0">
+                                  <div className="h-7 w-7 sm:h-8 sm:w-8 rounded flex items-center justify-center p-0.5 flex-shrink-0">
                                     <svg viewBox="0 0 212 189" className="h-full w-full">
                                       <path d="M200.9 0L125.5 56.1 139 23.3 200.9 0z" fill="#E17726"/>
                                       <path d="M10.7 0l74.7 56.7-13.1-33.4L10.7 0zM171.6 137.4l-18.9 29 40.5 11.1 11.6-39.5-33.2-.6zM7.3 137.9l11.5 39.5 40.5-11.1-18.9-29-33.1.6z" fill="#E27625"/>
@@ -423,7 +423,7 @@ export default function LocalCurrencyWallet({
                                     </svg>
                                   </div>
                                   {/* Binance Logo */}
-                                  <div className="h-6 w-6 sm:h-8 sm:w-8 rounded flex items-center justify-center flex-shrink-0">
+                                  <div className="h-7 w-7 sm:h-8 sm:w-8 rounded flex items-center justify-center flex-shrink-0">
                                     <svg viewBox="0 0 126.61 126.61" className="h-full w-full">
                                       <g fill="#F3BA2F">
                                         <path d="M38.73 53.2l24.59-24.58 24.6 24.6 14.3-14.31L63.32 0 24.43 38.9l14.3 14.3zM0 63.31l14.3-14.3 14.31 14.3-14.31 14.3zM38.73 73.41l24.59 24.59 24.6-24.6 14.31 14.29-38.9 38.91-38.91-38.88v-.03l-.66-.66 14.3-14.3.66.66v.02zM98 63.31l14.3-14.3 14.31 14.3-14.31 14.3z"/>
@@ -432,7 +432,7 @@ export default function LocalCurrencyWallet({
                                     </svg>
                                   </div>
                                   {/* Coinbase Wallet Logo */}
-                                  <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0" style={{ background: 'linear-gradient(135deg, #2E66F8 0%, #124AEB 100%)' }}>
+                                  <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0" style={{ background: 'linear-gradient(135deg, #2E66F8 0%, #124AEB 100%)' }}>
                                     <svg viewBox="0 0 1024 1024" className="h-4 w-4 sm:h-5 sm:w-5">
                                       <path fill="#FFFFFF" d="M512 0C229.2 0 0 229.2 0 512s229.2 512 512 512 512-229.2 512-512S794.8 0 512 0zm0 896c-212.1 0-384-171.9-384-384S299.9 128 512 128s384 171.9 384 384-171.9 384-384 384z"/>
                                       <path fill="#FFFFFF" d="M512 256c-141.4 0-256 114.6-256 256s114.6 256 256 256 256-114.6 256-256-114.6-256-256-256z"/>
