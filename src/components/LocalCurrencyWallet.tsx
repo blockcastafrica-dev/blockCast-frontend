@@ -276,7 +276,7 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[90vw] sm:max-w-[600px] max-h-[85vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3 sm:p-6 gap-3 sm:gap-4">
+      <DialogContent className="w-[90vw] sm:max-w-[600px] max-h-[80vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3 sm:p-6 gap-2 sm:gap-4">
         <DialogHeader className="space-y-1 sm:space-y-2">
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl md:text-2xl">
             <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
@@ -292,7 +292,7 @@ export default function LocalCurrencyWallet({
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-2 sm:mb-4 p-2 sm:p-3 md:p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-1 sm:mb-4 p-2 sm:p-3 md:p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
