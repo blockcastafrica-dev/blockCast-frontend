@@ -64,6 +64,7 @@ import {
 import TextCounter from "./TextCounter";
 import Thumbnail from "./Thumbnail";
 import ShareModal from "./ShareModal";
+import ProbabilityChart from "./ProbabilityChart";
 // import dispute from "../assets/dispute.svg";
 
 interface MarketPageProps {
@@ -278,7 +279,7 @@ export default function MarketPage({
   };
 
   return (
-    <div className="space-y-4 mx-auto scroll-smooth"> {/*max-w-6xl --removed*/}
+    <div className="space-y-4 mx-auto scroll-smooth max-w-7xl"> {/* Added max-width for better desktop layout */}
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button
@@ -397,86 +398,15 @@ export default function MarketPage({
                 </div>
               </div>
 
-              {/* Pool Distribution */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">
-                    {t("truthVerificationPool")}
-                  </span>
-                  <span className="text-sm font-bold">
-                    {formatCurrency(market.totalPool)}
-                  </span>
-                </div>
-                <Progress
-                  value={(market.yesPool / market.totalPool) * 100}
-                  className="h-3"
-                />
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-primary">{t("truthYes")}</span>
-                    <span className="font-medium">
-                      {formatCurrency(market.yesPool)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-secondary">{t("truthNo")}</span>
-                    <span className="font-medium">
-                      {formatCurrency(market.noPool)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Odds & Stats */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className={`text-center p-4 ${market.disputable ? 'bg-foreground' : 'bg-primary/10 border-primary/20'} rounded-lg border `}>
-                  <div className="text-sm text-muted-foreground mb-1">
-                    {t("truthYes")}
-                  </div>
-                  <div className={`text-2xl font-bold ${market.disputable ? 'text-muted-foreground' : 'text-primary'} `}>
-                    {market.yesOdds.toFixed(2)}x
-                  </div>
-                </div>
-                <div className={`text-center p-4 ${market.disputable ? 'bg-foreground' : 'bg-secondary/10 border-secondary/20'}  rounded-lg border `}>
-                  <div className="text-sm text-muted-foreground mb-1">
-                    {t("truthNo")}
-                  </div>
-                  <div className={`text-2xl font-bold ${market.disputable ? 'text-muted-foreground' : 'text-secondary'}`}>
-                    {market.noOdds.toFixed(2)}x
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>
-                    {formatNumber(market.totalCasters)} {t("verifiers")}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Eye className="h-4 w-4" />
-                  <span>
-                    {formatNumber(Math.floor(Math.random() * 10000) + 5000)}{" "}
-                    {t("views")}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4" />
-                  <span>
-                    {comments.length} {t("comments")}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4" />
-                  <span>
-                    {formatNumber(Math.floor(Math.random() * 500) + 100)}{" "}
-                    {t("likes")}
-                  </span>
-                </div>
-              </div>
+              {/* Probability Chart */}
+              <ProbabilityChart
+                yesPercentage={(market.yesPool / market.totalPool) * 100}
+                noPercentage={(market.noPool / market.totalPool) * 100}
+                totalPool={market.totalPool}
+                yesPool={market.yesPool}
+                noPool={market.noPool}
+                onShare={() => setShowShareModal(true)}
+              />
             </div>
           </div>
         </CardContent>
@@ -934,15 +864,15 @@ export default function MarketPage({
           {/* Activity Tab */}
           {activeTab === "activity" && !market.disputable && (
             <div className="border border-border rounded-xl bg-transparent">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5" />
-                  Market Activity
-                </CardTitle>
-                <CardDescription>Recent trading positions and transactions</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {/* Activity Feed */}
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5" />
+                    Market Activity
+                  </CardTitle>
+                  <CardDescription>Recent trading positions and transactions</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {/* Activity Feed */}
                 {[
                   {
                     id: "1",
