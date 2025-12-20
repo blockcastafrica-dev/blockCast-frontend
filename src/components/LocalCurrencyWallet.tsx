@@ -326,7 +326,7 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-2 sm:space-y-4 px-1 sm:px-0 py-1 sm:py-0">
+          <div className="space-y-2 sm:space-y-4 px-1 sm:px-0 py-2 sm:py-0">
             <div className="space-y-3 sm:space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
