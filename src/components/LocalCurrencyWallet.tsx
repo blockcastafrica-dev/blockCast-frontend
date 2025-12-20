@@ -276,7 +276,7 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[98vw] sm:max-w-[600px] max-h-[65vh] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3.5 sm:p-6 gap-2 sm:gap-4">
+      <DialogContent className="w-[98vw] sm:max-w-[600px] max-h-[55vh] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-3.5 sm:p-6 gap-2 sm:gap-4">
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
             <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
