@@ -323,7 +323,7 @@ export default function LocalCurrencyWithdrawal({
         {/* Step 1: Choose Withdrawal Method */}
         {step === 1 && (
           <div className="space-y-2 sm:space-y-4">
-            <div className="space-y-2.5 sm:space-y-3">
+            <div className="space-y-3 sm:space-y-3">
               {withdrawalMethods.map((method) => {
                 const Icon = method.icon;
                 return (
