@@ -1181,7 +1181,7 @@ export default function MarketPage({
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                      <span className="text-4xl font-bold" style={{ color: '#c084fc' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold" style={{ color: '#7c3aed' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
                     <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
                       <div
@@ -1231,7 +1231,7 @@ export default function MarketPage({
                         style={castPosition === "no" ? {
                           background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
                           borderColor: 'rgba(192, 132, 252, 0.6)',
-                          color: '#c084fc',
+                          color: '#7c3aed',
                           boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
                         } : {}}
                       >
@@ -1366,7 +1366,7 @@ export default function MarketPage({
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                      <span className="text-4xl font-bold" style={{ color: '#c084fc' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold" style={{ color: '#7c3aed' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
                     <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
                       <div
@@ -1416,7 +1416,7 @@ export default function MarketPage({
                         style={castPosition === "no" ? {
                           background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
                           borderColor: 'rgba(192, 132, 252, 0.6)',
-                          color: '#c084fc',
+                          color: '#7c3aed',
                           boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
                         } : {}}
                       >
