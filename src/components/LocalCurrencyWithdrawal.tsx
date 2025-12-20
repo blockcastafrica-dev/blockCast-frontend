@@ -288,7 +288,7 @@ export default function LocalCurrencyWithdrawal({
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between my-4 sm:my-0 sm:mb-4 md:mb-6 p-1.5 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-purple-500/40 px-1 sm:px-0 py-3 sm:py-0">
+        <div className="flex items-center justify-between my-4 mx-2 sm:mx-0 sm:my-0 sm:mb-4 md:mb-6 p-1.5 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-purple-500/40 px-1 sm:px-0 py-3 sm:py-0">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
