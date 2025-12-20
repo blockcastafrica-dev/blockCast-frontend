@@ -60,80 +60,80 @@ export default function Footer({ onNavigate }: FooterProps) {
   // };
 
   return (
-    <footer className="bg-card border-t border-border mt-12">
-      <div className="container mx-auto px-4 py-12 lg:px-8">
+    <footer className="hidden lg:block bg-card border-t border-border mt-8 md:mt-10 lg:mt-12">
+      <div className="container mx-auto px-3 md:px-4 lg:px-4 py-8 md:py-10 lg:py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-7 lg:gap-8">
           {/* Brand Section - Tagline Removed */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
+          <div className="space-y-3 md:space-y-4 lg:space-y-4">
+            <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2">
               <button
                 onClick={handleLogoClick}
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none cursor-pointer"
+                className="flex items-center gap-1.5 md:gap-2 lg:gap-2 hover:opacity-80 transition-opacity focus:outline-none cursor-pointer"
                 aria-label="Go to Truth Markets"
               >
                 <img
                   src={blockcastLogo}
                   alt="Blockcast Logo"
-                  className="w-8 h-8 rounded-lg"
+                  className="w-7 md:w-8 lg:w-8 h-7 md:h-8 lg:h-8 rounded-lg"
                 />
                 <div>
-                  <h3 className="text-lg font-bold">Blockcast</h3>
+                  <h3 className="text-base md:text-lg lg:text-lg font-bold">Blockcast</h3>
                 </div>
               </button>
             </div>
-            <p className="text-sm text-muted-foreground max-w-xs">
+            <p className="text-xs md:text-sm lg:text-sm text-muted-foreground max-w-xs">
               Africa's first AI-powered truth verification platform. Combating
               misinformation through collective intelligence and
               blockchain-secured credibility across the continent.
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2">
               <Button
                 {...({} as any)}
                 variant="ghost"
                 size="sm"
-                className="p-2 cursor-pointer"
+                className="p-1.5 md:p-2 lg:p-2 cursor-pointer"
                 onClick={() => window.open('https://x.com/BlockCastLive', '_blank')}
               >
-                <BsTwitterX className="h-4 w-4" />
+                <BsTwitterX className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
               </Button>
               <Button
                 {...({} as any)}
                 variant="ghost"
                 size="sm"
-                className="p-2"
+                className="p-1.5 md:p-2 lg:p-2"
               >
-                <FaDiscord className="h-4 w-4" />
+                <FaDiscord className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
               </Button>
               <Button
                 {...({} as any)}
                 variant="ghost"
                 size="sm"
-                className="p-2"
+                className="p-1.5 md:p-2 lg:p-2"
               >
-                <FaTiktok className="h-4 w-4" />
+                <FaTiktok className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
               </Button>
 
               <Button
                 {...({} as any)}
                 variant="ghost"
                 size="sm"
-                className="p-2"
+                className="p-1.5 md:p-2 lg:p-2"
               >
-                <FaTelegramPlane className="h-4 w-4" />
+                <FaTelegramPlane className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
               </Button>
             </div>
-            <div className="flex items-center text-sm text-muted-foreground h-2 ">
+            <div className="flex items-center text-xs md:text-sm lg:text-sm text-muted-foreground h-2 ">
               <p>
                 &copy; {new Date().getFullYear()} Blockcast. Fighting
                 misinformation through truth.
               </p>
             </div>
-            <div className="flex items-center text-sm text-muted-foreground gap-2 h-10 md:pb-4">
+            <div className="flex items-center text-xs md:text-sm lg:text-sm text-muted-foreground gap-1.5 md:gap-2 lg:gap-2 h-10 md:pb-4">
               <p>Built on </p>
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-1.5 md:gap-2 lg:gap-2">
                 <img
-                  className="h-6 text-muted-foreground"
+                  className="h-5 md:h-6 lg:h-6 text-muted-foreground"
                   src={bnbLogo}
                   alt=""
                 />
@@ -143,8 +143,8 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
 
           {/* Truth Platform Links */}
-          <div className="space-y-4 md:block hidden">
-            <h4 className="font-semibold text-foreground">Truth Platform</h4>
+          <div className="space-y-3 md:space-y-4 lg:space-y-4">
+            <h4 className="font-semibold text-foreground text-sm md:text-base lg:text-base">Truth Platform</h4>
             <div className="space-y-2">
               {[
                 { label: "Truth Markets", icon: Globe, page: "markets" },
@@ -165,8 +165,8 @@ export default function Footer({ onNavigate }: FooterProps) {
             </div>
           </div>
           {/************* Resource Links *************/}
-          <div className="space-y-4 md:block hidden">
-            <h4 className="font-semibold text-foreground">Resources</h4>
+          <div className="space-y-3 md:space-y-4 lg:space-y-4">
+            <h4 className="font-semibold text-foreground text-sm md:text-base lg:text-base">Resources</h4>
             <div className="space-y-2">
               {[
                 { label: "How it Works", icon: "icon", page: "markets" },
@@ -190,8 +190,8 @@ export default function Footer({ onNavigate }: FooterProps) {
 
           {/*************************** Truth Support *************************/}
 
-          <div className="space-y-4 md:block hidden">
-            <h4 className="font-semibold text-foreground">Support & Legal</h4>
+          <div className="space-y-3 md:space-y-4 lg:space-y-4">
+            <h4 className="font-semibold text-foreground text-sm md:text-base lg:text-base">Support & Legal</h4>
             <div className="space-y-2">
               {[
                 { label: "About us", page: "about" },

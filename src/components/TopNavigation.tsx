@@ -153,26 +153,26 @@ export default function TopNavigation({
           {" "}
           {/* .container .max-w-7xl --removed*/}
           {/* Left: Logo and Brand */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4 md:gap-5 lg:gap-6">
+            <div className="flex items-center gap-2 md:gap-2.5 lg:gap-3">
               <button
                 onClick={handleLogoClick}
-                className="flex items-center gap-3 hover:opacity-80 transition-opacity focus:outline-none cursor-pointer"
+                className="flex items-center gap-2 md:gap-2.5 lg:gap-3 hover:opacity-80 transition-opacity focus:outline-none cursor-pointer"
                 aria-label="Go to Truth Markets"
               >
                 <img
                   src={blockcastLogo}
                   alt="Blockcast Logo"
-                  className="w-8 h-8 rounded-lg"
+                  className="w-7 md:w-8 lg:w-8 h-7 md:h-8 lg:h-8 rounded-lg"
                 />
                 <div>
-                  <h1 className="text-lg font-bold">Blockcast</h1>
+                  <h1 className="text-base md:text-lg lg:text-lg font-bold">Blockcast</h1>
                 </div>
               </button>
             </div>
 
             {/* Desktop Navigation Links - Simplified */}
-            <nav className="hidden lg:flex items-center space-x-1">
+            <nav className="hidden lg:flex items-center space-x-0.5 md:space-x-1 lg:space-x-1">
               {mainNavItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -182,13 +182,13 @@ export default function TopNavigation({
                     key={item.id}
                     variant={active ? "default" : "ghost"}
                     onClick={() => handleNavClick(item.path)}
-                    className={`gap-2 px-4 py-2 h-10 cursor-pointer ${
+                    className={`gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-2 h-9 md:h-10 lg:h-10 cursor-pointer text-sm md:text-base lg:text-base ${
                       active
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
                     <span className="font-medium">{item.label}</span>
                   </Button>
                 );
@@ -196,7 +196,7 @@ export default function TopNavigation({
             </nav>
           </div>
           {/* Right: User Actions - Simplified */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-2.5 lg:gap-3">
             {/* Language Selector - Compact */}
             {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -227,9 +227,9 @@ export default function TopNavigation({
 
             {/* Balance (Desktop) - Only show when logged in */}
             {isLoggedIn && (
-              <div className="hidden lg:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-md">
-                <Wallet className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold text-foreground">
+              <div className="hidden lg:flex items-center gap-1.5 md:gap-2 lg:gap-2 bg-muted/50 px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 rounded-md">
+                <Wallet className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4 text-primary" />
+                <span className="text-xs md:text-sm lg:text-sm font-semibold text-foreground">
                   {userBalance.toFixed(3)}
                 </span>
               </div>
@@ -240,10 +240,10 @@ export default function TopNavigation({
               <Button
                 onClick={() => setIsVisible(true)}
                 size="sm"
-                className="hidden lg:flex gap-2 px-4 py-2 cursor-pointer"
+                className="hidden lg:flex gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer"
                 style={{ backgroundColor: '#06f6ff', color: '#000000' }}
               >
-                <span className="text-lg font-bold leading-none">+</span>
+                <span className="text-base md:text-lg lg:text-lg font-bold leading-none">+</span>
                 <span className="font-medium">Add Funds</span>
               </Button>
             )}
@@ -284,14 +284,14 @@ export default function TopNavigation({
                   variant="ghost"
                   size="sm"
                   onClick={handleLogin}
-                  className="relative px-4 py-2 cursor-pointer text-primary hover:bg-primary/10"
+                  className="relative px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer text-primary hover:bg-primary/10"
                 >
                   Login
                 </Button>
                 <Button
                   size="sm"
                   onClick={handleSignUp}
-                  className="relative px-4 py-2 cursor-pointer"
+                  className="relative px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer"
                   style={{ backgroundColor: '#06f6ff', color: '#000000' }}
                 >
                   Sign Up
@@ -397,93 +397,145 @@ export default function TopNavigation({
                     </SheetTitle> */}
                   </SheetHeader>
 
-                  {/* User Profile Section */}
-                  <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg">
-                    <Avatar>
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        JD
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium">John Doe</p>
-                      <button
-                        onClick={handleCopyAddress}
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
+                  {/* Logged In State */}
+                  {isLoggedIn ? (
+                    <>
+                      {/* User Profile Section */}
+                      <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg">
+                        <Avatar>
+                          <AvatarFallback className="bg-primary text-primary-foreground">
+                            JD
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium">John Doe</p>
+                          <button
+                            onClick={handleCopyAddress}
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
+                          >
+                            <span className="font-mono">{formatAddress(walletAddress)}</span>
+                            {copied ? (
+                              <Check className="h-3 w-3 text-green-500" />
+                            ) : (
+                              <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            )}
+                          </button>
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleNavClick("/settings")}
+                          className="p-2 h-8 w-8 cursor-pointer mr-2"
+                          aria-label="Settings"
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
+
+                        {/* Theme Toggle - Compact */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={onToggleDarkMode}
+                          className="p-2 cursor-pointer"
+                        >
+                          {isDarkMode ? (
+                            <Sun className="h-4 w-4 text-primary" />
+                          ) : (
+                            <Moon className="h-4 w-4 text-primary" />
+                          )}
+                        </Button>
+                      </div>
+
+                      {/* Balance */}
+                      <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-primary/10 to-secondary/10">
+                        <div className="flex items-center gap-2">
+                          <Wallet className="h-5 w-5 text-primary" />
+                          <span className="font-medium">Balance</span>
+                        </div>
+                        <span className="font-bold text-primary">
+                          {userBalance.toFixed(3)} USDT
+                        </span>
+                      </div>
+
+                      <div
+                        onClick={() => handleNavClick("/settings", "profile")}
+                        className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
                       >
-                        <span className="font-mono">{formatAddress(walletAddress)}</span>
-                        {copied ? (
-                          <Check className="h-3 w-3 text-green-500" />
-                        ) : (
-                          <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        )}
-                      </button>
-                    </div>
+                        <User className="h-4 w-4 text-primary" />
+                        <span className="text-md text-muted-foreground">
+                          Profile
+                        </span>
+                      </div>
 
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleNavClick("/settings")}
-                      className="p-2 h-8 w-8 cursor-pointer mr-2"
-                      aria-label="Settings"
-                    >
-                      <Settings className="h-4 w-4" />
-                    </Button>
+                      <div
+                        onClick={() => handleNavClick("/settings", "portfolio")}
+                        className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
+                      >
+                        <History className="size-4 text-primary" />
+                        <span className="text-md text-muted-foreground">
+                          Activity
+                        </span>
+                      </div>
 
-                    {/* Theme Toggle - Compact */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={onToggleDarkMode}
-                      className="p-2 cursor-pointer"
-                    >
-                      {isDarkMode ? (
-                        <Sun className="h-4 w-4 text-primary" />
-                      ) : (
-                        <Moon className="h-4 w-4 text-primary" />
-                      )}
-                    </Button>
-                  </div>
+                      <div
+                        onClick={() => handleNavClick("/settings", "wallet")}
+                        className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
+                      >
+                        <Wallet className="h-4 w-4 text-primary" />
+                        <span className="text-md text-muted-foreground">
+                          My Wallet
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    /* Logged Out State */
+                    <>
+                      <div className="flex items-center justify-between gap-3 p-4 bg-muted/30 rounded-lg">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm mb-1">Welcome to Blockcast</p>
+                          <p className="text-xs text-muted-foreground">Connect your wallet to get started</p>
+                        </div>
+                        {/* Theme Toggle - Compact */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={onToggleDarkMode}
+                          className="p-2 cursor-pointer"
+                        >
+                          {isDarkMode ? (
+                            <Sun className="h-4 w-4 text-primary" />
+                          ) : (
+                            <Moon className="h-4 w-4 text-primary" />
+                          )}
+                        </Button>
+                      </div>
 
-                  {/* Balance */}
-                  <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-primary/10 to-secondary/10">
-                    <div className="flex items-center gap-2">
-                      <Wallet className="h-5 w-5 text-primary" />
-                      <span className="font-medium">Balance</span>
-                    </div>
-                    <span className="font-bold text-primary">
-                      {userBalance.toFixed(3)} USDT
-                    </span>
-                  </div>
-
-                  <div
-                    onClick={() => handleNavClick("/settings", "profile")}
-                    className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
-                  >
-                    <User className="h-4 w-4 text-primary" />
-                    <span className="text-md text-muted-foreground">
-                      Profile
-                    </span>
-                  </div>
-
-                  <div
-                    onClick={() => handleNavClick("/settings", "portfolio")}
-                    className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
-                  >
-                    <History className="size-4 text-primary" />
-                    <span className="text-md text-muted-foreground">
-                      Activity
-                    </span>
-                  </div>
-
-                  <div
-                    onClick={() => handleNavClick("/settings", "wallet")}
-                    className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
-                  >
-                    <Wallet className="h-4 w-4 text-primary" />
-                    <span className="text-md text-muted-foreground">
-                      My Wallet
-                    </span>
-                  </div>
+                      {/* Login/Sign Up Buttons */}
+                      <div className="flex gap-3 px-4 py-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            handleLogin();
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex-1"
+                        >
+                          Login
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            handleSignUp();
+                            setShowMobileMenu(false);
+                          }}
+                          className="flex-1"
+                          style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                        >
+                          Sign Up
+                        </Button>
+                      </div>
+                    </>
+                  )}
 
                   {/* Support & Legal Links */}
                   <div className="mt-4">
@@ -548,39 +600,41 @@ export default function TopNavigation({
                     accordionTitle={"Settings"}
                   /> */}
 
-                  <div className="fixed bottom-0 mb-6">
-                    {/* Language Selector Mobile */}
-                    {/* <div className="mt-3">
-                      <Select
-                        value={language}
-                        onValueChange={(value) => setLanguage(value as any)}
-                      >
-                        <SelectTrigger>
-                          <Languages className="h-4 w-4 mr-2" />
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {languageOptions.map((lang) => (
-                            <SelectItem key={lang.code} value={lang.code}>
-                              <span className="mr-2">{lang.flag}</span>
-                              {lang.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div> */}
+                  {isLoggedIn && (
+                    <div className="fixed bottom-0 mb-6">
+                      {/* Language Selector Mobile */}
+                      {/* <div className="mt-3">
+                        <Select
+                          value={language}
+                          onValueChange={(value) => setLanguage(value as any)}
+                        >
+                          <SelectTrigger>
+                            <Languages className="h-4 w-4 mr-2" />
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {languageOptions.map((lang) => (
+                              <SelectItem key={lang.code} value={lang.code}>
+                                <span className="mr-2">{lang.flag}</span>
+                                {lang.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div> */}
 
-                    {/* Log Out */}
-                    <div
-                      onClick={handleSignOut}
-                      className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
-                    >
-                      <LogOut className="h-4 w-4 text-primary" />
-                      <span className="text-md text-muted-foreground">
-                        Log Out
-                      </span>
+                      {/* Log Out */}
+                      <div
+                        onClick={handleSignOut}
+                        className="flex items-center gap-2 px-2 ml-2 cursor-pointer"
+                      >
+                        <LogOut className="h-4 w-4 text-primary" />
+                        <span className="text-md text-muted-foreground">
+                          Log Out
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </SheetContent>
               </Sheet>
             </div>

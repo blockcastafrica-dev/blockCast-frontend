@@ -276,23 +276,23 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl">
+      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-2xl">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
-              <Wallet className="h-6 w-6 text-white" />
+          <DialogTitle className="flex items-center gap-2 md:gap-3 lg:gap-3 text-xl md:text-2xl lg:text-2xl">
+            <div className="p-1.5 md:p-2 lg:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
+              <Wallet className="h-5 w-5 md:h-6 md:w-6 lg:h-6 lg:w-6 text-white" />
             </div>
             <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-bold">
               Fund Your Wallet
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300">
+          <DialogDescription className="text-slate-300 text-sm md:text-base lg:text-base">
             Add funds to start betting on truth markets
           </DialogDescription>
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-6 p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-4 md:mb-5 lg:mb-6 p-3 md:p-4 lg:p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
@@ -336,15 +336,15 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex items-start sm:items-center justify-between gap-2">
-                        <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
-                            <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                    <CardContent className="p-4">
+                      <div className="flex items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+                          <div className="w-14 h-14 flex-shrink-0 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
+                            <Icon className="h-7 w-7 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
-                              <p className="font-bold text-sm sm:text-base text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <p className="font-bold text-base text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
                               {method.popular && (
                                 <Badge
                                   className="text-xs border whitespace-nowrap"
@@ -370,7 +370,7 @@ export default function LocalCurrencyWallet({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs sm:text-sm text-slate-400 line-clamp-2 mb-2">
+                            <p className="text-sm text-slate-400 line-clamp-2 mb-2">
                               {method.description}
                             </p>
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

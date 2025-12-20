@@ -965,13 +965,13 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   return (
     <div className="space-y-6">
       {/* Hero Section - Enhanced Mobile Layout */}
-      <div className="py-4 md:py-6 lg:py-8">
-        <div className="text-center mb-4 md:mb-6">
+      <div className="py-3 md:py-5 lg:py-8">
+        <div className="text-center mb-3 md:mb-4 lg:mb-6">
           {/* Truth Markets heading removed as per requirements */}
         </div>
 
         {/* Search and Filters - Horizontal Layout Matching Image */}
-        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3 md:gap-4 lg:gap-4">
           {/* Search Bar - Left Side */}
           <div className="flex-1">
             <div className="relative">
@@ -981,19 +981,19 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 placeholder="Search markets, categories, or sources..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-9 bg-background/50 border-primary/30 focus:border-primary text-sm md:text-base"
+                className="pl-10 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 focus:border-primary text-sm md:text-base lg:text-base"
               />
             </div>
           </div>
 
           {/* Filter Dropdowns - Center */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
             <Select
               value={selectedCategory}
               onValueChange={setSelectedCategory}
             >
               <SelectTrigger
-                className="w-40 flex-1 h-11 bg-background/50 border-primary/30 text-sm"
+                className="w-full sm:w-36 md:w-40 lg:w-40 flex-1 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 text-xs md:text-sm lg:text-sm"
                 {...({} as any)}
               >
                 <SelectValue placeholder="All Categories" />
@@ -1009,7 +1009,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
             <Select value="trending" onValueChange={() => {}}>
               <SelectTrigger
-                className="w-40 md:w-32 flex-1 h-11 bg-background/50 border-primary/30 text-sm"
+                className="w-full sm:w-36 md:w-40 lg:w-40 flex-1 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 text-xs md:text-sm lg:text-sm"
                 {...({} as any)}
               >
                 <SelectValue placeholder="Trending" />
@@ -1023,7 +1023,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
             <Select value="all" onValueChange={() => {}}>
               <SelectTrigger
-                className="w-40 md:w-32 flex-1 h-11 bg-background/50 border-primary/30 text-sm"
+                className="w-full sm:w-36 md:w-40 lg:w-40 flex-1 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 text-xs md:text-sm lg:text-sm"
                 {...({} as any)}
               >
                 <SelectValue placeholder="All Types" />
@@ -1038,7 +1038,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           </div>
 
           {/* Active Markets Counter and Create Button - Right Side */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm font-medium text-muted-foreground">
@@ -1046,11 +1046,11 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               </span>
             </div>
             <Button
-              className="font-medium gap-2 h-11 px-4 hover:opacity-90 transition-opacity"
+              className="font-medium gap-2 h-9 md:h-10 lg:h-11 px-3 md:px-4 lg:px-4 text-xs md:text-sm lg:text-sm hover:opacity-90 transition-opacity"
               style={{ backgroundColor: '#06f6ff', color: '#000000' }}
               onClick={() => toast.success('Create Market feature coming soon!')}
             >
-              <span className="text-lg">+</span>
+              <span className="text-base md:text-lg lg:text-lg">+</span>
               Create Market
             </Button>
           </div>
@@ -1069,7 +1069,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
           {sortedMarkets.map((market) => (
             <div
               key={market.id}
@@ -1120,7 +1120,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               <CardHeader className="pb-2">
                 {/* 1. Market Title - Well Aligned */}
                 <div className="relative mb-3 flex items-start gap-2">
-                  <CardTitle className="text-sm md:text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors text-left flex-1">
+                  <CardTitle className="text-xs sm:text-sm md:text-base lg:text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors text-left flex-1">
                     {getClaimText(market)}
                   </CardTitle>
                   {/* Share Button - Aligned with Title */}
@@ -1179,10 +1179,10 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       e.stopPropagation();
                       handleOpenBetDialog(market, "yes");
                     }}
-                    className="flex-1 bg-transparent border-2 border-primary/50 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary h-10 text-xs md:text-sm font-bold uppercase tracking-wide shadow-lg shadow-primary/20 transition-all"
+                    className="flex-1 bg-transparent border-2 border-primary/50 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold uppercase tracking-wide shadow-lg shadow-primary/20 transition-all"
                     {...({} as any)}
                   >
-                    <TrendingUp className="h-3 w-3 mr-1" />
+                    <TrendingUp className="h-3 w-3 md:h-3.5 md:w-3.5 lg:h-3.5 lg:w-3.5 mr-1" />
                     True {market.yesOdds.toFixed(2)}x
                   </Button>
 
@@ -1193,10 +1193,10 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       e.stopPropagation();
                       handleOpenBetDialog(market, "no");
                     }}
-                    className="flex-1 bg-transparent border-2 border-secondary/50 hover:border-secondary hover:bg-secondary/5 text-secondary hover:text-secondary h-10 text-xs md:text-sm font-bold uppercase tracking-wide shadow-lg shadow-secondary/20 transition-all"
+                    className="flex-1 bg-transparent border-2 border-secondary/50 hover:border-secondary hover:bg-secondary/5 text-secondary hover:text-secondary h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold uppercase tracking-wide shadow-lg shadow-secondary/20 transition-all"
                     {...({} as any)}
                   >
-                    <TrendingDown className="h-3 w-3 mr-1" />
+                    <TrendingDown className="h-3 w-3 md:h-3.5 md:w-3.5 lg:h-3.5 lg:w-3.5 mr-1" />
                     False {market.noOdds.toFixed(2)}x
                   </Button>
                 </div>
@@ -1209,13 +1209,13 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   {/* Left Side: Category, Disputable */}
                   <div className="flex items-center gap-2 flex-1">
                     {/* Category */}
-                    <Badge variant="outline" className="text-xs h-6 px-2 flex items-center shrink-0 whitespace-nowrap">
+                    <Badge variant="outline" className="text-[10px] sm:text-xs md:text-xs lg:text-xs h-5 md:h-6 lg:h-6 px-1.5 md:px-2 lg:px-2 flex items-center shrink-0 whitespace-nowrap">
                       {market.category}
                     </Badge>
 
                     {/* Disputable */}
                     {market.disputable && (
-                      <Badge className="text-xs h-6 px-2 flex items-center bg-yellow-100 text-yellow-800 border-yellow-300 shrink-0 whitespace-nowrap">
+                      <Badge className="text-[10px] sm:text-xs md:text-xs lg:text-xs h-5 md:h-6 lg:h-6 px-1.5 md:px-2 lg:px-2 flex items-center bg-yellow-100 text-yellow-800 border-yellow-300 shrink-0 whitespace-nowrap">
                         Disputable
                       </Badge>
                     )}
@@ -1224,7 +1224,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   {/* Right Side: Pool and Expire Date */}
                   <div className="flex items-center gap-1.5 shrink-0">
                     {/* Total Pool */}
-                    <div className="flex items-center gap-1 text-xs whitespace-nowrap h-6">
+                    <div className="flex items-center gap-1 text-[10px] sm:text-xs md:text-xs lg:text-xs whitespace-nowrap h-5 md:h-6 lg:h-6">
                       <span className="text-muted-foreground">Pool:</span>
                       <span className="font-semibold">
                         {formatCurrency(market.totalPool)} USDT
@@ -1232,8 +1232,8 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </div>
 
                     {/* Expire Date */}
-                    <div className="flex items-center gap-1 text-xs whitespace-nowrap h-6">
-                      <Clock className="h-3 w-3 shrink-0" />
+                    <div className="flex items-center gap-1 text-[10px] sm:text-xs md:text-xs lg:text-xs whitespace-nowrap h-5 md:h-6 lg:h-6">
+                      <Clock className="h-2.5 w-2.5 md:h-3 md:w-3 lg:h-3 lg:w-3 shrink-0" />
                       <span className="text-muted-foreground">
                         {formatTimeRemaining(market.expiresAt)}
                       </span>

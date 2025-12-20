@@ -279,17 +279,17 @@ export default function MarketPage({
   };
 
   return (
-    <div className="space-y-4 mx-auto scroll-smooth max-w-7xl"> {/* Added max-width for better desktop layout */}
+    <div className="space-y-3 md:space-y-4 lg:space-y-4 mx-auto scroll-smooth max-w-7xl"> {/* Added max-width for better desktop layout */}
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="gap-2"
+          className="gap-1 md:gap-2 lg:gap-2 text-xs md:text-sm lg:text-sm h-8 md:h-9 lg:h-10"
           {...({} as any)}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3 w-3 md:h-4 md:w-4 lg:h-4 lg:w-4" />
           {t("backToMarkets")}
         </Button>
 
@@ -318,22 +318,22 @@ export default function MarketPage({
               </div>
             )} */}
 
-            <div className="absolute bottom-4 left-4 right-4">
+            <div className="absolute bottom-3 md:bottom-4 lg:bottom-4 left-3 md:left-4 lg:left-4 right-3 md:right-4 lg:right-4">
               <Badge
                 variant="outline"
-                className="text-xs mb-2 bg-background/80"
+                className="text-[10px] md:text-xs lg:text-xs mb-1.5 md:mb-2 lg:mb-2 bg-background/80"
               >
                 {market.category}
               </Badge>
-              <h1 className="text-xl font-bold text-white mb-2">
+              <h1 className="text-base md:text-lg lg:text-xl font-bold text-white mb-1.5 md:mb-2 lg:mb-2">
                 {getTranslatedText(market.claim, market.claimTranslations)}
               </h1>
             </div>
           </div>
         )}
 
-        <CardContent className="p-6">
-          <div className="grid lg:grid-cols-3 gap-6">
+        <CardContent className="p-4 md:p-5 lg:p-6">
+          <div className="grid lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
             {/* Market Info */}
             <div className="lg:col-span-2 space-y-4">
               <p className="text-muted-foreground">
@@ -390,7 +390,7 @@ export default function MarketPage({
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-muted/50 rounded-lg">
+      <div className="flex flex-wrap items-center gap-1 md:gap-1 lg:gap-1 p-1.5 md:p-2 lg:p-2 bg-muted/50 rounded-lg">
         {[
           market.disputable && {
             id: "dispute",
@@ -420,13 +420,13 @@ export default function MarketPage({
                 variant={activeTab === tab.id ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setActiveTab(tab.id as any)}
-                className="flex-1 gap-2"
+                className="flex-1 gap-1 md:gap-2 lg:gap-2 text-xs md:text-sm lg:text-sm h-8 md:h-9 lg:h-10 px-2 md:px-3 lg:px-4"
                 {...({} as any)}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-3 w-3 md:h-4 md:w-4 lg:h-4 lg:w-4" />
                 {tab.label}
                 {tab.count && (
-                  <Badge variant="secondary" className="ml-1 text-xs">
+                  <Badge variant="secondary" className="ml-0.5 md:ml-1 lg:ml-1 text-[10px] md:text-xs lg:text-xs">
                     {tab.count}
                   </Badge>
                 )}
@@ -1140,12 +1140,12 @@ export default function MarketPage({
           <aside className="lg:sticky lg:top-6 self-start h-fit max-h-[calc(100vh-3rem)] overflow-visible">
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
+              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex gap-6 border-b border-zinc-800/30">
+                <div className="flex gap-3 md:gap-4 lg:gap-6 border-b border-zinc-800/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-3 md:py-3.5 lg:py-4 px-4 md:px-5 lg:px-6 text-sm md:text-base lg:text-base font-semibold transition-all duration-200 relative ${
                       isBuying
                         ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
@@ -1160,7 +1160,7 @@ export default function MarketPage({
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-3 md:py-3.5 lg:py-4 px-4 md:px-5 lg:px-6 text-sm md:text-base lg:text-base font-semibold transition-all duration-200 relative ${
                       isSelling
                         ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
@@ -1176,7 +1176,7 @@ export default function MarketPage({
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-4">
+                <div className="p-4 md:p-5 lg:p-6 space-y-3 md:space-y-4 lg:space-y-4">
                   {/* Percentage Bar */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -1241,15 +1241,15 @@ export default function MarketPage({
                   </div>
 
                   {/* Amount Input */}
-                  <div className="space-y-3 pt-3">
+                  <div className="space-y-2 md:space-y-3 lg:space-y-3 pt-2 md:pt-3 lg:pt-3">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-medium text-white text-left">Amount</h3>
-                      <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                      <h3 className="text-sm md:text-base lg:text-base font-medium text-white text-left">Amount</h3>
+                      <span className="text-xs md:text-sm lg:text-sm font-medium px-3 md:px-4 lg:px-4 py-1 md:py-1.5 lg:py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
                         Available USDT {userBalance.toFixed(2)}
                       </span>
                     </div>
                     <div className="relative">
-                      <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px', fontSize: '24px' }}>
+                      <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none text-lg md:text-xl lg:text-2xl" style={{ left: '20px' }}>
                         USDT
                       </span>
                       <Input
@@ -1260,7 +1260,7 @@ export default function MarketPage({
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-16 pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px', fontSize: '24px' }}
+                        className="w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl" style={{ paddingLeft: '90px' }}
                       />
                     </div>
                   </div>
@@ -1314,7 +1314,7 @@ export default function MarketPage({
                   <Button
                     onClick={handleCustomCast}
                     disabled={!castAmount || parseFloat(castAmount) > userBalance}
-                    className="relative w-full h-14 text-lg font-bold rounded-2xl cursor-pointer"
+                    className="relative w-full h-12 md:h-13 lg:h-14 text-base md:text-lg lg:text-lg font-bold rounded-xl md:rounded-2xl lg:rounded-2xl cursor-pointer"
                     style={{ backgroundColor: '#06f6ff', color: '#000000' }}
                   >
                     Cast Position
@@ -1325,12 +1325,12 @@ export default function MarketPage({
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <div className="rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
+              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
-                <div className="flex gap-6 border-b border-zinc-800/30">
+                <div className="flex gap-3 md:gap-4 lg:gap-6 border-b border-zinc-800/30">
                   <button
                     onClick={() => setCastInterface("buy")}
-                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-3 md:py-3.5 lg:py-4 px-4 md:px-5 lg:px-6 text-sm md:text-base lg:text-base font-semibold transition-all duration-200 relative ${
                       isBuying
                         ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
@@ -1345,7 +1345,7 @@ export default function MarketPage({
                   </button>
                   <button
                     onClick={() => setCastInterface("sell")}
-                    className={`py-4 px-6 text-base font-semibold transition-all duration-200 relative ${
+                    className={`py-3 md:py-3.5 lg:py-4 px-4 md:px-5 lg:px-6 text-sm md:text-base lg:text-base font-semibold transition-all duration-200 relative ${
                       isSelling
                         ? "text-white"
                         : "text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/50 active:bg-zinc-800/70"
@@ -1361,7 +1361,7 @@ export default function MarketPage({
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-4">
+                <div className="p-4 md:p-5 lg:p-6 space-y-3 md:space-y-4 lg:space-y-4">
                   {/* Percentage Bar */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -1426,15 +1426,15 @@ export default function MarketPage({
                   </div>
 
                   {/* Amount Input */}
-                  <div className="space-y-3 pt-3">
+                  <div className="space-y-2 md:space-y-3 lg:space-y-3 pt-2 md:pt-3 lg:pt-3">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-medium text-white text-left">Amount</h3>
-                      <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                      <h3 className="text-sm md:text-base lg:text-base font-medium text-white text-left">Amount</h3>
+                      <span className="text-xs md:text-sm lg:text-sm font-medium px-3 md:px-4 lg:px-4 py-1 md:py-1.5 lg:py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
                         Available USDT {userBalance.toFixed(2)}
                       </span>
                     </div>
                     <div className="relative">
-                      <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px', fontSize: '24px' }}>
+                      <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none text-lg md:text-xl lg:text-2xl" style={{ left: '20px' }}>
                         USDT
                       </span>
                       <Input
@@ -1445,7 +1445,7 @@ export default function MarketPage({
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-16 pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" style={{ paddingLeft: '110px', fontSize: '24px' }}
+                        className="w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl" style={{ paddingLeft: '90px' }}
                       />
                     </div>
                   </div>
@@ -1499,7 +1499,7 @@ export default function MarketPage({
                   <Button
                     onClick={handleCustomCast}
                     disabled={!castAmount || parseFloat(castAmount) > userBalance}
-                    className="relative w-full h-14 text-lg font-bold rounded-2xl cursor-pointer"
+                    className="relative w-full h-12 md:h-13 lg:h-14 text-base md:text-lg lg:text-lg font-bold rounded-xl md:rounded-2xl lg:rounded-2xl cursor-pointer"
                     style={{ backgroundColor: '#06f6ff', color: '#000000' }}
                   >
                     Cast Position
