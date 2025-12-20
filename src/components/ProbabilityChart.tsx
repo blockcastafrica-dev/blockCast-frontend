@@ -149,7 +149,7 @@ export default function ProbabilityChart({
               <span className="text-slate-300">True {yesPercentage.toFixed(1)}%</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#e879f9' }}></div>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#7c3aed' }}></div>
               <span className="text-slate-300">False {noPercentage.toFixed(1)}%</span>
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function ProbabilityChart({
               />
               <Line
                 dataKey="no"
-                stroke="#e879f9"
+                stroke="#7c3aed"
                 strokeWidth={3}
                 dot={false}
                 name="False"
