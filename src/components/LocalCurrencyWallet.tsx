@@ -296,16 +296,12 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100vw',
-          height: '100vh',
-          maxWidth: '100vw',
-          maxHeight: '100vh',
-          transform: 'none',
-          borderRadius: 0,
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 'calc(100vw - 32px)',
+          maxHeight: 'calc(100vh - 120px)',
+          padding: '16px',
         } : {
           position: 'fixed',
           top: '50%',
@@ -314,7 +310,7 @@ export default function LocalCurrencyWallet({
           maxWidth: '500px',
           maxHeight: '90vh',
         }}
-        className="overflow-y-auto border-0 sm:border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 sm:rounded-lg p-4 sm:p-6"
+        className="overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">

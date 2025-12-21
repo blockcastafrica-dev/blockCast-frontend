@@ -107,19 +107,14 @@ export default function ShareModal({ isOpen, onClose, market }: ShareModalProps)
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="sm:max-w-md overflow-y-auto border-0 sm:border sm:rounded-lg p-4 sm:p-6"
+        className="sm:max-w-md overflow-y-auto"
         style={isMobile ? {
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100vw',
-          height: '100vh',
-          maxWidth: '100vw',
-          maxHeight: '100vh',
-          transform: 'none',
-          borderRadius: 0,
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 'calc(100vw - 32px)',
+          maxHeight: 'calc(100vh - 100px)',
         } : {
           position: 'fixed',
           top: '50%',
