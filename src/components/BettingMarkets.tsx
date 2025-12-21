@@ -1129,9 +1129,11 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
+                      e.preventDefault();
+                      console.log('Share button clicked for market:', market.id);
                       handleShareMarket(market);
                     }}
-                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                    className="h-8 w-8 p-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0"
                     {...({} as any)}
                   >
                     <Share2 className="h-4 w-4" />
