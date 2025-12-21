@@ -280,15 +280,8 @@ export default function LocalCurrencyWithdrawal({
           maxHeight: 'calc(100vh - 180px)',
           transform: 'none',
           padding: '20px',
-        } : {
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '600px',
-          maxHeight: '90vh',
-        }}
-        className="overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
+        } : {}}
+        className="sm:max-w-[600px] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-3 text-sm sm:text-xl md:text-2xl">
