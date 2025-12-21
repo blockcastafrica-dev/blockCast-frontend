@@ -289,23 +289,21 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: '80px',
-          left: '16px',
-          right: '16px',
-          bottom: '100px',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 180px)',
-          transform: 'none',
-          padding: '20px',
+          maxHeight: 'calc(100vh - 120px)',
+          padding: '16px',
         } : {
           position: 'fixed',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          maxWidth: '600px',
+          maxWidth: '500px',
           maxHeight: '90vh',
         }}
-        className="overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 sm:gap-4 rounded-lg"
+        className="overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
@@ -322,30 +320,30 @@ export default function LocalCurrencyWallet({
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between my-2 mx-2 sm:mx-0 sm:my-0 sm:mb-4 p-1.5 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-cyan-500/40 px-1 sm:px-0 py-2 sm:py-0">
+        <div className="flex items-center justify-between mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
                       ? "bg-gradient-to-br from-cyan-500 to-purple-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/50"
                       : "border-slate-600 text-slate-500 bg-slate-800/50"
                   }`}
                 >
                   {step > s ? (
-                    <Check className="h-3 w-3 sm:h-6 sm:w-6" />
+                    <Check className="h-3 w-3 sm:h-5 sm:w-5" />
                   ) : (
-                    <span className="font-bold text-xs sm:text-lg">{s}</span>
+                    <span className="font-bold text-[10px] sm:text-sm">{s}</span>
                   )}
                 </div>
-                <span className={`text-[9px] sm:text-xs mt-0.5 sm:mt-2 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
+                <span className={`text-[9px] sm:text-xs mt-1 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
               {s < totalSteps && (
                 <div
-                  className={`h-0.5 sm:h-1 flex-1 mx-0.5 sm:mx-2 transition-all rounded-full ${
+                  className={`h-0.5 flex-1 mx-1 sm:mx-2 transition-all rounded-full ${
                     step > s ? "bg-gradient-to-r from-cyan-500 to-purple-500" : "bg-slate-700"
                   }`}
                 />
@@ -501,16 +499,16 @@ export default function LocalCurrencyWallet({
 
         {/* Step 2: Enter Amount */}
         {step === 2 && selectedMethod && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Card className="bg-slate-900 border-cyan-500/40">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center border border-cyan-500/30">
-                    {selectedMethod.icon && <selectedMethod.icon className="h-6 w-6 text-white" />}
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center border border-cyan-500/30">
+                    {selectedMethod.icon && <selectedMethod.icon className="h-5 w-5 text-white" />}
                   </div>
                   <div>
-                    <p className="font-bold text-white">{selectedMethod.name}</p>
-                    <p className="text-xs text-cyan-400">
+                    <p className="font-bold text-white text-sm">{selectedMethod.name}</p>
+                    <p className="text-[10px] sm:text-xs text-cyan-400">
                       {selectedMethod.fees} fee • {selectedMethod.processingTime}
                     </p>
                   </div>
@@ -518,8 +516,8 @@ export default function LocalCurrencyWallet({
               </CardContent>
             </Card>
 
-            <div className="space-y-2">
-              <Label className="text-slate-200 font-medium">Select Currency</Label>
+            <div className="space-y-1.5">
+              <Label className="text-slate-200 font-medium text-sm">Select Currency</Label>
               <Select
                 value={selectedCurrency.code}
                 onValueChange={(value) => {
@@ -551,10 +549,10 @@ export default function LocalCurrencyWallet({
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-slate-200 font-medium">Amount to Deposit</Label>
+            <div className="space-y-1.5">
+              <Label className="text-slate-200 font-medium text-sm">Amount to Deposit</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base font-medium text-muted-foreground pointer-events-none">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm font-medium text-muted-foreground pointer-events-none">
                   {selectedCurrency.symbol}
                 </span>
                 <Input
@@ -562,31 +560,31 @@ export default function LocalCurrencyWallet({
                   placeholder="0.00"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="text-lg font-semibold h-12"
-                  style={{ paddingLeft: `${selectedCurrency.symbol.length * 12 + 24}px` }}
+                  className="text-base font-semibold h-10"
+                  style={{ paddingLeft: `${selectedCurrency.symbol.length * 10 + 20}px` }}
                 />
               </div>
             </div>
 
             {amount && Number(amount) > 0 && (
               <Card className="bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10 border-cyan-500/30 backdrop-blur-sm shadow-xl shadow-cyan-500/10">
-                <CardContent className="p-5 space-y-3">
+                <CardContent className="p-3 space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-400 font-medium">
+                    <span className="text-xs text-slate-400 font-medium">
                       You'll receive
                     </span>
-                    <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <span className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                       {calculateUSDT()} USDT
                     </span>
                   </div>
                   <Separator className="bg-slate-700" />
-                  <div className="flex justify-between items-center text-sm">
+                  <div className="flex justify-between items-center text-xs">
                     <span className="text-slate-400">USD equivalent</span>
                     <span className="font-semibold text-white">
                       ${(Number(amount) * selectedCurrency.rate).toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
+                  <div className="flex justify-between items-center text-xs">
                     <span className="text-slate-400">
                       Processing fee ({selectedMethod.fees})
                     </span>
@@ -598,22 +596,22 @@ export default function LocalCurrencyWallet({
               </Card>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex gap-2 pt-1">
               <Button
                 variant="outline"
                 onClick={handleBack}
-                className="flex-1 border-cyan-500/30 hover:bg-slate-800/50 hover:border-cyan-500/50 transition-all"
+                className="flex-1 border-cyan-500/30 hover:bg-slate-800/50 hover:border-cyan-500/50 transition-all h-9"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
+                <ArrowLeft className="h-4 w-4 mr-1.5" />
                 Back
               </Button>
               <Button
                 onClick={handleNext}
                 disabled={!amount || Number(amount) <= 0}
-                className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 border-0 shadow-lg shadow-cyan-500/30 transition-all"
+                className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 border-0 shadow-lg shadow-cyan-500/30 transition-all h-9"
               >
                 Continue
-                <ArrowRight className="h-4 w-4 ml-2" />
+                <ArrowRight className="h-4 w-4 ml-1.5" />
               </Button>
             </div>
           </div>
