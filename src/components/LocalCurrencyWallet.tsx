@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -161,16 +161,6 @@ export default function LocalCurrencyWallet({
   const [cardName, setCardName] = useState<string>("");
   const [cardExpiry, setCardExpiry] = useState<string>("");
   const [cardCVV, setCardCVV] = useState<string>("");
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const depositAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
   const bankAccountNumber = "1234567890";
@@ -294,23 +284,7 @@ export default function LocalCurrencyWallet({
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        style={isMobile ? {
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 120px)',
-          padding: '16px',
-        } : {
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '500px',
-          maxHeight: '90vh',
-        }}
-        className="overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg"
+        className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg p-4 sm:p-6 sm:max-w-[500px]"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
