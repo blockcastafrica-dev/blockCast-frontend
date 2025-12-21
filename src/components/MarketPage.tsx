@@ -295,8 +295,12 @@ export default function MarketPage({
 
       </div>
 
-      {/* Market Header Card */}
-      <div className="overflow-hidden border border-border rounded-xl bg-transparent">
+      {/* Main Two-Column Layout for Desktop */}
+      <div className="flex flex-col lg:flex-row" style={{ gap: '60px' }}>
+        {/* Left Column - All Content */}
+        <div className="flex-1 min-w-0 space-y-3 md:space-y-4">
+          {/* Market Header Card */}
+          <div className="overflow-hidden border border-border rounded-xl bg-transparent">
         {market.imageUrl && (
           <div className="relative h-48 overflow-hidden">
             <img
@@ -433,15 +437,10 @@ export default function MarketPage({
               </Button>
             );
           })}
-      </div>
+          </div>
 
-      <div
-        className={`grid grid-cols-1 lg:${
-          market.disputable ? "grid-cols-2" : "grid-cols-3"
-        } gap-4 items-start relative`}
-      >
-        {/* Main Content */}
-        <div className="lg:col-span-2">
+          {/* Tab Content */}
+          <div className="space-y-4">
           {/* Verify Truth Tab*/}
           {activeTab === "dispute" && market.disputable && (
             <>
@@ -1133,11 +1132,14 @@ export default function MarketPage({
               </CardContent>
             </div>
           )}
+          </div>
+          {/* End of Tab Content */}
         </div>
+        {/* End of Left Column */}
 
-        {/* Sidebar - Casting Interface */}
-        {market.disputable || (
-          <aside className="lg:sticky lg:top-6 self-start h-fit max-h-[calc(100vh-3rem)] overflow-visible">
+        {/* Right Column - Betting Modal (Desktop Only - Sticky) */}
+        {!market.disputable && (
+          <aside className="hidden lg:block lg:w-[380px] shrink-0" style={{ position: 'sticky', top: '100px', alignSelf: 'flex-start', height: 'fit-content' }}>
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
               <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
