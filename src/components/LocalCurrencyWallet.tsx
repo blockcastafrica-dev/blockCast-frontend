@@ -310,7 +310,7 @@ export default function LocalCurrencyWallet({
           maxWidth: '500px',
           maxHeight: '90vh',
         }}
-        className="overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg"
+        className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-1 sm:gap-2 rounded-lg"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
@@ -327,12 +327,12 @@ export default function LocalCurrencyWallet({
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-2 sm:mb-4 p-1.5 sm:p-3 rounded-lg bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-6 h-6 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
                       ? "bg-gradient-to-br from-cyan-500 to-purple-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/50"
                       : "border-slate-600 text-slate-500 bg-slate-800/50"
@@ -341,10 +341,10 @@ export default function LocalCurrencyWallet({
                   {step > s ? (
                     <Check className="h-3 w-3 sm:h-5 sm:w-5" />
                   ) : (
-                    <span className="font-bold text-[10px] sm:text-sm">{s}</span>
+                    <span className="font-bold text-[9px] sm:text-sm">{s}</span>
                   )}
                 </div>
-                <span className={`text-[9px] sm:text-xs mt-1 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
+                <span className={`text-[8px] sm:text-xs mt-0.5 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
@@ -361,8 +361,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-2 sm:space-y-4 px-2 sm:px-0 py-2 sm:py-0">
-            <div className="space-y-3 sm:space-y-3">
+          <div className="space-y-1.5 sm:space-y-4 px-1 sm:px-0">
+            <div className="space-y-1.5 sm:space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -371,11 +371,11 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex items-start sm:items-center justify-between gap-2 sm:gap-3">
-                        <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
-                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <CardContent className="p-2 sm:p-4">
+                      <div className="flex items-center justify-between gap-2 sm:gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                          <div className="w-8 h-8 sm:w-12 sm:h-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
+                            <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
@@ -405,7 +405,7 @@ export default function LocalCurrencyWallet({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-[10px] sm:text-sm text-slate-400 line-clamp-2 mb-1 sm:mb-2">
+                            <p className="hidden sm:block text-sm text-slate-400 line-clamp-2 mb-2">
                               {method.description}
                             </p>
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
@@ -419,7 +419,7 @@ export default function LocalCurrencyWallet({
                                 </span>
                               </div>
                               {method.id === "card" && (
-                                <div className="flex items-center gap-0.5 sm:gap-1.5">
+                                <div className="hidden sm:flex items-center gap-1.5">
                                   {/* Visa Logo */}
                                   <div className="h-6 w-10 sm:h-10 sm:w-16 rounded flex items-center justify-center flex-shrink-0">
                                     <svg viewBox="0 0 141.732 141.732" className="h-full w-full">
@@ -439,7 +439,7 @@ export default function LocalCurrencyWallet({
                                 </div>
                               )}
                               {method.id === "crypto" && (
-                                <div className="flex items-center gap-0.5 sm:gap-1.5">
+                                <div className="hidden sm:flex items-center gap-1.5">
                                   {/* MetaMask Logo */}
                                   <div className="h-5 w-5 sm:h-8 sm:w-8 rounded flex items-center justify-center p-0.5 flex-shrink-0">
                                     <svg viewBox="0 0 212 189" className="h-full w-full">
@@ -486,16 +486,16 @@ export default function LocalCurrencyWallet({
               })}
             </div>
 
-            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg p-2 sm:p-4 border border-cyan-500/30 backdrop-blur-sm">
-              <div className="flex items-start gap-1.5 sm:gap-3">
-                <div className="p-1 sm:p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
-                  <Shield className="h-3 w-3 sm:h-5 sm:w-5 text-white flex-shrink-0" />
+            <div className="hidden sm:block bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg p-4 border border-cyan-500/30 backdrop-blur-sm">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
+                  <Shield className="h-5 w-5 text-white flex-shrink-0" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[10px] sm:text-sm text-cyan-400">
+                  <h4 className="font-bold text-sm text-cyan-400">
                     🔒 Secure & Fast Deposits
                   </h4>
-                  <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
+                  <p className="text-xs text-slate-400 mt-1">
                     All deposits are secured with bank-grade encryption. Your funds are automatically converted to USDT for betting.
                   </p>
                 </div>
