@@ -316,7 +316,7 @@ export default function LocalCurrencyWallet({
               Fund Your Wallet
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300 text-[10px] sm:text-sm md:text-base">
+          <DialogDescription className="text-slate-300 text-[10px] sm:text-sm md:text-base text-left ml-2 sm:ml-0">
             Add funds to start betting
           </DialogDescription>
         </DialogHeader>
