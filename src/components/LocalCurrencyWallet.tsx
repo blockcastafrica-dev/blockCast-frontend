@@ -276,46 +276,46 @@ export default function LocalCurrencyWallet({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-2xl">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
-              <Wallet className="h-6 w-6 text-white" />
+      <DialogContent className="w-[96vw] sm:max-w-[600px] max-h-[70vh] sm:max-h-[90vh] overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl p-1.5 sm:p-6 gap-0.5 sm:gap-4">
+        <DialogHeader className="space-y-0 sm:space-y-2">
+          <DialogTitle className="flex items-center gap-1 sm:gap-2 text-xs sm:text-xl md:text-2xl">
+            <div className="p-0.5 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500 shadow-lg shadow-cyan-500/30">
+              <Wallet className="h-3 w-3 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
             </div>
             <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent font-bold">
               Fund Your Wallet
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300">
+          <DialogDescription className="text-slate-300 text-[9px] sm:text-sm md:text-base hidden sm:block">
             Add funds to start betting on truth markets
           </DialogDescription>
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-6 p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-0.5 sm:mb-4 p-1 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
                       ? "bg-gradient-to-br from-cyan-500 to-purple-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/50"
                       : "border-slate-600 text-slate-500 bg-slate-800/50"
                   }`}
                 >
                   {step > s ? (
-                    <Check className="h-6 w-6" />
+                    <Check className="h-3 w-3 sm:h-6 sm:w-6" />
                   ) : (
-                    <span className="font-bold text-lg">{s}</span>
+                    <span className="font-bold text-xs sm:text-lg">{s}</span>
                   )}
                 </div>
-                <span className={`text-xs mt-2 font-medium ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
+                <span className={`text-[9px] sm:text-xs mt-0.5 sm:mt-2 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
               {s < totalSteps && (
                 <div
-                  className={`h-1 flex-1 mx-2 transition-all rounded-full ${
+                  className={`h-0.5 sm:h-1 flex-1 mx-0.5 sm:mx-2 transition-all rounded-full ${
                     step > s ? "bg-gradient-to-r from-cyan-500 to-purple-500" : "bg-slate-700"
                   }`}
                 />
@@ -326,8 +326,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-4">
-            <div className="space-y-3">
+          <div className="space-y-0.5 sm:space-y-4">
+            <div className="space-y-0.5 sm:space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -336,18 +336,18 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex items-start sm:items-center justify-between gap-2">
-                        <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
-                            <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                    <CardContent className="p-1.5 sm:p-4">
+                      <div className="flex items-start sm:items-center justify-between gap-1 sm:gap-3">
+                        <div className="flex items-start sm:items-center gap-1 sm:gap-3 flex-1 min-w-0">
+                          <div className="w-8 h-8 sm:w-14 sm:h-14 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
+                            <Icon className="h-3.5 w-3.5 sm:h-7 sm:w-7 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
-                              <p className="font-bold text-sm sm:text-base text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
+                            <div className="flex flex-wrap items-center gap-0.5 sm:gap-2 mb-0 sm:mb-1">
+                              <p className="font-bold text-[11px] sm:text-base text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
                               {method.popular && (
                                 <Badge
-                                  className="text-xs border whitespace-nowrap"
+                                  className="text-[8px] sm:text-xs border whitespace-nowrap px-1 py-0 sm:px-2 sm:py-0.5"
                                   style={{
                                     backgroundColor: 'rgba(6, 182, 212, 0.2)',
                                     color: 'rgb(34, 211, 238)',
@@ -359,7 +359,7 @@ export default function LocalCurrencyWallet({
                               )}
                               {method.comingSoon && (
                                 <Badge
-                                  className="text-xs border whitespace-nowrap"
+                                  className="text-[8px] sm:text-xs border whitespace-nowrap px-1 py-0 sm:px-2 sm:py-0.5"
                                   style={{
                                     backgroundColor: 'rgba(168, 85, 247, 0.2)',
                                     color: 'rgb(192, 132, 252)',
@@ -370,23 +370,23 @@ export default function LocalCurrencyWallet({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs sm:text-sm text-slate-400 line-clamp-2 mb-2">
+                            <p className="text-[9px] sm:text-sm text-slate-400 line-clamp-1 mb-0.5 sm:mb-2">
                               {method.description}
                             </p>
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                                <span className="text-xs text-slate-400 flex items-center gap-1 font-medium whitespace-nowrap">
-                                  <Zap className="h-3 w-3 flex-shrink-0" />
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 sm:gap-2">
+                              <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+                                <span className="text-[9px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 font-medium whitespace-nowrap">
+                                  <Zap className="h-2 w-2 sm:h-3 sm:w-3 flex-shrink-0" />
                                   {method.processingTime}
                                 </span>
-                                <span className="text-xs text-slate-400 font-medium whitespace-nowrap">
+                                <span className="text-[9px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
                                   Fee: {method.fees}
                                 </span>
                               </div>
                               {method.id === "card" && (
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-0.5 sm:gap-1.5">
                                   {/* Visa Logo */}
-                                  <div className="h-7 w-12 sm:h-10 sm:w-16 rounded flex items-center justify-center flex-shrink-0">
+                                  <div className="h-6 w-10 sm:h-10 sm:w-16 rounded flex items-center justify-center flex-shrink-0">
                                     <svg viewBox="0 0 141.732 141.732" className="h-full w-full">
                                       <g fill="#FFFFFF">
                                         <path d="M62.935 89.571h-9.733l6.083-37.384h9.734zM45.014 52.187L35.735 77.9l-1.098-5.537.001.002-3.275-16.812s-.396-3.366-4.617-3.366h-15.34l-.18.633s4.691.976 10.181 4.273l8.456 32.479h10.141l15.485-37.385H45.014zM121.569 89.571h8.937l-7.792-37.385h-7.824c-3.613 0-4.493 2.786-4.493 2.786L95.881 89.571h10.146l2.029-5.553h12.373l1.14 5.553zm-10.71-13.224l5.114-13.99 2.877 13.99h-7.991zM96.642 61.177l1.389-8.028s-4.286-1.63-8.754-1.63c-4.83 0-16.3 2.111-16.3 12.376 0 9.658 13.462 9.778 13.462 14.851s-12.075 4.164-16.06.965l-1.447 8.394s4.346 2.111 10.986 2.111c6.642 0 16.662-3.439 16.662-12.799 0-9.72-13.583-10.625-13.583-14.851.001-4.227 9.48-3.684 13.645-1.389z"/>
@@ -394,7 +394,7 @@ export default function LocalCurrencyWallet({
                                     </svg>
                                   </div>
                                   {/* Mastercard Logo */}
-                                  <div className="h-7 w-12 sm:h-10 sm:w-16 bg-white rounded flex items-center justify-center overflow-hidden p-0.5 flex-shrink-0">
+                                  <div className="h-6 w-10 sm:h-10 sm:w-16 bg-white rounded flex items-center justify-center overflow-hidden p-0.5 flex-shrink-0">
                                     <svg viewBox="0 0 48 32" className="h-full w-full">
                                       <circle cx="18" cy="16" r="10" fill="#EB001B"/>
                                       <circle cx="30" cy="16" r="10" fill="#F79E1B"/>
@@ -404,9 +404,9 @@ export default function LocalCurrencyWallet({
                                 </div>
                               )}
                               {method.id === "crypto" && (
-                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                <div className="flex items-center gap-0.5 sm:gap-1.5">
                                   {/* MetaMask Logo */}
-                                  <div className="h-6 w-6 sm:h-8 sm:w-8 rounded flex items-center justify-center p-0.5 flex-shrink-0">
+                                  <div className="h-5 w-5 sm:h-8 sm:w-8 rounded flex items-center justify-center p-0.5 flex-shrink-0">
                                     <svg viewBox="0 0 212 189" className="h-full w-full">
                                       <path d="M200.9 0L125.5 56.1 139 23.3 200.9 0z" fill="#E17726"/>
                                       <path d="M10.7 0l74.7 56.7-13.1-33.4L10.7 0zM171.6 137.4l-18.9 29 40.5 11.1 11.6-39.5-33.2-.6zM7.3 137.9l11.5 39.5 40.5-11.1-18.9-29-33.1.6z" fill="#E27625"/>
@@ -423,7 +423,7 @@ export default function LocalCurrencyWallet({
                                     </svg>
                                   </div>
                                   {/* Binance Logo */}
-                                  <div className="h-6 w-6 sm:h-8 sm:w-8 rounded flex items-center justify-center flex-shrink-0">
+                                  <div className="h-5 w-5 sm:h-8 sm:w-8 rounded flex items-center justify-center flex-shrink-0">
                                     <svg viewBox="0 0 126.61 126.61" className="h-full w-full">
                                       <g fill="#F3BA2F">
                                         <path d="M38.73 53.2l24.59-24.58 24.6 24.6 14.3-14.31L63.32 0 24.43 38.9l14.3 14.3zM0 63.31l14.3-14.3 14.31 14.3-14.31 14.3zM38.73 73.41l24.59 24.59 24.6-24.6 14.31 14.29-38.9 38.91-38.91-38.88v-.03l-.66-.66 14.3-14.3.66.66v.02zM98 63.31l14.3-14.3 14.31 14.3-14.31 14.3z"/>
@@ -432,8 +432,8 @@ export default function LocalCurrencyWallet({
                                     </svg>
                                   </div>
                                   {/* Coinbase Wallet Logo */}
-                                  <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0" style={{ background: 'linear-gradient(135deg, #2E66F8 0%, #124AEB 100%)' }}>
-                                    <svg viewBox="0 0 1024 1024" className="h-4 w-4 sm:h-5 sm:w-5">
+                                  <div className="h-5 w-5 sm:h-8 sm:w-8 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0" style={{ background: 'linear-gradient(135deg, #2E66F8 0%, #124AEB 100%)' }}>
+                                    <svg viewBox="0 0 1024 1024" className="h-3 w-3 sm:h-5 sm:w-5">
                                       <path fill="#FFFFFF" d="M512 0C229.2 0 0 229.2 0 512s229.2 512 512 512 512-229.2 512-512S794.8 0 512 0zm0 896c-212.1 0-384-171.9-384-384S299.9 128 512 128s384 171.9 384 384-171.9 384-384 384z"/>
                                       <path fill="#FFFFFF" d="M512 256c-141.4 0-256 114.6-256 256s114.6 256 256 256 256-114.6 256-256-114.6-256-256-256z"/>
                                     </svg>
@@ -443,7 +443,7 @@ export default function LocalCurrencyWallet({
                             </div>
                           </div>
                         </div>
-                        <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-1 sm:mt-0" />
+                        <ArrowRight className="h-3 w-3 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-0.5 sm:mt-0" />
                       </div>
                     </CardContent>
                   </Card>
@@ -451,18 +451,17 @@ export default function LocalCurrencyWallet({
               })}
             </div>
 
-            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl p-4 border border-cyan-500/30 backdrop-blur-sm">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
-                  <Shield className="h-5 w-5 text-white flex-shrink-0" />
+            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg p-1.5 sm:p-4 border border-cyan-500/30 backdrop-blur-sm">
+              <div className="flex items-start gap-1 sm:gap-3">
+                <div className="p-0.5 sm:p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
+                  <Shield className="h-2.5 w-2.5 sm:h-5 sm:w-5 text-white flex-shrink-0" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-cyan-400">
+                  <h4 className="font-bold text-[9px] sm:text-sm text-cyan-400">
                     🔒 Secure & Fast Deposits
                   </h4>
-                  <p className="text-xs text-slate-400 mt-1">
-                    All deposits are secured with bank-grade encryption. Your funds
-                    are automatically converted to USDT for betting.
+                  <p className="text-[8px] sm:text-xs text-slate-400 mt-0 sm:mt-1">
+                    Deposits secured with bank-grade encryption. Funds automatically converted to USDT.
                   </p>
                 </div>
               </div>

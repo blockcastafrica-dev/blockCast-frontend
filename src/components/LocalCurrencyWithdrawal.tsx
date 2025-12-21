@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -34,7 +34,9 @@ import {
   Shield,
   CheckCircle,
   Copy,
+  Building2,
   Smartphone,
+  Bitcoin,
   Clock,
   AlertCircle,
   Check,
@@ -42,14 +44,6 @@ import {
   DollarSign,
 } from "lucide-react";
 import { toast } from "sonner";
-
-// USDT Icon Component
-const UsdtIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 32 32" className={className} fill="currentColor">
-    <circle cx="16" cy="16" r="16" fill="currentColor" opacity="0.2"/>
-    <path d="M17.922 17.383v-.002c-.11.008-.677.042-1.942.042-1.01 0-1.721-.03-1.971-.042v.003c-3.888-.171-6.79-.848-6.79-1.658 0-.809 2.902-1.486 6.79-1.66v2.644c.254.018.982.061 1.988.061 1.207 0 1.812-.05 1.925-.06v-2.643c3.88.173 6.775.85 6.775 1.658 0 .81-2.895 1.485-6.775 1.657m0-3.59v-2.366h5.414V7.819H8.595v3.608h5.414v2.365c-4.4.202-7.709 1.074-7.709 2.118 0 1.044 3.309 1.915 7.709 2.118v7.582h3.913v-7.584c4.393-.202 7.694-1.073 7.694-2.116 0-1.043-3.301-1.914-7.694-2.117" fill="currentColor"/>
-  </svg>
-);
 
 interface CurrencyOption {
   code: string;
@@ -69,7 +63,6 @@ interface WithdrawalMethod {
   processingTime: string;
   minAmount: number;
   popular?: boolean;
-  comingSoon?: boolean;
 }
 
 interface LocalCurrencyWithdrawalProps {
@@ -89,10 +82,21 @@ const africanCurrencies: CurrencyOption[] = [
 
 const withdrawalMethods: WithdrawalMethod[] = [
   {
+    id: "bank",
+    name: "Bank Transfer",
+    description: "Direct transfer to your bank account",
+    icon: Building2,
+    type: "bank",
+    fees: "1.5%",
+    processingTime: "1-3 business days",
+    minAmount: 10,
+    popular: true,
+  },
+  {
     id: "crypto",
     name: "Crypto Wallet",
     description: "Withdraw to your crypto wallet address",
-    icon: UsdtIcon,
+    icon: Bitcoin,
     type: "crypto",
     fees: "0.5%",
     processingTime: "10-30 minutes",
@@ -108,18 +112,16 @@ const withdrawalMethods: WithdrawalMethod[] = [
     fees: "1.2%",
     processingTime: "Instant - 1 hour",
     minAmount: 5,
-    comingSoon: true,
   },
   {
     id: "card",
-    name: "Credit/Debit Card",
-    description: "Withdraw to your linked card",
+    name: "Debit Card",
+    description: "Withdraw to your linked debit card",
     icon: CreditCard,
     type: "card",
     fees: "2.5%",
     processingTime: "2-5 business days",
     minAmount: 20,
-    comingSoon: true,
   },
 ];
 
@@ -134,6 +136,11 @@ export default function LocalCurrencyWithdrawal({
   const [amount, setAmount] = useState<string>("");
   const [copied, setCopied] = useState<string>("");
 
+  // Bank details state
+  const [bankName, setBankName] = useState<string>("");
+  const [accountNumber, setAccountNumber] = useState<string>("");
+  const [accountName, setAccountName] = useState<string>("");
+
   // Crypto details state
   const [cryptoAddress, setCryptoAddress] = useState<string>("");
 
@@ -143,16 +150,6 @@ export default function LocalCurrencyWithdrawal({
 
   // Card details state
   const [cardLast4, setCardLast4] = useState<string>("");
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const calculateLocalAmount = () => {
     if (!amount || isNaN(Number(amount))) return "0.00";
@@ -212,7 +209,12 @@ export default function LocalCurrencyWithdrawal({
 
   const handleComplete = () => {
     // Validate required fields based on method
-    if (selectedMethod?.type === "crypto") {
+    if (selectedMethod?.type === "bank") {
+      if (!bankName || !accountNumber || !accountName) {
+        toast.error("Please fill in all bank details");
+        return;
+      }
+    } else if (selectedMethod?.type === "crypto") {
       if (!cryptoAddress) {
         toast.error("Please enter your crypto wallet address");
         return;
@@ -243,6 +245,9 @@ export default function LocalCurrencyWithdrawal({
     setSelectedMethod(null);
     setAmount("");
     setCopied("");
+    setBankName("");
+    setAccountNumber("");
+    setAccountName("");
     setCryptoAddress("");
     setMobileNumber("");
     setMobileProvider("");
@@ -254,79 +259,59 @@ export default function LocalCurrencyWithdrawal({
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent
-        style={isMobile ? {
-          position: 'fixed',
-          top: '80px',
-          left: '16px',
-          right: '16px',
-          bottom: '100px',
-          width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 180px)',
-          transform: 'none',
-          padding: '20px',
-        } : {
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '600px',
-          maxHeight: '90vh',
-        }}
-        className="overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl gap-1.5 sm:gap-2 rounded-lg"
-      >
-        <DialogHeader className="space-y-0.5 pb-0">
-          <DialogTitle className="flex items-center gap-1.5 sm:gap-3 text-sm sm:text-xl md:text-2xl">
-            <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
-              <TrendingDown className="h-3.5 w-3.5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
+      <DialogContent className="w-[96vw] sm:max-w-[600px] max-h-[70vh] sm:max-h-[90vh] overflow-y-auto border-2 border-purple-500/50 !bg-slate-950 shadow-2xl p-1.5 sm:p-6 gap-0.5 sm:gap-4">
+        <DialogHeader className="space-y-0 sm:space-y-2">
+          <DialogTitle className="flex items-center gap-1 sm:gap-3 text-xs sm:text-xl md:text-2xl">
+            <div className="p-0.5 sm:p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
+              <TrendingDown className="h-3 w-3 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
             </div>
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-bold">
               Withdraw Funds
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-300 text-[10px] sm:text-sm md:text-base text-left ml-7 sm:ml-10">
-            Withdraw your winnings
+          <DialogDescription className="text-slate-300 text-[9px] sm:text-sm md:text-base hidden sm:block">
+            Withdraw your winnings to your preferred payment method
           </DialogDescription>
         </DialogHeader>
 
         {/* Balance Display */}
-        <div className="bg-slate-900 rounded-lg p-3 sm:p-4 border border-purple-500/40 shadow-xl shadow-purple-500/20 -mt-8">
+        <div className="bg-slate-900 rounded-lg p-1.5 sm:p-5 border border-purple-500/40 shadow-xl shadow-purple-500/20">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] sm:text-sm text-slate-400 font-medium">Available Balance</p>
-              <p className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{userBalance.toFixed(6)} USDT</p>
+              <p className="text-[9px] sm:text-sm text-slate-400 font-medium">Available Balance</p>
+              <p className="text-sm sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{userBalance.toFixed(6)} USDT</p>
             </div>
-            <div className="p-2 sm:p-2.5 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
-              <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+            <div className="p-1 sm:p-3 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30">
+              <Wallet className="h-4 w-4 sm:h-8 sm:w-8 text-white" />
             </div>
           </div>
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg bg-slate-900 border border-purple-500/40">
+        <div className="flex items-center justify-between mb-0.5 sm:mb-4 md:mb-6 p-1 sm:p-3 md:p-4 rounded-lg bg-slate-900 border border-purple-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
                       ? "bg-gradient-to-br from-purple-500 to-pink-500 border-purple-400 text-white shadow-lg shadow-purple-500/50"
                       : "border-slate-600 text-slate-500 bg-slate-800/50"
                   }`}
                 >
                   {step > s ? (
-                    <Check className="h-3 w-3 sm:h-5 sm:w-5" />
+                    <Check className="h-3 w-3 sm:h-6 sm:w-6" />
                   ) : (
-                    <span className="font-bold text-[10px] sm:text-sm">{s}</span>
+                    <span className="font-bold text-xs sm:text-lg">{s}</span>
                   )}
                 </div>
-                <span className={`text-[9px] sm:text-xs mt-1 font-medium whitespace-nowrap ${step >= s ? "text-purple-400" : "text-slate-500"}`}>
+                <span className={`text-[9px] sm:text-xs mt-0.5 sm:mt-2 font-medium whitespace-nowrap ${step >= s ? "text-purple-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
               {s < totalSteps && (
                 <div
-                  className={`h-0.5 flex-1 mx-1 sm:mx-2 transition-all rounded-full ${
+                  className={`h-0.5 sm:h-1 flex-1 mx-0.5 sm:mx-2 transition-all rounded-full ${
                     step > s ? "bg-gradient-to-r from-purple-500 to-pink-500" : "bg-slate-700"
                   }`}
                 />
@@ -337,8 +322,8 @@ export default function LocalCurrencyWithdrawal({
 
         {/* Step 1: Choose Withdrawal Method */}
         {step === 1 && (
-          <div className="space-y-3">
-            <div className="space-y-3">
+          <div className="space-y-0.5 sm:space-y-4">
+            <div className="space-y-0.5 sm:space-y-3">
               {withdrawalMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -347,18 +332,18 @@ export default function LocalCurrencyWithdrawal({
                     className="cursor-pointer hover:border-purple-500/60 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex items-start sm:items-center justify-between gap-3">
-                        <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:from-purple-500/30 group-hover:to-pink-500/30 flex items-center justify-center border border-purple-500/30 transition-all">
-                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <CardContent className="p-1.5 sm:p-4">
+                      <div className="flex items-start sm:items-center justify-between gap-1 sm:gap-3">
+                        <div className="flex items-start sm:items-center gap-1 sm:gap-3 flex-1 min-w-0">
+                          <div className="w-8 h-8 sm:w-14 sm:h-14 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:from-purple-500/30 group-hover:to-pink-500/30 flex items-center justify-center border border-purple-500/30 transition-all">
+                            <Icon className="h-3.5 w-3.5 sm:h-7 sm:w-7 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
-                              <p className="font-bold text-xs sm:text-base text-white group-hover:text-purple-400 transition-colors">{method.name}</p>
+                            <div className="flex flex-wrap items-center gap-0.5 sm:gap-2 mb-0 sm:mb-1">
+                              <p className="font-bold text-[11px] sm:text-base text-white group-hover:text-purple-400 transition-colors">{method.name}</p>
                               {method.popular && (
                                 <Badge
-                                  className="text-[9px] sm:text-xs border px-1.5 py-0 sm:px-2 sm:py-0.5"
+                                  className="text-[8px] sm:text-xs border px-1 py-0 sm:px-2 sm:py-0.5"
                                   style={{
                                     backgroundColor: 'rgba(6, 182, 212, 0.2)',
                                     color: 'rgb(34, 211, 238)',
@@ -368,37 +353,25 @@ export default function LocalCurrencyWithdrawal({
                                   Popular
                                 </Badge>
                               )}
-                              {method.comingSoon && (
-                                <Badge
-                                  className="text-[9px] sm:text-xs border whitespace-nowrap px-1.5 py-0 sm:px-2 sm:py-0.5"
-                                  style={{
-                                    backgroundColor: 'rgba(168, 85, 247, 0.2)',
-                                    color: 'rgb(192, 132, 252)',
-                                    borderColor: 'rgba(168, 85, 247, 0.5)'
-                                  }}
-                                >
-                                  Coming Soon
-                                </Badge>
-                              )}
                             </div>
-                            <p className="text-[10px] sm:text-sm text-slate-400 line-clamp-2 mb-1 sm:mb-1">
+                            <p className="text-[9px] sm:text-sm text-slate-400 line-clamp-1 mb-0.5 sm:mb-1">
                               {method.description}
                             </p>
-                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
-                              <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
-                                <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+                              <span className="text-[9px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
+                                <Clock className="h-2 w-2 sm:h-3 sm:w-3" />
                                 {method.processingTime}
                               </span>
-                              <span className="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap">
+                              <span className="text-[9px] sm:text-xs text-slate-400 whitespace-nowrap">
                                 Fee: {method.fees}
                               </span>
-                              <span className="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap">
+                              <span className="text-[9px] sm:text-xs text-slate-400 whitespace-nowrap">
                                 Min: ${method.minAmount}
                               </span>
                             </div>
                           </div>
                         </div>
-                        <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-0.5 sm:mt-0" />
+                        <ArrowRight className="h-3 w-3 sm:h-5 sm:w-5 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform mt-0.5 sm:mt-0" />
                       </div>
                     </CardContent>
                   </Card>
@@ -406,17 +379,17 @@ export default function LocalCurrencyWithdrawal({
               })}
             </div>
 
-            <div className="bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
-              <div className="flex items-start gap-2">
-                <AlertCircle className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+            <div className="bg-blue-500/10 rounded-lg p-1.5 sm:p-4 border border-blue-500/20">
+              <div className="flex items-start gap-1 sm:gap-3">
+                <AlertCircle className="h-2.5 w-2.5 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-xs sm:text-sm text-blue-500">
+                  <h4 className="font-semibold text-[9px] sm:text-sm text-blue-500">
                     Withdrawal Information
                   </h4>
-                  <ul className="text-[10px] sm:text-xs text-muted-foreground mt-1 space-y-0.5">
-                    <li>• Withdrawals are processed within the stated timeframe</li>
-                    <li>• Additional verification may be required for large amounts</li>
-                    <li>• Network fees apply for crypto withdrawals</li>
+                  <ul className="text-[8px] sm:text-xs text-muted-foreground mt-0 sm:mt-2 space-y-0 sm:space-y-1">
+                    <li>• Processed within stated timeframe</li>
+                    <li>• Verification may be required</li>
+                    <li>• Network fees apply for crypto</li>
                   </ul>
                 </div>
               </div>
@@ -558,13 +531,59 @@ export default function LocalCurrencyWithdrawal({
         {/* Step 3: Withdrawal Details */}
         {step === 3 && selectedMethod && (
           <div className="space-y-4">
+            {/* Bank Transfer Details */}
+            {selectedMethod.type === "bank" && (
+              <>
+                <Card className="bg-muted/30">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Building2 className="h-5 w-5 text-primary" />
+                      Bank Account Details
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Enter your bank account information to receive funds
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <Label>Bank Name</Label>
+                      <Input
+                        placeholder="e.g., First Bank of Nigeria"
+                        value={bankName}
+                        onChange={(e) => setBankName(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Account Number</Label>
+                      <Input
+                        placeholder="1234567890"
+                        value={accountNumber}
+                        onChange={(e) => setAccountNumber(e.target.value)}
+                        className="font-mono"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Account Name</Label>
+                      <Input
+                        placeholder="John Doe"
+                        value={accountName}
+                        onChange={(e) => setAccountName(e.target.value)}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+
             {/* Crypto Wallet Details */}
             {selectedMethod.type === "crypto" && (
               <>
                 <Card className="bg-muted/30">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center gap-2">
-                      <UsdtIcon className="h-5 w-5" />
+                      <Bitcoin className="h-5 w-5 text-primary" />
                       Crypto Wallet Address
                     </CardTitle>
                     <CardDescription className="text-xs">
