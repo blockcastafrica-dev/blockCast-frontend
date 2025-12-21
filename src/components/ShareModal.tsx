@@ -128,7 +128,7 @@ export default function ShareModal({ isOpen, onClose, market }: ShareModalProps)
             <Share2 className="h-5 w-5 text-primary" />
             Share Market
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-left">
             Invite friends to bet on this market and earn rewards together
           </DialogDescription>
         </DialogHeader>
