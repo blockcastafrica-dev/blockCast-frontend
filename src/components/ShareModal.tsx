@@ -110,11 +110,11 @@ export default function ShareModal({ isOpen, onClose, market }: ShareModalProps)
         className="sm:max-w-md overflow-y-auto"
         style={isMobile ? {
           position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 100px)',
+          top: '60px',
+          left: '16px',
+          right: '16px',
+          bottom: '70px',
+          transform: 'none',
         } : {
           position: 'fixed',
           top: '50%',
