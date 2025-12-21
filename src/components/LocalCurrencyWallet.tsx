@@ -296,7 +296,7 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: '50%',
+          top: 'calc(50% + 30px)',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           width: 'calc(100vw - 32px)',
