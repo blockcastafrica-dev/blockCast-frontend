@@ -206,9 +206,13 @@ export default function ProbabilityChart({
               variant={timeRange === range ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setTimeRange(range)}
+              style={timeRange === range ? {
+                background: '#06b6d4',
+                color: 'white',
+              } : {}}
               className={`flex-shrink-0 px-3 md:px-4 lg:px-4 rounded-full text-xs md:text-sm lg:text-sm ${
                 timeRange === range
-                  ? 'bg-white text-black hover:bg-white/90'
+                  ? 'hover:brightness-110'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
             >

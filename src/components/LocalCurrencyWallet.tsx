@@ -36,7 +36,6 @@ import {
   Copy,
   Building2,
   Smartphone,
-  Bitcoin,
   QrCode,
   Clock,
   AlertCircle,
@@ -44,6 +43,14 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+
+// USDT Icon Component
+const UsdtIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 32 32" className={className} fill="currentColor">
+    <circle cx="16" cy="16" r="16" fill="currentColor" opacity="0.2"/>
+    <path d="M17.922 17.383v-.002c-.11.008-.677.042-1.942.042-1.01 0-1.721-.03-1.971-.042v.003c-3.888-.171-6.79-.848-6.79-1.658 0-.809 2.902-1.486 6.79-1.66v2.644c.254.018.982.061 1.988.061 1.207 0 1.812-.05 1.925-.06v-2.643c3.88.173 6.775.85 6.775 1.658 0 .81-2.895 1.485-6.775 1.657m0-3.59v-2.366h5.414V7.819H8.595v3.608h5.414v2.365c-4.4.202-7.709 1.074-7.709 2.118 0 1.044 3.309 1.915 7.709 2.118v7.582h3.913v-7.584c4.393-.202 7.694-1.073 7.694-2.116 0-1.043-3.301-1.914-7.694-2.117" fill="currentColor"/>
+  </svg>
+);
 
 interface CurrencyOption {
   code: string;
@@ -95,7 +102,7 @@ const paymentMethods: PaymentMethod[] = [
     id: "crypto",
     name: "Crypto Wallet",
     description: "Deposit with MetaMask, Trust Wallet, or any crypto wallet",
-    icon: Bitcoin,
+    icon: UsdtIcon,
     type: "crypto",
     fees: "0.5%",
     processingTime: "Instant",
@@ -367,8 +374,8 @@ export default function LocalCurrencyWallet({
                     <CardContent className="p-3 sm:p-4">
                       <div className="flex items-start sm:items-center justify-between gap-2 sm:gap-3">
                         <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 sm:w-14 sm:h-14 flex-shrink-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
-                            <Icon className="h-4.5 w-4.5 sm:h-7 sm:w-7 text-white" />
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
+                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
@@ -608,7 +615,17 @@ export default function LocalCurrencyWallet({
               <Button
                 onClick={handleNext}
                 disabled={!amount || Number(amount) <= 0}
-                className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 border-0 shadow-lg shadow-cyan-500/30 transition-all h-9"
+                style={amount && Number(amount) > 0 ? {
+                  background: '#06b6d4',
+                  color: 'white',
+                  boxShadow: '0 10px 15px -3px rgba(6, 182, 212, 0.4)',
+                  opacity: 1,
+                } : {
+                  background: '#334155',
+                  color: '#94a3b8',
+                  opacity: 1,
+                }}
+                className="flex-1 border-0 transition-all h-9 hover:brightness-110"
               >
                 Continue
                 <ArrowRight className="h-4 w-4 ml-1.5" />
