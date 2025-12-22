@@ -372,7 +372,7 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3.5">
+                    <CardContent className="p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700">
