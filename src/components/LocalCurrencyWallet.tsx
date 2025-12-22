@@ -327,7 +327,7 @@ export default function LocalCurrencyWallet({
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-1.5 sm:mb-4 p-2 sm:p-3 rounded-lg bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
@@ -361,8 +361,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-2 sm:space-y-4 px-2 sm:px-0 py-2 sm:py-0">
-            <div className="space-y-3 sm:space-y-3">
+          <div className="space-y-1.5 sm:space-y-4 px-0 sm:px-0 py-0 sm:py-0">
+            <div className="space-y-1.5 sm:space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -371,7 +371,7 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3 sm:p-4">
+                    <CardContent className="p-2 sm:p-4">
                       <div className="flex items-start sm:items-center justify-between gap-2 sm:gap-3">
                         <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
                           <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
