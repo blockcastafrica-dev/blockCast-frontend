@@ -296,12 +296,11 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: '90px',
+          top: '52px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 280px)',
-          padding: '12px',
+          padding: '10px',
         } : {
           position: 'fixed',
           top: '50%',
@@ -310,7 +309,7 @@ export default function LocalCurrencyWallet({
           maxWidth: '500px',
           maxHeight: '90vh',
         }}
-        className="overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg"
+        className="overflow-visible border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-1 rounded-lg"
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
@@ -327,12 +326,12 @@ export default function LocalCurrencyWallet({
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-1.5 sm:mb-4 p-2 sm:p-3 rounded-lg bg-slate-900 border border-cyan-500/40">
+        <div className="flex items-center justify-between mb-1 sm:mb-4 p-1.5 sm:p-3 rounded-lg bg-slate-900 border border-cyan-500/40">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-6 h-6 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
                       ? "bg-gradient-to-br from-cyan-500 to-purple-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/50"
                       : "border-slate-600 text-slate-500 bg-slate-800/50"
@@ -344,7 +343,7 @@ export default function LocalCurrencyWallet({
                     <span className="font-bold text-[10px] sm:text-sm">{s}</span>
                   )}
                 </div>
-                <span className={`text-[9px] sm:text-xs mt-1 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
+                <span className={`text-[9px] sm:text-xs mt-0.5 font-medium whitespace-nowrap ${step >= s ? "text-cyan-400" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
@@ -361,8 +360,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-1.5 sm:space-y-4 px-0 sm:px-0 py-0 sm:py-0">
-            <div className="space-y-1.5 sm:space-y-3">
+          <div className="space-y-1 sm:space-y-4">
+            <div className="space-y-1 sm:space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -486,16 +485,16 @@ export default function LocalCurrencyWallet({
               })}
             </div>
 
-            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg p-2 sm:p-4 border border-cyan-500/30 backdrop-blur-sm">
+            <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg p-1.5 sm:p-4 border border-cyan-500/30 backdrop-blur-sm">
               <div className="flex items-start gap-1.5 sm:gap-3">
-                <div className="p-1 sm:p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
+                <div className="p-0.5 sm:p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
                   <Shield className="h-3 w-3 sm:h-5 sm:w-5 text-white flex-shrink-0" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[10px] sm:text-sm text-cyan-400">
+                  <h4 className="font-bold text-[9px] sm:text-sm text-cyan-400">
                     🔒 Secure & Fast Deposits
                   </h4>
-                  <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
+                  <p className="text-[9px] sm:text-xs text-slate-400 mt-0">
                     All deposits are secured with bank-grade encryption. Your funds are automatically converted to USDT for betting.
                   </p>
                 </div>
