@@ -297,7 +297,7 @@ export default function LocalCurrencyWallet({
         style={isMobile ? {
           position: 'fixed',
           top: '80px',
-          bottom: '90px',
+          bottom: '120px',
           left: '16px',
           right: '16px',
           transform: 'none',
