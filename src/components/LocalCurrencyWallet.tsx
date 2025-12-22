@@ -298,7 +298,7 @@ export default function LocalCurrencyWallet({
         className={cn(
           "overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg",
           isMobile
-            ? "fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-32px)] max-h-[calc(100vh-140px)] p-4"
+            ? "!fixed !top-[70px] !left-[50%] !-translate-x-1/2 !translate-y-0 w-[calc(100vw-32px)] max-h-[calc(100vh-160px)] p-4"
             : "fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-[500px] max-h-[90vh]"
         )}
       >
