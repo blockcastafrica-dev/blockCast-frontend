@@ -296,12 +296,12 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: '55px',
+          top: '90px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 270px)',
-          padding: '14px',
+          maxHeight: 'calc(100vh - 280px)',
+          padding: '12px',
         } : {
           position: 'fixed',
           top: '50%',
