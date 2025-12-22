@@ -375,7 +375,7 @@ export default function LocalCurrencyWallet({
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700">
+                          <div className="w-11 h-11 flex-shrink-0 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
                             <Icon className="h-5 w-5 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
