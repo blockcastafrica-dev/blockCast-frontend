@@ -362,8 +362,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-2">
-            <div className="space-y-2">
+          <div className="space-y-3">
+            <div className="space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -372,13 +372,13 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3">
+                    <CardContent className="p-4">
                       <div className="flex items-start gap-3">
-                        <div className="w-9 h-9 flex-shrink-0 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700 mt-0.5">
-                          <Icon className="h-4 w-4 text-white" />
+                        <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700 mt-0.5">
+                          <Icon className="h-5 w-5 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-0.5">
+                          <div className="flex items-center justify-between mb-1">
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
                               {method.popular && (
@@ -408,10 +408,10 @@ export default function LocalCurrencyWallet({
                             </div>
                             <ArrowRight className="h-4 w-4 flex-shrink-0 text-slate-400 group-hover:translate-x-1 transition-transform" />
                           </div>
-                          <p className="text-xs text-slate-400 mb-1">
+                          <p className="text-xs text-slate-400 mb-1.5">
                             {method.description}
                           </p>
-                          <div className="flex items-center gap-3 mb-1.5">
+                          <div className="flex items-center gap-3 mb-2">
                             <span className="text-[11px] text-slate-400 flex items-center gap-1 font-medium">
                               <Zap className="h-3 w-3 flex-shrink-0" />
                               {method.processingTime}
