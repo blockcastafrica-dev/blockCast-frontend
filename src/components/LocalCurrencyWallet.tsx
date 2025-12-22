@@ -296,12 +296,13 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: '120px',
+          top: '110px',
           left: '16px',
           right: '16px',
           transform: 'none',
           width: 'auto',
-          padding: '16px',
+          padding: '14px',
+          overflow: 'visible',
         } : {
           position: 'fixed',
           top: '50%',
@@ -312,7 +313,7 @@ export default function LocalCurrencyWallet({
         }}
         className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl"
       >
-        <DialogHeader className="space-y-0.5 mb-2">
+        <DialogHeader className="space-y-0.5 mb-1">
           <DialogTitle className="flex items-center gap-2 text-base">
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500">
               <Wallet className="h-4 w-4 text-white" />
@@ -327,7 +328,7 @@ export default function LocalCurrencyWallet({
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-3 p-2 rounded-lg bg-slate-900/80 border border-slate-700">
+        <div className="flex items-center justify-between mb-2 p-2 rounded-lg bg-slate-900/80 border border-slate-700">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
@@ -361,8 +362,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-2">
-            <div className="space-y-2">
+          <div className="space-y-3">
+            <div className="space-y-3">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
