@@ -300,7 +300,7 @@ export default function LocalCurrencyWallet({
           left: '50%',
           transform: 'translateX(-50%)',
           width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 140px)',
+          maxHeight: 'calc(100vh - 230px)',
           padding: '16px',
         } : {
           position: 'fixed',
