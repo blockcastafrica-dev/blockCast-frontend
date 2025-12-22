@@ -296,12 +296,13 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'calc(100vw - 40px)',
-          maxHeight: 'calc(100vh - 180px)',
-          padding: '20px',
+          top: '100px',
+          left: '20px',
+          right: '20px',
+          bottom: '80px',
+          transform: 'none',
+          width: 'auto',
+          padding: '16px',
           overflowY: 'auto',
         } : {
           position: 'fixed',
@@ -313,12 +314,12 @@ export default function LocalCurrencyWallet({
         }}
         className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl"
       >
-        <DialogHeader className="space-y-1 mb-2">
-          <DialogTitle className="flex items-center gap-2 text-lg">
-            <div className="p-2 rounded-lg bg-slate-800 border border-slate-700">
+        <DialogHeader className="space-y-1 mb-3">
+          <DialogTitle className="flex items-center gap-2.5 text-lg">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500">
               <Wallet className="h-5 w-5 text-white" />
             </div>
-            <span className="text-white font-semibold">
+            <span className="text-white font-bold">
               Fund Your Wallet
             </span>
           </DialogTitle>
