@@ -43,6 +43,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "./ui/utils";
 
 // USDT Icon Component
 const UsdtIcon = ({ className }: { className?: string }) => (
@@ -294,23 +295,12 @@ export default function LocalCurrencyWallet({
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        style={isMobile ? {
-          position: 'fixed',
-          top: 'calc(50% + 30px)',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 200px)',
-          padding: '16px',
-        } : {
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '500px',
-          maxHeight: '90vh',
-        }}
-        className="overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg"
+        className={cn(
+          "overflow-y-auto border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl gap-2 rounded-lg",
+          isMobile
+            ? "fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-32px)] max-h-[calc(100vh-140px)] p-4"
+            : "fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-[500px] max-h-[90vh]"
+        )}
       >
         <DialogHeader className="space-y-0.5 sm:space-y-2">
           <DialogTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-xl md:text-2xl">
