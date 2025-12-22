@@ -296,14 +296,12 @@ export default function LocalCurrencyWallet({
       <DialogContent
         style={isMobile ? {
           position: 'fixed',
-          top: '140px',
+          top: '120px',
           left: '16px',
           right: '16px',
-          maxHeight: 'calc(100vh - 220px)',
           transform: 'none',
           width: 'auto',
-          padding: '20px',
-          overflowY: 'auto',
+          padding: '16px',
         } : {
           position: 'fixed',
           top: '50%',
@@ -314,39 +312,39 @@ export default function LocalCurrencyWallet({
         }}
         className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl"
       >
-        <DialogHeader className="space-y-1 mb-3">
-          <DialogTitle className="flex items-center gap-2.5 text-lg">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500">
-              <Wallet className="h-5 w-5 text-white" />
+        <DialogHeader className="space-y-0.5 mb-2">
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500">
+              <Wallet className="h-4 w-4 text-white" />
             </div>
             <span className="text-white font-bold">
               Fund Your Wallet
             </span>
           </DialogTitle>
-          <DialogDescription className="text-slate-400 text-sm text-left">
+          <DialogDescription className="text-slate-400 text-xs text-left">
             Add funds to start betting
           </DialogDescription>
         </DialogHeader>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-4 p-3 rounded-xl bg-slate-900/80 border border-slate-700">
+        <div className="flex items-center justify-between mb-3 p-2 rounded-lg bg-slate-900/80 border border-slate-700">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
                 <div
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                  className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition-all ${
                     step >= s
                       ? "bg-slate-800 border-slate-600 text-white"
                       : "border-slate-600 text-slate-500 bg-slate-800/50"
                   }`}
                 >
                   {step > s ? (
-                    <Check className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Check className="h-3 w-3" />
                   ) : (
-                    <span className="font-semibold text-sm sm:text-base">{s}</span>
+                    <span className="font-semibold text-xs">{s}</span>
                   )}
                 </div>
-                <span className={`text-xs sm:text-sm mt-1.5 font-medium whitespace-nowrap ${step >= s ? "text-white" : "text-slate-500"}`}>
+                <span className={`text-[10px] mt-1 font-medium whitespace-nowrap ${step >= s ? "text-white" : "text-slate-500"}`}>
                   {s === 1 ? "Method" : s === 2 ? "Amount" : "Details"}
                 </span>
               </div>
@@ -363,8 +361,8 @@ export default function LocalCurrencyWallet({
 
         {/* Step 1: Choose Payment Method */}
         {step === 1 && (
-          <div className="space-y-3">
-            <div className="space-y-2.5">
+          <div className="space-y-2">
+            <div className="space-y-2">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 return (
@@ -373,15 +371,15 @@ export default function LocalCurrencyWallet({
                     className="cursor-pointer hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/30 transition-all duration-300 bg-slate-900 border-slate-700 group"
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex items-start sm:items-center justify-between gap-2 sm:gap-3">
-                        <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 flex items-center justify-center border border-cyan-500/30 transition-all">
-                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <CardContent className="p-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <div className="w-9 h-9 flex-shrink-0 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700">
+                            <Icon className="h-4 w-4 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
-                              <p className="font-bold text-xs sm:text-base text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
+                            <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+                              <p className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors">{method.name}</p>
                               {method.popular && (
                                 <Badge
                                   className="text-[9px] sm:text-xs border whitespace-nowrap px-1.5 py-0 sm:px-2 sm:py-0.5"
@@ -407,16 +405,16 @@ export default function LocalCurrencyWallet({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-[10px] sm:text-sm text-slate-400 line-clamp-2 mb-1 sm:mb-2">
+                            <p className="text-xs text-slate-400 line-clamp-1 mb-0.5">
                               {method.description}
                             </p>
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
-                              <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
-                                <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-0.5 sm:gap-1 font-medium whitespace-nowrap">
-                                  <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0" />
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] text-slate-400 flex items-center gap-0.5 font-medium">
+                                  <Zap className="h-2.5 w-2.5 flex-shrink-0" />
                                   {method.processingTime}
                                 </span>
-                                <span className="text-[10px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
+                                <span className="text-[10px] text-slate-400 font-medium">
                                   Fee: {method.fees}
                                 </span>
                               </div>
@@ -488,16 +486,16 @@ export default function LocalCurrencyWallet({
               })}
             </div>
 
-            <div className="rounded-xl p-3 border border-slate-700 bg-slate-900/50">
-              <div className="flex items-start gap-2.5">
-                <div className="p-1.5 rounded-lg bg-slate-800 border border-slate-700">
-                  <Shield className="h-4 w-4 text-slate-400 flex-shrink-0" />
+            <div className="rounded-lg p-2.5 border border-slate-700 bg-slate-900/50">
+              <div className="flex items-start gap-2">
+                <div className="p-1 rounded-md bg-slate-800 border border-slate-700">
+                  <Shield className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-white">
+                  <h4 className="font-semibold text-xs text-white">
                     🔒 Secure & Fast Deposits
                   </h4>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  <p className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">
                     All deposits are secured with bank-grade encryption. Your funds are automatically converted to USDT for betting.
                   </p>
                 </div>
