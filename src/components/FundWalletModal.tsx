@@ -269,13 +269,13 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               <div>
                 <label className="text-slate-300 text-sm font-medium mb-2 block">Amount</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">{currency.symbol}</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">{currency.symbol}&nbsp;</span>
                   <input
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0.00"
-                    className="w-full p-3 pl-10 bg-slate-900 border border-slate-700 rounded-xl text-white text-lg font-semibold focus:border-cyan-500 focus:outline-none"
+                    className="w-full p-3 pl-14 bg-slate-900 border border-slate-700 rounded-xl text-white text-lg font-semibold focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
               </div>
