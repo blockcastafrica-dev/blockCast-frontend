@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import BettingPortfolio, { UserBet } from './BettingPortfolio';
 import VerificationHistory from './VerificationHistory';
 import type { VerificationResult } from './VerificationResults';
-import LocalCurrencyWallet from './LocalCurrencyWallet';
+import FundWalletModal from './FundWalletModal';
 import LocalCurrencyWithdrawal from './LocalCurrencyWithdrawal';
 // Import the accordion components
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
@@ -871,12 +871,10 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
       </Tabs>
 
       {/* Fund Wallet Modal */}
-      {isWalletVisible && (
-        <LocalCurrencyWallet
-          visible={isWalletVisible}
-          onClose={() => setIsWalletVisible(false)}
-        />
-      )}
+      <FundWalletModal
+        isOpen={isWalletVisible}
+        onClose={() => setIsWalletVisible(false)}
+      />
       {isWithdrawVisible && (
         <LocalCurrencyWithdrawal
           visible={isWithdrawVisible}

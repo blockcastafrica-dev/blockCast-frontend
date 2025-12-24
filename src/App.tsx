@@ -9,7 +9,6 @@ import About from '@/components/About';
 import Contact from '@/components/Contact';
 import PrivacyPolicy from '@/components/PrivacyPolicy';
 import TermsOfService from '@/components/TermsOfService';
-import LocalCurrencyWallet from '@/components/LocalCurrencyWallet';
 import Onboarding from '@/components/Onboarding';
 import VerificationInput from '@/components/VerificationInput';
 import VerificationResults from '@/components/VerificationResults';
@@ -134,7 +133,6 @@ const RouterLayout = ({ userProfile, isDarkMode, handleToggleDarkMode }: {
       </main>
 
       <Footer />
-      <LocalCurrencyWallet />
       <Toaster />
     </div>
   );

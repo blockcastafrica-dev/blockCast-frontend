@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Settings as SettingsIcon, User, Bell, Shield, Globe, Palette, Database, Smartphone, Languages, Moon, Sun, Volume2, VolumeX, Wallet, History } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import LocalCurrencyWallet from '@/components/LocalCurrencyWallet';
+import FundWalletModal from '@/components/FundWalletModal';
 import WithdrawWallet from '@/components/WithdrawWallet';
 
 export default function SettingsPage() {
@@ -714,12 +714,10 @@ export default function SettingsPage() {
       </Tabs>
 
       {/* Fund Wallet Modal */}
-      {showFundWallet && (
-        <LocalCurrencyWallet
-          visible={showFundWallet}
-          onClose={() => setShowFundWallet(false)}
-        />
-      )}
+      <FundWalletModal
+        isOpen={showFundWallet}
+        onClose={() => setShowFundWallet(false)}
+      />
 
       {/* Withdraw Modal */}
       {showWithdraw && (
