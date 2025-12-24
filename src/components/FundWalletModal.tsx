@@ -64,13 +64,11 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
       <div
         style={{
           position: 'absolute',
-          left: '16px',
-          right: '16px',
-          top: '96px',
-          bottom: '80px',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
           backgroundColor: '#0f1419',
-          border: '1px solid rgba(6, 182, 212, 0.5)',
-          borderRadius: '16px',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
