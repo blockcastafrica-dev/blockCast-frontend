@@ -183,16 +183,34 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0.00"
-                    className="w-full p-3 pl-8 bg-[#1a1f26] border border-gray-700 rounded-xl text-white text-lg focus:border-cyan-500 focus:outline-none"
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      paddingLeft: '32px',
+                      backgroundColor: '#1a1f26',
+                      border: '1px solid #374151',
+                      borderRadius: '12px',
+                      color: 'white',
+                      fontSize: '18px',
+                      outline: 'none'
+                    }}
                   />
                 </div>
               </div>
 
               {isAmountValid && (
-                <div className="p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
-                  <div className="flex justify-between">
+                <div style={{ padding: '16px', backgroundColor: 'rgba(6, 182, 212, 0.1)', border: '1px solid rgba(6, 182, 212, 0.3)', borderRadius: '12px' }}>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-gray-400 text-sm">Amount</span>
+                    <span className="text-white">${Number(amount).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-gray-400 text-sm">Fee ({method === "crypto" ? "0.5%" : method === "mobile" ? "1.2%" : "2.9%"})</span>
+                    <span style={{ color: '#f97316' }}>-${(Number(amount) * (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029)).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-gray-700">
                     <span className="text-gray-400 text-sm">You'll receive</span>
-                    <span className="text-cyan-400 font-bold">{Number(amount).toFixed(2)} USDT</span>
+                    <span style={{ color: '#06b6d4', fontWeight: 'bold' }}>{(Number(amount) * (1 - (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029))).toFixed(2)} USDT</span>
                   </div>
                 </div>
               )}
