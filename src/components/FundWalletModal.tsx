@@ -1,6 +1,60 @@
 import { useState } from "react";
-import { X, Wallet, CreditCard, Smartphone, Copy, Check, ChevronRight, ArrowLeft, Shield } from "lucide-react";
+import { X, Wallet, CreditCard, Smartphone, Copy, Check, ChevronRight, ArrowLeft, Shield, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+
+interface NetworkOption {
+  id: string;
+  name: string;
+  token: string;
+  address: string;
+  minDeposit: number;
+  confirmations: number;
+  estimatedTime: string;
+  icon: string;
+}
+
+const networks: NetworkOption[] = [
+  {
+    id: "bep20",
+    name: "BNB Smart Chain",
+    token: "USDT (BEP20)",
+    address: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    minDeposit: 10,
+    confirmations: 15,
+    estimatedTime: "~3 minutes",
+    icon: "🟡"
+  },
+  {
+    id: "erc20",
+    name: "Ethereum",
+    token: "USDT (ERC20)",
+    address: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    minDeposit: 50,
+    confirmations: 12,
+    estimatedTime: "~5 minutes",
+    icon: "⟠"
+  },
+  {
+    id: "base",
+    name: "Base",
+    token: "USDT (Base)",
+    address: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    minDeposit: 10,
+    confirmations: 10,
+    estimatedTime: "~2 minutes",
+    icon: "🔵"
+  },
+  {
+    id: "trc20",
+    name: "Tron",
+    token: "USDT (TRC20)",
+    address: "TJYvKLZwC9f5HqJKx4qJKx4qJKx4qJKx4q",
+    minDeposit: 5,
+    confirmations: 20,
+    estimatedTime: "~3 minutes",
+    icon: "🔺"
+  },
+];
 
 interface FundWalletModalProps {
   isOpen: boolean;
@@ -37,8 +91,8 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
   const [cardCVV, setCardCVV] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [provider, setProvider] = useState("");
-
-  const depositAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkOption>(networks[0]);
+  const [transactionId, setTransactionId] = useState("");
 
   const resetAndClose = () => {
     setStep(1);
@@ -51,18 +105,33 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
     setCardCVV("");
     setPhoneNumber("");
     setProvider("");
+    setSelectedNetwork(networks[0]);
+    setTransactionId("");
     onClose();
   };
 
-  // Convert amount to USD
-  const amountInUSD = amount ? Number(amount) / currency.rate : 0;
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(depositAddress);
+  const handleCopyAddress = async () => {
+    await navigator.clipboard.writeText(selectedNetwork.address);
     setCopied(true);
     toast.success("Address copied!");
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const handleCryptoSubmit = () => {
+    if (!transactionId.trim()) {
+      toast.error("Please enter your transaction ID/hash");
+      return;
+    }
+    if (amountInUSD < selectedNetwork.minDeposit) {
+      toast.error(`Minimum deposit is ${selectedNetwork.minDeposit} USDT for ${selectedNetwork.name}`);
+      return;
+    }
+    toast.success("Deposit submitted! We'll verify your transaction shortly.");
+    resetAndClose();
+  };
+
+  // Convert amount to USD
+  const amountInUSD = amount ? Number(amount) / currency.rate : 0;
 
   const handleSubmit = () => {
     toast.success("Payment initiated successfully!");
@@ -101,8 +170,8 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
           backgroundColor: '#0f1419',
           borderRadius: '16px',
           border: '1px solid #1f2937',
-          width: '90%',
-          maxWidth: '420px',
+          width: '95%',
+          maxWidth: '480px',
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
@@ -119,7 +188,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
             {step > 1 && (
               <button
                 type="button"
-                onClick={() => setStep(step === 3 ? 2 : 1)}
+                onClick={() => setStep(step === 3 && method === "crypto" ? 1 : step === 3 ? 2 : 1)}
                 className="p-1"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-400" />
@@ -157,9 +226,9 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
           {/* Step 1: Select Method */}
           {step === 1 && (
             <div className="space-y-3">
-              {/* Crypto */}
+              {/* Crypto - skip currency, go to step 3 */}
               <button
-                onClick={() => { setMethod("crypto"); setStep(2); }}
+                onClick={() => { setMethod("crypto"); setStep(3); }}
                 className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
@@ -393,21 +462,96 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
 
               {/* Crypto */}
               {method === "crypto" && (
-                <>
-                  <p className="text-gray-300 text-sm text-center">Send <span className="text-cyan-400 font-bold">USDT {amountInUSD.toFixed(2)}</span> to:</p>
-                  <div className="p-3 bg-[#1a1f26] border border-gray-700 rounded-xl flex items-center gap-2">
-                    <code className="text-cyan-400 text-xs flex-1 break-all">{depositAddress}</code>
-                    <button onClick={handleCopy} className="p-2 bg-gray-800 rounded-lg">
-                      {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
-                    </button>
+                <div className="space-y-4">
+                  {/* USDT Amount Input */}
+                  <div>
+                    <label className="text-gray-300 text-sm mb-2 block">Amount (USDT)</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">USDT</span>
+                      <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        placeholder="0.00"
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          paddingLeft: '60px',
+                          backgroundColor: '#1a1f26',
+                          border: '1px solid #374151',
+                          borderRadius: '12px',
+                          color: 'white',
+                          fontSize: '18px',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                    {amount && Number(amount) > 0 && (
+                      <p className="text-gray-500 text-xs mt-1">
+                        ≈ ${Number(amount).toFixed(2)} USD
+                      </p>
+                    )}
                   </div>
+
+                  {/* Network Selection */}
+                  <div>
+                    <label className="text-gray-300 text-sm mb-2 block">Select Network</label>
+                    <select
+                      value={selectedNetwork.id}
+                      onChange={(e) => setSelectedNetwork(networks.find(n => n.id === e.target.value) || networks[0])}
+                      className="w-full p-3 bg-[#1a1f26] border border-gray-700 rounded-xl text-white focus:border-cyan-500 focus:outline-none"
+                    >
+                      {networks.map((network) => (
+                        <option key={network.id} value={network.id}>
+                          {network.name} - {network.token}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Address */}
+                  {amount && Number(amount) > 0 && (
+                    <div className="p-4 bg-[#1a1f26] rounded-xl border border-gray-700 space-y-3">
+                      <p className="text-gray-300 text-sm text-center">
+                        Send <span className="text-cyan-400 font-bold">USDT {Number(amount).toFixed(2)}</span> to:
+                      </p>
+                      <div className="flex items-center gap-2 p-2 bg-gray-800 rounded-lg">
+                        <code className="text-cyan-400 text-xs flex-1 break-all">{selectedNetwork.address}</code>
+                        <button onClick={handleCopyAddress} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+                          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
+                        </button>
+                      </div>
+                      <p className="text-gray-500 text-xs text-center">
+                        Min: {selectedNetwork.minDeposit} USDT • Arrival: {selectedNetwork.estimatedTime}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Warning */}
+                  <div className="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+                    <AlertTriangle className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-yellow-500/80 text-xs">
+                      Only send <span className="font-bold">{selectedNetwork.token}</span> on <span className="font-bold">{selectedNetwork.name}</span>. Wrong network = lost funds.
+                    </p>
+                  </div>
+
+                  {/* Done Button */}
                   <button
                     onClick={handleSubmit}
-                    style={{ backgroundColor: '#06f6ff', color: 'black', padding: '12px', borderRadius: '12px', width: '100%', fontWeight: 600 }}
+                    disabled={!amount || Number(amount) <= 0}
+                    style={{
+                      backgroundColor: amount && Number(amount) > 0 ? '#06f6ff' : '#334155',
+                      color: amount && Number(amount) > 0 ? 'black' : 'white',
+                      padding: '12px',
+                      borderRadius: '12px',
+                      width: '100%',
+                      fontWeight: 600,
+                      cursor: amount && Number(amount) > 0 ? 'pointer' : 'not-allowed'
+                    }}
                   >
-                    Send
+                    I've Sent the Payment
                   </button>
-                </>
+                </div>
               )}
 
               {/* Mobile Money */}

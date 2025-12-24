@@ -720,12 +720,10 @@ export default function SettingsPage() {
       />
 
       {/* Withdraw Modal */}
-      {showWithdraw && (
-        <WithdrawWallet
-          visible={showWithdraw}
-          onClose={() => setShowWithdraw(false)}
-        />
-      )}
+      <WithdrawWallet
+        isOpen={showWithdraw}
+        onClose={() => setShowWithdraw(false)}
+      />
     </div>
   );
 }
