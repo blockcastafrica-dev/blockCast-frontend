@@ -230,3 +230,18 @@ html {
   opacity: 0.7;
   z-index: 1;
 }
+
+/* Mobile dialog positioning - ensures modal fits between header and footer */
+@media (max-width: 639px) {
+  .dialog-content-mobile {
+    top: 70px !important;
+    bottom: 90px !important;
+    left: 16px !important;
+    right: 16px !important;
+    transform: none !important;
+    max-width: none !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    width: auto !important;
+  }
+}

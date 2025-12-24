@@ -161,16 +161,6 @@ export default function LocalCurrencyWallet({
   const [cardName, setCardName] = useState<string>("");
   const [cardExpiry, setCardExpiry] = useState<string>("");
   const [cardCVV, setCardCVV] = useState<string>("");
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const depositAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
   const bankAccountNumber = "1234567890";
@@ -294,23 +284,6 @@ export default function LocalCurrencyWallet({
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        style={isMobile ? {
-          position: 'fixed',
-          top: '70px',
-          left: '16px',
-          right: '16px',
-          transform: 'none',
-          width: 'auto',
-          padding: '16px',
-          overflow: 'visible',
-        } : {
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '500px',
-          maxHeight: '90vh',
-        }}
         className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl"
       >
         <DialogHeader className="space-y-0.5 mb-1">
