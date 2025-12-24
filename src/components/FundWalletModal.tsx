@@ -62,7 +62,19 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
 
       {/* Modal */}
       <div
-        className="absolute left-4 right-4 top-24 bottom-20 bg-[#0f1419] border border-cyan-500/50 rounded-2xl flex flex-col overflow-hidden"
+        style={{
+          position: 'absolute',
+          left: '16px',
+          right: '16px',
+          top: '96px',
+          bottom: '80px',
+          backgroundColor: '#0f1419',
+          border: '1px solid rgba(6, 182, 212, 0.5)',
+          borderRadius: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
