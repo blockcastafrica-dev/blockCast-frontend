@@ -50,7 +50,7 @@ import blockcastLogo from "@/assets/4714a7efb088ecf7991d3a7cb494d86ff45fc844.png
 import FooterAccordion from './FooterAccordion';
 import NavAccordion from "./NavAccordion";
 import FundWalletModal from "./FundWalletModal";
-import LocalCurrencyWithdrawal from "./LocalCurrencyWithdrawal";
+import WithdrawWallet from "./WithdrawWallet";
 import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
 
@@ -753,10 +753,9 @@ export default function TopNavigation({
         onClose={() => setIsVisible(false)}
       />
       {isWithdrawalVisible && (
-        <LocalCurrencyWithdrawal
-          visible={isWithdrawalVisible}
+        <WithdrawWallet
+          isOpen={isWithdrawalVisible}
           onClose={() => setIsWithdrawalVisible(false)}
-          userBalance={userBalance}
         />
       )}
     </>

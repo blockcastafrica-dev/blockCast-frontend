@@ -16,7 +16,7 @@ import BettingPortfolio, { UserBet } from './BettingPortfolio';
 import VerificationHistory from './VerificationHistory';
 import type { VerificationResult } from './VerificationResults';
 import FundWalletModal from './FundWalletModal';
-import LocalCurrencyWithdrawal from './LocalCurrencyWithdrawal';
+import WithdrawWallet from './WithdrawWallet';
 // Import the accordion components
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 
@@ -876,10 +876,9 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
         onClose={() => setIsWalletVisible(false)}
       />
       {isWithdrawVisible && (
-        <LocalCurrencyWithdrawal
-          visible={isWithdrawVisible}
+        <WithdrawWallet
+          isOpen={isWithdrawVisible}
           onClose={() => setIsWithdrawVisible(false)}
-          userBalance={userBalance}
         />
       )}
     </div>
