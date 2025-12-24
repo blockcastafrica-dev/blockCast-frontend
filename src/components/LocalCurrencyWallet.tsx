@@ -161,6 +161,14 @@ export default function LocalCurrencyWallet({
   const [cardName, setCardName] = useState<string>("");
   const [cardExpiry, setCardExpiry] = useState<string>("");
   const [cardCVV, setCardCVV] = useState<string>("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const depositAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
   const bankAccountNumber = "1234567890";
@@ -281,10 +289,23 @@ export default function LocalCurrencyWallet({
 
   const totalSteps = 3;
 
+  const mobileStyles: React.CSSProperties = isMobile ? {
+    position: 'fixed',
+    top: '100px',
+    bottom: '80px',
+    left: '16px',
+    right: '16px',
+    transform: 'none',
+    maxWidth: 'none',
+    width: 'auto',
+    overflowY: 'auto',
+  } : {};
+
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
         className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl"
+        style={mobileStyles}
       >
         <DialogHeader className="space-y-0.5 mb-1">
           <DialogTitle className="flex items-center gap-2 text-base">
