@@ -125,7 +125,15 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
       />
 
       {/* Modal */}
-      <div className="fixed z-[110] inset-x-4 top-[100px] bottom-[80px] sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md sm:max-h-[85vh] bg-slate-950 border-2 border-cyan-500/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+      <div
+        className="fixed z-[110] bg-slate-950 border-2 border-cyan-500/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+        style={{
+          top: '100px',
+          bottom: '80px',
+          left: '16px',
+          right: '16px',
+        }}
+      >
 
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-800">
