@@ -298,23 +298,17 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               )}
 
               {/* Continue Button */}
-              {amount && Number(amount) > 0 ? (
-                <button
-                  onClick={() => setStep("details")}
-                  className="w-full py-3 text-white font-semibold rounded-xl transition-all"
-                  style={{ backgroundColor: '#06b6d4', boxShadow: '0 10px 15px -3px rgba(6, 182, 212, 0.3)' }}
-                >
-                  Continue
-                </button>
-              ) : (
-                <button
-                  disabled
-                  className="w-full py-3 text-white font-semibold rounded-xl transition-all cursor-not-allowed"
-                  style={{ backgroundColor: '#334155' }}
-                >
-                  Continue
-                </button>
-              )}
+              <button
+                onClick={() => amount && Number(amount) > 0 && setStep("details")}
+                disabled={!amount || Number(amount) <= 0}
+                className={`w-full py-3 text-white font-semibold rounded-xl transition-all ${
+                  amount && Number(amount) > 0
+                    ? 'bg-[#06b6d4] shadow-[0_10px_15px_-3px_rgba(6,182,212,0.3)]'
+                    : 'bg-[#334155] cursor-not-allowed'
+                }`}
+              >
+                Continue
+              </button>
             </div>
           )}
 
