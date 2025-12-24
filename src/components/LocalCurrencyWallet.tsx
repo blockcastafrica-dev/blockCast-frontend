@@ -289,23 +289,14 @@ export default function LocalCurrencyWallet({
 
   const totalSteps = 3;
 
-  const mobileStyles: React.CSSProperties = isMobile ? {
-    position: 'fixed',
-    top: '100px',
-    bottom: '80px',
-    left: '16px',
-    right: '16px',
-    transform: 'none',
-    maxWidth: 'none',
-    width: 'auto',
-    overflowY: 'auto',
-  } : {};
-
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl"
-        style={mobileStyles}
+        className={`border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl ${
+          isMobile
+            ? '!fixed !top-[100px] !bottom-[80px] !left-4 !right-4 !transform-none !max-w-none !w-auto !overflow-y-auto !translate-x-0 !translate-y-0'
+            : ''
+        }`}
       >
         <DialogHeader className="space-y-0.5 mb-1">
           <DialogTitle className="flex items-center gap-2 text-base">
