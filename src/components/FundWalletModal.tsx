@@ -152,8 +152,8 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               <p className="text-slate-400 text-xs">Add funds to start betting</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-slate-400" />
+          <button onClick={onClose} className="p-2 hover:bg-cyan-500/20 rounded-lg transition-colors border border-transparent hover:border-cyan-500/50">
+            <X className="w-5 h-5 text-cyan-400" />
           </button>
         </div>
 
@@ -300,7 +300,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               <button
                 onClick={() => setStep("details")}
                 disabled={!amount || Number(amount) <= 0}
-                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 disabled:from-slate-700 disabled:to-slate-700 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
+                className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 disabled:bg-slate-700 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed shadow-lg shadow-cyan-500/30 disabled:shadow-none"
               >
                 Continue
               </button>
@@ -346,7 +346,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
 
                   <button
                     onClick={handleSubmit}
-                    className="w-full py-3 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-semibold rounded-xl transition-all"
+                    className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/30"
                   >
                     I've Sent the Payment
                   </button>
@@ -400,7 +400,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                   <button
                     onClick={handleSubmit}
                     disabled={!selectedProvider || !phoneNumber}
-                    className="w-full py-3 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 disabled:from-slate-700 disabled:to-slate-700 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 disabled:bg-slate-700 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed shadow-lg shadow-cyan-500/30 disabled:shadow-none"
                   >
                     Send Payment Request
                   </button>
@@ -468,7 +468,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                   <button
                     onClick={handleSubmit}
                     disabled={!cardNumber || !cardName || !cardExpiry || !cardCVV}
-                    className="w-full py-3 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 disabled:from-slate-700 disabled:to-slate-700 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 disabled:bg-slate-700 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed shadow-lg shadow-cyan-500/30 disabled:shadow-none"
                   >
                     Pay {currency.symbol}{amount}
                   </button>
