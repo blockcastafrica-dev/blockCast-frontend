@@ -9,10 +9,27 @@ interface FundWalletModalProps {
 
 type PaymentMethod = "crypto" | "mobile" | "card" | null;
 
+interface CurrencyOption {
+  code: string;
+  name: string;
+  symbol: string;
+  flag: string;
+  rate: number; // rate to USD
+}
+
+const currencies: CurrencyOption[] = [
+  { code: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸", rate: 1.0 },
+  { code: "NGN", name: "Nigerian Naira", symbol: "₦", flag: "🇳🇬", rate: 1580 },
+  { code: "KES", name: "Kenyan Shilling", symbol: "KSh", flag: "🇰🇪", rate: 154 },
+  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", flag: "🇬🇭", rate: 14.5 },
+  { code: "ZAR", name: "South African Rand", symbol: "R", flag: "🇿🇦", rate: 18.2 },
+];
+
 export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProps) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [method, setMethod] = useState<PaymentMethod>(null);
   const [amount, setAmount] = useState("");
+  const [currency, setCurrency] = useState<CurrencyOption>(currencies[0]);
   const [copied, setCopied] = useState(false);
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
@@ -27,6 +44,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
     setStep(1);
     setMethod(null);
     setAmount("");
+    setCurrency(currencies[0]);
     setCardNumber("");
     setCardName("");
     setCardExpiry("");
@@ -35,6 +53,9 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
     setProvider("");
     onClose();
   };
+
+  // Convert amount to USD
+  const amountInUSD = amount ? Number(amount) / currency.rate : 0;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(depositAddress);
@@ -53,32 +74,51 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200]">
+    <>
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9998,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
+        }}
         onClick={resetAndClose}
       />
 
       {/* Modal */}
       <div
         style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 9999,
           backgroundColor: '#0f1419',
+          borderRadius: '16px',
+          border: '1px solid #1f2937',
+          width: '90%',
+          maxWidth: '420px',
+          maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-800">
+        <div
+          className="flex items-center justify-between border-b border-gray-800"
+          style={{ padding: '16px' }}
+        >
           <div className="flex items-center gap-3">
             {step > 1 && (
               <button
+                type="button"
                 onClick={() => setStep(step === 3 ? 2 : 1)}
                 className="p-1"
               >
@@ -93,7 +133,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               <p className="text-gray-500 text-xs">Add funds to start betting</p>
             </div>
           </div>
-          <button onClick={resetAndClose} className="p-2">
+          <button type="button" onClick={resetAndClose} className="p-2 z-50">
             <X className="w-5 h-5 text-cyan-400" />
           </button>
         </div>
@@ -174,10 +214,26 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
           {/* Step 2: Enter Amount */}
           {step === 2 && (
             <div className="space-y-4">
+              {/* Currency Selector */}
               <div>
-                <label className="text-gray-300 text-sm mb-2 block">Amount (USD)</label>
+                <label className="text-gray-300 text-sm mb-2 block">Currency</label>
+                <select
+                  value={currency.code}
+                  onChange={(e) => setCurrency(currencies.find(c => c.code === e.target.value) || currencies[0])}
+                  className="w-full p-3 bg-[#1a1f26] border border-gray-700 rounded-xl text-white focus:border-cyan-500 focus:outline-none"
+                >
+                  {currencies.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.flag} {c.code} - {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-gray-300 text-sm mb-2 block">Amount ({currency.code})</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{currency.symbol}</span>
                   <input
                     type="number"
                     value={amount}
@@ -186,7 +242,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                     style={{
                       width: '100%',
                       padding: '12px',
-                      paddingLeft: '32px',
+                      paddingLeft: currency.symbol.length > 1 ? '48px' : '32px',
                       backgroundColor: '#1a1f26',
                       border: '1px solid #374151',
                       borderRadius: '12px',
@@ -202,15 +258,21 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                 <div style={{ padding: '16px', backgroundColor: '#1a1f26', borderRadius: '12px' }}>
                   <div className="flex justify-between mb-3">
                     <span style={{ color: '#9ca3af', fontSize: '14px' }}>Amount</span>
-                    <span style={{ color: '#fff' }}>${Number(amount).toFixed(2)}</span>
+                    <span style={{ color: '#fff' }}>{currency.symbol}{Number(amount).toLocaleString()}</span>
                   </div>
+                  {currency.code !== "USD" && (
+                    <div className="flex justify-between mb-3">
+                      <span style={{ color: '#9ca3af', fontSize: '14px' }}>Equivalent (USDT)</span>
+                      <span style={{ color: '#fff' }}>USDT {amountInUSD.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between mb-3">
                     <span style={{ color: '#9ca3af', fontSize: '14px' }}>Fee ({method === "crypto" ? "0.5%" : method === "mobile" ? "1.2%" : "2.9%"})</span>
-                    <span style={{ color: '#9ca3af' }}>-${(Number(amount) * (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029)).toFixed(2)}</span>
+                    <span style={{ color: '#9ca3af' }}>-${(amountInUSD * (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029)).toFixed(2)}</span>
                   </div>
                   <div style={{ borderTop: '1px solid #374151', paddingTop: '12px', marginTop: '4px' }} className="flex justify-between">
                     <span style={{ color: '#fff', fontSize: '14px' }}>You'll receive</span>
-                    <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>{(Number(amount) * (1 - (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029))).toFixed(2)} USDT</span>
+                    <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>USDT {(amountInUSD * (1 - (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029))).toFixed(2)}</span>
                   </div>
                 </div>
               )}
@@ -219,8 +281,8 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                 onClick={() => isAmountValid && setStep(3)}
                 disabled={!isAmountValid}
                 style={{
-                  backgroundColor: isAmountValid ? '#06b6d4' : '#334155',
-                  color: 'white',
+                  backgroundColor: isAmountValid ? '#06f6ff' : '#334155',
+                  color: isAmountValid ? 'black' : 'white',
                   padding: '12px',
                   borderRadius: '12px',
                   width: '100%',
@@ -240,7 +302,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               {/* Crypto */}
               {method === "crypto" && (
                 <>
-                  <p className="text-gray-300 text-sm text-center">Send <span className="text-cyan-400 font-bold">${amount} USDT</span> to:</p>
+                  <p className="text-gray-300 text-sm text-center">Send <span className="text-cyan-400 font-bold">USDT {amountInUSD.toFixed(2)}</span> to:</p>
                   <div className="p-3 bg-[#1a1f26] border border-gray-700 rounded-xl flex items-center gap-2">
                     <code className="text-cyan-400 text-xs flex-1 break-all">{depositAddress}</code>
                     <button onClick={handleCopy} className="p-2 bg-gray-800 rounded-lg">
@@ -249,9 +311,9 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                   </div>
                   <button
                     onClick={handleSubmit}
-                    style={{ backgroundColor: '#06b6d4', color: 'white', padding: '12px', borderRadius: '12px', width: '100%', fontWeight: 600 }}
+                    style={{ backgroundColor: '#06f6ff', color: 'black', padding: '12px', borderRadius: '12px', width: '100%', fontWeight: 600 }}
                   >
-                    I've Sent Payment
+                    Send
                   </button>
                 </>
               )}
@@ -286,8 +348,8 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                     onClick={handleSubmit}
                     disabled={!provider || !phoneNumber}
                     style={{
-                      backgroundColor: provider && phoneNumber ? '#06b6d4' : '#334155',
-                      color: 'white',
+                      backgroundColor: provider && phoneNumber ? '#06f6ff' : '#334155',
+                      color: provider && phoneNumber ? 'black' : 'white',
                       padding: '12px',
                       borderRadius: '12px',
                       width: '100%',
@@ -352,8 +414,8 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                     onClick={handleSubmit}
                     disabled={!cardNumber || !cardName || !cardExpiry || !cardCVV}
                     style={{
-                      backgroundColor: cardNumber && cardName && cardExpiry && cardCVV ? '#06b6d4' : '#334155',
-                      color: 'white',
+                      backgroundColor: cardNumber && cardName && cardExpiry && cardCVV ? '#06f6ff' : '#334155',
+                      color: cardNumber && cardName && cardExpiry && cardCVV ? 'black' : 'white',
                       padding: '12px',
                       borderRadius: '12px',
                       width: '100%',
@@ -361,7 +423,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                       cursor: cardNumber && cardName && cardExpiry && cardCVV ? 'pointer' : 'not-allowed',
                     }}
                   >
-                    Pay ${amount}
+                    Pay {currency.symbol}{Number(amount).toLocaleString()}
                   </button>
                 </>
               )}
@@ -369,6 +431,6 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
