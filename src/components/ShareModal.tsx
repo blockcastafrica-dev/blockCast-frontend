@@ -1,10 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Badge } from './ui/badge';
-import { Copy, Check, Share2, MessageCircle, Send, Facebook, QrCode, Zap } from 'lucide-react';
-import { BsTwitterX } from "react-icons/bs";
+import { useState } from 'react';
+import { X, Share2, Copy, Check } from 'lucide-react';
+import { BsTwitterX, BsWhatsapp, BsTelegram, BsFacebook } from "react-icons/bs";
 import { toast } from 'sonner';
 
 interface ShareModalProps {
@@ -23,250 +19,182 @@ interface ShareModalProps {
 
 export default function ShareModal({ isOpen, onClose, market }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  if (!isOpen || !market) return null;
 
-  // Don't render if market is null
-  if (!market) {
-    return null;
-  }
-  
-  const shareUrl = `https://blockcast.app/market/${market.id}?ref=user123`;
-  const shareText = `🎯 Check out this prediction market on Blockcast!\n\n"${market.claim}"\n\nYES: ${market.yesOdds}x | NO: ${market.noOdds}x\nTotal Pool: $${(market.totalPool / 1000).toFixed(0)}K\n\nJoin me and let's see who predicts better! 🚀`;
+  const shareUrl = `https://blockcast.app/market/${market.id}`;
+  const shareText = `Check out this prediction: "${market.claim}" on Blockcast!`;
 
-  const handleCopyLink = async () => {
+  const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      toast.success('Link copied to clipboard!');
+      toast.success('Link copied!');
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      toast.error('Failed to copy link');
+    } catch {
+      toast.error('Failed to copy');
     }
   };
 
   const handleShare = (platform: string) => {
-    setSelectedPlatform(platform);
-    
     const encodedText = encodeURIComponent(shareText);
     const encodedUrl = encodeURIComponent(shareUrl);
-    
-    let shareLink = '';
-    
-    switch (platform) {
-      case 'twitter':
-        shareLink = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
-        break;
-      case 'facebook':
-        shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-        break;
-      case 'whatsapp':
-        shareLink = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
-        break;
-      case 'telegram':
-        shareLink = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
-        break;
-      default:
-        return;
-    }
-    
-    window.open(shareLink, '_blank', 'width=600,height=400');
-    setTimeout(() => setSelectedPlatform(null), 1000);
+
+    const links: Record<string, string> = {
+      twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
+      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
+    };
+
+    window.open(links[platform], '_blank', 'width=600,height=400');
   };
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Blockcast Prediction Market',
-          text: shareText,
-          url: shareUrl,
-        });
-        toast.success('Shared successfully!');
-      } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
-          toast.error('Failed to share');
-        }
-      }
-    } else {
-      handleCopyLink();
-    }
-  };
-
-  console.log('ShareModal rendering, isOpen:', isOpen, 'market:', market?.id);
+  const socialButtons = [
+    { id: 'twitter', icon: BsTwitterX, label: 'X', bg: '#000000' },
+    { id: 'whatsapp', icon: BsWhatsapp, label: 'WhatsApp', bg: '#25D366' },
+    { id: 'telegram', icon: BsTelegram, label: 'Telegram', bg: '#0088cc' },
+    { id: 'facebook', icon: BsFacebook, label: 'Facebook', bg: '#1877F2' },
+  ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="sm:max-w-md overflow-y-auto"
-        style={isMobile ? {
+    <>
+      {/* Backdrop */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9998,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
+        }}
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div
+        style={{
           position: 'fixed',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'calc(100vw - 32px)',
-          maxHeight: 'calc(100vh - 100px)',
-        } : {
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxHeight: '90vh',
+          zIndex: 9999,
+          backgroundColor: '#0f1419',
+          borderRadius: '16px',
+          border: '1px solid #1f2937',
+          width: '95%',
+          maxWidth: '400px',
+          overflow: 'hidden',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
         }}
       >
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Share2 className="h-5 w-5 text-primary" />
-            Share Market
-          </DialogTitle>
-          <DialogDescription className="text-left">
-            Invite friends to bet on this market and earn rewards together
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-6">
-          {/* Market Preview */}
-          <div className="p-4 bg-muted/30 rounded-lg">
-            <Badge className="mb-2 bg-primary/20 text-primary border-primary/30">
-              {market.category}
-            </Badge>
-            <h3 className="font-semibold mb-3 line-clamp-2 text-sm">
-              {market.claim}
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="text-center p-2 bg-primary/10 rounded">
-                <div className="text-sm font-semibold text-primary">YES</div>
-                <div className="text-xs text-muted-foreground">
-                  {market.yesOdds}x
-                </div>
-              </div>
-              <div className="text-center p-2 bg-secondary/10 rounded">
-                <div className="text-sm font-semibold text-secondary">NO</div>
-                <div className="text-xs text-muted-foreground">
-                  {market.noOdds}x
-                </div>
-              </div>
+        {/* Header */}
+        <div
+          className="flex items-center justify-between border-b border-gray-800"
+          style={{ padding: '16px' }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500">
+              <Share2 className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h2 className="text-white font-bold text-sm">Share Market</h2>
+              <p className="text-gray-500 text-xs">Invite friends to predict</p>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-9 w-9 p-0 flex items-center justify-center rounded-xl border-2 border-transparent transition-all group"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#06f6ff';
+              e.currentTarget.style.backgroundColor = '#1a1f26';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'transparent';
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            <X className="h-5 w-5 text-gray-400 group-hover:text-gray-300" />
+          </button>
+        </div>
 
-          {/* Reward Banner */}
-          <div className="p-3 bg-gradient-to-r from-green-400/10 to-primary/10 rounded-lg border border-green-400/30">
-            <div className="flex items-center gap-2 mb-1">
-              <Zap className="h-4 w-4 text-green-400" />
-              <span className="text-sm font-semibold text-green-400">
-                Referral Bonus
-              </span>
+        {/* Content */}
+        <div style={{ padding: '16px' }} className="space-y-4">
+          {/* Market Preview */}
+          <div className="p-3 bg-[#1a1f26] rounded-xl">
+            <span className="text-[10px] text-cyan-400 uppercase tracking-wide">{market.category}</span>
+            <p className="text-white text-sm mt-1 line-clamp-2">{market.claim}</p>
+
+            {/* Progress Bar */}
+            <div className="flex items-center gap-3 mt-3">
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-cyan-400 font-medium">
+                  {((market.yesOdds / (market.yesOdds + market.noOdds)) * 100).toFixed(0)}%
+                </span>
+                <span className="text-[10px] text-cyan-400">True</span>
+              </div>
+              <div
+                className="flex-1 h-2 rounded-full"
+                style={{
+                  background: 'linear-gradient(90deg, #06b6d4, #8b5cf6)',
+                }}
+              />
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-purple-400 font-medium">
+                  {((market.noOdds / (market.yesOdds + market.noOdds)) * 100).toFixed(0)}%
+                </span>
+                <span className="text-[10px] text-purple-400">False</span>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Earn 0.1 USDT when your friend places their first bet!
-            </p>
           </div>
 
           {/* Share Link */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Share Link</label>
+            <label className="text-gray-400 text-xs mb-2 block">Share Link</label>
             <div className="flex gap-2">
-              <Input
+              <input
+                type="text"
                 value={shareUrl}
                 readOnly
-                className="bg-muted text-muted-foreground text-xs"
+                className="flex-1 p-3 bg-[#1a1f26] border border-gray-700 rounded-xl text-gray-400 text-xs font-mono"
               />
-              <Button
-                onClick={handleCopyLink}
-                variant="outline"
-                size="sm"
-                className="shrink-0"
+              <button
+                onClick={handleCopy}
+                style={{
+                  backgroundColor: copied ? '#10b981' : '#06f6ff',
+                  color: copied ? 'white' : 'black',
+                  padding: '12px',
+                  borderRadius: '12px',
+                  fontWeight: 600,
+                }}
               >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
+                {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 
-          {/* Social Platforms */}
+          {/* Social Buttons */}
           <div>
-            <label className="text-sm font-medium mb-3 block">
-              Share on Social Media
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                onClick={() => handleShare("twitter")}
-                className="gap-2 relative"
-                disabled={selectedPlatform === "twitter"}
-              >
-                <BsTwitterX className="h-4 w-4" />
-
-                {selectedPlatform === "twitter" && (
-                  <div className="absolute inset-0 bg-primary/20 rounded animate-pulse" />
-                )}
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() => handleShare("facebook")}
-                className="gap-2 relative"
-                disabled={selectedPlatform === "facebook"}
-              >
-                <Facebook className="h-4 w-4" />
-                Facebook
-                {selectedPlatform === "facebook" && (
-                  <div className="absolute inset-0 bg-primary/20 rounded animate-pulse" />
-                )}
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() => handleShare("whatsapp")}
-                className="gap-2 relative"
-                disabled={selectedPlatform === "whatsapp"}
-              >
-                <MessageCircle className="h-4 w-4" />
-                WhatsApp
-                {selectedPlatform === "whatsapp" && (
-                  <div className="absolute inset-0 bg-primary/20 rounded animate-pulse" />
-                )}
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() => handleShare("telegram")}
-                className="gap-2 relative"
-                disabled={selectedPlatform === "telegram"}
-              >
-                <Send className="h-4 w-4" />
-                Telegram
-                {selectedPlatform === "telegram" && (
-                  <div className="absolute inset-0 bg-primary/20 rounded animate-pulse" />
-                )}
-              </Button>
+            <label className="text-gray-400 text-xs mb-2 block">Share on</label>
+            <div className="flex gap-2">
+              {socialButtons.map((btn) => (
+                <button
+                  key={btn.id}
+                  onClick={() => handleShare(btn.id)}
+                  className="flex-1 p-3 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                  style={{ backgroundColor: btn.bg }}
+                >
+                  <btn.icon className="w-5 h-5 text-white" />
+                </button>
+              ))}
             </div>
-          </div>
-
-          {/* Native Share / Quick Actions */}
-          <div className="flex gap-3">
-            <Button onClick={handleNativeShare} className="flex-1 gap-2">
-              <Share2 className="h-4 w-4" />
-              Share
-            </Button>
-            <Button variant="outline" onClick={onClose} className="flex-1">
-              Close
-            </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </>
   );
 }
