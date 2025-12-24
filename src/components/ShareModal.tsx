@@ -10,8 +10,8 @@ interface ShareModalProps {
     id: string;
     claim: string;
     category: string;
-    yesOdds: number;
-    noOdds: number;
+    yesPool: number;
+    noPool: number;
     totalPool: number;
     imageUrl?: string;
   } | null;
@@ -133,19 +133,29 @@ export default function ShareModal({ isOpen, onClose, market }: ShareModalProps)
             <div className="flex items-center gap-3 mt-3">
               <div className="flex flex-col items-center">
                 <span className="text-xs text-cyan-400 font-medium">
-                  {((market.yesOdds / (market.yesOdds + market.noOdds)) * 100).toFixed(0)}%
+                  {((market.yesPool / market.totalPool) * 100).toFixed(0)}%
                 </span>
                 <span className="text-[10px] text-cyan-400">True</span>
               </div>
-              <div
-                className="flex-1 h-2 rounded-full"
-                style={{
-                  background: 'linear-gradient(90deg, #06b6d4, #8b5cf6)',
-                }}
-              />
+              <div className="flex-1 h-2 rounded-full overflow-hidden flex">
+                <div
+                  className="h-full"
+                  style={{
+                    width: `${(market.yesPool / market.totalPool) * 100}%`,
+                    background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)',
+                  }}
+                />
+                <div
+                  className="h-full"
+                  style={{
+                    width: `${(market.noPool / market.totalPool) * 100}%`,
+                    background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)',
+                  }}
+                />
+              </div>
               <div className="flex flex-col items-center">
                 <span className="text-xs text-purple-400 font-medium">
-                  {((market.noOdds / (market.yesOdds + market.noOdds)) * 100).toFixed(0)}%
+                  {((market.noPool / market.totalPool) * 100).toFixed(0)}%
                 </span>
                 <span className="text-[10px] text-purple-400">False</span>
               </div>
