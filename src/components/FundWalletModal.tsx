@@ -269,13 +269,14 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               <div>
                 <label className="text-slate-300 text-sm font-medium mb-2 block">Amount</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">{currency.symbol}&nbsp;</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium pr-2">{currency.symbol}</span>
                   <input
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0.00"
-                    className="w-full p-3 pl-14 bg-slate-900 border border-slate-700 rounded-xl text-white text-lg font-semibold focus:border-cyan-500 focus:outline-none"
+                    style={{ paddingLeft: `${currency.symbol.length * 12 + 24}px` }}
+                    className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-lg font-semibold focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -300,7 +301,11 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               <button
                 onClick={() => setStep("details")}
                 disabled={!amount || Number(amount) <= 0}
-                className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 disabled:bg-slate-700 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed shadow-lg shadow-cyan-500/30 disabled:shadow-none"
+                className="w-full py-3 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: amount && Number(amount) > 0 ? '#06b6d4' : '#334155',
+                  boxShadow: amount && Number(amount) > 0 ? '0 10px 15px -3px rgba(6, 182, 212, 0.3)' : 'none',
+                }}
               >
                 Continue
               </button>
