@@ -126,12 +126,13 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
 
       {/* Modal */}
       <div
-        className="fixed z-[110] bg-slate-950 border-2 border-cyan-500/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+        className="fixed z-[110] border-2 border-cyan-500/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
         style={{
           top: '100px',
           bottom: '80px',
           left: '16px',
           right: '16px',
+          backgroundColor: '#0a0f18',
         }}
       >
 
