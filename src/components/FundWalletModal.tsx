@@ -199,18 +199,18 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               </div>
 
               {isAmountValid && (
-                <div style={{ padding: '16px', backgroundColor: 'rgba(6, 182, 212, 0.1)', border: '1px solid rgba(6, 182, 212, 0.3)', borderRadius: '12px' }}>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-400 text-sm">Amount</span>
-                    <span className="text-white">${Number(amount).toFixed(2)}</span>
+                <div style={{ padding: '16px', backgroundColor: '#1a1f26', borderRadius: '12px' }}>
+                  <div className="flex justify-between mb-3">
+                    <span style={{ color: '#9ca3af', fontSize: '14px' }}>Amount</span>
+                    <span style={{ color: '#fff' }}>${Number(amount).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-400 text-sm">Fee ({method === "crypto" ? "0.5%" : method === "mobile" ? "1.2%" : "2.9%"})</span>
-                    <span style={{ color: '#f97316' }}>-${(Number(amount) * (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029)).toFixed(2)}</span>
+                  <div className="flex justify-between mb-3">
+                    <span style={{ color: '#9ca3af', fontSize: '14px' }}>Fee ({method === "crypto" ? "0.5%" : method === "mobile" ? "1.2%" : "2.9%"})</span>
+                    <span style={{ color: '#9ca3af' }}>-${(Number(amount) * (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029)).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-gray-700">
-                    <span className="text-gray-400 text-sm">You'll receive</span>
-                    <span style={{ color: '#06b6d4', fontWeight: 'bold' }}>{(Number(amount) * (1 - (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029))).toFixed(2)} USDT</span>
+                  <div style={{ borderTop: '1px solid #374151', paddingTop: '12px', marginTop: '4px' }} className="flex justify-between">
+                    <span style={{ color: '#fff', fontSize: '14px' }}>You'll receive</span>
+                    <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>{(Number(amount) * (1 - (method === "crypto" ? 0.005 : method === "mobile" ? 0.012 : 0.029))).toFixed(2)} USDT</span>
                   </div>
                 </div>
               )}
