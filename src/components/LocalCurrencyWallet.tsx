@@ -164,7 +164,9 @@ export default function LocalCurrencyWallet({
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -292,11 +294,25 @@ export default function LocalCurrencyWallet({
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        className={`border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl ${
-          isMobile
-            ? '!fixed !top-[100px] !bottom-[80px] !left-4 !right-4 !transform-none !max-w-none !w-auto !overflow-y-auto !translate-x-0 !translate-y-0'
-            : ''
-        }`}
+        style={isMobile ? {
+          position: 'fixed',
+          top: '100px',
+          bottom: '80px',
+          left: '16px',
+          right: '16px',
+          transform: 'none',
+          width: 'auto',
+          padding: '16px',
+          overflowY: 'auto',
+        } : {
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxWidth: '500px',
+          maxHeight: '90vh',
+        }}
+        className="border-2 border-cyan-500/50 !bg-slate-950 shadow-2xl rounded-xl"
       >
         <DialogHeader className="space-y-0.5 mb-1">
           <DialogTitle className="flex items-center gap-2 text-base">
