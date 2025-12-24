@@ -231,3 +231,18 @@ html {
   z-index: 1;
 }
 
+/* Fund Wallet Modal Button Styles */
+.btn-continue-active {
+  background-color: #06b6d4 !important;
+  box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.3) !important;
+}
+
+.btn-continue-active:hover {
+  background-color: #0891b2 !important;
+}
+
+.btn-continue-disabled {
+  background-color: #334155 !important;
+  cursor: not-allowed;
+}
+

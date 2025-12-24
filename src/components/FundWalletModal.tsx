@@ -301,7 +301,9 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               <button
                 onClick={() => amount && Number(amount) > 0 && setStep("details")}
                 disabled={!amount || Number(amount) <= 0}
-                className="w-full py-3 text-white font-semibold rounded-xl transition-all bg-cyan-500 disabled:bg-slate-700 disabled:cursor-not-allowed shadow-lg shadow-cyan-500/30 disabled:shadow-none hover:bg-cyan-600"
+                className={`w-full py-3 text-white font-semibold rounded-xl transition-all ${
+                  amount && Number(amount) > 0 ? 'btn-continue-active' : 'btn-continue-disabled'
+                }`}
               >
                 Continue
               </button>
