@@ -185,7 +185,7 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - **Container:** Dark background (`#0f0f15`) with border for visibility
 - **Visibility:** Only shows on mobile (`lg:hidden`)
 
-### Changes (commit `7dfadb4`):
+### Changes (commit `a98839f`):
 - **Mobile Betting Modal:** Full-screen modal that opens when clicking True/False buttons in sticky bar
 - **Header:** Market image, title, and X close button
 - **Buy/Sell Tabs:** Toggle between buy and sell modes with underline indicator
