@@ -116,16 +116,38 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 
 ## 4. ProbabilityChart Updates
 
-**File:** `src/components/ProbabilityChart.tsx` (295 lines)
+**File:** `src/components/ProbabilityChart.tsx` (307 lines)
+
+### Commits:
+- `a260a70` - Added selected state styling for time period buttons
+- `55d8bba` - Fix ProbabilityChart to fill full width and reflect actual betting trends
 
 ### Changes (commit `a260a70`):
 - Added selected state styling for time period buttons
 - Active time range button (24H, 7D, 30D, ALL) now has cyan background (#06b6d4) with white text
 - Time range buttons use consistent pill/rounded style with hover effects
 
+### Changes (commit `55d8bba`):
+- **Full Width Fix:** Chart now fills entire container width (removed 3-column grid constraint)
+- **Chart Margins:** Set `margin.right: 0` and `YAxis width: 35px` for optimal space usage
+- **Realistic Trend Data:** Complete rewrite of `generateChartData` function:
+  - Starts from 50/50 (simulating market opening)
+  - Progressively trends toward current True/False pool percentages
+  - Uses quadratic easing (slow start, accelerates) for realistic momentum
+  - Adds seeded fluctuations (`Math.sin(hoursAgo * 0.1) * 3`) for natural appearance
+  - Final data point always matches exact current pool percentages
+  - Values clamped between 5% and 95%
+
+### Trend Behavior:
+| Current True % | Chart Shows |
+|----------------|-------------|
+| 70% | Upward trend from 50% → 70% |
+| 30% | Downward trend from 50% → 30% |
+| 50% | Flat/stable line around 50% |
+
 ### Current Features:
 - True/False percentages with cyan (#22d3ee) and purple (#7c3aed) colors
-- Trend indicator (up/down arrow with percentage change)
+- Trend indicator (up/down arrow with percentage change) - now reflects actual pool movement
 - Line chart with responsive height (48px mobile → 72px desktop)
 - Action buttons: Like, Bookmark, Share
 - BlockCast watermark logo
@@ -136,6 +158,10 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 
 **File:** `src/components/MarketPage.tsx` (1528 lines)
 
+### Commits:
+- `c01674c` - Two-column flex layout for desktop
+- `55d8bba` - Fix chart container to use full width
+
 ### Changes (commit `c01674c`):
 - Two-column flex layout for desktop
 - Left column: All content (header, chart, tabs)
@@ -144,8 +170,13 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - Sticky betting modal with `top: 100px` offset for navbar clearance
 - Max width container (7xl = 1280px) for better desktop presentation
 
+### Changes (commit `55d8bba`):
+- **Removed 3-column grid:** Changed from `grid lg:grid-cols-3` with `lg:col-span-2` to simple vertical stack
+- **Full width chart:** ProbabilityChart now wrapped in `<div className="w-full">` for proper expansion
+- **Layout structure:** Changed to `space-y-4 md:space-y-5 lg:space-y-6` for consistent vertical spacing
+
 ### Current Features:
-- ProbabilityChart integration with share functionality
+- ProbabilityChart integration with share functionality (now full width)
 - Tabs: Dispute, Overview, Activity, AI Analysis, Comments
 - Buy/Sell interface with:
   - Percentage bar (gradient)
@@ -241,7 +272,7 @@ background: linear-gradient(90deg,
 | `ShareModal.tsx` | 211 | Social sharing modal |
 | `WithdrawWallet.tsx` | 384 | Withdrawal modal |
 | `FundWalletModal.tsx` | 673 | Deposit modal |
-| `ProbabilityChart.tsx` | 295 | Market chart component |
+| `ProbabilityChart.tsx` | 307 | Market chart component |
 | `MarketPage.tsx` | 1528 | Individual market page |
 | `BettingMarkets.tsx` | 1410 | Markets list/grid |
 
