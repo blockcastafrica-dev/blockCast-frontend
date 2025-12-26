@@ -1352,12 +1352,12 @@ export default function MarketPage({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm text-zinc-400">Amount</h3>
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-zinc-800 text-zinc-400">
-                    Available ${userBalance.toFixed(0)}
+                  <span className="text-xs font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                    Available USDT {userBalance.toFixed(2)}
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="absolute top-1/2 -translate-y-1/2 text-zinc-500 text-lg" style={{ left: '16px' }}>$</span>
+                  <span className="absolute top-1/2 -translate-y-1/2 text-zinc-400 font-semibold text-base" style={{ left: '16px' }}>USD</span>
                   <Input
                     type="text"
                     placeholder="0.00"
@@ -1367,7 +1367,7 @@ export default function MarketPage({
                       handleAmountChange(value);
                     }}
                     className="w-full h-14 pr-4 text-white text-lg bg-zinc-900/50 border border-zinc-700/50 rounded-xl focus:border-zinc-600 focus:ring-0 placeholder:text-zinc-600"
-                    style={{ paddingLeft: '36px' }}
+                    style={{ paddingLeft: '56px' }}
                   />
                 </div>
               </div>
