@@ -19,37 +19,50 @@ interface ProbabilityChartProps {
   onBookmarkToggle?: () => void;
 }
 
-// Generate mock historical data for the chart with visible trends
+// Generate realistic historical data based on current pool percentages
 const generateChartData = (currentYes: number, currentNo: number) => {
   const data = [];
   const now = new Date();
 
-  // Mock data points showing a clear trend over 7 days
-  const mockDataPoints = [
-    { hoursAgo: 168, yesPercent: 45, noPercent: 55 }, // 7 days ago
-    { hoursAgo: 156, yesPercent: 47, noPercent: 53 },
-    { hoursAgo: 144, yesPercent: 48, noPercent: 52 }, // 6 days ago
-    { hoursAgo: 132, yesPercent: 50, noPercent: 50 },
-    { hoursAgo: 120, yesPercent: 52, noPercent: 48 }, // 5 days ago
-    { hoursAgo: 108, yesPercent: 54, noPercent: 46 },
-    { hoursAgo: 96, yesPercent: 56, noPercent: 44 },  // 4 days ago
-    { hoursAgo: 84, yesPercent: 58, noPercent: 42 },
-    { hoursAgo: 72, yesPercent: 60, noPercent: 40 },  // 3 days ago
-    { hoursAgo: 60, yesPercent: 62, noPercent: 38 },
-    { hoursAgo: 48, yesPercent: 64, noPercent: 36 },  // 2 days ago
-    { hoursAgo: 36, yesPercent: 66, noPercent: 34 },
-    { hoursAgo: 24, yesPercent: 68, noPercent: 32 },  // 1 day ago
-    { hoursAgo: 12, yesPercent: 69, noPercent: 31 },
-    { hoursAgo: 6, yesPercent: 69.5, noPercent: 30.5 },
-    { hoursAgo: 0, yesPercent: currentYes, noPercent: currentNo }, // Now
-  ];
+  // Start from 50/50 and trend towards current percentages with realistic fluctuations
+  const startYes = 50;
+  const startNo = 50;
 
-  mockDataPoints.forEach(point => {
-    const date = new Date(now.getTime() - point.hoursAgo * 60 * 60 * 1000);
+  // Calculate the direction and magnitude of trend
+  const yesDiff = currentYes - startYes;
+  const noDiff = currentNo - startNo;
+
+  // Generate data points over 7 days with natural progression
+  const hoursPoints = [168, 156, 144, 132, 120, 108, 96, 84, 72, 60, 48, 36, 24, 12, 6, 0];
+
+  hoursPoints.forEach((hoursAgo, index) => {
+    const progress = 1 - (hoursAgo / 168); // 0 at start, 1 at end
+
+    // Add some randomness for realistic fluctuations (seeded by hoursAgo for consistency)
+    const seed = Math.sin(hoursAgo * 0.1) * 3;
+    const fluctuation = hoursAgo === 0 ? 0 : seed; // No fluctuation for current value
+
+    // Calculate percentage with easing (starts slow, accelerates)
+    const easedProgress = progress * progress; // Quadratic easing
+
+    let yesPercent = startYes + (yesDiff * easedProgress) + fluctuation;
+    let noPercent = 100 - yesPercent;
+
+    // Ensure final point matches exactly
+    if (hoursAgo === 0) {
+      yesPercent = currentYes;
+      noPercent = currentNo;
+    }
+
+    // Clamp values between 5 and 95
+    yesPercent = Math.max(5, Math.min(95, yesPercent));
+    noPercent = Math.max(5, Math.min(95, noPercent));
+
+    const date = new Date(now.getTime() - hoursAgo * 60 * 60 * 1000);
     data.push({
       date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      yes: Number(point.yesPercent.toFixed(1)),
-      no: Number(point.noPercent.toFixed(1)),
+      yes: Number(yesPercent.toFixed(1)),
+      no: Number(noPercent.toFixed(1)),
       timestamp: date.getTime(),
     });
   });
@@ -229,12 +242,12 @@ export default function ProbabilityChart({
 
       {/* Chart */}
       <div className="w-full bg-black/30 rounded-lg p-3 md:p-4 lg:p-4 relative">
-        <div className="h-48 md:h-56 lg:h-72">
+        <div className="h-48 md:h-56 lg:h-72 w-full">
         {filteredData && filteredData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={filteredData}
-              margin={{ top: 10, right: 40, left: 0, bottom: 10 }}
+              margin={{ top: 10, right: 0, left: 0, bottom: 10 }}
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -257,6 +270,7 @@ export default function ProbabilityChart({
                 domain={[0, 100]}
                 tickFormatter={(value) => `${value}%`}
                 orientation="right"
+                width={35}
               />
               <Tooltip
                 contentStyle={{

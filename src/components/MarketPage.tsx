@@ -337,9 +337,9 @@ export default function MarketPage({
         )}
 
         <CardContent className="p-4 md:p-5 lg:p-6">
-          <div className="grid lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6">
+          <div className="space-y-4 md:space-y-5 lg:space-y-6">
             {/* Market Info */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="space-y-4">
               <p className="text-muted-foreground">
                 {getTranslatedText(
                   market.description,
@@ -371,23 +371,23 @@ export default function MarketPage({
                   </span>
                 </div>
               </div>
+            </div>
 
-              {/* Probability Chart - with extra top spacing on mobile */}
-              <div className="mt-6 sm:mt-4">
-                <ProbabilityChart
-                  yesPercentage={(market.yesPool / market.totalPool) * 100}
-                  noPercentage={(market.noPool / market.totalPool) * 100}
-                  totalPool={market.totalPool}
-                  yesPool={market.yesPool}
-                  noPool={market.noPool}
-                  onShare={() => setShowShareModal(true)}
-                  isLiked={isLiked}
-                  onLikeToggle={() => setIsLiked(!isLiked)}
-                  likeCount={formatNumber(Math.floor(Math.random() * 500) + 100)}
-                  isBookmarked={isBookmarked}
-                  onBookmarkToggle={() => setIsBookmarked(!isBookmarked)}
-                />
-              </div>
+            {/* Probability Chart - Full Width */}
+            <div className="w-full">
+              <ProbabilityChart
+                yesPercentage={(market.yesPool / market.totalPool) * 100}
+                noPercentage={(market.noPool / market.totalPool) * 100}
+                totalPool={market.totalPool}
+                yesPool={market.yesPool}
+                noPool={market.noPool}
+                onShare={() => setShowShareModal(true)}
+                isLiked={isLiked}
+                onLikeToggle={() => setIsLiked(!isLiked)}
+                likeCount={formatNumber(Math.floor(Math.random() * 500) + 100)}
+                isBookmarked={isBookmarked}
+                onBookmarkToggle={() => setIsBookmarked(!isBookmarked)}
+              />
             </div>
           </div>
         </CardContent>
