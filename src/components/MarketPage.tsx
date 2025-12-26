@@ -1223,29 +1223,44 @@ export default function MarketPage({
 
         {/* Mobile Betting Modal - Above Footer */}
         {showMobileBetModal && !market.disputable && (
-          <div className="lg:hidden fixed left-0 right-0 top-0 z-[100] flex flex-col" style={{ backgroundColor: '#0a0a0f', bottom: '70px' }}>
-            {/* Close Button */}
-            <div className="flex justify-end p-3">
-              <button
-                onClick={() => setShowMobileBetModal(false)}
-                className="p-2 text-zinc-400 hover:text-white"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+          <>
+            {/* Backdrop - click to close */}
+            <div
+              className="lg:hidden fixed inset-0 z-[99] bg-black/50"
+              onClick={() => setShowMobileBetModal(false)}
+            />
+            <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col" style={{ backgroundColor: '#0a0a0f', top: '120px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+            {/* Close Button - Right Corner */}
+            <button
+              onClick={() => setShowMobileBetModal(false)}
+              className="absolute top-4 right-4 h-9 w-9 flex items-center justify-center rounded-xl border-2 border-transparent transition-all z-10"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#06f6ff';
+                e.currentTarget.style.backgroundColor = '#1a1f26';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'transparent';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <X className="h-5 w-5 text-gray-400" />
+            </button>
+
+            {/* Spacer for X button */}
+            <div className="h-12"></div>
 
             {/* Market Title Header */}
-            <div className="flex items-center gap-4 px-4 pb-4">
+            <div className="flex items-center gap-4 px-6 pb-6">
               {market.imageUrl && (
                 <img src={market.imageUrl} alt="" className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
               )}
-              <h2 className="text-white font-bold text-lg leading-tight">
+              <h2 className="text-white font-bold text-lg leading-tight pr-4">
                 {getTranslatedText(market.claim, market.claimTranslations)}
               </h2>
             </div>
 
             {/* Buy/Sell Tabs */}
-            <div className="flex gap-4 border-b border-zinc-800/30 px-4">
+            <div className="flex gap-4 border-b border-zinc-800/30 px-6">
               <button
                 onClick={() => setCastInterface("buy")}
                 className={`py-3.5 px-5 text-base font-semibold transition-all duration-200 relative ${
@@ -1424,6 +1439,7 @@ export default function MarketPage({
               </Button>
             </div>
           </div>
+          </>
         )}
 
         {/* Right Column - Betting Modal (Desktop Only - Sticky) */}
