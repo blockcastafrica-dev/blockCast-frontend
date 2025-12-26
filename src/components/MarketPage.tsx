@@ -1447,7 +1447,7 @@ export default function MarketPage({
           <aside className="hidden lg:block lg:w-[380px] shrink-0" style={{ position: 'sticky', top: '100px', alignSelf: 'flex-start', height: 'fit-content' }}>
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937' }}>
+              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
                 <div className="flex gap-3 md:gap-4 lg:gap-6 border-b border-zinc-800/30">
                   <button
@@ -1632,7 +1632,7 @@ export default function MarketPage({
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937' }}>
+              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
                 {/* Tabs */}
                 <div className="flex gap-3 md:gap-4 lg:gap-6 border-b border-zinc-800/30">
                   <button
