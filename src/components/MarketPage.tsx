@@ -1357,7 +1357,7 @@ export default function MarketPage({
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="absolute top-1/2 -translate-y-1/2 text-zinc-400 font-semibold text-base" style={{ left: '16px' }}>USD</span>
+                  <span className="absolute top-1/2 -translate-y-1/2 text-zinc-400 font-semibold text-base" style={{ left: '16px' }}>USDT</span>
                   <Input
                     type="text"
                     placeholder="0.00"
@@ -1367,7 +1367,7 @@ export default function MarketPage({
                       handleAmountChange(value);
                     }}
                     className="w-full h-14 pr-4 text-white text-lg bg-zinc-900/50 border border-zinc-700/50 rounded-xl focus:border-zinc-600 focus:ring-0 placeholder:text-zinc-600"
-                    style={{ paddingLeft: '56px' }}
+                    style={{ paddingLeft: '65px' }}
                   />
                 </div>
               </div>
