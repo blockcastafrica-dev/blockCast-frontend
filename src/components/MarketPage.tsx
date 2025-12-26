@@ -1137,6 +1137,84 @@ export default function MarketPage({
         </div>
         {/* End of Left Column */}
 
+        {/* Mobile Sticky Betting Bar - Fixed above footer */}
+        {!market.disputable && (
+          <div
+            className="lg:hidden fixed left-0 right-0 z-50"
+            style={{ bottom: '70px' }}
+          >
+            <div
+              className="mx-3 rounded-2xl p-4"
+              style={{ backgroundColor: '#0f0f15', border: '1px solid #2a2a3a' }}
+            >
+              {/* Progress Bar with Percentages */}
+              <div className="flex items-center gap-3 mb-4">
+                <span className="font-bold text-base text-white" style={{ minWidth: '42px' }}>
+                  {Math.round((market.yesPool / market.totalPool) * 100)}%
+                </span>
+                <div
+                  className="flex-1 rounded-full overflow-hidden flex"
+                  style={{ height: '12px', backgroundColor: '#1a1a2e' }}
+                >
+                  <div
+                    className="h-full"
+                    style={{
+                      width: `${(market.yesPool / market.totalPool) * 100}%`,
+                      background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
+                    }}
+                  />
+                  <div
+                    className="h-full"
+                    style={{
+                      width: `${(market.noPool / market.totalPool) * 100}%`,
+                      background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
+                    }}
+                  />
+                </div>
+                <span className="font-bold text-base text-right text-white" style={{ minWidth: '42px' }}>
+                  {Math.round((market.noPool / market.totalPool) * 100)}%
+                </span>
+              </div>
+
+              {/* Pool Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => handlePositionChange("yes")}
+                  className={`py-4 px-4 rounded-full text-lg font-bold transition-all text-center cursor-pointer ${
+                    castPosition === "yes"
+                      ? "border-2 shadow-lg"
+                      : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400"
+                  }`}
+                  style={castPosition === "yes" ? {
+                    background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                    borderColor: 'rgba(34, 211, 238, 0.6)',
+                    color: '#22d3ee',
+                    boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                  } : {}}
+                >
+                  ${market.yesPool >= 1000 ? (market.yesPool / 1000).toFixed(1) + 'K' : market.yesPool.toFixed(0)}
+                </button>
+                <button
+                  onClick={() => handlePositionChange("no")}
+                  className={`py-4 px-4 rounded-full text-lg font-bold transition-all text-center cursor-pointer ${
+                    castPosition === "no"
+                      ? "border-2 shadow-lg"
+                      : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400"
+                  }`}
+                  style={castPosition === "no" ? {
+                    background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                    borderColor: 'rgba(192, 132, 252, 0.6)',
+                    color: '#c084fc',
+                    boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                  } : {}}
+                >
+                  ${market.noPool >= 1000 ? (market.noPool / 1000).toFixed(1) + 'K' : market.noPool.toFixed(0)}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Right Column - Betting Modal (Desktop Only - Sticky) */}
         {!market.disputable && (
           <aside className="hidden lg:block lg:w-[380px] shrink-0" style={{ position: 'sticky', top: '100px', alignSelf: 'flex-start', height: 'fit-content' }}>
