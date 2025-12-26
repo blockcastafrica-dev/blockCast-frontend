@@ -1224,16 +1224,8 @@ export default function MarketPage({
         {/* Mobile Betting Modal - Above Footer */}
         {showMobileBetModal && !market.disputable && (
           <div className="lg:hidden fixed left-0 right-0 top-0 z-[100] flex flex-col" style={{ backgroundColor: '#0a0a0f', bottom: '70px' }}>
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
-              <div className="flex items-center gap-3">
-                {market.imageUrl && (
-                  <img src={market.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover" />
-                )}
-                <h2 className="text-white font-semibold text-sm line-clamp-2 flex-1">
-                  {getTranslatedText(market.claim, market.claimTranslations)}
-                </h2>
-              </div>
+            {/* Close Button */}
+            <div className="flex justify-end p-3">
               <button
                 onClick={() => setShowMobileBetModal(false)}
                 className="p-2 text-zinc-400 hover:text-white"
@@ -1242,34 +1234,44 @@ export default function MarketPage({
               </button>
             </div>
 
+            {/* Market Title Header */}
+            <div className="flex items-center gap-4 px-4 pb-4">
+              {market.imageUrl && (
+                <img src={market.imageUrl} alt="" className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+              )}
+              <h2 className="text-white font-bold text-lg leading-tight">
+                {getTranslatedText(market.claim, market.claimTranslations)}
+              </h2>
+            </div>
+
+            {/* Buy/Sell Tabs */}
+            <div className="flex gap-4 border-b border-zinc-800/30 px-4">
+              <button
+                onClick={() => setCastInterface("buy")}
+                className={`py-3.5 px-5 text-base font-semibold transition-all duration-200 relative ${
+                  castInterface === "buy" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
+                }`}
+              >
+                Buy
+                {castInterface === "buy" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+                )}
+              </button>
+              <button
+                onClick={() => setCastInterface("sell")}
+                className={`py-3.5 px-5 text-base font-semibold transition-all duration-200 relative ${
+                  castInterface === "sell" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
+                }`}
+              >
+                Sell
+                {castInterface === "sell" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+                )}
+              </button>
+            </div>
+
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {/* Buy/Sell Tabs */}
-              <div className="flex gap-4 border-b border-zinc-800/30">
-                <button
-                  onClick={() => setCastInterface("buy")}
-                  className={`py-3.5 px-5 text-base font-semibold transition-all duration-200 relative ${
-                    castInterface === "buy" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
-                  }`}
-                >
-                  Buy
-                  {castInterface === "buy" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
-                  )}
-                </button>
-                <button
-                  onClick={() => setCastInterface("sell")}
-                  className={`py-3.5 px-5 text-base font-semibold transition-all duration-200 relative ${
-                    castInterface === "sell" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
-                  }`}
-                >
-                  Sell
-                  {castInterface === "sell" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
-                  )}
-                </button>
-              </div>
-
               {/* Progress Bar with Percentages */}
               <div className="flex items-center gap-3">
                 <span className="text-white font-medium text-sm">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
