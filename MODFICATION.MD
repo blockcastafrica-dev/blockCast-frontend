@@ -203,6 +203,11 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
   - Gray (#334155) with muted text when disabled
 - **State Management:** `showMobileBetModal` state to control visibility
 
+### Changes (commit `c1d98c4`):
+- **Hide Sticky Bar When Modal Open:** Added `!showMobileBetModal` condition to hide bottom sticky bar when betting modal is displayed
+- **Modal Positioned Above Footer:** Changed from `inset-0` to `bottom: 70px` so modal doesn't overlap footer menu
+- **Cast Position Button Visibility:** Button now properly visible within modal container above footer
+
 ### Current Features:
 - ProbabilityChart integration with share functionality (now full width)
 - Tabs: Dispute, Overview, Activity, AI Analysis, Comments

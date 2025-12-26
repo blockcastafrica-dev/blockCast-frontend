@@ -1139,8 +1139,8 @@ export default function MarketPage({
         </div>
         {/* End of Left Column */}
 
-        {/* Mobile Sticky Betting Bar - Fixed above footer */}
-        {!market.disputable && (
+        {/* Mobile Sticky Betting Bar - Fixed above footer (hidden when modal is open) */}
+        {!market.disputable && !showMobileBetModal && (
           <div
             className="lg:hidden fixed left-0 right-0 z-50"
             style={{ bottom: '70px' }}
@@ -1221,9 +1221,9 @@ export default function MarketPage({
           </div>
         )}
 
-        {/* Mobile Betting Modal - Full Screen */}
+        {/* Mobile Betting Modal - Above Footer */}
         {showMobileBetModal && !market.disputable && (
-          <div className="lg:hidden fixed inset-0 z-[100] flex flex-col" style={{ backgroundColor: '#0a0a0f' }}>
+          <div className="lg:hidden fixed left-0 right-0 top-0 z-[100] flex flex-col" style={{ backgroundColor: '#0a0a0f', bottom: '70px' }}>
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-zinc-800">
               <div className="flex items-center gap-3">
@@ -1408,11 +1408,11 @@ export default function MarketPage({
             </div>
 
             {/* Fixed Bottom Button */}
-            <div className="p-4 border-t border-zinc-800">
+            <div className="p-4 border-t border-zinc-800" style={{ backgroundColor: '#0a0a0f' }}>
               <Button
                 onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
                 disabled={!castAmount || parseFloat(castAmount) > userBalance}
-                className="w-full h-14 text-base font-bold rounded-xl cursor-pointer"
+                className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer"
                 style={{
                   backgroundColor: !castAmount || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
                   color: !castAmount || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
