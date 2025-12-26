@@ -208,6 +208,19 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - **Modal Positioned Above Footer:** Changed from `inset-0` to `bottom: 70px` so modal doesn't overlap footer menu
 - **Cast Position Button Visibility:** Button now properly visible within modal container above footer
 
+### Changes (commit `7ab69d4`):
+- **Buy/Sell Tabs Styling:** Matched desktop version with `gap-4`, `text-base font-semibold`, thicker underline (`h-1 bg-primary`)
+
+### Changes (commit `2303151`):
+- **Header Redesign:** X close button moved to own row, larger market image (14x14), bigger title (text-lg font-bold)
+- **Tabs Outside Scrollable Area:** Buy/Sell tabs fixed below title for better UX
+
+### Changes (commit `8d2d92b`):
+- **Modal Position:** Lowered modal (`top: 120px`) for better visibility with rounded top corners
+- **X Close Button:** Absolute positioned top-right with cyan hover effect (#06f6ff border)
+- **Layout Spacing:** Spacer div for X button, increased padding (`px-6`) for market title and tabs
+- **Backdrop Overlay:** Semi-transparent backdrop (`bg-black/50`) - click outside to close modal
+
 ### Current Features:
 - ProbabilityChart integration with share functionality (now full width)
 - Tabs: Dispute, Overview, Activity, AI Analysis, Comments
@@ -306,7 +319,7 @@ background: linear-gradient(90deg,
 | `WithdrawWallet.tsx` | 384 | Withdrawal modal |
 | `FundWalletModal.tsx` | 673 | Deposit modal |
 | `ProbabilityChart.tsx` | 307 | Market chart component |
-| `MarketPage.tsx` | 1814 | Individual market page |
+| `MarketPage.tsx` | 1832 | Individual market page |
 | `BettingMarkets.tsx` | 1410 | Markets list/grid |
 
 ---
