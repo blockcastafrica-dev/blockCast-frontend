@@ -1147,7 +1147,7 @@ export default function MarketPage({
           >
             <div
               className="mx-3 rounded-2xl p-4"
-              style={{ backgroundColor: '#121218', border: '1px solid rgba(6, 246, 255, 0.15)' }}
+              style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937' }}
             >
               {/* Progress Bar with Percentages */}
               <div className="flex items-center gap-3 mb-4">
@@ -1229,7 +1229,7 @@ export default function MarketPage({
               className="lg:hidden fixed inset-0 z-[99] bg-black/50"
               onClick={() => setShowMobileBetModal(false)}
             />
-            <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col" style={{ backgroundColor: '#121218', border: '1px solid rgba(6, 246, 255, 0.15)', top: '120px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+            <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937', top: '120px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
             {/* Close Button - Right Corner */}
             <button
               onClick={() => setShowMobileBetModal(false)}
@@ -1425,7 +1425,7 @@ export default function MarketPage({
             </div>
 
             {/* Fixed Bottom Button */}
-            <div className="p-4 border-t border-zinc-800" style={{ backgroundColor: '#121218' }}>
+            <div className="p-4 border-t border-zinc-800" style={{ backgroundColor: '#0f1419' }}>
               <Button
                 onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
                 disabled={!castAmount || parseFloat(castAmount) > userBalance}
@@ -1447,7 +1447,7 @@ export default function MarketPage({
           <aside className="hidden lg:block lg:w-[380px] shrink-0" style={{ position: 'sticky', top: '100px', alignSelf: 'flex-start', height: 'fit-content' }}>
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
-              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
+              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937' }}>
                 {/* Tabs */}
                 <div className="flex gap-3 md:gap-4 lg:gap-6 border-b border-zinc-800/30">
                   <button
@@ -1632,7 +1632,7 @@ export default function MarketPage({
 
             {/* SELL INTERFACE */}
             {castInterface === "sell" && (
-              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
+              <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937' }}>
                 {/* Tabs */}
                 <div className="flex gap-3 md:gap-4 lg:gap-6 border-b border-zinc-800/30">
                   <button
