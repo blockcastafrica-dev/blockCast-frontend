@@ -1229,11 +1229,11 @@ export default function MarketPage({
               className="lg:hidden fixed inset-0 z-[99] bg-black/50"
               onClick={() => setShowMobileBetModal(false)}
             />
-            <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937', top: '120px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+            <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col overflow-hidden" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937', top: '60px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
             {/* Close Button - Right Corner */}
             <button
               onClick={() => setShowMobileBetModal(false)}
-              className="absolute top-2 right-4 h-9 w-9 flex items-center justify-center rounded-xl border-2 border-transparent transition-all z-10"
+              className="absolute top-3 right-4 h-8 w-8 flex items-center justify-center rounded-xl border-2 border-transparent transition-all z-10"
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#06f6ff';
                 e.currentTarget.style.backgroundColor = '#1a1f26';
@@ -1246,191 +1246,190 @@ export default function MarketPage({
               <X className="h-5 w-5 text-gray-400" />
             </button>
 
-            {/* Single Scrollable Block for All Content */}
-            <div className="flex-1 overflow-y-auto">
-              {/* Spacer for X button */}
-              <div className="h-10"></div>
-
+            {/* Static Content - No Scroll */}
+            <div className="flex-1 flex flex-col">
               {/* Market Title Header */}
-              <div className="flex items-center gap-4 px-6 mb-6">
+              <div className="flex items-center gap-3 px-5 pt-12 pb-3">
                 {market.imageUrl && (
-                  <img src={market.imageUrl} alt="" className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                  <img src={market.imageUrl} alt="" className="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
                 )}
-                <h2 className="text-white font-bold text-lg leading-tight pr-4">
+                <h2 className="text-white font-bold text-base leading-tight pr-8">
                   {getTranslatedText(market.claim, market.claimTranslations)}
                 </h2>
               </div>
 
               {/* Buy/Sell Tabs */}
-              <div className="flex gap-4 border-b border-zinc-800/30 px-6 mt-2">
+              <div className="flex gap-4 border-b border-zinc-800/30 px-5">
                 <button
                   onClick={() => setCastInterface("buy")}
-                  className={`pt-2 pb-3 px-5 text-base font-semibold transition-all duration-200 relative ${
+                  className={`pt-1 pb-2 px-4 text-sm font-semibold transition-all duration-200 relative ${
                     castInterface === "buy" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
                   }`}
                 >
                   Buy
                   {castInterface === "buy" && (
-                    <div className="absolute bottom-1 left-0 right-0 h-1 bg-primary"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
                   )}
                 </button>
                 <button
                   onClick={() => setCastInterface("sell")}
-                  className={`pt-2 pb-3 px-5 text-base font-semibold transition-all duration-200 relative ${
+                  className={`pt-1 pb-2 px-4 text-sm font-semibold transition-all duration-200 relative ${
                     castInterface === "sell" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
                   }`}
                 >
                   Sell
                   {castInterface === "sell" && (
-                    <div className="absolute bottom-1 left-0 right-0 h-1 bg-primary"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
                   )}
                 </button>
               </div>
 
-              {/* Content */}
-              <div className="p-4 space-y-4">
-                {/* Progress Bar with Percentages */}
-                <div className="flex items-center gap-3">
-                  <span className="text-white font-medium text-sm">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                  <div className="flex-1 rounded-full overflow-hidden flex" style={{ height: '10px', backgroundColor: '#1a1a2e' }}>
-                    <div
-                      className="h-full"
-                      style={{
-                        width: `${(market.yesPool / market.totalPool) * 100}%`,
-                        background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
-                      }}
-                    />
-                    <div
-                      className="h-full"
-                      style={{
-                        width: `${(market.noPool / market.totalPool) * 100}%`,
-                        background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
-                      }}
-                    />
-                  </div>
-                  <span className="text-white font-medium text-sm">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
-                </div>
-
-                {/* Pick a Side */}
-                <div className="space-y-2">
-                  <h3 className="text-sm text-zinc-400">Pick a side</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => handlePositionChange("yes")}
-                      className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                        castPosition === "yes"
-                          ? "border-2 shadow-lg"
-                          : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                      }`}
-                      style={castPosition === "yes" ? {
-                        background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                        borderColor: 'rgba(34, 211, 238, 0.6)',
-                        color: '#22d3ee',
-                        boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                      } : {}}
-                    >
-                      TRUE
-                    </button>
-                    <button
-                      onClick={() => handlePositionChange("no")}
-                      className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                        castPosition === "no"
-                          ? "border-2 shadow-lg"
-                          : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                      }`}
-                      style={castPosition === "no" ? {
-                        background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                        borderColor: 'rgba(192, 132, 252, 0.6)',
-                        color: '#7c3aed',
-                        boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                      } : {}}
-                    >
-                      FALSE
-                    </button>
-                  </div>
-                </div>
-
-                {/* Amount Input */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm text-zinc-400">Amount</h3>
-                    <span className="text-xs font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
-                      Available USDT {userBalance.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="relative">
-                    <span className="absolute top-1/2 -translate-y-1/2 text-zinc-400 font-semibold text-base" style={{ left: '16px' }}>USDT</span>
-                    <Input
-                      type="text"
-                      placeholder="0.00"
-                      value={castAmount}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9.]/g, '');
-                        handleAmountChange(value);
-                      }}
-                      className="w-full h-14 pr-4 text-white text-lg bg-zinc-900/50 border border-zinc-700/50 rounded-xl focus:border-zinc-600 focus:ring-0 placeholder:text-zinc-600"
-                      style={{ paddingLeft: '65px' }}
-                    />
-                  </div>
-                </div>
-
-                {/* Market Info */}
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-500">Price change</span>
-                    <span className="text-zinc-300">
-                      ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} → ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-500">Shares</span>
-                    <span className="text-zinc-300">
-                      {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-500">Avg. price</span>
-                    <span className="text-zinc-300">
-                      ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-zinc-800"></div>
-
-                {/* Fee Info */}
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <span className="text-zinc-500">Fee</span>
-                      <AlertCircle className="w-3 h-3 text-zinc-600" />
+              {/* Content - Flex grow to fill space */}
+              <div className="flex-1 flex flex-col justify-between px-5 py-3">
+                <div className="space-y-2.5">
+                  {/* Progress Bar with Percentages */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-medium text-xs">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                    <div className="flex-1 rounded-full overflow-hidden flex" style={{ height: '8px', backgroundColor: '#1a1a2e' }}>
+                      <div
+                        className="h-full"
+                        style={{
+                          width: `${(market.yesPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
+                        }}
+                      />
+                      <div
+                        className="h-full"
+                        style={{
+                          width: `${(market.noPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
+                        }}
+                      />
                     </div>
-                    <span className="text-zinc-300">3%</span>
+                    <span className="text-white font-medium text-xs">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-500">Max profit</span>
-                    <span className="text-emerald-400">
-                      ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / Math.max(0.01, profitCalculation.amount)) * 100).toFixed(2) : "0.00"}%)
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <span className="text-zinc-500">Max payout</span>
-                      <AlertCircle className="w-3 h-3 text-zinc-600" />
+
+                  {/* Pick a Side */}
+                  <div className="space-y-1.5">
+                    <h3 className="text-xs text-zinc-400">Pick a side</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => handlePositionChange("yes")}
+                        className={`py-2.5 px-3 rounded-full text-sm font-bold transition-all text-center cursor-pointer ${
+                          castPosition === "yes"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                        }`}
+                        style={castPosition === "yes" ? {
+                          background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                          borderColor: 'rgba(34, 211, 238, 0.6)',
+                          color: '#22d3ee',
+                          boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                        } : {}}
+                      >
+                        TRUE
+                      </button>
+                      <button
+                        onClick={() => handlePositionChange("no")}
+                        className={`py-2.5 px-3 rounded-full text-sm font-bold transition-all text-center cursor-pointer ${
+                          castPosition === "no"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                        }`}
+                        style={castPosition === "no" ? {
+                          background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                          borderColor: 'rgba(192, 132, 252, 0.6)',
+                          color: '#7c3aed',
+                          boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                        } : {}}
+                      >
+                        FALSE
+                      </button>
                     </div>
-                    <span className="text-zinc-300">
-                      ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
-                    </span>
+                  </div>
+
+                  {/* Amount Input */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs text-zinc-400">Amount</h3>
+                      <span className="text-[10px] font-medium px-3 py-1 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                        Available USDT {userBalance.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <span className="absolute top-1/2 -translate-y-1/2 text-zinc-400 font-semibold text-sm" style={{ left: '14px' }}>USDT</span>
+                      <Input
+                        type="text"
+                        placeholder="0.00"
+                        value={castAmount}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9.]/g, '');
+                          handleAmountChange(value);
+                        }}
+                        className="w-full h-11 pr-4 text-white text-base bg-zinc-900/50 border border-zinc-700/50 rounded-xl focus:border-zinc-600 focus:ring-0 placeholder:text-zinc-600"
+                        style={{ paddingLeft: '60px' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Market Info */}
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-zinc-500">Price change</span>
+                      <span className="text-zinc-300">
+                        ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} → ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-zinc-500">Shares</span>
+                      <span className="text-zinc-300">
+                        {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-zinc-500">Avg. price</span>
+                      <span className="text-zinc-300">
+                        ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-zinc-800"></div>
+
+                  {/* Fee Info */}
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <span className="text-zinc-500">Fee</span>
+                        <AlertCircle className="w-3 h-3 text-zinc-600" />
+                      </div>
+                      <span className="text-zinc-300">3%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-zinc-500">Max profit</span>
+                      <span className="text-emerald-400">
+                        ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / Math.max(0.01, profitCalculation.amount)) * 100).toFixed(2) : "0.00"}%)
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <span className="text-zinc-500">Max payout</span>
+                        <AlertCircle className="w-3 h-3 text-zinc-600" />
+                      </div>
+                      <span className="text-zinc-300">
+                        ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Bottom Button inside scrollable area */}
-                <div className="pt-4">
+                {/* Bottom Button */}
+                <div className="pt-2">
                   <Button
                     onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
                     disabled={!castAmount || parseFloat(castAmount) > userBalance}
-                    className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer"
+                    className="w-full h-12 text-base font-bold rounded-xl cursor-pointer"
                     style={{
                       backgroundColor: !castAmount || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
                       color: !castAmount || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
