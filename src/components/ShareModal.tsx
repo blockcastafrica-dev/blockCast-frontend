@@ -53,7 +53,7 @@ export default function ShareModal({ isOpen, onClose, market }: ShareModalProps)
   const socialButtons = [
     { id: 'twitter', icon: BsTwitterX, label: 'X', bg: '#000000' },
     { id: 'whatsapp', icon: BsWhatsapp, label: 'WhatsApp', bg: '#25D366' },
-    { id: 'telegram', icon: BsTelegram, label: 'Telegram', bg: '#0088cc' },
+    { id: 'telegram', icon: BsTelegram, label: 'Telegram', bg: '#26A5E4' },
     { id: 'facebook', icon: BsFacebook, label: 'Facebook', bg: '#1877F2' },
   ];
 
