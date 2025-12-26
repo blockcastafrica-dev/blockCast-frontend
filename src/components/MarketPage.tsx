@@ -1487,8 +1487,8 @@ export default function MarketPage({
                   {/* Percentage Bar */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                      <span className="text-4xl font-bold" style={{ color: '#7c3aed' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold text-white">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold text-white">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
                     <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
                       <div
@@ -1672,8 +1672,8 @@ export default function MarketPage({
                   {/* Percentage Bar */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-4xl font-bold" style={{ color: '#22d3ee' }}>{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                      <span className="text-4xl font-bold" style={{ color: '#7c3aed' }}>{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold text-white">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                      <span className="text-4xl font-bold text-white">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
                     </div>
                     <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
                       <div
