@@ -221,11 +221,11 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - **Layout Spacing:** Spacer div for X button, increased padding (`px-6`) for market title and tabs
 - **Backdrop Overlay:** Semi-transparent backdrop (`bg-black/50`) - click outside to close modal
 
-### Changes (commits `c7730a9`, `6aa3b76`, `b28f4ce`, `72c627e`, `670a2f5`, `9903f43`):
-- **Mobile Betting Bar Container:** Changed background from `#0f0f15` to `#121218` for better contrast consistency
-- **True Button Color:** Updated to use correct brand cyan `#06f6ff` instead of `rgba(34, 211, 238, ...)` for gradient, border, shadow, and text
-- **Mobile Betting Modal Background:** Changed from `#0a0a0f` (near-black) to `#121218` (darker, less purple) for both modal container and bottom button area
-- **Subtle Cyan Border:** Added thin cyan highlight `rgba(6, 246, 255, 0.15)` to both mobile betting bar and modal containers
+### Changes (commits `c7730a9`, `6aa3b76`, `b28f4ce`, `72c627e`, `670a2f5`, `9903f43`, `5ae834c`, `477acf1`):
+- **Mobile Betting UI Background:** Updated to match FundWalletModal styling with `#0f1419` background
+- **Border Styling:** Changed to `#1f2937` border for consistency across all modals
+- **True Button Color:** Updated to match desktop cyan-400 styling with `rgba(34, 211, 238, ...)` gradient, border, and shadow
+- **Desktop Betting Sidebar:** Also updated to use `#0f1419` background and `#1f2937` border
 
 ### Current Features:
 - ProbabilityChart integration with share functionality (now full width)
@@ -300,7 +300,7 @@ background: linear-gradient(90deg,
 - **Secondary/False:** Purple (#7c3aed, #c084fc)
 - **Background:** Dark (#0f1419)
 - **Cards:** #1a1f26
-- **Mobile Betting UI:** Dark (#121218)
+- **Mobile Betting UI:** Dark (#0f1419) with border (#1f2937)
 
 ### Progress Bars:
 - Gradient from cyan → purple based on pool percentages
