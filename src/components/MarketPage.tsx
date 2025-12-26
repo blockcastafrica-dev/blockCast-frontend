@@ -1229,7 +1229,7 @@ export default function MarketPage({
               className="lg:hidden fixed inset-0 z-[99] bg-black/50"
               onClick={() => setShowMobileBetModal(false)}
             />
-            <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col" style={{ backgroundColor: '#0a0a0f', top: '120px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+            <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col" style={{ backgroundColor: '#141423', top: '120px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
             {/* Close Button - Right Corner */}
             <button
               onClick={() => setShowMobileBetModal(false)}
@@ -1425,7 +1425,7 @@ export default function MarketPage({
             </div>
 
             {/* Fixed Bottom Button */}
-            <div className="p-4 border-t border-zinc-800" style={{ backgroundColor: '#0a0a0f' }}>
+            <div className="p-4 border-t border-zinc-800" style={{ backgroundColor: '#141423' }}>
               <Button
                 onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
                 disabled={!castAmount || parseFloat(castAmount) > userBalance}
