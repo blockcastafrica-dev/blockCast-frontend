@@ -1147,7 +1147,7 @@ export default function MarketPage({
           >
             <div
               className="mx-3 rounded-2xl p-4"
-              style={{ backgroundColor: '#121218', border: '1px solid #2a2a3a' }}
+              style={{ backgroundColor: '#121218', border: '1px solid rgba(6, 246, 255, 0.15)' }}
             >
               {/* Progress Bar with Percentages */}
               <div className="flex items-center gap-3 mb-4">
