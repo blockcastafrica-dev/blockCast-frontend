@@ -1245,27 +1245,27 @@ export default function MarketPage({
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {/* Buy/Sell Tabs */}
-              <div className="flex border-b border-zinc-800">
+              <div className="flex gap-4 border-b border-zinc-800/30">
                 <button
                   onClick={() => setCastInterface("buy")}
-                  className={`py-3 px-5 text-sm font-medium transition-all relative ${
-                    castInterface === "buy" ? "text-white" : "text-zinc-500"
+                  className={`py-3.5 px-5 text-base font-semibold transition-all duration-200 relative ${
+                    castInterface === "buy" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
                   }`}
                 >
                   Buy
                   {castInterface === "buy" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
                   )}
                 </button>
                 <button
                   onClick={() => setCastInterface("sell")}
-                  className={`py-3 px-5 text-sm font-medium transition-all relative ${
-                    castInterface === "sell" ? "text-white" : "text-zinc-500"
+                  className={`py-3.5 px-5 text-base font-semibold transition-all duration-200 relative ${
+                    castInterface === "sell" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
                   }`}
                 >
                   Sell
                   {castInterface === "sell" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
                   )}
                 </button>
               </div>
