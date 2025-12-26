@@ -1233,7 +1233,7 @@ export default function MarketPage({
             {/* Close Button - Right Corner */}
             <button
               onClick={() => setShowMobileBetModal(false)}
-              className="absolute top-3 right-4 h-8 w-8 flex items-center justify-center rounded-xl border-2 border-transparent transition-all z-10"
+              className="absolute top-1 right-4 h-8 w-8 flex items-center justify-center rounded-xl border-2 border-transparent transition-all z-10"
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#06f6ff';
                 e.currentTarget.style.backgroundColor = '#1a1f26';
@@ -1248,8 +1248,11 @@ export default function MarketPage({
 
             {/* Static Content - No Scroll */}
             <div className="flex-1 flex flex-col">
+              {/* Spacer for close button */}
+              <div className="h-8"></div>
+
               {/* Market Title Header */}
-              <div className="flex items-center gap-3 px-5 pt-12 pb-3">
+              <div className="flex items-center gap-3 px-6 pt-2 pb-4">
                 {market.imageUrl && (
                   <img src={market.imageUrl} alt="" className="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
                 )}
@@ -1259,34 +1262,34 @@ export default function MarketPage({
               </div>
 
               {/* Buy/Sell Tabs */}
-              <div className="flex gap-4 border-b border-zinc-800/30 px-5">
+              <div className="flex gap-4 border-b border-zinc-800/30 px-6">
                 <button
                   onClick={() => setCastInterface("buy")}
-                  className={`pt-1 pb-2 px-4 text-sm font-semibold transition-all duration-200 relative ${
+                  className={`pt-1 pb-3 px-4 text-sm font-semibold transition-all duration-200 relative ${
                     castInterface === "buy" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
                   }`}
                 >
                   Buy
                   {castInterface === "buy" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+                    <div className="absolute bottom-1 left-0 right-0 h-1 bg-primary"></div>
                   )}
                 </button>
                 <button
                   onClick={() => setCastInterface("sell")}
-                  className={`pt-1 pb-2 px-4 text-sm font-semibold transition-all duration-200 relative ${
+                  className={`pt-1 pb-3 px-4 text-sm font-semibold transition-all duration-200 relative ${
                     castInterface === "sell" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
                   }`}
                 >
                   Sell
                   {castInterface === "sell" && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+                    <div className="absolute bottom-1 left-0 right-0 h-1 bg-primary"></div>
                   )}
                 </button>
               </div>
 
               {/* Content */}
-              <div className="flex-1 flex flex-col justify-between px-5 py-4">
-                <div className="space-y-3">
+              <div className="px-6 py-4">
+                <div className="space-y-4">
                   {/* Progress Bar with Percentages */}
                   <div className="flex items-center gap-3">
                     <span className="text-white font-medium text-sm">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
@@ -1310,12 +1313,12 @@ export default function MarketPage({
                   </div>
 
                   {/* Pick a Side */}
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <h3 className="text-sm text-zinc-400">Pick a side</h3>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-4">
                       <button
                         onClick={() => handlePositionChange("yes")}
-                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                        className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           castPosition === "yes"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
@@ -1331,7 +1334,7 @@ export default function MarketPage({
                       </button>
                       <button
                         onClick={() => handlePositionChange("no")}
-                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                        className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           castPosition === "no"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
@@ -1349,10 +1352,10 @@ export default function MarketPage({
                   </div>
 
                   {/* Amount Input */}
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm text-zinc-400">Amount</h3>
-                      <span className="text-xs font-medium px-3 py-1 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                      <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
                         Available USDT {userBalance.toFixed(2)}
                       </span>
                     </div>
@@ -1373,7 +1376,7 @@ export default function MarketPage({
                   </div>
 
                   {/* Market Info */}
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-2 text-sm mt-4">
                     <div className="flex items-center justify-between">
                       <span className="text-zinc-500">Price change</span>
                       <span className="text-zinc-300">
@@ -1423,14 +1426,11 @@ export default function MarketPage({
                     </div>
                   </div>
 
-                </div>
-
-                {/* Bottom Button */}
-                <div className="pt-4">
+                  {/* Bottom Button */}
                   <Button
                     onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
                     disabled={!castAmount || parseFloat(castAmount) > userBalance}
-                    className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer"
+                    className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer mt-14"
                     style={{
                       backgroundColor: !castAmount || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
                       color: !castAmount || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
