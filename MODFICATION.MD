@@ -161,6 +161,7 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 ### Commits:
 - `c01674c` - Two-column flex layout for desktop
 - `55d8bba` - Fix chart container to use full width
+- `f0ee2d7` - Add mobile sticky betting bar above footer
 
 ### Changes (commit `c01674c`):
 - Two-column flex layout for desktop
@@ -174,6 +175,15 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - **Removed 3-column grid:** Changed from `grid lg:grid-cols-3` with `lg:col-span-2` to simple vertical stack
 - **Full width chart:** ProbabilityChart now wrapped in `<div className="w-full">` for proper expansion
 - **Layout structure:** Changed to `space-y-4 md:space-y-5 lg:space-y-6` for consistent vertical spacing
+
+### Changes (commit `f0ee2d7`):
+- **Mobile Sticky Betting Bar:** Fixed position bar above mobile footer (`bottom: 70px`)
+- **Progress Bar:** Cyan→Purple gradient matching market cards with white percentage labels
+- **Pool Buttons:** Display volume in $K format (e.g., "$1050.0K", "$450.0K")
+- **Button Styling:** Same as desktop - pill shape (`rounded-full`), gradient background when selected
+- **Glow Effects:** Cyan glow for True, Purple glow for False when selected
+- **Container:** Dark background (`#0f0f15`) with border for visibility
+- **Visibility:** Only shows on mobile (`lg:hidden`)
 
 ### Current Features:
 - ProbabilityChart integration with share functionality (now full width)
