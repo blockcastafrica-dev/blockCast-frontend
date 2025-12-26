@@ -228,6 +228,14 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - **Desktop Betting Sidebar:** Kept original gradient styling (`bg-gradient-to-b from-zinc-950 to-black`)
 - **Percentage Figures:** Changed desktop sidebar percentage text (70%/30%) to white
 
+### Changes (commit `830225c`):
+- **TRUE/FALSE Buttons:** Increased padding (`py-3` → `py-4`) and gap (`gap-3` → `gap-4`) for better touch targets
+- **Pick a Side Section:** Increased spacing (`space-y-2` → `space-y-3`)
+- **Amount Section:** Increased spacing (`space-y-2` → `space-y-3`)
+- **Available Balance Badge:** Made taller (`py-1` → `py-1.5`)
+- **Market Info Section:** Added `mt-4` margin to push price details (shares, avg price, fee) lower
+- **Enter Amount Button:** Adjusted margin (`mt-14`) for better positioning
+
 ### Current Features:
 - ProbabilityChart integration with share functionality (now full width)
 - Tabs: Dispute, Overview, Activity, AI Analysis, Comments
