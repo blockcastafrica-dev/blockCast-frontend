@@ -1188,13 +1188,13 @@ export default function MarketPage({
                       : "bg-zinc-900/80 border-2 border-zinc-700/50"
                   }`}
                   style={castPosition === "yes" ? {
-                    background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                    borderColor: 'rgba(34, 211, 238, 0.6)',
-                    boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                    background: 'linear-gradient(to bottom right, rgba(6, 246, 255, 0.2), rgba(6, 246, 255, 0.1))',
+                    borderColor: 'rgba(6, 246, 255, 0.6)',
+                    boxShadow: '0 10px 15px -3px rgba(6, 246, 255, 0.25)'
                   } : {}}
                 >
-                  <div className={`text-base font-bold ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>True</div>
-                  <div className={`text-xs ${castPosition === "yes" ? "text-cyan-300" : "text-zinc-500"}`}>
+                  <div className={`text-base font-bold ${castPosition === "yes" ? "" : "text-zinc-400"}`} style={castPosition === "yes" ? { color: '#06f6ff' } : {}}>True</div>
+                  <div className={`text-xs ${castPosition === "yes" ? "" : "text-zinc-500"}`} style={castPosition === "yes" ? { color: 'rgba(6, 246, 255, 0.8)' } : {}}>
                     ${market.yesPool >= 1000 ? (market.yesPool / 1000).toFixed(1) + 'K' : market.yesPool.toFixed(0)}
                   </div>
                 </button>
