@@ -221,11 +221,12 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - **Layout Spacing:** Spacer div for X button, increased padding (`px-6`) for market title and tabs
 - **Backdrop Overlay:** Semi-transparent backdrop (`bg-black/50`) - click outside to close modal
 
-### Changes (commits `c7730a9`, `6aa3b76`, `b28f4ce`, `72c627e`, `670a2f5`, `9903f43`, `5ae834c`, `477acf1`, `03d54a3`):
+### Changes (commits `c7730a9`, `6aa3b76`, `b28f4ce`, `72c627e`, `670a2f5`, `9903f43`, `5ae834c`, `477acf1`, `03d54a3`, `d9a15b2`):
 - **Mobile Betting UI Background:** Updated to match FundWalletModal styling with `#0f1419` background
 - **Border Styling:** Changed to `#1f2937` border for mobile betting UI
 - **True Button Color:** Updated to match desktop cyan-400 styling with `rgba(34, 211, 238, ...)` gradient, border, and shadow
 - **Desktop Betting Sidebar:** Kept original gradient styling (`bg-gradient-to-b from-zinc-950 to-black`)
+- **Percentage Figures:** Changed desktop sidebar percentage text (70%/30%) to white
 
 ### Current Features:
 - ProbabilityChart integration with share functionality (now full width)
