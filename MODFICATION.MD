@@ -185,6 +185,24 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - **Container:** Dark background (`#0f0f15`) with border for visibility
 - **Visibility:** Only shows on mobile (`lg:hidden`)
 
+### Changes (commit `7dfadb4`):
+- **Mobile Betting Modal:** Full-screen modal that opens when clicking True/False buttons in sticky bar
+- **Header:** Market image, title, and X close button
+- **Buy/Sell Tabs:** Toggle between buy and sell modes with underline indicator
+- **Progress Bar:** Cyan→Purple gradient with percentages on both sides
+- **Pick a Side:** TRUE/FALSE pill buttons matching desktop style
+  - `rounded-full` shape
+  - Cyan gradient + glow for TRUE when selected
+  - Purple gradient + glow for FALSE when selected
+  - Gray with hover effect when unselected
+- **Amount Input:** Dollar prefix, available balance display
+- **Market Info:** Price change, Shares, Avg. price
+- **Fee Info:** 3% fee, Max profit (emerald color), Max payout
+- **Cast Position Button:**
+  - Cyan (#06f6ff) with black text when amount entered
+  - Gray (#334155) with muted text when disabled
+- **State Management:** `showMobileBetModal` state to control visibility
+
 ### Current Features:
 - ProbabilityChart integration with share functionality (now full width)
 - Tabs: Dispute, Overview, Activity, AI Analysis, Comments
@@ -283,7 +301,7 @@ background: linear-gradient(90deg,
 | `WithdrawWallet.tsx` | 384 | Withdrawal modal |
 | `FundWalletModal.tsx` | 673 | Deposit modal |
 | `ProbabilityChart.tsx` | 307 | Market chart component |
-| `MarketPage.tsx` | 1528 | Individual market page |
+| `MarketPage.tsx` | 1814 | Individual market page |
 | `BettingMarkets.tsx` | 1410 | Markets list/grid |
 
 ---

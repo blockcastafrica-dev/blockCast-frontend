@@ -50,6 +50,7 @@ import {
   MessagesSquare,
   Clock4,
   Activity,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/components/LanguageContext";
@@ -108,6 +109,7 @@ export default function MarketPage({
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [showMobileBetModal, setShowMobileBetModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<
     "dispute" | "overview" | "comments" | "analysis" | "activity"
   >(market.disputable ? "dispute" : "overview");
@@ -1179,38 +1181,245 @@ export default function MarketPage({
               {/* Pool Buttons */}
               <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => handlePositionChange("yes")}
-                  className={`py-4 px-4 rounded-full text-lg font-bold transition-all text-center cursor-pointer ${
+                  onClick={() => { handlePositionChange("yes"); setShowMobileBetModal(true); }}
+                  className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
                     castPosition === "yes"
                       ? "border-2 shadow-lg"
-                      : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400"
+                      : "bg-zinc-900/80 border-2 border-zinc-700/50"
                   }`}
                   style={castPosition === "yes" ? {
                     background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
                     borderColor: 'rgba(34, 211, 238, 0.6)',
-                    color: '#22d3ee',
                     boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
                   } : {}}
                 >
-                  ${market.yesPool >= 1000 ? (market.yesPool / 1000).toFixed(1) + 'K' : market.yesPool.toFixed(0)}
+                  <div className={`text-base font-bold ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>True</div>
+                  <div className={`text-xs ${castPosition === "yes" ? "text-cyan-300" : "text-zinc-500"}`}>
+                    ${market.yesPool >= 1000 ? (market.yesPool / 1000).toFixed(1) + 'K' : market.yesPool.toFixed(0)}
+                  </div>
                 </button>
                 <button
-                  onClick={() => handlePositionChange("no")}
-                  className={`py-4 px-4 rounded-full text-lg font-bold transition-all text-center cursor-pointer ${
+                  onClick={() => { handlePositionChange("no"); setShowMobileBetModal(true); }}
+                  className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
                     castPosition === "no"
                       ? "border-2 shadow-lg"
-                      : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400"
+                      : "bg-zinc-900/80 border-2 border-zinc-700/50"
                   }`}
                   style={castPosition === "no" ? {
                     background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
                     borderColor: 'rgba(192, 132, 252, 0.6)',
-                    color: '#c084fc',
                     boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
                   } : {}}
                 >
-                  ${market.noPool >= 1000 ? (market.noPool / 1000).toFixed(1) + 'K' : market.noPool.toFixed(0)}
+                  <div className={`text-base font-bold ${castPosition === "no" ? "text-purple-400" : "text-zinc-400"}`}>False</div>
+                  <div className={`text-xs ${castPosition === "no" ? "text-purple-300" : "text-zinc-500"}`}>
+                    ${market.noPool >= 1000 ? (market.noPool / 1000).toFixed(1) + 'K' : market.noPool.toFixed(0)}
+                  </div>
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Betting Modal - Full Screen */}
+        {showMobileBetModal && !market.disputable && (
+          <div className="lg:hidden fixed inset-0 z-[100] flex flex-col" style={{ backgroundColor: '#0a0a0f' }}>
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+              <div className="flex items-center gap-3">
+                {market.imageUrl && (
+                  <img src={market.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                )}
+                <h2 className="text-white font-semibold text-sm line-clamp-2 flex-1">
+                  {getTranslatedText(market.claim, market.claimTranslations)}
+                </h2>
+              </div>
+              <button
+                onClick={() => setShowMobileBetModal(false)}
+                className="p-2 text-zinc-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Buy/Sell Tabs */}
+              <div className="flex border-b border-zinc-800">
+                <button
+                  onClick={() => setCastInterface("buy")}
+                  className={`py-3 px-5 text-sm font-medium transition-all relative ${
+                    castInterface === "buy" ? "text-white" : "text-zinc-500"
+                  }`}
+                >
+                  Buy
+                  {castInterface === "buy" && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"></div>
+                  )}
+                </button>
+                <button
+                  onClick={() => setCastInterface("sell")}
+                  className={`py-3 px-5 text-sm font-medium transition-all relative ${
+                    castInterface === "sell" ? "text-white" : "text-zinc-500"
+                  }`}
+                >
+                  Sell
+                  {castInterface === "sell" && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"></div>
+                  )}
+                </button>
+              </div>
+
+              {/* Progress Bar with Percentages */}
+              <div className="flex items-center gap-3">
+                <span className="text-white font-medium text-sm">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                <div className="flex-1 rounded-full overflow-hidden flex" style={{ height: '10px', backgroundColor: '#1a1a2e' }}>
+                  <div
+                    className="h-full"
+                    style={{
+                      width: `${(market.yesPool / market.totalPool) * 100}%`,
+                      background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
+                    }}
+                  />
+                  <div
+                    className="h-full"
+                    style={{
+                      width: `${(market.noPool / market.totalPool) * 100}%`,
+                      background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
+                    }}
+                  />
+                </div>
+                <span className="text-white font-medium text-sm">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+              </div>
+
+              {/* Pick a Side */}
+              <div className="space-y-2">
+                <h3 className="text-sm text-zinc-400">Pick a side</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handlePositionChange("yes")}
+                    className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                      castPosition === "yes"
+                        ? "border-2 shadow-lg"
+                        : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                    }`}
+                    style={castPosition === "yes" ? {
+                      background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                      borderColor: 'rgba(34, 211, 238, 0.6)',
+                      color: '#22d3ee',
+                      boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                    } : {}}
+                  >
+                    TRUE
+                  </button>
+                  <button
+                    onClick={() => handlePositionChange("no")}
+                    className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                      castPosition === "no"
+                        ? "border-2 shadow-lg"
+                        : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                    }`}
+                    style={castPosition === "no" ? {
+                      background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                      borderColor: 'rgba(192, 132, 252, 0.6)',
+                      color: '#7c3aed',
+                      boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                    } : {}}
+                  >
+                    FALSE
+                  </button>
+                </div>
+              </div>
+
+              {/* Amount Input */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm text-zinc-400">Amount</h3>
+                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-zinc-800 text-zinc-400">
+                    Available ${userBalance.toFixed(0)}
+                  </span>
+                </div>
+                <div className="relative">
+                  <span className="absolute top-1/2 -translate-y-1/2 text-zinc-500 text-lg" style={{ left: '16px' }}>$</span>
+                  <Input
+                    type="text"
+                    placeholder="0.00"
+                    value={castAmount}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9.]/g, '');
+                      handleAmountChange(value);
+                    }}
+                    className="w-full h-14 pr-4 text-white text-lg bg-zinc-900/50 border border-zinc-700/50 rounded-xl focus:border-zinc-600 focus:ring-0 placeholder:text-zinc-600"
+                    style={{ paddingLeft: '36px' }}
+                  />
+                </div>
+              </div>
+
+              {/* Market Info */}
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-zinc-500">Price change</span>
+                  <span className="text-zinc-300">
+                    ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)} → ${(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-zinc-500">Shares</span>
+                  <span className="text-zinc-300">
+                    {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-zinc-500">Avg. price</span>
+                  <span className="text-zinc-300">
+                    ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-zinc-800"></div>
+
+              {/* Fee Info */}
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <span className="text-zinc-500">Fee</span>
+                    <AlertCircle className="w-3 h-3 text-zinc-600" />
+                  </div>
+                  <span className="text-zinc-300">3%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-zinc-500">Max profit</span>
+                  <span className="text-emerald-400">
+                    ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / Math.max(0.01, profitCalculation.amount)) * 100).toFixed(2) : "0.00"}%)
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <span className="text-zinc-500">Max payout</span>
+                    <AlertCircle className="w-3 h-3 text-zinc-600" />
+                  </div>
+                  <span className="text-zinc-300">
+                    ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Fixed Bottom Button */}
+            <div className="p-4 border-t border-zinc-800">
+              <Button
+                onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
+                disabled={!castAmount || parseFloat(castAmount) > userBalance}
+                className="w-full h-14 text-base font-bold rounded-xl cursor-pointer"
+                style={{
+                  backgroundColor: !castAmount || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
+                  color: !castAmount || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
+                }}
+              >
+                {!castAmount ? 'Enter amount' : parseFloat(castAmount) > userBalance ? 'Insufficient balance' : 'Cast Position'}
+              </Button>
             </div>
           </div>
         )}
