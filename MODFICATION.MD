@@ -419,4 +419,65 @@ background: linear-gradient(90deg,
 
 ---
 
+## 10. Help Center FAQ Redesign
+
+**File:** `src/pages/HelpCenterPage.tsx` (483 lines)
+
+### Commits:
+- `0ee9e0c` - Redesign Help Center as modern FAQ with FundWallet styling
+
+### Changes:
+- Complete redesign from traditional help center to modern accordion-style FAQ
+- Matched FundWallet modal styling for consistency across app
+
+### Design Elements:
+
+**Header:**
+- Gradient icon (cyan → purple) matching FundWallet
+- Title "Help Center" with subtitle "Find answers to your questions"
+- Search bar with gray placeholder text
+
+**Category Cards:**
+| Category | Icon | Description |
+|----------|------|-------------|
+| Getting Started | BookOpen | New to BlockCast? Start here |
+| Truth Verification | Shield | How we verify claims |
+| Truth Markets | Zap | Prediction markets explained |
+| Community & Reputation | Users | Build your credibility |
+
+**Styling:**
+- Card background: `#1a1f26`
+- Border: `#374151` (default), `rgba(6, 246, 255, 0.3)` (expanded)
+- Icon boxes: 40x40px with `#4b5563` border
+- Question count badge: Cyan background with count
+- ChevronRight rotates 90° when category expanded
+- ChevronDown rotates 180° when question expanded
+
+**Accordion Behavior:**
+- Click category → expands to show questions
+- Click question → expands to show answer
+- Only one category open at a time
+
+**Contact Support Section:**
+- Icon box with MessageCircle
+- "Still need help?" title
+- "Email Support" button (cyan `#06f6ff`, black text)
+- "Join Discord" button (outline style)
+
+**Security Notice:**
+- Shield icon in cyan
+- Warning text about passwords/private keys
+
+### FAQ Content:
+- 4 categories with 4-5 questions each
+- Topics: Account creation, verification, markets, community
+- 17 total FAQ items
+
+### Layout:
+- Max width: 600px (matches modal feel)
+- Padding: 24px vertical, 16px horizontal
+- Gap between cards: 12px
+
+---
+
 *Last Updated: December 27, 2025*
