@@ -239,7 +239,7 @@ export default function ContactPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                 <div style={{
                   padding: '8px',
-                  borderRadius: '8px',
+                  borderRadius: '50%',
                   background: 'linear-gradient(135deg, #06b6d4, #8b5cf6)'
                 }}>
                   <MapPin style={{ width: '16px', height: '16px', color: 'white' }} />
