@@ -487,4 +487,22 @@ background: linear-gradient(90deg,
 
 ---
 
+## 11. Footer & Navigation Updates
+
+**Files:**
+- `src/components/Footer.tsx`
+- `src/components/NavAccordion.tsx`
+- `src/components/FooterAccordion.tsx`
+
+### Commits:
+- `c75b8fd` - Rename Help Center to FAQ in footer and mobile menu
+
+### Changes:
+- Renamed "Help Center" to "FAQ" across all navigation
+- Desktop footer: Updated Resources section
+- Mobile side menu: Updated Support & Legal section
+- All links now point to `/help` route (FAQ page)
+
+---
+
 *Last Updated: December 27, 2025*
