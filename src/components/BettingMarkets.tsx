@@ -1289,9 +1289,18 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               {/* Content */}
               <div className="p-4 md:p-5 lg:p-6 space-y-4">
                 {/* Market Claim */}
-                <div className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800/50">
-                  <p className="font-medium text-white text-sm">{selectedMarket.claim}</p>
-                  <p className="text-xs text-zinc-500 mt-1">Source: {selectedMarket.source}</p>
+                <div className="flex items-start gap-3 p-3 bg-zinc-900/50 rounded-xl border border-zinc-800/50">
+                  {selectedMarket.imageUrl && (
+                    <img
+                      src={selectedMarket.imageUrl}
+                      alt=""
+                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-white text-sm">{selectedMarket.claim}</p>
+                    <p className="text-xs text-zinc-500 mt-1">Source: {selectedMarket.source}</p>
+                  </div>
                 </div>
 
                 {/* Percentage Bar */}
