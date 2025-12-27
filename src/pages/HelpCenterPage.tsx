@@ -8,10 +8,7 @@ interface FAQItem {
 }
 
 export default function HelpCenterPage() {
-  const [activeFilter, setActiveFilter] = useState('All');
   const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({});
-
-  const filters = ['All', 'General', 'Verification', 'Markets'];
 
   const faqItems: FAQItem[] = [
     {
@@ -88,11 +85,7 @@ export default function HelpCenterPage() {
     }));
   };
 
-  const filteredItems = faqItems.filter(item => {
-    return activeFilter === 'All' || item.category === activeFilter;
-  });
-
-  const groupedItems = filteredItems.reduce((acc, item) => {
+  const groupedItems = faqItems.reduce((acc, item) => {
     const originalIndex = faqItems.findIndex(f => f.question === item.question);
     if (!acc[item.category]) {
       acc[item.category] = [];
@@ -103,29 +96,19 @@ export default function HelpCenterPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="w-full max-w-6xl mx-auto px-5 py-16 md:py-24">
-
-        {/* Title */}
-        <h1 className="text-[56px] md:text-[96px] font-bold text-white tracking-[-0.03em] mb-16 md:mb-20">
-          Frequently Asked Questions
-        </h1>
-
-        {/* Filters */}
-        <div className="flex flex-wrap gap-2 mb-12 md:mb-16">
-          {filters.map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`h-9 px-4 rounded-full text-[14px] font-medium transition-colors ${
-                activeFilter === filter
-                  ? 'bg-white text-black'
-                  : 'bg-zinc-800/80 text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              {filter}
-            </button>
-          ))}
+      {/* Hero Banner */}
+      <div style={{ backgroundColor: '#06b6d4', width: '100%', padding: '64px 20px' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: '42px', fontWeight: 'bold', color: 'black', letterSpacing: '-0.02em' }}>
+            Frequently Asked Questions
+          </h1>
+          <p style={{ color: 'rgba(0,0,0,0.6)', fontSize: '18px', marginTop: '12px' }}>
+            Find answers to your questions
+          </p>
         </div>
+      </div>
+
+      <div className="w-full max-w-6xl mx-auto px-5 py-16 md:py-24">
 
         {/* FAQ Sections */}
         <div className="space-y-32 md:space-y-40">
