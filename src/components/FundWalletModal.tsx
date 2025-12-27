@@ -299,7 +299,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
 
               {/* Mobile Money */}
               <button
-                onClick={() => { setMethod("mobile"); setStep(2); }}
+                onClick={() => toast.info("Mobile Money coming soon!")}
                 className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
@@ -333,7 +333,6 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                           <path d="M2077.98 189.262C2077.98 189.849 2077.54 196.741 2076.66 209.938H1903.48C1907 222.256 1913.74 231.788 1923.7 238.533C1933.96 244.985 1946.71 248.211 1961.94 248.211C1973.37 248.211 1983.19 246.598 1991.39 243.372C1999.89 240.146 2008.39 234.867 2016.89 227.535L2060.84 273.287C2037.69 299.096 2003.85 312 1959.31 312C1931.47 312 1907 306.721 1885.9 296.163C1864.8 285.605 1848.39 270.941 1836.67 252.171C1825.24 233.401 1819.53 212.138 1819.53 188.382C1819.53 164.92 1825.1 143.95 1836.23 125.474C1847.66 106.704 1863.34 92.0397 1883.26 81.4816C1903.19 70.9236 1925.61 65.6445 1950.52 65.6445C1974.25 65.6445 1995.79 70.6303 2015.13 80.6018C2034.47 90.2801 2049.71 104.504 2060.84 123.274C2072.27 141.751 2077.98 163.747 2077.98 189.262ZM1950.95 125.034C1938.06 125.034 1927.22 128.7 1918.43 136.032C1909.93 143.364 1904.51 153.335 1902.17 165.946H1999.74C1997.4 153.335 1991.83 143.364 1983.04 136.032C1974.54 128.7 1963.85 125.034 1950.95 125.034Z" fill="white"/>
                           <path d="M1740.39 197.524V311.794H1653.36V196.204L1536 0H1609.13C1620.75 0 1631.51 6.11245 1637.47 16.0923L1700.83 122.298L1764.19 16.0923C1770.15 6.11248 1780.91 0 1792.53 0H1858.19L1740.39 197.524Z" fill="white"/>
                         </svg>
-                        <span className="text-gray-500 text-xs">• Fee: 1.2%</span>
                       </div>
                     </div>
                   </div>
@@ -343,7 +342,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
 
               {/* Card */}
               <button
-                onClick={() => { setMethod("card"); setStep(2); }}
+                onClick={() => toast.info("Credit/Debit Card coming soon!")}
                 className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
@@ -356,7 +355,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                         <span className="text-white font-medium">Credit/Debit Card</span>
                         <span className="px-2 py-0.5 bg-gray-500/20 text-gray-400 text-[10px] rounded-full">Coming Soon</span>
                       </div>
-                      <p className="text-gray-500 text-xs">Visa, Mastercard • Fee: 2.9%</p>
+                      <p className="text-gray-500 text-xs">Visa, Mastercard</p>
                     </div>
                   </div>
                   <ChevronRight className="w-5 h-5 text-gray-500" />
