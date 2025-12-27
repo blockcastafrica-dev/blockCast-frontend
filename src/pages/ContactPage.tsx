@@ -71,7 +71,7 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div style={{
-            backgroundColor: '#0f1419',
+            backgroundColor: '#1a1f26',
             border: '1px solid #1f2937',
             borderRadius: '16px',
             padding: '24px',
@@ -231,7 +231,7 @@ export default function ContactPage() {
 
             {/* Contact Information */}
             <div style={{
-              backgroundColor: '#0f1419',
+              backgroundColor: '#1a1f26',
               border: '1px solid #1f2937',
               borderRadius: '16px',
               padding: '24px'
@@ -290,7 +290,7 @@ export default function ContactPage() {
 
             {/* Follow Us */}
             <div style={{
-              backgroundColor: '#0f1419',
+              backgroundColor: '#1a1f26',
               border: '1px solid #1f2937',
               borderRadius: '16px',
               padding: '24px'
