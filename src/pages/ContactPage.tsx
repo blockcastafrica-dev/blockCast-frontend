@@ -45,17 +45,6 @@ export default function ContactPage() {
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '12px',
-            borderRadius: '16px',
-            background: 'linear-gradient(135deg, #06b6d4, #8b5cf6)',
-            marginBottom: '20px'
-          }}>
-            <Mail style={{ width: '32px', height: '32px', color: 'white' }} />
-          </div>
           <h1 style={{
             fontSize: '36px',
             fontWeight: 'bold',
