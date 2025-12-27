@@ -170,7 +170,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             <div className="space-y-2">
               {[
                 { label: "How it Works", icon: "icon", page: "markets" },
-                { label: "Help Center", icon: "Users", page: "help" },
+                { label: "FAQ", icon: "Users", page: "help" },
                 { label: "Contact Us", icon: "icon", page: "contact" },
                 // { label: "Fact Verification", icon: Shield, page: "verify" },
                 // { label: "Help Center", icon: Users, page: "community" },

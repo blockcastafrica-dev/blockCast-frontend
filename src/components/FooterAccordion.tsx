@@ -41,7 +41,7 @@ const FooterAccordion = ({ handleLinkClick, enableMobileHover = false }) => {
           { label: "Contact Us", page: "contact" },
           { label: "Privacy Policy", page: "privacy" },
           { label: "Terms of Service", page: "terms" },
-          { label: "Help Center", page: "contact" },
+          { label: "FAQ", page: "help" },
         ].map((item, index) => (
           <div
             key={item.label}

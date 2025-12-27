@@ -8,7 +8,7 @@ const accordionData = [
   { label: "Contact Us", page: "contact" },
   { label: "Privacy Policy", page: "privacy" },
   { label: "Terms of Service", page: "terms" },
-  { label: "Help Center", page: "contact" },
+  { label: "FAQ", page: "help" },
 ];
 
 const NavAccordion = ({ handleLinkClick, accordionTitle, data = accordionData }) => {
