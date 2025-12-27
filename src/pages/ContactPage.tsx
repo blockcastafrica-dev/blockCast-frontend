@@ -80,18 +80,9 @@ export default function ContactPage() {
           className="lg:col-span-2"
           >
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                <div style={{
-                  padding: '8px',
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #06b6d4, #8b5cf6)'
-                }}>
-                  <Send style={{ width: '16px', height: '16px', color: 'white' }} />
-                </div>
-                <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: 'white' }}>
-                  Send us a Message
-                </h2>
-              </div>
+              <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: 'white', marginBottom: '8px' }}>
+                Send us a Message
+              </h2>
               <p style={{ fontSize: '14px', color: '#6b7280' }}>
                 We'd love to hear from you. Send us a message and we'll respond as soon as possible.
               </p>
