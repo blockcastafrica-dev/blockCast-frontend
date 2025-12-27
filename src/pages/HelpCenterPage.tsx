@@ -106,8 +106,8 @@ export default function HelpCenterPage() {
       <div className="w-full max-w-6xl mx-auto px-5 py-16 md:py-24">
 
         {/* Title */}
-        <h1 className="text-[40px] md:text-[56px] font-semibold text-white tracking-[-0.02em] mb-12 md:mb-16">
-          FAQ
+        <h1 className="text-[56px] md:text-[96px] font-bold text-white tracking-[-0.03em] mb-16 md:mb-20">
+          Frequently Asked Questions
         </h1>
 
         {/* Filters */}
@@ -144,7 +144,7 @@ export default function HelpCenterPage() {
                   return (
                     <div
                       key={item.originalIndex}
-                      className={`rounded-lg ${isExpanded ? 'bg-zinc-800' : ''}`}
+                      className={`rounded-lg transition-all duration-200 ${isExpanded ? 'bg-zinc-800' : ''}`}
                     >
                       <button
                         onClick={() => toggleItem(item.originalIndex)}
