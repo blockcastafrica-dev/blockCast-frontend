@@ -1341,9 +1341,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   {/* Market Info */}
                   <div className="space-y-3 py-4 border-t border-zinc-800/50">
                     <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Price change</span>
+                      <span className="text-base text-white text-left font-normal">Current odds</span>
                       <span className="text-base font-medium text-white text-right">
-                        {selectedMarket && (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)} USDT → {selectedMarket && (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)} USDT
+                        {selectedMarket && (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)}x
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
