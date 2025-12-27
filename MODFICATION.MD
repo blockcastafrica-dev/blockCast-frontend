@@ -522,4 +522,63 @@ background: linear-gradient(90deg,
 
 ---
 
+## 12. Contact Page Redesign
+
+**File:** `src/pages/ContactPage.tsx`
+
+### Commits:
+- `0257c5b` - Redesign Contact page with FundWalletModal style
+
+### Changes:
+- Complete redesign to match FundWalletModal and modal styling
+- Dark theme background (`#0f1419`)
+- Card backgrounds with border (`#1f2937`)
+- Cyan accent colors for interactive elements
+
+### Design Elements:
+
+**Header:**
+- Gradient icon (cyan → purple) with Mail icon
+- Title: 36px, bold, white
+- Subtitle: 16px, gray (#9ca3af)
+
+**Contact Form:**
+- Input fields with cyan border highlight on focus/value
+- Dark input background (`#1a1f26`)
+- Border: 2px solid, zinc when empty, cyan (`#06b6d4`) when filled
+- Dropdown with custom ChevronDown icon
+- Cyan submit button with hover effect
+
+**Form Fields:**
+- Full Name, Email Address (side by side on desktop)
+- Inquiry Type (dropdown)
+- Subject
+- Message (textarea)
+
+**Contact Information Card:**
+- Email (cyan icon)
+- Community (purple icon)
+- Response Time (green icon)
+- Headquarters (yellow icon)
+
+**Social Media Buttons:**
+- X (Twitter), Discord, Telegram
+- Hover: cyan border + cyan background tint
+
+**Security Notice:**
+- Shield icon with privacy message
+- Dark card background (`#1a1f26`)
+
+**Emergency Alert Section:**
+- Orange gradient background
+- Orange border
+- Orange "Report Emergency" button
+
+### Removed:
+- FAQ section (now on separate FAQ page)
+- Quick Actions buttons
+- Old card-based UI components
+
+---
+
 *Last Updated: December 27, 2025*
