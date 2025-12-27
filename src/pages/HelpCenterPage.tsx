@@ -144,15 +144,17 @@ export default function HelpCenterPage() {
                   return (
                     <div
                       key={item.originalIndex}
-                      className="rounded-xl transition-all duration-200 hover:bg-[#2a2f38]"
-                      style={isExpanded ? { backgroundColor: '#3f3f46' } : {}}
+                      className="rounded-xl transition-all duration-200"
+                      style={{ backgroundColor: isExpanded ? '#2d3748' : undefined }}
+                      onMouseEnter={(e) => { if (!isExpanded) e.currentTarget.style.backgroundColor = '#2d3748'; }}
+                      onMouseLeave={(e) => { if (!isExpanded) e.currentTarget.style.backgroundColor = ''; }}
                     >
                       <button
                         onClick={() => toggleItem(item.originalIndex)}
                         className="w-full py-4 px-4 flex items-center gap-4 text-left focus:outline-none group"
                       >
                         <ChevronDown
-                          className="w-5 h-5 text-zinc-500 group-hover:text-white transition-transform duration-200"
+                          className="w-5 h-5 text-zinc-500 group-hover:text-cyan-400 transition-all duration-200"
                           strokeWidth={2}
                           style={{ transform: isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)' }}
                         />
