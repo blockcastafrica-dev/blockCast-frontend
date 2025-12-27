@@ -229,52 +229,6 @@ export default function ContactPage() {
           {/* Right Sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-            {/* Follow Us */}
-            <div style={{
-              backgroundColor: '#1a1f26',
-              border: '1px solid #1f2937',
-              borderRadius: '16px',
-              padding: '24px'
-            }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>
-                Follow Us
-              </h3>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                {[
-                  { icon: BsTwitterX, url: 'https://x.com/BlockCastLive' },
-                  { icon: FaDiscord, url: '#' },
-                  { icon: FaTelegramPlane, url: '#' }
-                ].map((social, index) => (
-                  <button
-                    key={index}
-                    onClick={() => window.open(social.url, '_blank')}
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '12px',
-                      backgroundColor: '#1a1f26',
-                      border: '1px solid #374151',
-                      borderRadius: '12px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#06b6d4';
-                      e.currentTarget.style.backgroundColor = 'rgba(6, 182, 212, 0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = '#374151';
-                      e.currentTarget.style.backgroundColor = '#1a1f26';
-                    }}
-                  >
-                    <social.icon style={{ width: '20px', height: '20px', color: '#9ca3af' }} />
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Security Notice */}
             <div style={{
               backgroundColor: '#1a1f26',
