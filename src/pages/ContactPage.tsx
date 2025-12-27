@@ -63,22 +63,15 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '32px'
-        }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
           {/* Contact Form */}
           <div style={{
             backgroundColor: '#1a1f26',
             border: '1px solid #1f2937',
             borderRadius: '16px',
-            padding: '24px',
-            gridColumn: 'span 1'
-          }}
-          className="lg:col-span-2"
-          >
+            padding: '24px'
+          }}>
             <div style={{ marginBottom: '24px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: 'white', marginBottom: '8px' }}>
                 Send us a Message
@@ -226,22 +219,18 @@ export default function ContactPage() {
             </form>
           </div>
 
-          {/* Right Sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-
-            {/* Security Notice */}
-            <div style={{
-              backgroundColor: '#1a1f26',
-              border: '1px solid #1f2937',
-              borderRadius: '12px',
-              padding: '16px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <Shield style={{ width: '20px', height: '20px', color: '#06b6d4', flexShrink: 0, marginTop: '2px' }} />
-                <p style={{ fontSize: '13px', color: '#9ca3af', lineHeight: '1.5' }}>
-                  Your information is secure. We never share your data with third parties without your consent.
-                </p>
-              </div>
+          {/* Security Notice */}
+          <div style={{
+            backgroundColor: '#1a1f26',
+            border: '1px solid #1f2937',
+            borderRadius: '12px',
+            padding: '16px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <Shield style={{ width: '20px', height: '20px', color: '#06b6d4', flexShrink: 0, marginTop: '2px' }} />
+              <p style={{ fontSize: '13px', color: '#9ca3af', lineHeight: '1.5' }}>
+                Your information is secure. We never share your data with third parties without your consent.
+              </p>
             </div>
           </div>
         </div>
