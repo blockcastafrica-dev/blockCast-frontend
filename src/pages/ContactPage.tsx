@@ -45,18 +45,19 @@ export default function ContactPage() {
 
         {/* Header */}
         <div style={{ marginBottom: '48px' }}>
-          <h1 className="text-center lg:text-left" style={{
+          <h1 style={{
             fontSize: '36px',
             fontWeight: 'bold',
             color: 'white',
-            marginBottom: '12px'
+            marginBottom: '12px',
+            textAlign: 'left'
           }}>
             Contact Us
           </h1>
-          <p className="text-center lg:text-left" style={{
+          <p style={{
             fontSize: '16px',
             color: '#9ca3af',
-            maxWidth: '500px'
+            textAlign: 'left'
           }}>
             Get in touch with our team for support, partnerships, or questions about truth verification
           </p>
