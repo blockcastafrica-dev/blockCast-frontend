@@ -64,6 +64,8 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - Cyan "Withdraw" button
 
 ### Amount Input Styling (Crypto Method):
+- USDT label: White text, positioned left inside input (`left-4`)
+- Input padding: `paddingLeft: 60px` to accommodate label
 - Border: 2px solid
 - Active (with value): Cyan border (`#06b6d4`)
 - Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
@@ -95,6 +97,8 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - Cyan border highlight on amount input when value is entered (matching betting platform style)
 
 ### Amount Input Styling (Crypto Method):
+- USDT label: White text, positioned left inside input (`left-4`)
+- Input padding: `paddingLeft: 60px` to accommodate label
 - Border: 2px solid
 - Active (with value): Cyan border (`#06b6d4`)
 - Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
