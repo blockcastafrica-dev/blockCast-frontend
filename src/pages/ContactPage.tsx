@@ -44,7 +44,7 @@ export default function ContactPage() {
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+        <div className="text-center lg:text-left" style={{ marginBottom: '48px' }}>
           <h1 style={{
             fontSize: '36px',
             fontWeight: 'bold',
@@ -53,11 +53,10 @@ export default function ContactPage() {
           }}>
             Contact Us
           </h1>
-          <p style={{
+          <p className="mx-auto lg:mx-0" style={{
             fontSize: '16px',
             color: '#9ca3af',
-            maxWidth: '500px',
-            margin: '0 auto'
+            maxWidth: '500px'
           }}>
             Get in touch with our team for support, partnerships, or questions about truth verification
           </p>
