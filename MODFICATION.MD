@@ -530,18 +530,23 @@ background: linear-gradient(90deg,
 - `0257c5b` - Redesign Contact page with FundWalletModal style
 - `4436ba1` - Remove urgent misinformation alert section
 - `682fbe6` - Remove email icon from header
+- `ee5aaa1` - Fix header left alignment on desktop
+- `b50a2bf` - Add full stop to subtitle
+- `fd72518` - Remove icon from Send us a Message section
+- `ead3b24` - Make Contact Information icon background round
+- `ff4328f` - Update card backgrounds to brand color (#1a1f26)
 
 ### Changes:
 - Complete redesign to match FundWalletModal and modal styling
-- Dark theme background (`#0f1419`)
-- Card backgrounds with border (`#1f2937`)
+- Dark theme page background (`#0f1419`)
+- Card backgrounds (`#1a1f26`) with border (`#1f2937`)
 - Cyan accent colors for interactive elements
 
 ### Design Elements:
 
 **Header:**
-- Title: 36px, bold, white
-- Subtitle: 16px, gray (#9ca3af)
+- Title: 36px, bold, white, left-aligned on desktop
+- Subtitle: 16px, gray (#9ca3af), left-aligned on desktop
 
 **Contact Form:**
 - Input fields with cyan border highlight on focus/value
@@ -557,6 +562,7 @@ background: linear-gradient(90deg,
 - Message (textarea)
 
 **Contact Information Card:**
+- Round gradient icon (cyan → purple) header
 - Email (cyan icon)
 - Community (purple icon)
 - Response Time (green icon)
@@ -576,6 +582,7 @@ background: linear-gradient(90deg,
 - Old card-based UI components
 - Header email icon with gradient background
 - Urgent misinformation alert section
+- "Send us a Message" section icon
 
 ---
 
