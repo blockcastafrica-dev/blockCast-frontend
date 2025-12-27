@@ -86,6 +86,13 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - Proper cyan color scheme (#06b6d4) for action buttons
 - Fixed Continue button states (cyan when amount entered)
 - Dynamic spacing for currency symbol
+- Cyan border highlight on amount input when value is entered (matching betting platform style)
+
+### Amount Input Styling (Crypto Method):
+- Border: 2px solid
+- Active (with value): Cyan border (`#06b6d4`)
+- Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
+- Matches BettingMarkets.tsx input styling pattern
 
 ### Current Features:
 
