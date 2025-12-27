@@ -1321,7 +1321,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </span>
                   </div>
                   <div className="relative">
-                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none text-lg md:text-xl lg:text-2xl" style={{ left: '20px' }}>
+                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-white pointer-events-none text-lg md:text-xl lg:text-2xl" style={{ left: '20px' }}>
                       USDT
                     </span>
                     <Input
