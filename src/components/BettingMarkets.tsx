@@ -1251,94 +1251,122 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
       )}
 
       {/* Bet Dialog */}
-      <AlertDialog open={showBetDialog} onOpenChange={setShowBetDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="flex items-center justify-between">
-              <AlertDialogTitle className="text-left">Cast Your Truth Position</AlertDialogTitle>
-              <button
-                type="button"
-                onClick={() => setShowBetDialog(false)}
-                className="h-9 w-9 p-0 flex items-center justify-center rounded-xl border-2 border-transparent transition-all group -mt-6"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#06f6ff';
-                  e.currentTarget.style.backgroundColor = '#1a1f26';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'transparent';
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                <X className="h-5 w-5 text-gray-400 group-hover:text-gray-300" />
-              </button>
-            </div>
-            <AlertDialogDescription className="space-y-3">
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="font-medium">{selectedMarket?.claim}</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Source: {selectedMarket?.source}
-                </p>
+      {showBetDialog && selectedMarket && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-50"
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              backdropFilter: 'blur(4px)',
+            }}
+            onClick={() => setShowBetDialog(false)}
+          />
+
+          {/* Modal */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="w-full max-w-md rounded-2xl md:rounded-3xl border border-zinc-800/50 shadow-2xl overflow-hidden" style={{ backgroundColor: '#0f1419' }}>
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-zinc-800/30">
+                <h2 className="text-lg font-bold text-white">Cast Your Truth Position</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowBetDialog(false)}
+                  className="h-9 w-9 p-0 flex items-center justify-center rounded-xl border-2 border-transparent transition-all group"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#06f6ff';
+                    e.currentTarget.style.backgroundColor = '#1a1f26';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'transparent';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  <X className="h-5 w-5 text-gray-400 group-hover:text-gray-300" />
+                </button>
               </div>
 
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => setBetPosition("yes")}
-                    className="py-3 px-4 rounded-full border-2 transition-all text-center cursor-pointer flex flex-col items-center justify-center gap-0.5"
-                    style={
-                      betPosition === "yes"
-                        ? {
-                            background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                            borderColor: 'rgba(34, 211, 238, 0.6)',
-                            color: '#22d3ee',
-                            boxShadow: '0 0 20px rgba(34, 211, 238, 0.4), 0 0 40px rgba(34, 211, 238, 0.2), 0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                          }
-                        : {
-                            background: 'rgba(39, 39, 42, 0.5)',
-                            borderColor: 'rgba(113, 113, 122, 0.5)',
-                            color: 'rgba(161, 161, 170, 1)'
-                          }
-                    }
-                  >
-                    <span className="text-base font-bold uppercase tracking-wide">True</span>
-                    <span className="text-xs font-medium" style={{ opacity: 0.8 }}>
-                      {selectedMarket?.yesOdds.toFixed(2)}x odds
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setBetPosition("no")}
-                    className="py-3 px-4 rounded-full border-2 transition-all text-center cursor-pointer flex flex-col items-center justify-center gap-0.5"
-                    style={
-                      betPosition === "no"
-                        ? {
-                            background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                            borderColor: 'rgba(192, 132, 252, 0.6)',
-                            color: '#c084fc',
-                            boxShadow: '0 0 20px rgba(192, 132, 252, 0.4), 0 0 40px rgba(192, 132, 252, 0.2), 0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                          }
-                        : {
-                            background: 'rgba(39, 39, 42, 0.5)',
-                            borderColor: 'rgba(113, 113, 122, 0.5)',
-                            color: 'rgba(161, 161, 170, 1)'
-                          }
-                    }
-                  >
-                    <span className="text-base font-bold uppercase tracking-wide">False</span>
-                    <span className="text-xs font-medium" style={{ opacity: 0.8 }}>
-                      {selectedMarket?.noOdds.toFixed(2)}x odds
-                    </span>
-                  </button>
+              {/* Content */}
+              <div className="p-4 md:p-5 lg:p-6 space-y-4">
+                {/* Market Claim */}
+                <div className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800/50">
+                  <p className="font-medium text-white text-sm">{selectedMarket.claim}</p>
+                  <p className="text-xs text-zinc-500 mt-1">Source: {selectedMarket.source}</p>
                 </div>
 
+                {/* Percentage Bar */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-medium text-white text-left">Amount</h3>
-                    <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
+                    <span className="text-2xl font-bold text-white">{Math.round((selectedMarket.yesPool / selectedMarket.totalPool) * 100)}%</span>
+                    <span className="text-2xl font-bold text-white">{Math.round((selectedMarket.noPool / selectedMarket.totalPool) * 100)}%</span>
+                  </div>
+                  <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
+                    <div
+                      className="h-full transition-all duration-500"
+                      style={{
+                        width: `${(selectedMarket.yesPool / selectedMarket.totalPool) * 100}%`,
+                        background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
+                      }}
+                    />
+                    <div
+                      className="h-full transition-all duration-500"
+                      style={{
+                        width: `${(selectedMarket.noPool / selectedMarket.totalPool) * 100}%`,
+                        background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Pick a Side */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-white text-left">Pick a side</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => setBetPosition("yes")}
+                      className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                        betPosition === "yes"
+                          ? "border-2 shadow-lg"
+                          : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                      }`}
+                      style={betPosition === "yes" ? {
+                        background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                        borderColor: 'rgba(34, 211, 238, 0.6)',
+                        color: '#22d3ee',
+                        boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                      } : {}}
+                    >
+                      TRUE
+                    </button>
+                    <button
+                      onClick={() => setBetPosition("no")}
+                      className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                        betPosition === "no"
+                          ? "border-2 shadow-lg"
+                          : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                      }`}
+                      style={betPosition === "no" ? {
+                        background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                        borderColor: 'rgba(192, 132, 252, 0.6)',
+                        color: '#7c3aed',
+                        boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                      } : {}}
+                    >
+                      FALSE
+                    </button>
+                  </div>
+                </div>
+
+                {/* Amount Input */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-white text-left">Amount</h3>
+                    <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-300">
                       Available USDT {userBalance.toFixed(2)}
                     </span>
                   </div>
                   <div className="relative">
-                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-white pointer-events-none text-lg md:text-xl lg:text-2xl" style={{ left: '20px' }}>
+                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '20px', fontSize: '18px' }}>
                       USDT
                     </span>
                     <Input
@@ -1350,67 +1378,79 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                         setBetAmount(value);
                       }}
                       placeholder="0.00"
-                      className="w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl"
-                      style={{ paddingLeft: '90px' }}
+                      className="w-full h-14 pr-4 font-bold text-white text-left bg-zinc-900/80 border-2 rounded-xl focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      style={{
+                        paddingLeft: '90px',
+                        fontSize: '18px',
+                        borderColor: betAmount ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)'
+                      }}
                     />
                   </div>
+                </div>
 
-                  {/* Market Info */}
-                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
-                    <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Current odds</span>
-                      <span className="text-base font-medium text-white text-right">
-                        {selectedMarket && (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)}x
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Shares</span>
-                      <span className="text-base font-medium text-white text-right">
-                        {betAmount && selectedMarket ? Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)) : 0}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Avg. price</span>
-                      <span className="text-base font-medium text-white text-right">
-                        {betAmount && selectedMarket ? (parseFloat(betAmount) / Math.max(1, Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)))).toFixed(2) : "0.00"} USDT
-                      </span>
-                    </div>
+                {/* Market Info */}
+                <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-zinc-400">Current odds</span>
+                    <span className="text-sm font-medium text-white">
+                      {(betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)}x
+                    </span>
                   </div>
-
-                  {/* Fee Info */}
-                  <div className="space-y-3 py-4 border-t border-zinc-800/50">
-                    <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Fee</span>
-                      <span className="text-base font-medium text-white text-right">3%</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Max profit</span>
-                      <span className="text-base font-semibold text-emerald-400 text-right">
-                        {betAmount && selectedMarket ? (
-                          parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)
-                        ).toFixed(2) : "0.00"} USDT ({betAmount && selectedMarket ? (
-                          ((parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)) / parseFloat(betAmount)) * 100
-                        ).toFixed(2) : "0.00"}%)
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Max payout</span>
-                      <span className="text-base font-medium text-white text-right">
-                        {betAmount && selectedMarket ? (parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)).toFixed(2) : "0.00"} USDT
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-zinc-400">Shares</span>
+                    <span className="text-sm font-medium text-white">
+                      {betAmount ? Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)) : 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-zinc-400">Avg. price</span>
+                    <span className="text-sm font-medium text-white">
+                      {betAmount ? (parseFloat(betAmount) / Math.max(1, Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)))).toFixed(2) : "0.00"} USDT
+                    </span>
                   </div>
                 </div>
+
+                {/* Fee Info */}
+                <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-zinc-400">Fee</span>
+                    <span className="text-sm font-medium text-white">3%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-zinc-400">Max profit</span>
+                    <span className="text-sm font-semibold text-emerald-400">
+                      {betAmount ? (
+                        parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)
+                      ).toFixed(2) : "0.00"} USDT ({betAmount ? (
+                        ((parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)) / parseFloat(betAmount)) * 100
+                      ).toFixed(2) : "0.00"}%)
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-zinc-400">Max payout</span>
+                    <span className="text-sm font-medium text-white">
+                      {betAmount ? (parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)).toFixed(2) : "0.00"} USDT
+                    </span>
+                  </div>
+                </div>
+
+                {/* Cast Position Button */}
+                <Button
+                  onClick={handlePlaceBet}
+                  disabled={!betAmount || parseFloat(betAmount) > userBalance}
+                  className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer"
+                  style={{
+                    backgroundColor: !betAmount || parseFloat(betAmount) > userBalance ? '#334155' : '#06f6ff',
+                    color: !betAmount || parseFloat(betAmount) > userBalance ? '#94a3b8' : '#000000'
+                  }}
+                >
+                  {!betAmount ? 'Enter amount' : parseFloat(betAmount) > userBalance ? 'Insufficient balance' : 'Cast Position'}
+                </Button>
               </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handlePlaceBet}>
-              Cast Position
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Share Modal */}
       {showShareModal && (
