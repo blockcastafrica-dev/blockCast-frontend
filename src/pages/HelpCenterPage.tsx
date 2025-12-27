@@ -1,274 +1,482 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Search, MessageCircle, Mail, BookOpen, Users, Shield, Zap, Globe, HelpCircle, FileText, Download, Video } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown, Search, Mail, MessageCircle, BookOpen, Users, Shield, Zap, HelpCircle, ExternalLink, ChevronRight } from 'lucide-react';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface FAQCategory {
+  title: string;
+  icon: React.ElementType;
+  description: string;
+  questions: FAQItem[];
+}
 
 export default function HelpCenterPage() {
-  const faqCategories = [
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedCategory, setExpandedCategory] = useState<string | null>('Getting Started');
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+
+  const faqCategories: FAQCategory[] = [
     {
       title: 'Getting Started',
       icon: BookOpen,
+      description: 'New to BlockCast? Start here',
       questions: [
         {
           question: 'How do I create an account?',
-          answer: 'Click the "Sign Up" button in the top right corner and follow the registration process. You\'ll need to provide your email, create a password, and verify your account.'
+          answer: 'Click the "Sign Up" button in the top right corner and follow the registration process. You\'ll need to provide your email, create a password, and verify your account through the confirmation email sent to you.'
         },
         {
-          question: 'What is Blockcast and how does it work?',
-          answer: 'Blockcast is Africa\'s first AI-powered truth verification platform that combines community wisdom with advanced artificial intelligence to combat misinformation. Our AI analyzes claims against multiple sources while the community votes on truthfulness.'
+          question: 'What is BlockCast and how does it work?',
+          answer: 'BlockCast is Africa\'s first AI-powered truth verification platform that combines community wisdom with advanced artificial intelligence to combat misinformation. Our AI analyzes claims against multiple sources while the community votes on truthfulness, creating a decentralized fact-checking ecosystem.'
         },
         {
-          question: 'Which countries does Blockcast support?',
-          answer: 'We currently operate in 15+ African countries with plans to expand across the entire continent. Our platform supports multiple languages including English, French, and Swahili.'
+          question: 'Which countries does BlockCast support?',
+          answer: 'We currently operate in 15+ African countries with plans to expand across the entire continent. Our platform supports multiple languages including English, French, and Swahili to serve diverse communities.'
+        },
+        {
+          question: 'Is BlockCast free to use?',
+          answer: 'Yes, creating an account and browsing truth markets is completely free. You only need funds when you want to participate in truth markets by staking positions on claims.'
         }
       ]
     },
     {
       title: 'Truth Verification',
       icon: Shield,
+      description: 'How we verify claims',
       questions: [
         {
           question: 'How does truth verification work?',
-          answer: 'Our AI scans thousands of sources across Africa and internationally to verify claims. Community members then vote on the truthfulness of claims, providing local context and cultural nuances that improve AI accuracy.'
+          answer: 'Our AI scans thousands of sources across Africa and internationally to verify claims. It cross-references data from credible news outlets, official reports, and verified databases. Community members then vote on the truthfulness of claims, providing local context and cultural nuances that improve AI accuracy.'
         },
         {
           question: 'How do I submit a claim for verification?',
-          answer: 'Navigate to the "Verify" section and use the verification tool to submit suspicious claims. Our AI and community will assess and provide truth ratings.'
+          answer: 'Navigate to the "Verify" section and use the verification tool to submit suspicious claims. Paste the claim or URL, add any relevant context, and our AI and community will assess and provide truth ratings within 24-48 hours.'
         },
         {
           question: 'How accurate is the AI verification?',
-          answer: 'Our AI has a 94.2% accuracy rate, but we always recommend considering AI verifications alongside human judgment and additional sources.'
+          answer: 'Our AI has a 94.2% accuracy rate based on historical verification outcomes. However, we always recommend considering AI verifications alongside human judgment and additional sources, especially for nuanced or developing stories.'
+        },
+        {
+          question: 'Can I dispute a verification result?',
+          answer: 'Yes! If you have evidence that contradicts an AI resolution, you can submit a dispute during the dispute window. Submit your evidence with supporting links, and our dispute resolution system will review your submission. There is a small fee to prevent spam, which is refunded for good-faith attempts.'
         }
       ]
     },
     {
       title: 'Truth Markets',
       icon: Zap,
+      description: 'Prediction markets explained',
       questions: [
         {
           question: 'What are truth markets?',
-          answer: 'Truth markets are prediction markets for African events where you can cast positions on real-world outcomes. They help determine the likelihood of claims being true or false.'
+          answer: 'Truth markets are prediction markets for African events where you can stake positions on real-world outcomes. They harness collective intelligence to determine the likelihood of claims being true or false, with financial incentives for accurate predictions.'
         },
         {
           question: 'How do I participate in truth markets?',
-          answer: 'Browse active markets in the "Truth Markets" section, select a market, and cast your position with a stake. You earn rewards for accurate predictions.'
+          answer: 'Browse active markets in the "Truth Markets" section, select a market that interests you, choose your position (True or False), enter your stake amount, and confirm your position. You\'ll earn rewards if your prediction is correct when the market resolves.'
         },
         {
           question: 'What are the risks of participating in truth markets?',
-          answer: 'Truth markets involve financial risk. You may lose the funds you stake. Only participate with amounts you can afford to lose. Blockcast is not a financial advisor.'
+          answer: 'Truth markets involve financial risk. You may lose the funds you stake if your prediction is incorrect. Only participate with amounts you can afford to lose. Past performance is not indicative of future results. BlockCast is not a financial advisor.'
+        },
+        {
+          question: 'How are markets resolved?',
+          answer: 'Markets are resolved using AI analysis of official sources and verified data once the resolution criteria are met. The resolution period is typically 24-48 hours after market closes. In case of disputes, additional evidence is reviewed before final resolution.'
+        },
+        {
+          question: 'What fees are charged?',
+          answer: 'There is a 3% fee on winnings when you claim your rewards from a resolved market. There are no fees for placing positions or for losing positions.'
         }
       ]
     },
     {
       title: 'Community & Reputation',
       icon: Users,
+      description: 'Build your credibility',
       questions: [
         {
           question: 'How do I become a trusted verifier?',
-          answer: 'Consistently provide accurate truth assessments, participate in community discussions, and maintain high credibility scores. Trusted verifiers earn additional rewards and influence.'
+          answer: 'Consistently provide accurate truth assessments, participate in community discussions, and maintain high credibility scores over time. Trusted verifiers are identified by a verified badge and earn additional rewards and influence in the platform.'
         },
         {
           question: 'What is the credibility scoring system?',
-          answer: 'Our blockchain-secured credibility system tracks your verification accuracy over time. Higher scores unlock additional features and rewards.'
+          answer: 'Our blockchain-secured credibility system tracks your verification accuracy over time. Your score is calculated based on your prediction accuracy, dispute outcomes, and community standing. Higher scores unlock additional features, early access to markets, and enhanced rewards.'
         },
         {
           question: 'How do community discussions work?',
-          answer: 'Each truth market has a dedicated discussion section where community members can share insights, debate claims, and collaborate on verification efforts.'
+          answer: 'Each truth market has a dedicated discussion section where community members can share insights, debate claims, and collaborate on verification efforts. You can comment, like posts, and indicate your position. Quality contributions improve your reputation score.'
+        },
+        {
+          question: 'Can I follow other users?',
+          answer: 'Yes, you can follow top performers and trusted verifiers to see their positions and insights. This helps you learn from experienced users and make more informed decisions.'
         }
       ]
     }
   ];
 
-  const helpResources = [
-    {
-      title: 'User Guide',
-      description: 'Comprehensive guide to using all Blockcast features',
-      icon: FileText,
-      action: 'Download PDF'
-    },
-    {
-      title: 'Video Tutorials',
-      description: 'Step-by-step video guides for key features',
-      icon: Video,
-      action: 'Watch Now'
-    },
-    {
-      title: 'API Documentation',
-      description: 'Technical documentation for developers and integrators',
-      icon: Globe,
-      action: 'View Docs'
-    }
-  ];
+  const toggleItem = (categoryIndex: number, questionIndex: number) => {
+    const key = `${categoryIndex}-${questionIndex}`;
+    setExpandedItems(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const filteredCategories = faqCategories.map(category => ({
+    ...category,
+    questions: category.questions.filter(
+      q =>
+        q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        q.answer.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  })).filter(category => category.questions.length > 0);
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div
+      style={{
+        minHeight: '100vh',
+        padding: '24px 16px',
+        maxWidth: '600px',
+        margin: '0 auto',
+      }}
+    >
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-primary">Help Center</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Find answers to common questions and learn how to make the most of Blockcast
-        </p>
-        
-        {/* Search Bar */}
-        <div className="max-w-2xl mx-auto mt-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search help articles..."
-              className="w-full pl-10 pr-4 py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
+      <div style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div
+            style={{
+              padding: '10px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #06b6d4, #8b5cf6)',
+            }}
+          >
+            <HelpCircle style={{ width: '20px', height: '20px', color: 'white' }} />
+          </div>
+          <div>
+            <h1 style={{ color: 'white', fontWeight: 'bold', fontSize: '16px', margin: 0 }}>
+              Help Center
+            </h1>
+            <p style={{ color: '#6b7280', fontSize: '12px', margin: 0 }}>
+              Find answers to your questions
+            </p>
           </div>
         </div>
+
+        {/* Search */}
+        <div style={{ position: 'relative' }}>
+          <Search
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '18px',
+              height: '18px',
+              color: '#6b7280',
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Search for answers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px 12px 12px 42px',
+              backgroundColor: '#1a1f26',
+              border: '1px solid #374151',
+              borderRadius: '12px',
+              color: 'white',
+              fontSize: '14px',
+              outline: 'none',
+            }}
+          />
+        </div>
       </div>
-
-      {/* Quick Help Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:bg-card/90 transition-colors">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-primary" />
-              Contact Support
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Can't find what you're looking for? Our support team is here to help.
-            </p>
-            <Button className="w-full gap-2">
-              <Mail className="h-4 w-4" />
-              Email Support
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:bg-card/90 transition-colors">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-secondary" />
-              Community Help
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Get help from our community of truth verifiers and experts.
-            </p>
-            <Button className="w-full gap-2" variant="outline">
-              <MessageCircle className="h-4 w-4" />
-              Join Discord
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:bg-card/90 transition-colors">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <HelpCircle className="h-5 w-5 text-green-500" />
-              Quick Start
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              New to Blockcast? Get started with our quick start guide.
-            </p>
-            <Button className="w-full gap-2" variant="outline">
-              <BookOpen className="h-4 w-4" />
-              View Guide
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Help Resources */}
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            Help Resources
-          </CardTitle>
-          <CardDescription>
-            Download guides and tutorials to help you master Blockcast
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {helpResources.map((resource, index) => {
-              const Icon = resource.icon;
-              return (
-                <div key={index} className="flex items-start gap-3 p-4 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">{resource.title}</h4>
-                    <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
-                    <Button className="p-0 mt-2 h-auto" variant="link">
-                      {resource.action}
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* FAQ Categories */}
-      <div className="space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-foreground">Frequently Asked Questions</h2>
-          <p className="text-muted-foreground mt-2">
-            Browse questions by category or search above
-          </p>
-        </div>
-
-        {faqCategories.map((category, categoryIndex) => {
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {filteredCategories.map((category) => {
           const Icon = category.icon;
+          const actualCategoryIndex = faqCategories.findIndex(c => c.title === category.title);
+          const isExpanded = expandedCategory === category.title;
+
           return (
-            <Card key={categoryIndex} className="border-border/50 bg-card/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <Icon className="h-4 w-4 text-primary" />
+            <div
+              key={category.title}
+              style={{
+                backgroundColor: '#1a1f26',
+                border: isExpanded ? '1px solid rgba(6, 246, 255, 0.3)' : '1px solid #374151',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {/* Category Header */}
+              <button
+                onClick={() => setExpandedCategory(isExpanded ? null : category.title)}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      border: '1px solid #4b5563',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Icon style={{ width: '20px', height: '20px', color: 'white' }} />
                   </div>
-                  {category.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {category.questions.map((faq, faqIndex) => (
-                    <div key={faqIndex} className="space-y-2">
-                      <h3 className="font-semibold text-foreground">{faq.question}</h3>
-                      <p className="text-sm text-muted-foreground">{faq.answer}</p>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ color: 'white', fontWeight: 500, fontSize: '14px' }}>
+                        {category.title}
+                      </span>
+                      <span
+                        style={{
+                          padding: '2px 8px',
+                          backgroundColor: 'rgba(6, 246, 255, 0.15)',
+                          color: '#06f6ff',
+                          fontSize: '10px',
+                          borderRadius: '9999px',
+                        }}
+                      >
+                        {category.questions.length}
+                      </span>
                     </div>
-                  ))}
+                    <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '2px' }}>
+                      {category.description}
+                    </p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+                <ChevronRight
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    color: '#6b7280',
+                    transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                />
+              </button>
+
+              {/* Questions */}
+              {isExpanded && (
+                <div style={{ borderTop: '1px solid #374151' }}>
+                  {category.questions.map((faq, questionIndex) => {
+                    const key = `${actualCategoryIndex}-${questionIndex}`;
+                    const isItemExpanded = expandedItems[key];
+
+                    return (
+                      <div
+                        key={faq.question}
+                        style={{
+                          borderBottom: questionIndex < category.questions.length - 1 ? '1px solid #374151' : 'none',
+                        }}
+                      >
+                        <button
+                          onClick={() => toggleItem(actualCategoryIndex, questionIndex)}
+                          style={{
+                            width: '100%',
+                            padding: '14px 16px',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            gap: '12px',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                          }}
+                        >
+                          <span style={{ color: '#d1d5db', fontSize: '13px', lineHeight: '1.5' }}>
+                            {faq.question}
+                          </span>
+                          <ChevronDown
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              color: isItemExpanded ? '#06f6ff' : '#6b7280',
+                              flexShrink: 0,
+                              marginTop: '2px',
+                              transform: isItemExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.2s ease',
+                            }}
+                          />
+                        </button>
+
+                        {isItemExpanded && (
+                          <div
+                            style={{
+                              padding: '0 16px 14px 16px',
+                            }}
+                          >
+                            <p
+                              style={{
+                                color: '#9ca3af',
+                                fontSize: '13px',
+                                lineHeight: '1.7',
+                                margin: 0,
+                              }}
+                            >
+                              {faq.answer}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
 
-      {/* Still Need Help */}
-      <Card className="border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10 backdrop-blur-sm">
-        <CardContent className="py-8 text-center">
-          <HelpCircle className="h-12 w-12 text-primary mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-foreground mb-2">Still Need Help?</h3>
-          <p className="text-muted-foreground max-w-xl mx-auto mb-6">
-            Our support team is available 24/7 to assist you with any questions or issues you might have.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button className="gap-2">
-              <Mail className="h-4 w-4" />
-              Email Support
-            </Button>
-            <Button variant="outline" className="gap-2">
-              <MessageCircle className="h-4 w-4" />
-              Live Chat
-            </Button>
+      {/* No Results */}
+      {searchQuery && filteredCategories.length === 0 && (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '48px 16px',
+          }}
+        >
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: '#1a1f26',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+            }}
+          >
+            <Search style={{ width: '24px', height: '24px', color: '#4b5563' }} />
           </div>
-        </CardContent>
-      </Card>
+          <h3 style={{ color: 'white', fontSize: '16px', fontWeight: 500, marginBottom: '8px' }}>
+            No results found
+          </h3>
+          <p style={{ color: '#6b7280', fontSize: '13px' }}>
+            Try searching with different keywords
+          </p>
+        </div>
+      )}
+
+      {/* Contact Support */}
+      <div
+        style={{
+          marginTop: '24px',
+          padding: '20px',
+          backgroundColor: '#1a1f26',
+          border: '1px solid #374151',
+          borderRadius: '12px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              border: '1px solid #4b5563',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <MessageCircle style={{ width: '20px', height: '20px', color: 'white' }} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span style={{ color: 'white', fontWeight: 500, fontSize: '14px' }}>
+                Still need help?
+              </span>
+            </div>
+            <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '16px' }}>
+              Our support team is available 24/7 to assist you
+            </p>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <a
+                href="mailto:support@blockcast.africa"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '10px 16px',
+                  backgroundColor: '#06f6ff',
+                  color: 'black',
+                  borderRadius: '10px',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                }}
+              >
+                <Mail style={{ width: '16px', height: '16px' }} />
+                Email Support
+              </a>
+              <a
+                href="https://discord.gg/blockcast"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '10px 16px',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #4b5563',
+                  color: 'white',
+                  borderRadius: '10px',
+                  fontWeight: 500,
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                }}
+              >
+                <ExternalLink style={{ width: '16px', height: '16px' }} />
+                Join Discord
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Security Notice */}
+      <div
+        style={{
+          marginTop: '12px',
+          padding: '12px',
+          backgroundColor: '#1a1f26',
+          border: '1px solid #374151',
+          borderRadius: '12px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <Shield style={{ width: '16px', height: '16px', color: '#06f6ff', marginTop: '1px', flexShrink: 0 }} />
+          <p style={{ color: '#9ca3af', fontSize: '12px', margin: 0, lineHeight: '1.5' }}>
+            BlockCast will never ask for your password or private keys. Report suspicious activity to our support team.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
