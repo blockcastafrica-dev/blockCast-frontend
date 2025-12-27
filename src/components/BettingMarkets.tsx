@@ -1321,7 +1321,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </span>
                   </div>
                   <div className="relative">
-                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '24px', fontSize: '24px' }}>
+                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none text-lg md:text-xl lg:text-2xl" style={{ left: '20px' }}>
                       USDT
                     </span>
                     <Input
@@ -1333,14 +1333,8 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                         setBetAmount(value);
                       }}
                       placeholder="0.00"
-                      className="pr-6 font-bold text-left focus-visible:ring-0"
-                      style={{
-                        paddingLeft: '110px',
-                        fontSize: '24px',
-                        border: betAmount ? '2px solid #06b6d4' : undefined,
-                        backgroundColor: 'transparent',
-                        color: '#ffffff'
-                      }}
+                      className="w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl"
+                      style={{ paddingLeft: '90px' }}
                     />
                   </div>
 
