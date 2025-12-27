@@ -419,64 +419,75 @@ background: linear-gradient(90deg,
 
 ---
 
-## 10. Help Center FAQ Redesign
+## 10. FAQ Page Redesign (Kalshi-Style)
 
-**File:** `src/pages/HelpCenterPage.tsx` (483 lines)
+**File:** `src/pages/HelpCenterPage.tsx`
 
 ### Commits:
 - `0ee9e0c` - Redesign Help Center as modern FAQ with FundWallet styling
+- `edd045d` - Redesign FAQ page with Kalshi-style layout
+- `edcdd9a` - Update FAQ page title and styling
+- `a5def4f` - Add hover highlight effect to FAQ questions
 
 ### Changes:
-- Complete redesign from traditional help center to modern accordion-style FAQ
-- Matched FundWallet modal styling for consistency across app
+- Complete redesign inspired by Kalshi FAQ layout
+- Clean, minimal accordion-style questions
+- Large prominent page title
+- Category sections with clear separation
 
 ### Design Elements:
 
-**Header:**
-- Gradient icon (cyan → purple) matching FundWallet
-- Title "Help Center" with subtitle "Find answers to your questions"
-- Search bar with gray placeholder text
+**Page Title:**
+- "Frequently Asked Questions"
+- Size: 56px (mobile) / 96px (desktop)
+- Font weight: Bold
+- Letter spacing: -0.03em
+- Large margin below (mb-16 / mb-20)
 
-**Category Cards:**
-| Category | Icon | Description |
-|----------|------|-------------|
-| Getting Started | BookOpen | New to BlockCast? Start here |
-| Truth Verification | Shield | How we verify claims |
-| Truth Markets | Zap | Prediction markets explained |
-| Community & Reputation | Users | Build your credibility |
+**Filter Pills:**
+| Filter | Style |
+|--------|-------|
+| All | White bg, black text when active |
+| General | Pill button |
+| Verification | Pill button |
+| Markets | Pill button |
 
-**Styling:**
-- Card background: `#1a1f26`
-- Border: `#374151` (default), `rgba(6, 246, 255, 0.3)` (expanded)
-- Icon boxes: 40x40px with `#4b5563` border
-- Question count badge: Cyan background with count
-- ChevronRight rotates 90° when category expanded
-- ChevronDown rotates 180° when question expanded
+**Section Titles (General, Verification, Markets):**
+- Size: 28px (mobile) / 36px (desktop)
+- Font weight: Semibold
+- Margin top: 8 (mt-8)
+- Margin bottom: 6 (mb-6)
+- Large spacing between sections (space-y-32 / space-y-40)
 
-**Accordion Behavior:**
-- Click category → expands to show questions
-- Click question → expands to show answer
-- Only one category open at a time
+**Question Items:**
+- Arrow icon (ChevronDown) rotates: -90° closed, 0° open
+- Text: 17px font-medium, white color
+- Hover effect: Rounded background highlight (#2a2f38)
+- Expanded state: Dark background (#3f3f46)
+- Space between questions: space-y-2
 
-**Contact Support Section:**
-- Icon box with MessageCircle
-- "Still need help?" title
-- "Email Support" button (cyan `#06f6ff`, black text)
-- "Join Discord" button (outline style)
+**Answer Text:**
+- Size: 15px
+- Color: zinc-300
+- Left margin aligned with question text (ml-9)
+- Padding: px-4 pb-4
 
-**Security Notice:**
-- Shield icon in cyan
-- Warning text about passwords/private keys
+### FAQ Categories:
+| Category | Questions |
+|----------|-----------|
+| General | 4 questions (What is BlockCast, Create account, Countries, Free to use) |
+| Verification | 4 questions (How it works, Submit claim, AI accuracy, Dispute) |
+| Markets | 5 questions (What are markets, Participate, Risks, Resolution, Fees) |
 
-### FAQ Content:
-- 4 categories with 4-5 questions each
-- Topics: Account creation, verification, markets, community
-- 17 total FAQ items
+### Interaction States:
+- **Hover:** Rounded background highlight appears
+- **Expanded:** Darker background, arrow points down
+- **Collapsed:** No background, arrow points right
 
 ### Layout:
-- Max width: 600px (matches modal feel)
-- Padding: 24px vertical, 16px horizontal
-- Gap between cards: 12px
+- Max width: 6xl (1152px)
+- Padding: px-5 py-16 (mobile) / py-24 (desktop)
+- Full width responsive design
 
 ---
 
