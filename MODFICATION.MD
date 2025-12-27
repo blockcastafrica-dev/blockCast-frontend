@@ -400,7 +400,10 @@ background: linear-gradient(90deg,
 - Complete redesign to match MarketPage modal style
 - Custom modal with solid dark background (`#0f1419`)
 - Header with title and X close button (cyan border on hover)
-- Market claim section with source info
+- Market claim section with source info and market image (commit `edde6c5`):
+  - 48x48px rounded image (`w-12 h-12 rounded-lg`)
+  - Flexbox layout with image on left, text on right
+  - Image only shown if `selectedMarket.imageUrl` exists
 - Percentage bar with cyan→purple gradient showing pool distribution
 - Pick a side (TRUE/FALSE) buttons with glow effects
 - Amount input with:
