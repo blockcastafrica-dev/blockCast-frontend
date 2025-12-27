@@ -394,6 +394,14 @@ background: linear-gradient(90deg,
 - Responsive height (`h-12 md:h-14 lg:h-16`)
 - Responsive font size (`text-lg md:text-xl lg:text-2xl`)
 - USDT label with consistent positioning (`left: 20px`)
+- USDT label color changed to white (commit `d91baa0`)
+
+### X Close Button (commit `a7e9f7f`):
+- Replaced Cancel button with X close button in betting modal
+- Title "Cast Your Truth Position" aligned left
+- X button aligned right on same line with `-mt-6` for positioning
+- Cyan border on hover (`#06f6ff`) matching other modals
+- Removed Cancel button from footer
 
 ---
 
