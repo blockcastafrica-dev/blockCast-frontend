@@ -528,6 +528,8 @@ background: linear-gradient(90deg,
 
 ### Commits:
 - `0257c5b` - Redesign Contact page with FundWalletModal style
+- `4436ba1` - Remove urgent misinformation alert section
+- `682fbe6` - Remove email icon from header
 
 ### Changes:
 - Complete redesign to match FundWalletModal and modal styling
@@ -538,7 +540,6 @@ background: linear-gradient(90deg,
 ### Design Elements:
 
 **Header:**
-- Gradient icon (cyan → purple) with Mail icon
 - Title: 36px, bold, white
 - Subtitle: 16px, gray (#9ca3af)
 
@@ -569,15 +570,12 @@ background: linear-gradient(90deg,
 - Shield icon with privacy message
 - Dark card background (`#1a1f26`)
 
-**Emergency Alert Section:**
-- Orange gradient background
-- Orange border
-- Orange "Report Emergency" button
-
 ### Removed:
 - FAQ section (now on separate FAQ page)
 - Quick Actions buttons
 - Old card-based UI components
+- Header email icon with gradient background
+- Urgent misinformation alert section
 
 ---
 
