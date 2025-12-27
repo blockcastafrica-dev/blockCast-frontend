@@ -396,12 +396,23 @@ background: linear-gradient(90deg,
 - USDT label with consistent positioning (`left: 20px`)
 - USDT label color changed to white (commit `d91baa0`)
 
-### X Close Button (commit `a7e9f7f`):
-- Replaced Cancel button with X close button in betting modal
-- Title "Cast Your Truth Position" aligned left
-- X button aligned right on same line with `-mt-6` for positioning
-- Cyan border on hover (`#06f6ff`) matching other modals
-- Removed Cancel button from footer
+### Betting Modal Redesign (commit `954e844`):
+- Complete redesign to match MarketPage modal style
+- Custom modal with solid dark background (`#0f1419`)
+- Header with title and X close button (cyan border on hover)
+- Market claim section with source info
+- Percentage bar with cyan→purple gradient showing pool distribution
+- Pick a side (TRUE/FALSE) buttons with glow effects
+- Amount input with:
+  - USDT label and input at proportional 18px font size
+  - Cyan border highlight (`#06b6d4`) when value entered
+  - Dark background (`bg-zinc-900/80`)
+- Market Info section (Current odds, Shares, Avg. price)
+- Fee Info section (Fee, Max profit in emerald, Max payout)
+- Dynamic Cast Position button:
+  - Cyan (`#06f6ff`) with black text when active
+  - Gray (`#334155`) when disabled
+  - Shows "Enter amount" / "Insufficient balance" / "Cast Position"
 
 ---
 
