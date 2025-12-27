@@ -67,6 +67,9 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div style={{
+            backgroundColor: '#1a1f26',
+            border: '1px solid #1f2937',
+            borderRadius: '16px',
             padding: '24px'
           }}>
             <div style={{ marginBottom: '24px' }}>
