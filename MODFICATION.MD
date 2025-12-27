@@ -385,6 +385,16 @@ background: linear-gradient(90deg,
 - Different content sections for each mode
 - Button color changes: cyan for Buy, red for Sell
 
+### Input Styling Consistency (commit `d134f15`):
+- Matched BettingMarkets.tsx input with MarketPage.tsx styling
+- Dark gray background (`bg-zinc-900/80`)
+- Border styling (`border-2 border-zinc-700/50`)
+- Rounded corners (`rounded-xl md:rounded-2xl lg:rounded-2xl`)
+- Gray placeholder text (`placeholder:text-zinc-500`)
+- Responsive height (`h-12 md:h-14 lg:h-16`)
+- Responsive font size (`text-lg md:text-xl lg:text-2xl`)
+- USDT label with consistent positioning (`left: 20px`)
+
 ---
 
 *Last Updated: December 27, 2025*
