@@ -144,7 +144,8 @@ export default function HelpCenterPage() {
                   return (
                     <div
                       key={item.originalIndex}
-                      className={`rounded-lg transition-all duration-200 ${isExpanded ? 'bg-zinc-800' : ''}`}
+                      className="rounded-xl transition-all duration-200 hover:bg-[#2a2f38]"
+                      style={isExpanded ? { backgroundColor: '#3f3f46' } : {}}
                     >
                       <button
                         onClick={() => toggleItem(item.originalIndex)}
@@ -161,7 +162,7 @@ export default function HelpCenterPage() {
                       </button>
 
                       {isExpanded && (
-                        <p className="pl-13 pr-4 pb-5 ml-9 text-[15px] text-zinc-300 leading-relaxed">
+                        <p className="px-4 pb-4 pt-0 ml-9 text-[15px] text-zinc-300 leading-relaxed">
                           {item.answer}
                         </p>
                       )}
