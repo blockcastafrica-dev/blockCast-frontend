@@ -428,6 +428,7 @@ background: linear-gradient(90deg,
 - `edd045d` - Redesign FAQ page with Kalshi-style layout
 - `edcdd9a` - Update FAQ page title and styling
 - `a5def4f` - Add hover highlight effect to FAQ questions
+- `1c824b3` - Add hover highlight with BlockCast color scheme
 
 ### Changes:
 - Complete redesign inspired by Kalshi FAQ layout
@@ -461,9 +462,11 @@ background: linear-gradient(90deg,
 
 **Question Items:**
 - Arrow icon (ChevronDown) rotates: -90° closed, 0° open
+- Arrow turns cyan on hover (cyan-400)
 - Text: 17px font-medium, white color
-- Hover effect: Rounded background highlight (#2a2f38)
-- Expanded state: Dark background (#3f3f46)
+- Hover effect: Rounded background highlight (#2d3748)
+- Expanded state: Same background (#2d3748)
+- JavaScript onMouseEnter/onMouseLeave for reliable hover
 - Space between questions: space-y-2
 
 **Answer Text:**
@@ -480,9 +483,9 @@ background: linear-gradient(90deg,
 | Markets | 5 questions (What are markets, Participate, Risks, Resolution, Fees) |
 
 ### Interaction States:
-- **Hover:** Rounded background highlight appears
-- **Expanded:** Darker background, arrow points down
-- **Collapsed:** No background, arrow points right
+- **Hover:** Rounded background highlight (#2d3748), arrow turns cyan
+- **Expanded:** Same background (#2d3748), arrow points down
+- **Collapsed:** No background, arrow points right, white text
 
 ### Layout:
 - Max width: 6xl (1152px)
