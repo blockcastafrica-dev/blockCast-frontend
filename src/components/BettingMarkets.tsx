@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { TrendingUp, TrendingDown, Users, Clock, Target, Star, MessageCircle, Filter, ChevronDown, Share2, Heart, Bookmark, Zap, Globe, Shield, Search } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, Clock, Target, Star, MessageCircle, Filter, ChevronDown, Share2, Heart, Bookmark, Zap, Globe, Shield, Search, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useLanguage } from '@/components/LanguageContext';
@@ -1254,7 +1254,24 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
       <AlertDialog open={showBetDialog} onOpenChange={setShowBetDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cast Your Truth Position</AlertDialogTitle>
+            <div className="flex items-center justify-between">
+              <AlertDialogTitle className="text-left">Cast Your Truth Position</AlertDialogTitle>
+              <button
+                type="button"
+                onClick={() => setShowBetDialog(false)}
+                className="h-9 w-9 p-0 flex items-center justify-center rounded-xl border-2 border-transparent transition-all group -mt-6"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#06f6ff';
+                  e.currentTarget.style.backgroundColor = '#1a1f26';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'transparent';
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <X className="h-5 w-5 text-gray-400 group-hover:text-gray-300" />
+              </button>
+            </div>
             <AlertDialogDescription className="space-y-3">
               <div className="p-3 bg-muted rounded-lg">
                 <p className="font-medium">{selectedMarket?.claim}</p>
@@ -1388,7 +1405,6 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handlePlaceBet}>
               Cast Position
             </AlertDialogAction>
