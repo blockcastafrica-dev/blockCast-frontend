@@ -371,44 +371,6 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Emergency Alert Section */}
-        <div style={{
-          marginTop: '48px',
-          padding: '32px',
-          background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(239, 68, 68, 0.1))',
-          border: '1px solid rgba(249, 115, 22, 0.3)',
-          borderRadius: '16px',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', marginBottom: '12px' }}>
-            Urgent Misinformation Alert?
-          </h3>
-          <p style={{ fontSize: '14px', color: '#9ca3af', marginBottom: '20px', maxWidth: '500px', margin: '0 auto 20px' }}>
-            If you've identified dangerous misinformation that requires immediate attention, contact our emergency response team.
-          </p>
-          <button
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '12px 24px',
-              backgroundColor: '#f97316',
-              color: 'white',
-              fontWeight: '600',
-              fontSize: '14px',
-              border: 'none',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#ea580c'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f97316'}
-          >
-            <Shield style={{ width: '18px', height: '18px' }} />
-            Report Emergency
-          </button>
-        </div>
-
       </div>
     </div>
   );
