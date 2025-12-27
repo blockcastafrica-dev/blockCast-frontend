@@ -340,4 +340,51 @@ background: linear-gradient(90deg,
 
 ---
 
-*Last Updated: December 26, 2025*
+## 9. Betting Modal Buy/Sell Interface Improvements
+
+**Files:** `src/components/MarketPage.tsx`, `src/components/BettingMarkets.tsx`
+
+### Commits:
+- `f9d1f80` - Fix betting modal to show current odds instead of duplicate price change
+- `9f9aaab` - Add cyan border to amount input when value is entered
+- `0ab8a9b` - Differentiate Buy and Sell interfaces in betting modal
+
+### Changes:
+
+**Fixed "Price change" duplicate display:**
+- Changed from showing same value twice (`$1.43 → $1.43`) to single "Current odds" value (`1.43x`)
+
+**Amount Input Styling:**
+- Cyan border (#06b6d4) appears when user enters a value
+- Transparent background with white text
+- No border when empty
+
+**Buy Interface (Desktop & Mobile):**
+| Field | Value |
+|-------|-------|
+| Current odds | `{yesOdds/noOdds}x` |
+| Shares | Calculated shares |
+| Avg. price | Amount / Shares |
+| Fee | 3% |
+| Max profit | Profit amount + percentage |
+| Max payout | Total potential return |
+| Button | "Buy Position" (cyan #06f6ff) |
+
+**Sell Interface (Desktop & Mobile):**
+| Field | Value |
+|-------|-------|
+| Price per share | `${ 1 / odds }` (e.g., $0.70) |
+| Shares to sell | Calculated shares |
+| Est. return | Amount entered |
+| Fee | 3% |
+| Net proceeds | Amount × 0.97 (after fee) |
+| Button | "Sell Position" (red #ef4444) |
+
+### Mobile Modal:
+- Conditional rendering based on `castInterface` state ("buy" or "sell")
+- Different content sections for each mode
+- Button color changes: cyan for Buy, red for Sell
+
+---
+
+*Last Updated: December 27, 2025*

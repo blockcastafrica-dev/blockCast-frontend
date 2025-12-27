@@ -1448,9 +1448,9 @@ export default function MarketPage({
                     <>
                       <div className="space-y-2 text-sm mt-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-zinc-500">Sell price</span>
+                          <span className="text-zinc-500">Price per share</span>
                           <span className="text-zinc-300">
-                            {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x
+                            ${(1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -1826,9 +1826,9 @@ export default function MarketPage({
                   {/* Market Info */}
                   <div className="space-y-3 py-4 border-t border-zinc-800/50">
                     <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Sell price</span>
+                      <span className="text-base text-white text-left font-normal">Price per share</span>
                       <span className="text-base font-medium text-white text-right">
-                        {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x
+                        ${(1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
