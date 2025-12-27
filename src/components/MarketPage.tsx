@@ -1369,7 +1369,7 @@ export default function MarketPage({
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-12 pr-4 text-white text-lg bg-zinc-900/50 border border-zinc-700/50 rounded-xl focus:border-zinc-600 focus:ring-0 placeholder:text-zinc-600"
+                        className={`w-full h-12 pr-4 text-white text-lg bg-zinc-900/50 border-2 rounded-xl focus:border-[#06f6ff] focus:ring-0 placeholder:text-zinc-600 ${castAmount ? 'border-[#06f6ff]' : 'border-zinc-700/50'}`}
                         style={{ paddingLeft: '65px' }}
                       />
                     </div>
@@ -1633,7 +1633,7 @@ export default function MarketPage({
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl" style={{ paddingLeft: '90px' }}
+                        className={`w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-[#06f6ff] focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl ${castAmount ? 'border-[#06f6ff]' : 'border-zinc-700/50'}`} style={{ paddingLeft: '90px' }}
                       />
                     </div>
                   </div>
@@ -1818,7 +1818,7 @@ export default function MarketPage({
                           const value = e.target.value.replace(/[^0-9.]/g, '');
                           handleAmountChange(value);
                         }}
-                        className="w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 border-zinc-700/50 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-zinc-600 focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl" style={{ paddingLeft: '90px' }}
+                        className={`w-full h-12 md:h-14 lg:h-16 pr-4 md:pr-6 lg:pr-6 font-bold text-white text-left bg-zinc-900/80 border-2 rounded-xl md:rounded-2xl lg:rounded-2xl focus:border-[#06f6ff] focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-lg md:text-xl lg:text-2xl ${castAmount ? 'border-[#06f6ff]' : 'border-zinc-700/50'}`} style={{ paddingLeft: '90px' }}
                       />
                     </div>
                   </div>
