@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { useLanguage } from '@/components/LanguageContext';
 import ShareModal from '@/components/ShareModal';
+import CreateMarketModal from '@/components/CreateMarketModal';
 import { useNavigate } from 'react-router-dom';
 
 export interface BettingMarket {
@@ -866,6 +867,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   const [betPosition, setBetPosition] = useState<'yes' | 'no'>('yes');
   const [betAmount, setBetAmount] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showCreateMarketModal, setShowCreateMarketModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
@@ -1048,7 +1050,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
             <Button
               className="font-medium gap-2 h-9 md:h-10 lg:h-11 px-3 md:px-4 lg:px-4 text-xs md:text-sm lg:text-sm hover:opacity-90 transition-opacity"
               style={{ backgroundColor: '#06f6ff', color: '#000000' }}
-              onClick={() => toast.success('Create Market feature coming soon!')}
+              onClick={() => setShowCreateMarketModal(true)}
             >
               <span className="text-base md:text-lg lg:text-lg">+</span>
               Create Market
@@ -1405,6 +1407,16 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           market={selectedMarket}
         />
       )}
+
+      {/* Create Market Modal */}
+      <CreateMarketModal
+        isOpen={showCreateMarketModal}
+        onClose={() => setShowCreateMarketModal(false)}
+        onCreateMarket={(market) => {
+          console.log('New market created:', market);
+          // TODO: Add market to backend/state
+        }}
+      />
     </div>
   );
 }
