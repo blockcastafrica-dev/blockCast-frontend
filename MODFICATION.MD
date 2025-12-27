@@ -429,29 +429,22 @@ background: linear-gradient(90deg,
 - `edcdd9a` - Update FAQ page title and styling
 - `a5def4f` - Add hover highlight effect to FAQ questions
 - `1c824b3` - Add hover highlight with BlockCast color scheme
+- `ffced16` - Redesign FAQ page header with cyan banner
 
 ### Changes:
 - Complete redesign inspired by Kalshi FAQ layout
+- Full-width cyan hero banner like Kalshi
 - Clean, minimal accordion-style questions
-- Large prominent page title
 - Category sections with clear separation
+- Removed filter pills for cleaner look
 
 ### Design Elements:
 
-**Page Title:**
-- "Frequently Asked Questions"
-- Size: 56px (mobile) / 96px (desktop)
-- Font weight: Bold
-- Letter spacing: -0.03em
-- Large margin below (mb-16 / mb-20)
-
-**Filter Pills:**
-| Filter | Style |
-|--------|-------|
-| All | White bg, black text when active |
-| General | Pill button |
-| Verification | Pill button |
-| Markets | Pill button |
+**Hero Banner:**
+- Full-width cyan background (`#06b6d4`)
+- Centered title: "Frequently Asked Questions" (42px, black, bold)
+- Subtitle: "Find answers to your questions" (18px, black/60%)
+- Padding: 64px vertical
 
 **Section Titles (General, Verification, Markets):**
 - Size: 28px (mobile) / 36px (desktop)
