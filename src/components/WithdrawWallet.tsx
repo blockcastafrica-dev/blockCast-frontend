@@ -335,7 +335,17 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full p-3 bg-[#1a1f26] border border-gray-700 rounded-xl text-white focus:border-cyan-500 focus:outline-none text-lg"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: '#1a1f26',
+                    border: '2px solid',
+                    borderColor: amount ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)',
+                    borderRadius: '12px',
+                    color: 'white',
+                    fontSize: '18px',
+                    outline: 'none'
+                  }}
                 />
               </div>
               <p className="text-gray-500 text-xs mt-1">Min: {selectedNetwork.minWithdraw} USDT • Network fee: {selectedNetwork.fee} USDT</p>
