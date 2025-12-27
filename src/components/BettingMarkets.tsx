@@ -1333,8 +1333,14 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                         setBetAmount(value);
                       }}
                       placeholder="0.00"
-                      className="pr-6 font-bold text-white text-left"
-                      style={{ paddingLeft: '110px', fontSize: '24px' }}
+                      className="pr-6 font-bold text-left focus-visible:ring-0"
+                      style={{
+                        paddingLeft: '110px',
+                        fontSize: '24px',
+                        border: betAmount ? '2px solid #06b6d4' : undefined,
+                        backgroundColor: 'transparent',
+                        color: '#ffffff'
+                      }}
                     />
                   </div>
 
