@@ -58,10 +58,16 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 **Step 2: Crypto Withdrawal**
 - Network selector (BEP20, ERC20, Base, TRC20)
 - Wallet address input
-- Amount input with min/fee display
+- Amount input with min/fee display and cyan border highlight when value entered
 - Fee summary (Amount, Network fee, You'll receive)
 - Warning about wrong addresses
 - Cyan "Withdraw" button
+
+### Amount Input Styling (Crypto Method):
+- Border: 2px solid
+- Active (with value): Cyan border (`#06b6d4`)
+- Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
+- Matches FundWalletModal and BettingMarkets input styling pattern
 
 ### Network Options:
 | Network | Token | Fee | Min Withdraw | Time |
