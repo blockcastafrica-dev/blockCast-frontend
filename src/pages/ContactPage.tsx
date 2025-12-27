@@ -59,7 +59,7 @@ export default function ContactPage() {
             color: '#9ca3af',
             textAlign: 'left'
           }}>
-            Get in touch with our team for support, partnerships, or questions about truth verification
+            Get in touch with our team for support, partnerships, or questions about truth verification.
           </p>
         </div>
 
