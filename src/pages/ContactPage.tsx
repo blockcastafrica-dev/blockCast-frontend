@@ -40,7 +40,7 @@ export default function ContactPage() {
   });
 
   return (
-    <div style={{ backgroundColor: '#0f1419', minHeight: '100vh', padding: '40px 20px' }}>
+    <div style={{ backgroundColor: '#1a1f26', minHeight: '100vh', padding: '40px 20px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Header */}
