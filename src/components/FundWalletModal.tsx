@@ -477,7 +477,7 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                   <div>
                     <label className="text-gray-300 text-sm mb-2 block">Amount (USDT)</label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">USDT</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white">USDT</span>
                       <input
                         type="number"
                         value={amount}

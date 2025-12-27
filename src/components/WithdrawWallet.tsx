@@ -330,6 +330,7 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
             <div>
               <label className="text-gray-300 text-sm mb-2 block">Amount (USDT)</label>
               <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white">USDT</span>
                 <input
                   type="number"
                   value={amount}
@@ -338,6 +339,7 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
                   style={{
                     width: '100%',
                     padding: '12px',
+                    paddingLeft: '60px',
                     backgroundColor: '#1a1f26',
                     border: '2px solid',
                     borderColor: amount ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)',
