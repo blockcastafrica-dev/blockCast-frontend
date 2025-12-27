@@ -229,65 +229,6 @@ export default function ContactPage() {
           {/* Right Sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-            {/* Contact Information */}
-            <div style={{
-              backgroundColor: '#1a1f26',
-              border: '1px solid #1f2937',
-              borderRadius: '16px',
-              padding: '24px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                <div style={{
-                  padding: '8px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #06b6d4, #8b5cf6)'
-                }}>
-                  <MapPin style={{ width: '16px', height: '16px', color: 'white' }} />
-                </div>
-                <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: 'white' }}>
-                  Contact Information
-                </h3>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <Mail style={{ width: '20px', height: '20px', color: '#06b6d4', marginTop: '2px' }} />
-                  <div>
-                    <p style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Email</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>hello@blockcast.africa</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>support@blockcast.africa</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <MessageCircle style={{ width: '20px', height: '20px', color: '#8b5cf6', marginTop: '2px' }} />
-                  <div>
-                    <p style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Community</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>Discord: blockcast-africa</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>Telegram: @blockcast_truth</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <Clock style={{ width: '20px', height: '20px', color: '#22c55e', marginTop: '2px' }} />
-                  <div>
-                    <p style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Response Time</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>24 hours average</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>Mon-Fri: 9AM-6PM WAT</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <MapPin style={{ width: '20px', height: '20px', color: '#eab308', marginTop: '2px' }} />
-                  <div>
-                    <p style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Headquarters</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>Lagos, Nigeria</p>
-                    <p style={{ fontSize: '14px', color: '#9ca3af' }}>Serving all of Africa</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Follow Us */}
             <div style={{
               backgroundColor: '#1a1f26',
