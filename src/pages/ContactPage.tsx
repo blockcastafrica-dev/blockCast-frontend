@@ -44,8 +44,8 @@ export default function ContactPage() {
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div className="text-center lg:text-left" style={{ marginBottom: '48px' }}>
-          <h1 style={{
+        <div style={{ marginBottom: '48px' }}>
+          <h1 className="text-center lg:text-left" style={{
             fontSize: '36px',
             fontWeight: 'bold',
             color: 'white',
@@ -53,7 +53,7 @@ export default function ContactPage() {
           }}>
             Contact Us
           </h1>
-          <p className="mx-auto lg:mx-0" style={{
+          <p className="text-center lg:text-left" style={{
             fontSize: '16px',
             color: '#9ca3af',
             maxWidth: '500px'
