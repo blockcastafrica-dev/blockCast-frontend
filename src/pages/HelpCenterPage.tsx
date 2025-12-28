@@ -102,7 +102,7 @@ export default function HelpCenterPage() {
             Frequently Asked Questions
           </h1>
           <p style={{ color: 'rgba(0,0,0,0.6)', fontSize: '18px', marginTop: '12px' }}>
-            Find answers to your questions
+            Find Answers to your Questions
           </p>
         </div>
       </div>
