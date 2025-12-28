@@ -194,7 +194,8 @@ export default function MarketPage({
   const calculateProfit = (amount: number, position: "yes" | "no") => {
     const odds = position === "yes" ? market.yesOdds : market.noOdds;
     const grossPayout = amount * odds;
-    const fee = grossPayout * FEE_PERCENTAGE;
+    const grossProfit = grossPayout - amount;
+    const fee = grossProfit * FEE_PERCENTAGE;
     const netPayout = grossPayout - fee;
     const netProfit = netPayout - amount;
     const pricePerShare = 1 / odds;
