@@ -84,6 +84,11 @@ interface ProfitCalculation {
   amount: number;
   potential: number;
   profit: number;
+  grossPayout: number;
+  fee: number;
+  shares: number;
+  pricePerShare: number;
+  odds: number;
 }
 
 const quickCastAmounts = [0.01, 0.05, 0.1, 0.5, 1.0];
@@ -183,11 +188,18 @@ export default function MarketPage({
     );
   };
 
+  const MIN_BET_AMOUNT = 1; // Minimum bet amount in USDT
+  const FEE_PERCENTAGE = 0.03; // 3% fee on winnings
+
   const calculateProfit = (amount: number, position: "yes" | "no") => {
     const odds = position === "yes" ? market.yesOdds : market.noOdds;
-    const potentialReturn = amount * odds;
-    const profit = potentialReturn - amount;
-    return { amount, potential: potentialReturn, profit };
+    const grossPayout = amount * odds;
+    const fee = grossPayout * FEE_PERCENTAGE;
+    const netPayout = grossPayout - fee;
+    const netProfit = netPayout - amount;
+    const pricePerShare = 1 / odds;
+    const shares = Math.floor(amount / pricePerShare);
+    return { amount, potential: netPayout, profit: netProfit, grossPayout, fee, shares, pricePerShare, odds };
   };
 
   const handleAmountChange = (value: string) => {
@@ -212,6 +224,10 @@ export default function MarketPage({
     const amount = parseFloat(castAmount);
     if (isNaN(amount) || amount <= 0) {
       toast.error("Please enter a valid amount");
+      return;
+    }
+    if (amount < MIN_BET_AMOUNT) {
+      toast.error(`Minimum bet amount is ${MIN_BET_AMOUNT} USDT`);
       return;
     }
     if (amount > userBalance) {
@@ -1388,13 +1404,13 @@ export default function MarketPage({
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Shares</span>
                           <span className="text-zinc-300">
-                            {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                            {profitCalculation ? profitCalculation.shares : 0}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Avg. price</span>
                           <span className="text-zinc-300">
-                            ${profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"}
+                            ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : "0.00"}
                           </span>
                         </div>
                       </div>
@@ -1406,15 +1422,17 @@ export default function MarketPage({
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
-                            <span className="text-zinc-500">Fee</span>
+                            <span className="text-zinc-500">Fee (on winnings)</span>
                             <AlertCircle className="w-3 h-3 text-zinc-600" />
                           </div>
-                          <span className="text-zinc-300">3%</span>
+                          <span className="text-zinc-300">
+                            3% (-${profitCalculation ? profitCalculation.fee.toFixed(2) : "0.00"})
+                          </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Max profit</span>
                           <span className="text-emerald-400">
-                            ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation ? ((profitCalculation.profit / Math.max(0.01, profitCalculation.amount)) * 100).toFixed(2) : "0.00"}%)
+                            ${profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} ({profitCalculation && profitCalculation.amount > 0 ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(0) : "0"}%)
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -1431,14 +1449,14 @@ export default function MarketPage({
                       {/* Bottom Button */}
                       <Button
                         onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
-                        disabled={!castAmount || parseFloat(castAmount) > userBalance}
+                        disabled={!castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance}
                         className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer mt-14"
                         style={{
-                          backgroundColor: !castAmount || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
-                          color: !castAmount || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
+                          backgroundColor: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
+                          color: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
                         }}
                       >
-                        {!castAmount ? 'Enter amount' : parseFloat(castAmount) > userBalance ? 'Insufficient balance' : 'Buy Position'}
+                        {!castAmount ? 'Enter amount' : parseFloat(castAmount) < MIN_BET_AMOUNT ? `Min ${MIN_BET_AMOUNT} USDT` : parseFloat(castAmount) > userBalance ? 'Insufficient balance' : 'Buy Position'}
                       </Button>
                     </>
                   )}
@@ -1450,19 +1468,19 @@ export default function MarketPage({
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Price per share</span>
                           <span className="text-zinc-300">
-                            ${(1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
+                            ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Shares to sell</span>
                           <span className="text-zinc-300">
-                            {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                            {profitCalculation ? profitCalculation.shares : 0}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Est. return</span>
                           <span className="text-zinc-300">
-                            ${profitCalculation ? profitCalculation.amount.toFixed(2) : "0.00"}
+                            ${profitCalculation ? profitCalculation.grossPayout.toFixed(2) : "0.00"}
                           </span>
                         </div>
                       </div>
@@ -1474,15 +1492,17 @@ export default function MarketPage({
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
-                            <span className="text-zinc-500">Fee</span>
+                            <span className="text-zinc-500">Fee (on winnings)</span>
                             <AlertCircle className="w-3 h-3 text-zinc-600" />
                           </div>
-                          <span className="text-zinc-300">3%</span>
+                          <span className="text-zinc-300">
+                            3% (-${profitCalculation ? profitCalculation.fee.toFixed(2) : "0.00"})
+                          </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Net proceeds</span>
                           <span className="text-emerald-400">
-                            ${profitCalculation ? (profitCalculation.amount * 0.97).toFixed(2) : "0.00"}
+                            ${profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"}
                           </span>
                         </div>
                       </div>
@@ -1490,14 +1510,14 @@ export default function MarketPage({
                       {/* Bottom Button */}
                       <Button
                         onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
-                        disabled={!castAmount || parseFloat(castAmount) > userBalance}
+                        disabled={!castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance}
                         className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer mt-14"
                         style={{
-                          backgroundColor: !castAmount || parseFloat(castAmount) > userBalance ? '#334155' : '#ef4444',
-                          color: !castAmount || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#ffffff'
+                          backgroundColor: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#334155' : '#ef4444',
+                          color: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#ffffff'
                         }}
                       >
-                        {!castAmount ? 'Enter amount' : parseFloat(castAmount) > userBalance ? 'Insufficient balance' : 'Sell Position'}
+                        {!castAmount ? 'Enter amount' : parseFloat(castAmount) < MIN_BET_AMOUNT ? `Min ${MIN_BET_AMOUNT} USDT` : parseFloat(castAmount) > userBalance ? 'Insufficient balance' : 'Sell Position'}
                       </Button>
                     </>
                   )}
@@ -1649,13 +1669,13 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Shares</span>
                       <span className="text-base font-medium text-white text-right">
-                        {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                        {profitCalculation ? profitCalculation.shares : 0}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Avg. price</span>
                       <span className="text-base font-medium text-white text-right">
-                        {profitCalculation ? (profitCalculation.amount / Math.max(1, Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)))).toFixed(2) : "0.00"} USDT
+                        {profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
@@ -1664,15 +1684,17 @@ export default function MarketPage({
                   <div className="space-y-3 py-4 border-t border-zinc-800/50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-base text-white text-left font-normal">Fee</span>
+                        <span className="text-base text-white text-left font-normal">Fee (on winnings)</span>
                         <AlertCircle className="w-4 h-4 text-zinc-500" />
                       </div>
-                      <span className="text-base font-medium text-white text-right">3%</span>
+                      <span className="text-base font-medium text-white text-right">
+                        3% (-${profitCalculation ? profitCalculation.fee.toFixed(2) : "0.00"})
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Max profit</span>
                       <span className="text-base font-semibold text-emerald-400 text-right">
-                        {profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} USDT ({profitCalculation ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(2) : "0.00"}%)
+                        {profitCalculation ? profitCalculation.profit.toFixed(2) : "0.00"} USDT ({profitCalculation && profitCalculation.amount > 0 ? ((profitCalculation.profit / profitCalculation.amount) * 100).toFixed(0) : "0"}%)
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -1686,11 +1708,14 @@ export default function MarketPage({
                   {/* Submit Button */}
                   <Button
                     onClick={handleCustomCast}
-                    disabled={!castAmount || parseFloat(castAmount) > userBalance}
+                    disabled={!castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance}
                     className="relative w-full h-12 md:h-13 lg:h-14 text-base md:text-lg lg:text-lg font-bold rounded-xl md:rounded-2xl lg:rounded-2xl cursor-pointer"
-                    style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                    style={{
+                      backgroundColor: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
+                      color: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
+                    }}
                   >
-                    Buy Position
+                    {!castAmount ? 'Enter amount' : parseFloat(castAmount) < MIN_BET_AMOUNT ? `Min ${MIN_BET_AMOUNT} USDT` : parseFloat(castAmount) > userBalance ? 'Insufficient balance' : 'Buy Position'}
                   </Button>
                 </div>
               </div>
@@ -1828,19 +1853,19 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Price per share</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${(1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
+                        ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Shares to sell</span>
                       <span className="text-base font-medium text-white text-right">
-                        {profitCalculation ? Math.floor(profitCalculation.amount / (castPosition === "yes" ? market.yesOdds : market.noOdds)) : 0}
+                        {profitCalculation ? profitCalculation.shares : 0}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Est. return</span>
                       <span className="text-base font-medium text-white text-right">
-                        {profitCalculation ? profitCalculation.amount.toFixed(2) : "0.00"} USDT
+                        {profitCalculation ? profitCalculation.grossPayout.toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
@@ -1849,15 +1874,17 @@ export default function MarketPage({
                   <div className="space-y-3 py-4 border-t border-zinc-800/50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-base text-white text-left font-normal">Fee</span>
+                        <span className="text-base text-white text-left font-normal">Fee (on winnings)</span>
                         <AlertCircle className="w-4 h-4 text-zinc-500" />
                       </div>
-                      <span className="text-base font-medium text-white text-right">3%</span>
+                      <span className="text-base font-medium text-white text-right">
+                        3% (-${profitCalculation ? profitCalculation.fee.toFixed(2) : "0.00"})
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Net proceeds</span>
                       <span className="text-base font-semibold text-emerald-400 text-right">
-                        {profitCalculation ? (profitCalculation.amount * 0.97).toFixed(2) : "0.00"} USDT
+                        {profitCalculation ? profitCalculation.potential.toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
@@ -1865,11 +1892,14 @@ export default function MarketPage({
                   {/* Submit Button */}
                   <Button
                     onClick={handleCustomCast}
-                    disabled={!castAmount || parseFloat(castAmount) > userBalance}
+                    disabled={!castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance}
                     className="relative w-full h-12 md:h-13 lg:h-14 text-base md:text-lg lg:text-lg font-bold rounded-xl md:rounded-2xl lg:rounded-2xl cursor-pointer"
-                    style={{ backgroundColor: '#ef4444', color: '#ffffff' }}
+                    style={{
+                      backgroundColor: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#334155' : '#ef4444',
+                      color: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#ffffff'
+                    }}
                   >
-                    Sell Position
+                    {!castAmount ? 'Enter amount' : parseFloat(castAmount) < MIN_BET_AMOUNT ? `Min ${MIN_BET_AMOUNT} USDT` : parseFloat(castAmount) > userBalance ? 'Insufficient balance' : 'Sell Position'}
                   </Button>
                 </div>
               </div>
