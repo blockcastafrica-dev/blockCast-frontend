@@ -30,46 +30,46 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 
 ## 2. WithdrawWallet Modal
 
-**File:** `src/components/WithdrawWallet.tsx`
+**File:** `src/components/WithdrawWallet.tsx` (384 lines)
+
+### Commits:
+- `50001cf` - Redesign WithdrawWallet to match FundWalletModal UI
+- `2ddcd0f` - Rewrite WithdrawWallet to match FundWalletModal structure
+
+### Changes:
+| Feature | Before | After |
+|---------|--------|-------|
+| Steps | 3 steps | 2 steps |
+| Payment Methods | Complex multi-currency support | Simple method selection |
+| Currency Selector | USD, NGN, KES, GHS, ZAR | Removed (USDT only) |
+| Mobile Money/Card | Full forms | "Coming Soon" toast |
+| Network icons | Emoji icons | Removed |
+| Bank Transfer | Supported | Removed |
+| Lines of Code | 729 lines | 384 lines |
 
 ### Current Features:
 
 **Step 1: Method Selection**
 - Crypto Wallet - "Popular" badge, MetaMask/BNB/Base icons, 0.5% fee
-- Mobile Money - Yellow Card logo, "Coming Soon" badge
-- Credit/Debit Card - "Coming Soon" badge
+- Mobile Money - Yellow Card logo, "Coming Soon" badge, 1.2% fee
+- Credit/Debit Card - "Coming Soon" badge, 2.9% fee
 - Security notice with Shield icon
 
-**Step 2: Crypto Withdrawal (Updated Dec 28, 2025)**
-- Available balance display at top (USDT format)
+**Step 2: Crypto Withdrawal**
 - Network selector (BEP20, ERC20, Base, TRC20)
-- Wallet address input with format validation
-- Amount input with MAX button
+- Wallet address input
+- Amount input with min/fee display and cyan border highlight when value entered
 - Fee summary (Amount, Network fee, You'll receive)
 - Warning about wrong addresses
-- Dynamic submit button with validation states
+- Cyan "Withdraw" button
 
-### Validation Features:
-- **Address validation**: EVM addresses must start with `0x` (42 chars), TRC20 must start with `T` (34 chars)
-- **Balance check**: Cannot withdraw more than available balance
-- **Minimum check**: Must meet network minimum withdrawal amount
-- **Visual feedback**: Red borders and error messages for invalid inputs
-
-### Dynamic Button States:
-| State | Button Text |
-|-------|-------------|
-| No address | "Enter wallet address" |
-| Invalid address | "Invalid address" |
-| No amount | "Enter amount" |
-| Below minimum | "Min X USDT" |
-| Exceeds balance | "Insufficient balance" |
-| Valid | "Withdraw" |
-
-### UI Elements:
-- Available Balance box showing `USDT {balance}`
-- MAX button to withdraw full balance minus fees
-- Placeholder changes based on network (`0x...` or `T...`)
-- Green "You'll receive" amount when valid, red when invalid
+### Amount Input Styling (Crypto Method):
+- USDT label: White text, positioned left inside input (`left-4`)
+- Input padding: `paddingLeft: 60px` to accommodate label
+- Border: 2px solid
+- Active (with value): Cyan border (`#06b6d4`)
+- Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
+- Matches FundWalletModal and BettingMarkets input styling pattern
 
 ### Network Options:
 | Network | Token | Fee | Min Withdraw | Time |
@@ -83,7 +83,7 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 
 ## 3. FundWalletModal Overhaul
 
-**File:** `src/components/FundWalletModal.tsx`
+**File:** `src/components/FundWalletModal.tsx` (673 lines)
 
 ### Changes:
 - Created new modal with proper mobile support and 3 payment methods
@@ -92,31 +92,26 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - Clean fee summary design (neutral colors, no distracting styling)
 - Full-screen modal option for better mobile experience
 - Proper cyan color scheme (#06b6d4) for action buttons
+- Fixed Continue button states (cyan when amount entered)
+- Dynamic spacing for currency symbol
+- Cyan border highlight on amount input when value is entered (matching betting platform style)
 
-### Custodial Crypto Deposit Flow (Updated Dec 28, 2025):
-- Simplified flow for custodial system
-- User enters amount, selects network, sees deposit address
-- Balance credited automatically when transaction confirms on blockchain
+### Amount Input Styling (Crypto Method):
+- USDT label: White text, positioned left inside input (`left-4`)
+- Input padding: `paddingLeft: 60px` to accommodate label
+- Border: 2px solid
+- Active (with value): Cyan border (`#06b6d4`)
+- Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
+- Matches BettingMarkets.tsx input styling pattern
 
-**Crypto Deposit Flow:**
-1. User clicks "Crypto Wallet"
-2. Enters deposit amount (USDT)
-3. Selects network (BEP20, ERC20, Base, TRC20)
-4. Deposit address appears showing exact amount to send
-5. Copies address and sends from external wallet
-6. Clicks "Done" → Modal closes
-7. Backend auto-credits balance after blockchain confirmation
+### Current Features:
 
-**UI Elements:**
-- Amount input with USDT label and cyan border when filled
-- Network selector dropdown
-- Deposit address (only shows after amount entered) with copy button
-- Shows exact amount: "Send 100.00 USDT (BEP20) to:"
-- Info box: "Balance credited automatically after confirmation"
-- Warning about wrong network = lost funds
-- Dynamic button states: "Enter amount" → "Min X USDT" → "Done"
+**3-Step Flow:**
+1. Select Method
+2. Enter Amount
+3. Payment Details
 
-### Payment Methods:
+**Payment Methods:**
 | Method | Fee | Status |
 |--------|-----|--------|
 | Crypto Wallet (MetaMask, BNB, Base) | 0.5% | Active |
@@ -131,7 +126,7 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 | Base | USDT (Base) | $10 | ~2 mins |
 | Tron | USDT (TRC20) | $5 | ~3 mins |
 
-**Multi-Currency Support (for fiat methods):**
+**Multi-Currency Support:**
 - USD ($), NGN (₦), KES (KSh), GHS (₵), ZAR (R)
 
 ---
@@ -432,72 +427,43 @@ background: linear-gradient(90deg,
   - USDT label and input at proportional 18px font size
   - Cyan border highlight (`#06b6d4`) when value entered
   - Dark background (`bg-zinc-900/80`)
-- Market Info section (Current odds, Price per share, Shares)
-- Fee Info section (Fee with actual amount, Max profit in emerald, Max payout)
+- Market Info section (Current odds, Shares, Avg. price)
+- Fee Info section (Fee on winnings, Max profit in emerald, Max payout)
 - Dynamic Cast Position button:
   - Cyan (`#06f6ff`) with black text when active
   - Gray (`#334155`) when disabled
-  - Shows "Enter amount" / "Min 1 USDT" / "Insufficient balance" / "Cast Position"
+  - Shows "Enter amount" / "Insufficient balance" / "Cast Position"
 
-### Calculation Fixes (Dec 28, 2025):
+### Fee Calculation Fix (commit `2331c93`):
 
-**Applied to both BettingMarkets.tsx and MarketPage.tsx:**
+**Files:** `src/components/MarketPage.tsx`, `src/components/BettingMarkets.tsx`
 
-**Fee Calculation:**
-- Fee is 3% of **gross payout** (winnings), not bet amount
-- Label: "Fee (on winnings)"
-- Shows actual fee: "3% (-$X.XX)"
-- Max payout = gross payout - fee
-- Max profit = net payout - bet amount
+**Issue:** Fee was incorrectly calculated on gross payout instead of winnings only.
 
-**Shares Formula Fixed:**
-- Price per share = 1 / odds
-- Shares = Math.floor(amount / pricePerShare)
-- Added "Price per share" / "Avg. price" display
-
-**Minimum Bet Validation:**
-- Minimum bet: 1 USDT
-- Button shows "Min 1 USDT" when below minimum
-
-**Dynamic Button States (MarketPage.tsx):**
-| State | Button Text | Color |
-|-------|-------------|-------|
-| No amount | "Enter amount" | Gray (#334155) |
-| Below minimum | "Min 1 USDT" | Gray (#334155) |
-| Exceeds balance | "Insufficient balance" | Gray (#334155) |
-| Valid (Buy) | "Buy Position" | Cyan (#06f6ff) |
-| Valid (Sell) | "Sell Position" | Red (#ef4444) |
-
-**ProfitCalculation Interface (MarketPage.tsx):**
-```typescript
-interface ProfitCalculation {
-  amount: number;
-  potential: number;    // Net payout after fee
-  profit: number;       // Net profit after fee
-  grossPayout: number;  // Payout before fee
-  fee: number;          // 3% of gross payout
-  shares: number;       // Calculated shares
-  pricePerShare: number; // 1 / odds
-  odds: number;         // Current position odds
-}
+**Before (incorrect):**
+```javascript
+const fee = grossPayout * 0.03;  // 3% of total payout
 ```
 
-**Example Calculation:**
-```
-Bet: $10 at 2.0x odds
-Price per share: 1 / 2.0 = $0.50
-Shares: floor(10 / 0.50) = 20 shares
-Gross Payout: $10 × 2.0 = $20
-Fee (3%): $20 × 0.03 = $0.60
-Net Payout: $20 - $0.60 = $19.40
-Net Profit: $19.40 - $10 = $9.40 (94% return)
+**After (correct):**
+```javascript
+const grossProfit = grossPayout - amount;
+const fee = grossProfit * 0.03;  // 3% of winnings only
 ```
 
-**UI Sections Updated (MarketPage.tsx):**
-- Desktop Buy interface
-- Desktop Sell interface
-- Mobile Buy interface
-- Mobile Sell interface
+**Example Calculation (1 USDT bet at 1.43x odds):**
+| Step | Before | After |
+|------|--------|-------|
+| Gross Payout | $1.43 | $1.43 |
+| Gross Profit | $0.43 | $0.43 |
+| Fee (3%) | $0.04 (on payout) | $0.01 (on winnings) |
+| Max Payout | $1.39 | $1.42 |
+| Max Profit | $0.39 (39%) | $0.42 (42%) |
+
+**Locations Fixed:**
+- `MarketPage.tsx:197` - calculateProfit function
+- `BettingMarkets.tsx:1414` - Market Info calculation
+- `BettingMarkets.tsx:1446` - Fee Info calculation
 
 ---
 
@@ -650,6 +616,7 @@ Net Profit: $19.40 - $10 = $9.40 (94% return)
 - Dark card background (`#1a1f26`)
 
 ### Removed:
+
 - FAQ section (now on separate FAQ page)
 - Quick Actions buttons
 - Old card-based UI components
