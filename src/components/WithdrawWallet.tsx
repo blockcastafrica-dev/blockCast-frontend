@@ -28,12 +28,17 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
   const [amount, setAmount] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkOption>(networks[0]);
+  const [addressError, setAddressError] = useState("");
+
+  // Mock user balance - in production this would come from props or context
+  const userBalance = 1250.50;
 
   const resetAndClose = () => {
     setStep(1);
     setAmount("");
     setWalletAddress("");
     setSelectedNetwork(networks[0]);
+    setAddressError("");
     onClose();
   };
 
@@ -45,13 +50,73 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
     }
   };
 
+  // Validate wallet address format based on network
+  const validateAddress = (address: string, networkId: string): boolean => {
+    if (!address) return false;
+
+    if (networkId === "trc20") {
+      // TRC20 addresses start with T and are 34 characters
+      return /^T[a-zA-Z0-9]{33}$/.test(address);
+    } else {
+      // EVM addresses (BEP20, ERC20, Base) start with 0x and are 42 characters
+      return /^0x[a-fA-F0-9]{40}$/.test(address);
+    }
+  };
+
+  const handleAddressChange = (address: string) => {
+    setWalletAddress(address);
+    if (address && !validateAddress(address, selectedNetwork.id)) {
+      if (selectedNetwork.id === "trc20") {
+        setAddressError("Invalid TRC20 address (should start with T)");
+      } else {
+        setAddressError("Invalid address (should start with 0x)");
+      }
+    } else {
+      setAddressError("");
+    }
+  };
+
+  // Handle network change - revalidate address
+  const handleNetworkChange = (networkId: string) => {
+    const network = networks.find(n => n.id === networkId) || networks[0];
+    setSelectedNetwork(network);
+    if (walletAddress && !validateAddress(walletAddress, networkId)) {
+      if (networkId === "trc20") {
+        setAddressError("Invalid TRC20 address (should start with T)");
+      } else {
+        setAddressError("Invalid address (should start with 0x)");
+      }
+    } else {
+      setAddressError("");
+    }
+  };
+
+  // Set max amount (balance minus fee)
+  const handleMaxClick = () => {
+    const maxAmount = Math.max(0, userBalance - selectedNetwork.fee);
+    setAmount(maxAmount.toFixed(2));
+  };
+
+  const amountNum = Number(amount) || 0;
+  const isAddressValid = walletAddress && validateAddress(walletAddress, selectedNetwork.id);
+  const isAmountValid = amountNum >= selectedNetwork.minWithdraw && amountNum <= userBalance;
+  const canSubmit = isAddressValid && isAmountValid;
+
   const handleSubmit = () => {
     if (!walletAddress) {
       toast.error("Please enter your wallet address");
       return;
     }
-    if (!amount || Number(amount) < selectedNetwork.minWithdraw) {
+    if (!isAddressValid) {
+      toast.error("Please enter a valid wallet address");
+      return;
+    }
+    if (amountNum < selectedNetwork.minWithdraw) {
       toast.error(`Minimum withdrawal is ${selectedNetwork.minWithdraw} USDT`);
+      return;
+    }
+    if (amountNum > userBalance) {
+      toast.error("Insufficient balance");
       return;
     }
     toast.success("Withdrawal request submitted!");
@@ -298,12 +363,20 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
           {/* Step 2: Crypto Withdrawal */}
           {step === 2 && (
           <div className="space-y-4">
+            {/* Available Balance */}
+            <div className="p-3 bg-[#1a1f26] border border-gray-700 rounded-xl">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Available Balance</span>
+                <span className="text-white font-semibold">USDT {userBalance.toFixed(2)}</span>
+              </div>
+            </div>
+
             {/* Network Selector */}
             <div>
               <label className="text-gray-300 text-sm mb-2 block">Network</label>
               <select
                 value={selectedNetwork.id}
-                onChange={(e) => setSelectedNetwork(networks.find(n => n.id === e.target.value) || networks[0])}
+                onChange={(e) => handleNetworkChange(e.target.value)}
                 className="w-full p-3 bg-[#1a1f26] border border-gray-700 rounded-xl text-white focus:border-cyan-500 focus:outline-none"
               >
                 {networks.map((n) => (
@@ -320,15 +393,37 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
               <input
                 type="text"
                 value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
-                placeholder="Enter your wallet address"
-                className="w-full p-3 bg-[#1a1f26] border border-gray-700 rounded-xl text-white focus:border-cyan-500 focus:outline-none font-mono text-sm"
+                onChange={(e) => handleAddressChange(e.target.value)}
+                placeholder={selectedNetwork.id === "trc20" ? "T..." : "0x..."}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  backgroundColor: '#1a1f26',
+                  border: '2px solid',
+                  borderColor: addressError ? '#ef4444' : walletAddress && isAddressValid ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)',
+                  borderRadius: '12px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontFamily: 'monospace',
+                  outline: 'none'
+                }}
               />
+              {addressError && (
+                <p className="text-red-400 text-xs mt-1">{addressError}</p>
+              )}
             </div>
 
             {/* Amount Input */}
             <div>
-              <label className="text-gray-300 text-sm mb-2 block">Amount (USDT)</label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-gray-300 text-sm">Amount (USDT)</label>
+                <button
+                  onClick={handleMaxClick}
+                  className="text-cyan-400 text-xs font-medium hover:text-cyan-300 transition-colors"
+                >
+                  MAX
+                </button>
+              </div>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white">USDT</span>
                 <input
@@ -342,7 +437,7 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
                     paddingLeft: '60px',
                     backgroundColor: '#1a1f26',
                     border: '2px solid',
-                    borderColor: amount ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)',
+                    borderColor: amountNum > userBalance ? '#ef4444' : amount ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)',
                     borderRadius: '12px',
                     color: 'white',
                     fontSize: '18px',
@@ -350,15 +445,20 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
                   }}
                 />
               </div>
-              <p className="text-gray-500 text-xs mt-1">Min: {selectedNetwork.minWithdraw} USDT • Network fee: {selectedNetwork.fee} USDT</p>
+              <div className="flex justify-between mt-1">
+                <p className="text-gray-500 text-xs">Min: {selectedNetwork.minWithdraw} USDT • Fee: {selectedNetwork.fee} USDT</p>
+                {amountNum > userBalance && (
+                  <p className="text-red-400 text-xs">Insufficient balance</p>
+                )}
+              </div>
             </div>
 
             {/* Fee Summary */}
-            {amount && Number(amount) > 0 && (
+            {amount && amountNum > 0 && (
               <div style={{ padding: '16px', backgroundColor: '#1a1f26', borderRadius: '12px' }}>
                 <div className="flex justify-between mb-3">
                   <span style={{ color: '#9ca3af', fontSize: '14px' }}>Amount</span>
-                  <span style={{ color: '#fff' }}>{Number(amount).toFixed(2)} USDT</span>
+                  <span style={{ color: '#fff' }}>{amountNum.toFixed(2)} USDT</span>
                 </div>
                 <div className="flex justify-between mb-3">
                   <span style={{ color: '#9ca3af', fontSize: '14px' }}>Network fee</span>
@@ -366,7 +466,9 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
                 </div>
                 <div style={{ borderTop: '1px solid #374151', paddingTop: '12px', marginTop: '4px' }} className="flex justify-between">
                   <span style={{ color: '#fff', fontSize: '14px' }}>You'll receive</span>
-                  <span style={{ color: '#fff', fontWeight: '600', fontSize: '16px' }}>{Math.max(0, Number(amount) - selectedNetwork.fee).toFixed(2)} USDT</span>
+                  <span style={{ color: amountNum > userBalance ? '#ef4444' : '#10b981', fontWeight: '600', fontSize: '16px' }}>
+                    {Math.max(0, amountNum - selectedNetwork.fee).toFixed(2)} USDT
+                  </span>
                 </div>
               </div>
             )}
@@ -382,18 +484,23 @@ export default function WithdrawWallet({ isOpen, onClose }: WithdrawWalletProps)
             {/* Submit Button */}
             <button
               onClick={handleSubmit}
-              disabled={!walletAddress || !amount}
+              disabled={!canSubmit}
               style={{
-                backgroundColor: walletAddress && amount ? '#06f6ff' : '#334155',
-                color: walletAddress && amount ? 'black' : 'white',
+                backgroundColor: canSubmit ? '#06f6ff' : '#334155',
+                color: canSubmit ? 'black' : 'white',
                 padding: '12px',
                 borderRadius: '12px',
                 width: '100%',
                 fontWeight: 600,
-                cursor: walletAddress && amount ? 'pointer' : 'not-allowed',
+                cursor: canSubmit ? 'pointer' : 'not-allowed',
               }}
             >
-              Withdraw
+              {!walletAddress ? 'Enter wallet address' :
+               addressError ? 'Invalid address' :
+               !amount || amountNum === 0 ? 'Enter amount' :
+               amountNum < selectedNetwork.minWithdraw ? `Min ${selectedNetwork.minWithdraw} USDT` :
+               amountNum > userBalance ? 'Insufficient balance' :
+               'Withdraw'}
             </button>
           </div>
           )}
