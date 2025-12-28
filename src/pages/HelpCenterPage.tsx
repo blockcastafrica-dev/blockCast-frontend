@@ -79,10 +79,9 @@ export default function HelpCenterPage() {
   ];
 
   const toggleItem = (index: number) => {
-    setExpandedItems(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
+    setExpandedItems(prev =>
+      prev[index] ? {} : { [index]: true }
+    );
   };
 
   const groupedItems = faqItems.reduce((acc, item) => {
@@ -127,13 +126,13 @@ export default function HelpCenterPage() {
                   return (
                     <div
                       key={item.originalIndex}
-                      className="rounded-xl transition-all duration-200"
+                      className="rounded-xl transition-all duration-200 cursor-pointer"
                       style={{ backgroundColor: isExpanded ? '#2d3748' : undefined }}
                       onMouseEnter={(e) => { if (!isExpanded) e.currentTarget.style.backgroundColor = '#2d3748'; }}
                       onMouseLeave={(e) => { if (!isExpanded) e.currentTarget.style.backgroundColor = ''; }}
+                      onClick={() => toggleItem(item.originalIndex)}
                     >
-                      <button
-                        onClick={() => toggleItem(item.originalIndex)}
+                      <div
                         className="w-full py-4 px-4 flex items-center gap-4 text-left focus:outline-none group"
                       >
                         <ChevronDown
@@ -144,7 +143,7 @@ export default function HelpCenterPage() {
                         <span className="text-[17px] font-medium text-white">
                           {item.question}
                         </span>
-                      </button>
+                      </div>
 
                       {isExpanded && (
                         <p className="px-4 pb-4 pt-0 ml-9 text-[15px] text-zinc-300 leading-relaxed">
