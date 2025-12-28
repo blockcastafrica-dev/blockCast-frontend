@@ -911,12 +911,18 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
     setShowBetDialog(true);
   };
 
+  const MIN_BET_AMOUNT = 1; // Minimum bet amount in USDT
+
   const handlePlaceBet = async () => {
     if (!selectedMarket || !betAmount) return;
-    
+
     const amount = parseFloat(betAmount);
-    if (amount <= 0 || amount > userBalance) {
-      toast.error('Invalid amount or insufficient balance');
+    if (amount < MIN_BET_AMOUNT) {
+      toast.error(`Minimum bet amount is ${MIN_BET_AMOUNT} USDT`);
+      return;
+    }
+    if (amount > userBalance) {
+      toast.error('Insufficient balance');
       return;
     }
 
@@ -1399,61 +1405,85 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
                 {/* Market Info */}
                 <div className="space-y-3 py-4 border-t border-zinc-800/50">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-zinc-400">Current odds</span>
-                    <span className="text-sm font-medium text-white">
-                      {(betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds).toFixed(2)}x
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-zinc-400">Shares</span>
-                    <span className="text-sm font-medium text-white">
-                      {betAmount ? Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)) : 0}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-zinc-400">Avg. price</span>
-                    <span className="text-sm font-medium text-white">
-                      {betAmount ? (parseFloat(betAmount) / Math.max(1, Math.floor(parseFloat(betAmount) / (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)))).toFixed(2) : "0.00"} USDT
-                    </span>
-                  </div>
+                  {(() => {
+                    const amount = betAmount ? parseFloat(betAmount) : 0;
+                    const odds = betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds;
+                    const pricePerShare = 1 / odds;
+                    const shares = amount > 0 ? Math.floor(amount / pricePerShare) : 0;
+                    const grossPayout = amount * odds;
+                    const fee = grossPayout * 0.03;
+                    const netPayout = grossPayout - fee;
+                    const netProfit = netPayout - amount;
+                    const profitPercent = amount > 0 ? (netProfit / amount) * 100 : 0;
+
+                    return (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-zinc-400">Current odds</span>
+                          <span className="text-sm font-medium text-white">{odds.toFixed(2)}x</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-zinc-400">Price per share</span>
+                          <span className="text-sm font-medium text-white">${pricePerShare.toFixed(2)}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-zinc-400">Shares</span>
+                          <span className="text-sm font-medium text-white">{shares}</span>
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
 
                 {/* Fee Info */}
                 <div className="space-y-3 py-4 border-t border-zinc-800/50">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-zinc-400">Fee</span>
-                    <span className="text-sm font-medium text-white">3%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-zinc-400">Max profit</span>
-                    <span className="text-sm font-semibold text-emerald-400">
-                      {betAmount ? (
-                        parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)
-                      ).toFixed(2) : "0.00"} USDT ({betAmount ? (
-                        ((parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds) - parseFloat(betAmount)) / parseFloat(betAmount)) * 100
-                      ).toFixed(2) : "0.00"}%)
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-zinc-400">Max payout</span>
-                    <span className="text-sm font-medium text-white">
-                      {betAmount ? (parseFloat(betAmount) * (betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds)).toFixed(2) : "0.00"} USDT
-                    </span>
-                  </div>
+                  {(() => {
+                    const amount = betAmount ? parseFloat(betAmount) : 0;
+                    const odds = betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds;
+                    const grossPayout = amount * odds;
+                    const fee = grossPayout * 0.03;
+                    const netPayout = grossPayout - fee;
+                    const netProfit = netPayout - amount;
+                    const profitPercent = amount > 0 ? (netProfit / amount) * 100 : 0;
+
+                    return (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-zinc-400">Fee (on winnings)</span>
+                          <span className="text-sm font-medium text-white">3% (-${fee.toFixed(2)})</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-zinc-400">Max profit</span>
+                          <span className="text-sm font-semibold text-emerald-400">
+                            {netProfit.toFixed(2)} USDT ({profitPercent.toFixed(1)}%)
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-zinc-400">Max payout</span>
+                          <span className="text-sm font-medium text-white">{netPayout.toFixed(2)} USDT</span>
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
 
                 {/* Cast Position Button */}
                 <Button
                   onClick={handlePlaceBet}
-                  disabled={!betAmount || parseFloat(betAmount) > userBalance}
+                  disabled={!betAmount || parseFloat(betAmount) < MIN_BET_AMOUNT || parseFloat(betAmount) > userBalance}
                   className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer"
                   style={{
-                    backgroundColor: !betAmount || parseFloat(betAmount) > userBalance ? '#334155' : '#06f6ff',
-                    color: !betAmount || parseFloat(betAmount) > userBalance ? '#94a3b8' : '#000000'
+                    backgroundColor: !betAmount || parseFloat(betAmount) < MIN_BET_AMOUNT || parseFloat(betAmount) > userBalance ? '#334155' : '#06f6ff',
+                    color: !betAmount || parseFloat(betAmount) < MIN_BET_AMOUNT || parseFloat(betAmount) > userBalance ? '#94a3b8' : '#000000'
                   }}
                 >
-                  {!betAmount ? 'Enter amount' : parseFloat(betAmount) > userBalance ? 'Insufficient balance' : 'Cast Position'}
+                  {!betAmount || parseFloat(betAmount) === 0
+                    ? 'Enter amount'
+                    : parseFloat(betAmount) < MIN_BET_AMOUNT
+                    ? `Min ${MIN_BET_AMOUNT} USDT`
+                    : parseFloat(betAmount) > userBalance
+                    ? 'Insufficient balance'
+                    : 'Cast Position'}
                 </Button>
               </div>
             </div>
