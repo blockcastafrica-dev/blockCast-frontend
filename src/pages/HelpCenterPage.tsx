@@ -44,7 +44,7 @@ export default function HelpCenterPage() {
     {
       category: 'General',
       question: 'Where can I learn more?',
-      answer: 'You can explore market explanations inside the platform, educational guides and resources, and help center and support channels. Our goal is to make forecasting transparent, accessible, and engaging.'
+      answer: 'You can explore market explanations inside the platform, educational guides and resources, and how it work and support channels. Our goal is to make forecasting transparent, accessible, and engaging.'
     },
     {
       category: 'Verification',
