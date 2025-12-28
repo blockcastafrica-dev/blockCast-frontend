@@ -92,7 +92,6 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
   const [phoneNumber, setPhoneNumber] = useState("");
   const [provider, setProvider] = useState("");
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkOption>(networks[0]);
-  const [transactionId, setTransactionId] = useState("");
 
   const resetAndClose = () => {
     setStep(1);
@@ -106,7 +105,6 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
     setPhoneNumber("");
     setProvider("");
     setSelectedNetwork(networks[0]);
-    setTransactionId("");
     onClose();
   };
 
@@ -115,19 +113,6 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
     setCopied(true);
     toast.success("Address copied!");
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleCryptoSubmit = () => {
-    if (!transactionId.trim()) {
-      toast.error("Please enter your transaction ID/hash");
-      return;
-    }
-    if (amountInUSD < selectedNetwork.minDeposit) {
-      toast.error(`Minimum deposit is ${selectedNetwork.minDeposit} USDT for ${selectedNetwork.name}`);
-      return;
-    }
-    toast.success("Deposit submitted! We'll verify your transaction shortly.");
-    resetAndClose();
   };
 
   // Convert amount to USD
@@ -473,37 +458,6 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               {/* Crypto */}
               {method === "crypto" && (
                 <div className="space-y-4">
-                  {/* USDT Amount Input */}
-                  <div>
-                    <label className="text-gray-300 text-sm mb-2 block">Amount (USDT)</label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white">USDT</span>
-                      <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="0.00"
-                        style={{
-                          width: '100%',
-                          padding: '12px',
-                          paddingLeft: '60px',
-                          backgroundColor: '#1a1f26',
-                          border: '2px solid',
-                          borderColor: amount ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)',
-                          borderRadius: '12px',
-                          color: 'white',
-                          fontSize: '18px',
-                          outline: 'none'
-                        }}
-                      />
-                    </div>
-                    {amount && Number(amount) > 0 && (
-                      <p className="text-gray-500 text-xs mt-1">
-                        ≈ ${Number(amount).toFixed(2)} USD
-                      </p>
-                    )}
-                  </div>
-
                   {/* Network Selection */}
                   <div>
                     <label className="text-gray-300 text-sm mb-2 block">Select Network</label>
@@ -520,23 +474,29 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
                     </select>
                   </div>
 
-                  {/* Address */}
-                  {amount && Number(amount) > 0 && (
-                    <div className="p-4 bg-[#1a1f26] rounded-xl border border-gray-700 space-y-3">
-                      <p className="text-gray-300 text-sm text-center">
-                        Send <span className="text-cyan-400 font-bold">USDT {Number(amount).toFixed(2)}</span> to:
-                      </p>
-                      <div className="flex items-center gap-2 p-2 bg-gray-800 rounded-lg">
-                        <code className="text-cyan-400 text-xs flex-1 break-all">{selectedNetwork.address}</code>
-                        <button onClick={handleCopyAddress} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
-                        </button>
-                      </div>
-                      <p className="text-gray-500 text-xs text-center">
-                        Min: {selectedNetwork.minDeposit} USDT • Arrival: {selectedNetwork.estimatedTime}
-                      </p>
+                  {/* Deposit Address */}
+                  <div className="p-4 bg-[#1a1f26] rounded-xl border border-gray-700 space-y-3">
+                    <p className="text-gray-300 text-sm text-center">
+                      Send <span className="text-cyan-400 font-bold">{selectedNetwork.token}</span> to this address:
+                    </p>
+                    <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg">
+                      <code className="text-cyan-400 text-xs flex-1 break-all">{selectedNetwork.address}</code>
+                      <button onClick={handleCopyAddress} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+                        {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
+                      </button>
                     </div>
-                  )}
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Min deposit: {selectedNetwork.minDeposit} USDT</span>
+                      <span>Arrival: {selectedNetwork.estimatedTime}</span>
+                    </div>
+                  </div>
+
+                  {/* Info Box */}
+                  <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
+                    <p className="text-cyan-400 text-xs text-center">
+                      Your balance will be credited automatically once the transaction is confirmed on the blockchain.
+                    </p>
+                  </div>
 
                   {/* Warning */}
                   <div className="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
@@ -548,19 +508,21 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
 
                   {/* Done Button */}
                   <button
-                    onClick={handleSubmit}
-                    disabled={!amount || Number(amount) <= 0}
+                    onClick={() => {
+                      toast.success("Once your transaction is confirmed, your balance will update automatically.");
+                      resetAndClose();
+                    }}
                     style={{
-                      backgroundColor: amount && Number(amount) > 0 ? '#06f6ff' : '#334155',
-                      color: amount && Number(amount) > 0 ? 'black' : 'white',
+                      backgroundColor: '#06f6ff',
+                      color: 'black',
                       padding: '12px',
                       borderRadius: '12px',
                       width: '100%',
                       fontWeight: 600,
-                      cursor: amount && Number(amount) > 0 ? 'pointer' : 'not-allowed'
+                      cursor: 'pointer'
                     }}
                   >
-                    I've Sent the Payment
+                    Done
                   </button>
                 </div>
               )}
