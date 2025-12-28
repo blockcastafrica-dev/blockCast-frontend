@@ -83,7 +83,7 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 
 ## 3. FundWalletModal Overhaul
 
-**File:** `src/components/FundWalletModal.tsx` (673 lines)
+**File:** `src/components/FundWalletModal.tsx`
 
 ### Changes:
 - Created new modal with proper mobile support and 3 payment methods
@@ -92,26 +92,31 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 - Clean fee summary design (neutral colors, no distracting styling)
 - Full-screen modal option for better mobile experience
 - Proper cyan color scheme (#06b6d4) for action buttons
-- Fixed Continue button states (cyan when amount entered)
-- Dynamic spacing for currency symbol
-- Cyan border highlight on amount input when value is entered (matching betting platform style)
 
-### Amount Input Styling (Crypto Method):
-- USDT label: White text, positioned left inside input (`left-4`)
-- Input padding: `paddingLeft: 60px` to accommodate label
-- Border: 2px solid
-- Active (with value): Cyan border (`#06b6d4`)
-- Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
-- Matches BettingMarkets.tsx input styling pattern
+### Custodial Crypto Deposit Flow (Updated Dec 28, 2025):
+- Simplified flow for custodial system
+- Removed amount input (backend auto-detects deposit amount)
+- Removed transaction ID input (backend monitors blockchain)
+- User selects network → sees deposit address → copies → sends from external wallet
+- Balance credited automatically when transaction confirms on blockchain
 
-### Current Features:
+**Crypto Deposit Flow:**
+1. User clicks "Crypto Wallet"
+2. Selects network (BEP20, ERC20, Base, TRC20)
+3. Sees deposit address with copy button
+4. Sends USDT from external wallet
+5. Clicks "Done" → Modal closes
+6. Backend auto-credits balance after blockchain confirmation
 
-**3-Step Flow:**
-1. Select Method
-2. Enter Amount
-3. Payment Details
+**UI Elements:**
+- Network selector dropdown
+- Deposit address display with copy button
+- Min deposit & estimated arrival time info
+- Info box: "Balance credited automatically after confirmation"
+- Warning about wrong network = lost funds
+- Simple "Done" button
 
-**Payment Methods:**
+### Payment Methods:
 | Method | Fee | Status |
 |--------|-----|--------|
 | Crypto Wallet (MetaMask, BNB, Base) | 0.5% | Active |
@@ -126,7 +131,7 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 | Base | USDT (Base) | $10 | ~2 mins |
 | Tron | USDT (TRC20) | $5 | ~3 mins |
 
-**Multi-Currency Support:**
+**Multi-Currency Support (for fiat methods):**
 - USD ($), NGN (₦), KES (KSh), GHS (₵), ZAR (R)
 
 ---
