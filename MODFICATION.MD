@@ -432,12 +432,38 @@ background: linear-gradient(90deg,
   - USDT label and input at proportional 18px font size
   - Cyan border highlight (`#06b6d4`) when value entered
   - Dark background (`bg-zinc-900/80`)
-- Market Info section (Current odds, Shares, Avg. price)
-- Fee Info section (Fee, Max profit in emerald, Max payout)
+- Market Info section (Current odds, Price per share, Shares)
+- Fee Info section (Fee with actual amount, Max profit in emerald, Max payout)
 - Dynamic Cast Position button:
   - Cyan (`#06f6ff`) with black text when active
   - Gray (`#334155`) when disabled
-  - Shows "Enter amount" / "Insufficient balance" / "Cast Position"
+  - Shows "Enter amount" / "Min 1 USDT" / "Insufficient balance" / "Cast Position"
+
+### Calculation Fixes (Dec 28, 2025):
+
+**Fee Calculation:**
+- Fee is 3% of **gross payout** (winnings), not bet amount
+- Shows actual fee: "3% (-$X.XX)"
+- Max payout = gross payout - fee
+- Max profit = net payout - bet amount
+
+**Shares Formula Fixed:**
+- Price per share = 1 / odds
+- Shares = amount / price per share
+- Added "Price per share" display
+
+**Minimum Bet Validation:**
+- Minimum bet: 1 USDT
+- Button shows "Min 1 USDT" when below minimum
+
+**Example Calculation:**
+```
+Bet: $10 at 2.0x odds
+Gross Payout: $10 × 2.0 = $20
+Fee (3%): $20 × 0.03 = $0.60
+Net Payout: $20 - $0.60 = $19.40
+Net Profit: $19.40 - $10 = $9.40 (94% return)
+```
 
 ---
 
