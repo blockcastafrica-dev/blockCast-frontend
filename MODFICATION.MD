@@ -95,26 +95,26 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 
 ### Custodial Crypto Deposit Flow (Updated Dec 28, 2025):
 - Simplified flow for custodial system
-- Removed amount input (backend auto-detects deposit amount)
-- Removed transaction ID input (backend monitors blockchain)
-- User selects network → sees deposit address → copies → sends from external wallet
+- User enters amount, selects network, sees deposit address
 - Balance credited automatically when transaction confirms on blockchain
 
 **Crypto Deposit Flow:**
 1. User clicks "Crypto Wallet"
-2. Selects network (BEP20, ERC20, Base, TRC20)
-3. Sees deposit address with copy button
-4. Sends USDT from external wallet
-5. Clicks "Done" → Modal closes
-6. Backend auto-credits balance after blockchain confirmation
+2. Enters deposit amount (USDT)
+3. Selects network (BEP20, ERC20, Base, TRC20)
+4. Deposit address appears showing exact amount to send
+5. Copies address and sends from external wallet
+6. Clicks "Done" → Modal closes
+7. Backend auto-credits balance after blockchain confirmation
 
 **UI Elements:**
+- Amount input with USDT label and cyan border when filled
 - Network selector dropdown
-- Deposit address display with copy button
-- Min deposit & estimated arrival time info
+- Deposit address (only shows after amount entered) with copy button
+- Shows exact amount: "Send 100.00 USDT (BEP20) to:"
 - Info box: "Balance credited automatically after confirmation"
 - Warning about wrong network = lost funds
-- Simple "Done" button
+- Dynamic button states: "Enter amount" → "Min X USDT" → "Done"
 
 ### Payment Methods:
 | Method | Fee | Status |
