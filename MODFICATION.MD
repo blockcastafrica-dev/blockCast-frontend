@@ -441,29 +441,63 @@ background: linear-gradient(90deg,
 
 ### Calculation Fixes (Dec 28, 2025):
 
+**Applied to both BettingMarkets.tsx and MarketPage.tsx:**
+
 **Fee Calculation:**
 - Fee is 3% of **gross payout** (winnings), not bet amount
+- Label: "Fee (on winnings)"
 - Shows actual fee: "3% (-$X.XX)"
 - Max payout = gross payout - fee
 - Max profit = net payout - bet amount
 
 **Shares Formula Fixed:**
 - Price per share = 1 / odds
-- Shares = amount / price per share
-- Added "Price per share" display
+- Shares = Math.floor(amount / pricePerShare)
+- Added "Price per share" / "Avg. price" display
 
 **Minimum Bet Validation:**
 - Minimum bet: 1 USDT
 - Button shows "Min 1 USDT" when below minimum
 
+**Dynamic Button States (MarketPage.tsx):**
+| State | Button Text | Color |
+|-------|-------------|-------|
+| No amount | "Enter amount" | Gray (#334155) |
+| Below minimum | "Min 1 USDT" | Gray (#334155) |
+| Exceeds balance | "Insufficient balance" | Gray (#334155) |
+| Valid (Buy) | "Buy Position" | Cyan (#06f6ff) |
+| Valid (Sell) | "Sell Position" | Red (#ef4444) |
+
+**ProfitCalculation Interface (MarketPage.tsx):**
+```typescript
+interface ProfitCalculation {
+  amount: number;
+  potential: number;    // Net payout after fee
+  profit: number;       // Net profit after fee
+  grossPayout: number;  // Payout before fee
+  fee: number;          // 3% of gross payout
+  shares: number;       // Calculated shares
+  pricePerShare: number; // 1 / odds
+  odds: number;         // Current position odds
+}
+```
+
 **Example Calculation:**
 ```
 Bet: $10 at 2.0x odds
+Price per share: 1 / 2.0 = $0.50
+Shares: floor(10 / 0.50) = 20 shares
 Gross Payout: $10 × 2.0 = $20
 Fee (3%): $20 × 0.03 = $0.60
 Net Payout: $20 - $0.60 = $19.40
 Net Profit: $19.40 - $10 = $9.40 (94% return)
 ```
+
+**UI Sections Updated (MarketPage.tsx):**
+- Desktop Buy interface
+- Desktop Sell interface
+- Mobile Buy interface
+- Mobile Sell interface
 
 ---
 
