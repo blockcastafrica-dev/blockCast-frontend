@@ -30,46 +30,46 @@ This document summarizes all major updates made to the BlockCast v2 codebase in 
 
 ## 2. WithdrawWallet Modal
 
-**File:** `src/components/WithdrawWallet.tsx` (384 lines)
-
-### Commits:
-- `50001cf` - Redesign WithdrawWallet to match FundWalletModal UI
-- `2ddcd0f` - Rewrite WithdrawWallet to match FundWalletModal structure
-
-### Changes:
-| Feature | Before | After |
-|---------|--------|-------|
-| Steps | 3 steps | 2 steps |
-| Payment Methods | Complex multi-currency support | Simple method selection |
-| Currency Selector | USD, NGN, KES, GHS, ZAR | Removed (USDT only) |
-| Mobile Money/Card | Full forms | "Coming Soon" toast |
-| Network icons | Emoji icons | Removed |
-| Bank Transfer | Supported | Removed |
-| Lines of Code | 729 lines | 384 lines |
+**File:** `src/components/WithdrawWallet.tsx`
 
 ### Current Features:
 
 **Step 1: Method Selection**
 - Crypto Wallet - "Popular" badge, MetaMask/BNB/Base icons, 0.5% fee
-- Mobile Money - Yellow Card logo, "Coming Soon" badge, 1.2% fee
-- Credit/Debit Card - "Coming Soon" badge, 2.9% fee
+- Mobile Money - Yellow Card logo, "Coming Soon" badge
+- Credit/Debit Card - "Coming Soon" badge
 - Security notice with Shield icon
 
-**Step 2: Crypto Withdrawal**
+**Step 2: Crypto Withdrawal (Updated Dec 28, 2025)**
+- Available balance display at top (USDT format)
 - Network selector (BEP20, ERC20, Base, TRC20)
-- Wallet address input
-- Amount input with min/fee display and cyan border highlight when value entered
+- Wallet address input with format validation
+- Amount input with MAX button
 - Fee summary (Amount, Network fee, You'll receive)
 - Warning about wrong addresses
-- Cyan "Withdraw" button
+- Dynamic submit button with validation states
 
-### Amount Input Styling (Crypto Method):
-- USDT label: White text, positioned left inside input (`left-4`)
-- Input padding: `paddingLeft: 60px` to accommodate label
-- Border: 2px solid
-- Active (with value): Cyan border (`#06b6d4`)
-- Inactive (empty): Zinc border (`rgba(63, 63, 70, 0.5)`)
-- Matches FundWalletModal and BettingMarkets input styling pattern
+### Validation Features:
+- **Address validation**: EVM addresses must start with `0x` (42 chars), TRC20 must start with `T` (34 chars)
+- **Balance check**: Cannot withdraw more than available balance
+- **Minimum check**: Must meet network minimum withdrawal amount
+- **Visual feedback**: Red borders and error messages for invalid inputs
+
+### Dynamic Button States:
+| State | Button Text |
+|-------|-------------|
+| No address | "Enter wallet address" |
+| Invalid address | "Invalid address" |
+| No amount | "Enter amount" |
+| Below minimum | "Min X USDT" |
+| Exceeds balance | "Insufficient balance" |
+| Valid | "Withdraw" |
+
+### UI Elements:
+- Available Balance box showing `USDT {balance}`
+- MAX button to withdraw full balance minus fees
+- Placeholder changes based on network (`0x...` or `T...`)
+- Green "You'll receive" amount when valid, red when invalid
 
 ### Network Options:
 | Network | Token | Fee | Min Withdraw | Time |
