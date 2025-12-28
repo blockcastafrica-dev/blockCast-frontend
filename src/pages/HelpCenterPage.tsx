@@ -13,68 +13,83 @@ export default function HelpCenterPage() {
   const faqItems: FAQItem[] = [
     {
       category: 'General',
-      question: 'What is BlockCast?',
-      answer: 'BlockCast is Africa\'s first AI-powered truth verification platform that combines community wisdom with advanced artificial intelligence to combat misinformation. Our AI analyzes claims against multiple sources while the community votes on truthfulness.'
+      question: 'What is a prediction market?',
+      answer: 'A prediction market is a platform where users forecast the outcome of real-world events by trading on clearly defined questions (for example: Will X happen before Y date?). Market prices reflect the collective probability assigned by participants.'
     },
     {
       category: 'General',
-      question: 'How do I create an account?',
-      answer: 'Click the "Sign Up" button in the top right corner and follow the registration process. You\'ll need to provide your email, create a password, and verify your account through the confirmation email sent to you.'
+      question: 'How does the platform work?',
+      answer: 'Each market has predefined outcomes (usually Yes / No or True / False). Users take positions on the outcome they believe will occur. Prices move based on supply and demand. When the event resolves, correct positions receive payouts.'
     },
     {
       category: 'General',
-      question: 'Which countries does BlockCast support?',
-      answer: 'We currently operate in 15+ African countries with plans to expand across the entire continent. Our platform supports multiple languages including English, French, and Swahili.'
+      question: 'Is this gambling?',
+      answer: 'No. Prediction markets are information and forecasting markets, not games of chance. Prices are driven by research, news, and collective intelligence rather than randomness.'
     },
     {
       category: 'General',
-      question: 'Is BlockCast free to use?',
-      answer: 'Yes, creating an account and browsing truth markets is completely free. You only need funds when you want to participate in truth markets by staking positions on claims.'
+      question: 'How is my money protected?',
+      answer: 'The platform uses secure infrastructure and encryption, segregation of user funds, and transparent settlement mechanisms. Security and user protection are core priorities.'
+    },
+    {
+      category: 'General',
+      question: 'What fees are charged?',
+      answer: 'Fees may include a small fee on winning payouts and network or transaction fees (where applicable). All fees are clearly disclosed before confirming any trade.'
+    },
+    {
+      category: 'General',
+      question: 'What currencies or payment methods are supported?',
+      answer: 'Depending on the platform and your region, we may support fiat currencies, stablecoins or other digital assets, and local payment methods. When fiat currencies are used, they are converted into digital assets such as stablecoins pegged to the US dollar before being used on the platform. This ensures consistent pricing, transparent settlement, and efficient market operations. All supported options and conversion details are clearly displayed during deposits and withdrawals.'
     },
     {
       category: 'Verification',
-      question: 'How does truth verification work?',
-      answer: 'Our AI scans thousands of sources across Africa and internationally to verify claims. It cross-references data from credible news outlets, official reports, and verified databases.'
+      question: 'How are market outcomes verified?',
+      answer: 'Each market specifies its official resolution sources before opening, which may include government or institutional data, recognized media outlets, and independent, verifiable public records. Markets are resolved strictly based on these predefined sources.'
     },
     {
       category: 'Verification',
-      question: 'How do I submit a claim for verification?',
-      answer: 'Navigate to the "Verify" section and use the verification tool to submit suspicious claims. Paste the claim or URL, add any relevant context, and our AI will assess it within 24-48 hours.'
+      question: 'Who decides the final outcome?',
+      answer: 'Outcomes are determined using predefined trusted sources, structured verification processes, and in some cases, AI-assisted data analysis. Human oversight is applied where judgment or interpretation is required.'
     },
     {
       category: 'Verification',
-      question: 'How accurate is the AI verification?',
-      answer: 'Our AI has a 94.2% accuracy rate based on historical verification outcomes. We recommend considering AI verifications alongside human judgment for nuanced stories.'
+      question: 'Can outcomes be disputed?',
+      answer: 'Yes. If you believe a market was resolved incorrectly, you may submit a dispute during the designated dispute window with supporting evidence. All disputes are reviewed according to platform rules.'
     },
     {
       category: 'Verification',
-      question: 'Can I dispute a verification result?',
-      answer: 'Yes! If you have evidence that contradicts an AI resolution, you can submit a dispute during the dispute window with supporting links.'
+      question: 'Is the platform regulated?',
+      answer: 'Regulatory status depends on jurisdiction. The platform operates in compliance with applicable laws and may restrict access where required.'
     },
     {
       category: 'Markets',
-      question: 'What are truth markets?',
-      answer: 'Truth markets are prediction markets for African events where you can stake positions on real-world outcomes. They harness collective intelligence to determine the likelihood of claims being true or false.'
+      question: 'What types of markets are available?',
+      answer: 'Markets may include: Politics & public policy, Economics & finance, Sports & entertainment, Technology & innovation, Culture, media, and global events. Available categories may vary by region and regulation.'
     },
     {
       category: 'Markets',
-      question: 'How do I participate in truth markets?',
-      answer: 'Browse active markets, select one that interests you, choose your position (True or False), enter your stake amount, and confirm. You\'ll earn rewards if your prediction is correct.'
+      question: 'Why use prediction markets instead of polls or experts?',
+      answer: 'Prediction markets update in real time, reward accuracy not opinions, aggregate thousands of independent signals, and reduce bias through financial incentives. They turn information into actionable probabilities.'
+    },
+    {
+      category: 'Markets',
+      question: 'How are prices determined?',
+      answer: 'Prices are set by the market itself. As users buy or sell positions, prices adjust automatically, acting as a real-time probability estimate of the outcome.'
+    },
+    {
+      category: 'Markets',
+      question: 'How do payouts work?',
+      answer: 'Each correct position settles at a fixed value (e.g. $1 or equivalent). Profit = payout minus the price you paid. Payouts are credited automatically after resolution.'
+    },
+    {
+      category: 'Markets',
+      question: 'Can I exit a position before resolution?',
+      answer: 'Yes. You can usually sell your position at the current market price before the event resolves, allowing you to lock in profits or limit losses.'
     },
     {
       category: 'Markets',
       question: 'What are the risks?',
-      answer: 'Truth markets involve financial risk. You may lose the funds you stake if your prediction is incorrect. Only participate with amounts you can afford to lose.'
-    },
-    {
-      category: 'Markets',
-      question: 'How are markets resolved?',
-      answer: 'Markets are resolved using AI analysis of official sources and verified data once the resolution criteria are met, typically 24-48 hours after market closes.'
-    },
-    {
-      category: 'Markets',
-      question: 'What fees are charged?',
-      answer: 'There is a 3% fee on winnings when you claim rewards from a resolved market. There are no fees for placing positions or for losing positions.'
+      answer: 'Participation involves financial risk. If your prediction is incorrect, you may lose the amount you committed. Only participate with funds you can afford to lose.'
     }
   ];
 
