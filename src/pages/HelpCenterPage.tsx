@@ -42,6 +42,11 @@ export default function HelpCenterPage() {
       answer: 'Depending on the platform and your region, we may support fiat currencies, stablecoins or other digital assets, and local payment methods. When fiat currencies are used, they are converted into digital assets such as stablecoins pegged to the US dollar before being used on the platform. This ensures consistent pricing, transparent settlement, and efficient market operations. All supported options and conversion details are clearly displayed during deposits and withdrawals.'
     },
     {
+      category: 'General',
+      question: 'Where can I learn more?',
+      answer: 'You can explore market explanations inside the platform, educational guides and resources, and help center and support channels. Our goal is to make forecasting transparent, accessible, and engaging.'
+    },
+    {
       category: 'Verification',
       question: 'How are market outcomes verified?',
       answer: 'Each market specifies its official resolution sources before opening, which may include government or institutional data, recognized media outlets, and independent, verifiable public records. Markets are resolved strictly based on these predefined sources.'
@@ -49,7 +54,7 @@ export default function HelpCenterPage() {
     {
       category: 'Verification',
       question: 'Who decides the final outcome?',
-      answer: 'Outcomes are determined using predefined trusted sources, structured verification processes, and in some cases, AI-assisted data analysis. Human oversight is applied where judgment or interpretation is required.'
+      answer: 'Outcomes are determined using predefined trusted sources, structured verification processes, and in some cases, AI-assisted data analysis using Google Gemini and Perplexity. Human oversight is applied where judgment or interpretation is required.'
     },
     {
       category: 'Verification',

@@ -488,9 +488,17 @@ background: linear-gradient(90deg,
 ### FAQ Categories:
 | Category | Questions |
 |----------|-----------|
-| General | 4 questions (What is BlockCast, Create account, Countries, Free to use) |
-| Verification | 4 questions (How it works, Submit claim, AI accuracy, Dispute) |
-| Markets | 5 questions (What are markets, Participate, Risks, Resolution, Fees) |
+| General | 8 questions (What is a prediction market, How does the platform work, Is this gambling, How is my money protected, What fees are charged, What currencies/payment methods, Where can I learn more) |
+| Verification | 4 questions (How are market outcomes verified, Who decides the final outcome, Can outcomes be disputed, Is the platform regulated) |
+| Markets | 7 questions (What types of markets available, Why use prediction markets, How are prices determined, How do payouts work, Can I exit a position, What are the risks) |
+
+### FAQ Accordion Behavior:
+- Auto-close: Opening a new question automatically closes the previously open one
+- Full-item clickable: Entire question area is clickable (cursor pointer on hover)
+- Smooth transitions for expand/collapse
+
+### AI Verification:
+- Uses Google Gemini and Perplexity for AI-assisted data analysis
 
 ### Interaction States:
 - **Hover:** Rounded background highlight (#2d3748), arrow turns cyan
@@ -586,4 +594,4 @@ background: linear-gradient(90deg,
 
 ---
 
-*Last Updated: December 27, 2025*
+*Last Updated: December 28, 2025*
