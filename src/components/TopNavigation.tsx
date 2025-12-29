@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import {
@@ -54,6 +54,7 @@ import WithdrawWallet from "./WithdrawWallet";
 import ConnectWalletModal from "./ConnectWalletModal";
 import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
+import { useAccount, useDisconnect, useBalance } from 'wagmi';
 
 interface TopNavigationProps {
   isDarkMode: boolean;
@@ -67,7 +68,6 @@ export default function TopNavigation({
   userBalance,
 }: TopNavigationProps) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,13 +76,24 @@ export default function TopNavigation({
   const [copied, setCopied] = useState(false);
   const [showConnectWallet, setShowConnectWallet] = useState(false);
 
-  // Generate or get wallet address (in real app, this would come from wallet connection)
-  const walletAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
+  // Wagmi hooks for wallet connection
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { data: balanceData } = useBalance({
+    address: address,
+  });
+
+  // Derive isLoggedIn from wallet connection state
+  const isLoggedIn = isConnected && !!address;
+
+  // Get wallet address from wagmi or fallback
+  const walletAddress = address || "0x0000000000000000000000000000000000000000";
 
   // Copy wallet address to clipboard
   const handleCopyAddress = async () => {
+    if (!address) return;
     try {
-      await navigator.clipboard.writeText(walletAddress);
+      await navigator.clipboard.writeText(address);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -91,8 +102,8 @@ export default function TopNavigation({
   };
 
   // Format wallet address for display (shortened)
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const formatAddress = (addr: string) => {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
   // Simplified main navigation - only core features
@@ -136,15 +147,15 @@ export default function TopNavigation({
     setShowConnectWallet(true);
   };
 
-  const handleWalletConnect = (wallet: string) => {
-    // Simulate wallet connection - in real app, this would connect to the actual wallet
-    console.log('Connecting to wallet:', wallet);
-    setIsLoggedIn(true);
+  const handleWalletConnect = (walletAddress: string) => {
+    // Wallet connected via wagmi
+    console.log('Wallet connected:', walletAddress);
     setShowConnectWallet(false);
   };
 
   const handleSignOut = () => {
-    setIsLoggedIn(false);
+    // Disconnect wallet using wagmi
+    disconnect();
     navigate('/');
   };
 
