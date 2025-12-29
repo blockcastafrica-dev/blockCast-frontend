@@ -159,11 +159,9 @@ const marketEvents = [
 // Region filters
 const regionFilters = [
   { value: "all", label: "All" },
-  { value: "north", label: "North" },
-  { value: "west", label: "West" },
-  { value: "central", label: "Central" },
-  { value: "east", label: "East" },
-  { value: "south", label: "South" },
+  { value: "africa", label: "Africa" },
+  { value: "us", label: "US" },
+  { value: "europe", label: "Europe" },
 ];
 
 const categoryFilters = [
@@ -172,9 +170,13 @@ const categoryFilters = [
 ];
 
 export default function NewsRoom() {
-  const [selectedRegion, setSelectedRegion] = useState("all");
+  const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
+  const [selectedSubRegion, setSelectedSubRegion] = useState<string | null>(null);
   const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>({ "1": true });
   const navigate = useNavigate();
+
+  // Get the current effective region for filtering
+  const selectedRegion = selectedSubRegion || selectedContinent || 'all';
 
   // Calculate days until event
   const getDaysUntil = (date: Date) => {
@@ -248,104 +250,281 @@ export default function NewsRoom() {
 
         {/* Map Section */}
         <div className="lg:col-span-5 rounded-xl border border-zinc-800 p-4 relative" style={{ backgroundColor: '#0a0a0a', minHeight: '320px' }}>
-          {/* Interactive Africa Map using real SVG map */}
-          <div className="w-full h-[280px] flex items-center justify-center relative">
-            <div className="relative">
-              {/* Real Africa SVG Map from Wikimedia Commons */}
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/8/86/Africa_%28orthographic_projection%29.svg"
-                alt="Africa Map"
-                className="w-[280px] h-[280px] object-contain"
-                style={{
-                  filter: 'brightness(0.4) saturate(0)',
-                }}
-              />
+          {/* Interactive Map - World or Zoomed Continent */}
+          <div className="w-full h-[280px] flex items-center justify-center relative overflow-hidden">
 
-              {/* Interactive overlay regions */}
-              <svg
-                viewBox="0 0 280 280"
-                className="absolute inset-0 w-[280px] h-[280px]"
-              >
-                {/* North Africa clickable region */}
-                <path
-                  d="M70,60 L210,60 L220,90 L200,110 L160,115 L120,110 L80,100 L60,80 Z"
-                  fill={selectedRegion === 'north' ? 'rgba(6, 246, 255, 0.4)' : selectedRegion === 'all' ? 'rgba(6, 246, 255, 0.2)' : 'transparent'}
-                  stroke={selectedRegion === 'north' ? '#06f6ff' : 'transparent'}
-                  strokeWidth="2"
-                  className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
-                  onClick={() => setSelectedRegion('north')}
+            {/* WORLD VIEW - When no continent selected or "All" */}
+            {!selectedContinent && (
+              <>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg"
+                  alt="World Map"
+                  className="absolute inset-0 w-full h-full object-contain opacity-20 transition-all duration-500"
+                  style={{ filter: 'invert(1) brightness(0.5)' }}
                 />
+                <svg viewBox="0 0 1000 500" className="w-full h-full relative z-10">
+                  {/* US Region */}
+                  <g className="cursor-pointer" onClick={() => { setSelectedContinent('us'); setSelectedSubRegion(null); }}>
+                    <ellipse cx="200" cy="180" rx="90" ry="60" fill="rgba(6, 246, 255, 0.25)" stroke="rgba(100,100,100,0.3)" strokeWidth="1" className="hover:fill-[rgba(6,246,255,0.4)] transition-all" />
+                    <text x="200" y="185" fill="#888" fontSize="14" fontWeight="600" textAnchor="middle">USA</text>
+                  </g>
+                  {/* Europe Region */}
+                  <g className="cursor-pointer" onClick={() => { setSelectedContinent('europe'); setSelectedSubRegion(null); }}>
+                    <ellipse cx="500" cy="150" rx="70" ry="50" fill="rgba(6, 246, 255, 0.25)" stroke="rgba(100,100,100,0.3)" strokeWidth="1" className="hover:fill-[rgba(6,246,255,0.4)] transition-all" />
+                    <text x="500" y="155" fill="#888" fontSize="13" fontWeight="600" textAnchor="middle">Europe</text>
+                  </g>
+                  {/* Africa Region */}
+                  <g className="cursor-pointer" onClick={() => { setSelectedContinent('africa'); setSelectedSubRegion(null); }}>
+                    <ellipse cx="500" cy="290" rx="80" ry="90" fill="rgba(6, 246, 255, 0.35)" stroke="rgba(100,100,100,0.3)" strokeWidth="1" className="hover:fill-[rgba(6,246,255,0.45)] transition-all" />
+                    <text x="500" y="295" fill="#aaa" fontSize="15" fontWeight="700" textAnchor="middle">Africa</text>
+                  </g>
+                </svg>
+              </>
+            )}
 
-                {/* West Africa clickable region */}
-                <path
-                  d="M60,100 L120,110 L130,140 L120,165 L90,170 L65,155 L55,125 Z"
-                  fill={selectedRegion === 'west' ? 'rgba(6, 246, 255, 0.4)' : selectedRegion === 'all' ? 'rgba(6, 246, 255, 0.2)' : 'transparent'}
-                  stroke={selectedRegion === 'west' ? '#06f6ff' : 'transparent'}
-                  strokeWidth="2"
-                  className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
-                  onClick={() => setSelectedRegion('west')}
+            {/* AFRICA ZOOMED VIEW */}
+            {selectedContinent === 'africa' && (
+              <div className="relative w-full h-full">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/8/86/Africa_%28orthographic_projection%29.svg"
+                  alt="Africa Map"
+                  className="absolute inset-0 w-full h-full object-contain transition-all duration-500"
+                  style={{ filter: 'brightness(0.4) saturate(0)' }}
                 />
+                <svg viewBox="0 0 280 280" className="absolute inset-0 w-full h-full">
+                  {/* North Africa */}
+                  <path
+                    d="M70,60 L210,60 L220,90 L200,110 L160,115 L120,110 L80,100 L60,80 Z"
+                    fill={selectedSubRegion === 'north' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'north' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'north' ? null : 'north')}
+                  />
+                  {/* West Africa */}
+                  <path
+                    d="M60,100 L120,110 L130,140 L120,165 L90,170 L65,155 L55,125 Z"
+                    fill={selectedSubRegion === 'west' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'west' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'west' ? null : 'west')}
+                  />
+                  {/* Central Africa */}
+                  <path
+                    d="M120,110 L160,115 L155,130 L160,160 L150,185 L120,190 L100,175 L100,150 L120,140 Z"
+                    fill={selectedSubRegion === 'central' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'central' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'central' ? null : 'central')}
+                  />
+                  {/* East Africa */}
+                  <path
+                    d="M160,115 L200,110 L220,90 L230,120 L225,160 L200,190 L175,185 L160,160 L155,130 Z"
+                    fill={selectedSubRegion === 'east' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'east' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'east' ? null : 'east')}
+                  />
+                  {/* South Africa */}
+                  <path
+                    d="M100,175 L120,190 L150,185 L175,185 L180,210 L165,240 L130,250 L95,235 L85,200 Z"
+                    fill={selectedSubRegion === 'south' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'south' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'south' ? null : 'south')}
+                  />
+                  {/* Region indicators */}
+                  {selectedSubRegion === 'north' && <circle cx="150" cy="85" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'west' && <circle cx="90" cy="135" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'central' && <circle cx="130" cy="150" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'east' && <circle cx="195" cy="150" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'south' && <circle cx="135" cy="215" r="6" fill="#06f6ff" className="animate-pulse" />}
+                </svg>
+              </div>
+            )}
 
-                {/* East Africa clickable region */}
-                <path
-                  d="M160,115 L200,110 L220,90 L230,120 L225,160 L200,190 L175,185 L160,160 L155,130 Z"
-                  fill={selectedRegion === 'east' ? 'rgba(6, 246, 255, 0.4)' : selectedRegion === 'all' ? 'rgba(6, 246, 255, 0.2)' : 'transparent'}
-                  stroke={selectedRegion === 'east' ? '#06f6ff' : 'transparent'}
-                  strokeWidth="2"
-                  className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
-                  onClick={() => setSelectedRegion('east')}
+            {/* US ZOOMED VIEW */}
+            {selectedContinent === 'us' && (
+              <div className="relative w-full h-full">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Map_of_USA_with_state_names.svg"
+                  alt="USA Map"
+                  className="absolute inset-0 w-full h-full object-contain transition-all duration-500"
+                  style={{ filter: 'brightness(0.3) saturate(0) invert(1)' }}
                 />
+                <svg viewBox="0 0 400 250" className="absolute inset-0 w-full h-full">
+                  {/* Northeast */}
+                  <path
+                    d="M300,50 L380,40 L390,80 L370,100 L330,105 L300,90 Z"
+                    fill={selectedSubRegion === 'northeast' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'northeast' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'northeast' ? null : 'northeast')}
+                  />
+                  {/* Midwest */}
+                  <path
+                    d="M180,60 L300,50 L300,90 L290,130 L220,140 L170,120 L160,80 Z"
+                    fill={selectedSubRegion === 'midwest' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'midwest' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'midwest' ? null : 'midwest')}
+                  />
+                  {/* West */}
+                  <path
+                    d="M30,50 L180,60 L160,80 L170,120 L140,180 L50,190 L20,120 Z"
+                    fill={selectedSubRegion === 'west-us' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'west-us' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'west-us' ? null : 'west-us')}
+                  />
+                  {/* South */}
+                  <path
+                    d="M170,120 L290,130 L330,105 L370,100 L380,150 L350,200 L200,210 L140,180 Z"
+                    fill={selectedSubRegion === 'south-us' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'south-us' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'south-us' ? null : 'south-us')}
+                  />
+                  {selectedSubRegion === 'northeast' && <circle cx="345" cy="75" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'midwest' && <circle cx="230" cy="95" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'west-us' && <circle cx="90" cy="120" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'south-us' && <circle cx="270" cy="160" r="6" fill="#06f6ff" className="animate-pulse" />}
+                </svg>
+              </div>
+            )}
 
-                {/* Central Africa region */}
-                <path
-                  d="M120,110 L160,115 L155,130 L160,160 L150,185 L120,190 L100,175 L100,150 L120,140 Z"
-                  fill={selectedRegion === 'central' ? 'rgba(6, 246, 255, 0.4)' : selectedRegion === 'all' ? 'rgba(6, 246, 255, 0.2)' : 'transparent'}
-                  stroke={selectedRegion === 'central' ? '#06f6ff' : 'transparent'}
-                  strokeWidth="2"
-                  className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
-                  onClick={() => setSelectedRegion('central')}
+            {/* EUROPE ZOOMED VIEW */}
+            {selectedContinent === 'europe' && (
+              <div className="relative w-full h-full">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/4/44/Europe_orthographic_Caucasus_Urals_boundary_%28with_calculation%29.svg"
+                  alt="Europe Map"
+                  className="absolute inset-0 w-full h-full object-contain transition-all duration-500"
+                  style={{ filter: 'brightness(0.4) saturate(0)' }}
                 />
-
-                {/* Southern Africa clickable region */}
-                <path
-                  d="M100,175 L120,190 L150,185 L175,185 L180,210 L165,240 L130,250 L95,235 L85,200 Z"
-                  fill={selectedRegion === 'south' ? 'rgba(6, 246, 255, 0.4)' : selectedRegion === 'all' ? 'rgba(6, 246, 255, 0.2)' : 'transparent'}
-                  stroke={selectedRegion === 'south' ? '#06f6ff' : 'transparent'}
-                  strokeWidth="2"
-                  className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
-                  onClick={() => setSelectedRegion('south')}
-                />
-
-                {/* Region highlight indicators */}
-                {selectedRegion === 'north' && (
-                  <circle cx="150" cy="85" r="6" fill="#06f6ff" className="animate-pulse" />
-                )}
-                {selectedRegion === 'west' && (
-                  <circle cx="90" cy="135" r="6" fill="#06f6ff" className="animate-pulse" />
-                )}
-                {selectedRegion === 'central' && (
-                  <circle cx="130" cy="150" r="6" fill="#06f6ff" className="animate-pulse" />
-                )}
-                {selectedRegion === 'east' && (
-                  <circle cx="195" cy="150" r="6" fill="#06f6ff" className="animate-pulse" />
-                )}
-                {selectedRegion === 'south' && (
-                  <circle cx="135" cy="215" r="6" fill="#06f6ff" className="animate-pulse" />
-                )}
-              </svg>
-            </div>
+                <svg viewBox="0 0 280 280" className="absolute inset-0 w-full h-full">
+                  {/* Northern Europe */}
+                  <path
+                    d="M100,40 L180,35 L200,60 L180,90 L120,95 L90,70 Z"
+                    fill={selectedSubRegion === 'north-eu' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'north-eu' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'north-eu' ? null : 'north-eu')}
+                  />
+                  {/* Western Europe */}
+                  <path
+                    d="M60,90 L120,95 L130,130 L110,170 L70,165 L50,130 Z"
+                    fill={selectedSubRegion === 'west-eu' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'west-eu' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'west-eu' ? null : 'west-eu')}
+                  />
+                  {/* Eastern Europe */}
+                  <path
+                    d="M180,90 L230,85 L250,120 L240,170 L190,175 L160,140 L170,100 Z"
+                    fill={selectedSubRegion === 'east-eu' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'east-eu' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'east-eu' ? null : 'east-eu')}
+                  />
+                  {/* Southern Europe */}
+                  <path
+                    d="M70,165 L110,170 L160,140 L190,175 L180,210 L120,220 L80,200 Z"
+                    fill={selectedSubRegion === 'south-eu' ? 'rgba(6, 246, 255, 0.4)' : 'rgba(6, 246, 255, 0.15)'}
+                    stroke={selectedSubRegion === 'south-eu' ? '#06f6ff' : 'transparent'}
+                    strokeWidth="2"
+                    className="cursor-pointer transition-all duration-300 hover:fill-[rgba(6,246,255,0.3)]"
+                    onClick={() => setSelectedSubRegion(selectedSubRegion === 'south-eu' ? null : 'south-eu')}
+                  />
+                  {selectedSubRegion === 'north-eu' && <circle cx="145" cy="65" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'west-eu' && <circle cx="90" cy="130" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'east-eu' && <circle cx="205" cy="130" r="6" fill="#06f6ff" className="animate-pulse" />}
+                  {selectedSubRegion === 'south-eu' && <circle cx="130" cy="185" r="6" fill="#06f6ff" className="animate-pulse" />}
+                </svg>
+              </div>
+            )}
           </div>
 
           {/* Region Selector Pills */}
           <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1 bg-zinc-900/95 rounded-full p-1 backdrop-blur-sm">
-            {["All", "North", "West", "Central", "East", "South"].map((region) => (
+            {/* Back to World button when zoomed */}
+            {selectedContinent && (
+              <button
+                onClick={() => { setSelectedContinent(null); setSelectedSubRegion(null); }}
+                className="px-3 py-1.5 text-xs font-medium rounded-full transition-all bg-zinc-700 text-white hover:bg-zinc-600"
+              >
+                ← World
+              </button>
+            )}
+
+            {/* World view pills */}
+            {!selectedContinent && ["Africa", "US", "Europe"].map((region) => (
               <button
                 key={region}
-                onClick={() => setSelectedRegion(region.toLowerCase())}
-                className="px-4 py-1.5 text-xs font-medium rounded-full transition-all"
+                onClick={() => { setSelectedContinent(region.toLowerCase()); setSelectedSubRegion(null); }}
+                className="px-4 py-1.5 text-xs font-medium rounded-full transition-all hover:bg-zinc-700"
+                style={{ backgroundColor: 'transparent', color: '#fff' }}
+              >
+                {region}
+              </button>
+            ))}
+
+            {/* Africa sub-regions */}
+            {selectedContinent === 'africa' && ["All", "North", "West", "Central", "East", "South"].map((region) => (
+              <button
+                key={region}
+                onClick={() => setSelectedSubRegion(region === 'All' ? null : region.toLowerCase())}
+                className="px-3 py-1.5 text-xs font-medium rounded-full transition-all"
                 style={{
-                  backgroundColor: selectedRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
-                  color: selectedRegion === region.toLowerCase() ? '#000' : '#fff',
+                  backgroundColor: (region === 'All' && !selectedSubRegion) || selectedSubRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
+                  color: (region === 'All' && !selectedSubRegion) || selectedSubRegion === region.toLowerCase() ? '#000' : '#fff',
+                }}
+              >
+                {region}
+              </button>
+            ))}
+
+            {/* US sub-regions */}
+            {selectedContinent === 'us' && ["All", "Northeast", "Midwest", "West", "South"].map((region) => (
+              <button
+                key={region}
+                onClick={() => setSelectedSubRegion(region === 'All' ? null : (region === 'West' ? 'west-us' : region === 'South' ? 'south-us' : region.toLowerCase()))}
+                className="px-3 py-1.5 text-xs font-medium rounded-full transition-all"
+                style={{
+                  backgroundColor: (region === 'All' && !selectedSubRegion) ||
+                    selectedSubRegion === region.toLowerCase() ||
+                    selectedSubRegion === 'west-us' && region === 'West' ||
+                    selectedSubRegion === 'south-us' && region === 'South' ? '#06f6ff' : 'transparent',
+                  color: (region === 'All' && !selectedSubRegion) ||
+                    selectedSubRegion === region.toLowerCase() ||
+                    selectedSubRegion === 'west-us' && region === 'West' ||
+                    selectedSubRegion === 'south-us' && region === 'South' ? '#000' : '#fff',
+                }}
+              >
+                {region}
+              </button>
+            ))}
+
+            {/* Europe sub-regions */}
+            {selectedContinent === 'europe' && ["All", "North", "West", "East", "South"].map((region) => (
+              <button
+                key={region}
+                onClick={() => setSelectedSubRegion(region === 'All' ? null : `${region.toLowerCase()}-eu`)}
+                className="px-3 py-1.5 text-xs font-medium rounded-full transition-all"
+                style={{
+                  backgroundColor: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-eu` ? '#06f6ff' : 'transparent',
+                  color: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-eu` ? '#000' : '#fff',
                 }}
               >
                 {region}
@@ -414,11 +593,19 @@ export default function NewsRoom() {
         {regionFilters.map((filter) => (
           <button
             key={filter.value}
-            onClick={() => setSelectedRegion(filter.value)}
+            onClick={() => {
+              if (filter.value === 'all') {
+                setSelectedContinent(null);
+                setSelectedSubRegion(null);
+              } else {
+                setSelectedContinent(filter.value);
+                setSelectedSubRegion(null);
+              }
+            }}
             className="px-5 py-2 rounded-full text-sm font-medium transition-all"
             style={{
-              backgroundColor: selectedRegion === filter.value ? '#eab308' : '#252525',
-              color: selectedRegion === filter.value ? '#000' : '#fff',
+              backgroundColor: (filter.value === 'all' && !selectedContinent) || selectedContinent === filter.value ? '#eab308' : '#252525',
+              color: (filter.value === 'all' && !selectedContinent) || selectedContinent === filter.value ? '#000' : '#fff',
             }}
           >
             {filter.label}
