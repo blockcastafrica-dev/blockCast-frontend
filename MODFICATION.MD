@@ -805,4 +805,82 @@ Auto-detects installed wallets and shows "Detected" badge:
 
 ---
 
+## 17. Sort Filter Pill with Dropdown Menu
+
+**File:** `src/components/BettingMarkets.tsx`
+
+### Changes:
+- Replaced Trending/All Types dropdown selects with a single sort filter pill
+- Pill displays selected sort option with up/down arrow icon
+- Clicking pill opens dropdown menu
+
+### Sort Filter Pill Button:
+| Property | Value |
+|----------|-------|
+| Background | Transparent |
+| Text Color | White (`#ffffff`) |
+| Border | Gray (`#444`) |
+| Hover Border | Cyan (`#06f6ff`) via `onMouseEnter`/`onMouseLeave` |
+| Icon | Up/down arrows (↕) |
+
+### Dropdown Menu:
+| Property | Value |
+|----------|-------|
+| Background | `#1a1a1a` |
+| Border | `border-zinc-800` |
+| Border Radius | `rounded-xl` |
+| Min Width | `200px` |
+
+### Sort Options:
+| Value | Label |
+|-------|-------|
+| `new` | New |
+| `ending-soon` | Ending Soon |
+| `volume-desc` | Total Volume ↓ |
+| `volume-asc` | Total Volume ↑ |
+| `24h-volume` | 24H Volume ↓ (default) |
+| `7d-volume` | 7D Volume ↓ |
+
+### Selected Option Styling:
+- Text Color: Orange (`#f97316`)
+- Background: `rgba(249, 115, 22, 0.1)`
+- Checkmark icon displayed
+
+### Mobile Layout:
+- Sort filter pill and Create Market button in same scrollable row
+- Active Markets counter hidden on mobile, visible on lg screens
+
+---
+
+## 18. Category Pills Hover Effect
+
+**File:** `src/components/BettingMarkets.tsx`
+
+### Changes:
+- Added cyan hover effect using `onMouseEnter`/`onMouseLeave` handlers
+- Removed glowing box-shadow effect from selected pills
+
+### Pill Styling:
+| State | Background | Text | Border |
+|-------|------------|------|--------|
+| Selected | Cyan (`#06f6ff`) | Black (`#000000`) | Cyan (`#06f6ff`) |
+| Unselected | Transparent | White (`#ffffff`) | Gray (`#444`) |
+| Hover (unselected) | Transparent | White | Cyan (`#06f6ff`) |
+
+### Hover Implementation:
+```jsx
+onMouseEnter={(e) => {
+  if (selectedCategory !== category) {
+    e.currentTarget.style.borderColor = '#06f6ff';
+  }
+}}
+onMouseLeave={(e) => {
+  if (selectedCategory !== category) {
+    e.currentTarget.style.borderColor = '#444';
+  }
+}}
+```
+
+---
+
 *Last Updated: December 29, 2025*
