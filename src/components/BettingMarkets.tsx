@@ -1034,14 +1034,21 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 31 Active Markets
               </span>
             </div>
-            <Button
-              className="font-medium gap-2 h-9 md:h-10 lg:h-11 px-3 md:px-4 lg:px-4 text-xs md:text-sm lg:text-sm hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+            <button
+              className="font-medium gap-2 px-4 md:px-6 py-2 md:py-2.5 text-sm md:text-base rounded-full transition-all duration-200 flex items-center"
+              style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1px solid #444' }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#06f6ff'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#444'; }}
               onClick={() => setShowCreateMarketModal(true)}
             >
-              <span className="text-base md:text-lg lg:text-lg">+</span>
+              <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+              </svg>
               Create Market
-            </Button>
+            </button>
           </div>
         </div>
 

@@ -329,7 +329,7 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                   <Tag className="w-4 h-4" />
                   Category <span className="text-red-400">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-wrap gap-2">
                   {categories.map((cat) => (
                     <button
                       key={cat.id}
@@ -337,14 +337,17 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                         setSelectedCategory(cat.id);
                         setSelectedSubcategory("");
                       }}
-                      className="p-3 rounded-xl text-left transition-colors"
+                      className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
+                        selectedCategory !== cat.id ? 'hover:border-[#06f6ff]' : ''
+                      }`}
                       style={{
-                        backgroundColor: selectedCategory === cat.id ? '#06f6ff20' : '#1a1f26',
-                        border: selectedCategory === cat.id ? '1px solid #06f6ff' : '1px solid #374151',
-                        color: selectedCategory === cat.id ? '#06f6ff' : 'white',
+                        backgroundColor: selectedCategory === cat.id ? '#06f6ff' : 'transparent',
+                        color: selectedCategory === cat.id ? '#000000' : '#ffffff',
+                        borderColor: selectedCategory === cat.id ? '#06f6ff' : '#444',
+                        boxShadow: selectedCategory === cat.id ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
                       }}
                     >
-                      <span className="text-sm font-medium">{cat.name}</span>
+                      {cat.name}
                     </button>
                   ))}
                 </div>
@@ -360,11 +363,14 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                       <button
                         key={sub}
                         onClick={() => setSelectedSubcategory(sub)}
-                        className="px-3 py-2 rounded-lg text-sm transition-colors"
+                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
+                          selectedSubcategory !== sub ? 'hover:border-[#06f6ff]' : ''
+                        }`}
                         style={{
-                          backgroundColor: selectedSubcategory === sub ? '#06f6ff20' : '#1a1f26',
-                          border: selectedSubcategory === sub ? '1px solid #06f6ff' : '1px solid #374151',
-                          color: selectedSubcategory === sub ? '#06f6ff' : '#9ca3af',
+                          backgroundColor: selectedSubcategory === sub ? '#06f6ff' : 'transparent',
+                          color: selectedSubcategory === sub ? '#000000' : '#ffffff',
+                          borderColor: selectedSubcategory === sub ? '#06f6ff' : '#444',
+                          boxShadow: selectedSubcategory === sub ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
                         }}
                       >
                         {sub}
@@ -376,32 +382,34 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
 
               <div>
                 <label className="text-gray-300 text-sm mb-2 block">Market Type</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex gap-2">
                   <button
                     onClick={() => setMarketType('present')}
-                    className="p-3 rounded-xl text-left transition-colors"
+                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
+                      marketType !== 'present' ? 'hover:border-[#06f6ff]' : ''
+                    }`}
                     style={{
-                      backgroundColor: marketType === 'present' ? '#06f6ff20' : '#1a1f26',
-                      border: marketType === 'present' ? '1px solid #06f6ff' : '1px solid #374151',
+                      backgroundColor: marketType === 'present' ? '#06f6ff' : 'transparent',
+                      color: marketType === 'present' ? '#000000' : '#ffffff',
+                      borderColor: marketType === 'present' ? '#06f6ff' : '#444',
+                      boxShadow: marketType === 'present' ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
                     }}
                   >
-                    <span className="text-sm font-medium" style={{ color: marketType === 'present' ? '#06f6ff' : 'white' }}>
-                      Present
-                    </span>
-                    <p className="text-xs text-gray-500 mt-1">Is this true now?</p>
+                    Present
                   </button>
                   <button
                     onClick={() => setMarketType('future')}
-                    className="p-3 rounded-xl text-left transition-colors"
+                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
+                      marketType !== 'future' ? 'hover:border-[#06f6ff]' : ''
+                    }`}
                     style={{
-                      backgroundColor: marketType === 'future' ? '#06f6ff20' : '#1a1f26',
-                      border: marketType === 'future' ? '1px solid #06f6ff' : '1px solid #374151',
+                      backgroundColor: marketType === 'future' ? '#06f6ff' : 'transparent',
+                      color: marketType === 'future' ? '#000000' : '#ffffff',
+                      borderColor: marketType === 'future' ? '#06f6ff' : '#444',
+                      boxShadow: marketType === 'future' ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
                     }}
                   >
-                    <span className="text-sm font-medium" style={{ color: marketType === 'future' ? '#06f6ff' : 'white' }}>
-                      Future
-                    </span>
-                    <p className="text-xs text-gray-500 mt-1">Will this happen?</p>
+                    Future
                   </button>
                 </div>
               </div>
