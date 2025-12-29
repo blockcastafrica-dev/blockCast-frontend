@@ -872,7 +872,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [selectedConfidence, setSelectedConfidence] = useState('all');
-  const [selectedSort, setSelectedSort] = useState('24h-volume');
+  const [selectedSort, setSelectedSort] = useState('trending');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -895,39 +895,44 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
     return matchesSearch && matchesCategory && matchesCountry && matchesConfidence;
   });
 
-  // Sort options
-  const sortOptions = [
+  // Filter options
+  const filterOptions = [
+    { value: 'trending', label: 'Trending' },
+    { value: 'high-volume', label: 'High Volume' },
     { value: 'new', label: 'New' },
     { value: 'ending-soon', label: 'Ending Soon' },
-    { value: 'volume-desc', label: 'Total Volume ↓' },
-    { value: 'volume-asc', label: 'Total Volume ↑' },
-    { value: '24h-volume', label: '24H Volume ↓' },
-    { value: '7d-volume', label: '7D Volume ↓' },
+    { value: 'past', label: 'Past' },
+    { value: 'future', label: 'Future' },
   ];
 
-  const selectedSortLabel = sortOptions.find(opt => opt.value === selectedSort)?.label || '24H Volume ↓';
+  const selectedFilterLabel = filterOptions.find(opt => opt.value === selectedSort)?.label || 'Trending';
 
-  // Sort markets based on selected sort option
-  const sortedMarkets = [...filteredMarkets].sort((a, b) => {
-    switch (selectedSort) {
-      case 'new':
-        return new Date(b.expiresAt).getTime() - new Date(a.expiresAt).getTime();
-      case 'ending-soon':
-        return new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime();
-      case 'volume-desc':
-        return b.totalPool - a.totalPool;
-      case 'volume-asc':
-        return a.totalPool - b.totalPool;
-      case '24h-volume':
-        if (a.trending && !b.trending) return -1;
-        if (!a.trending && b.trending) return 1;
-        return b.totalPool - a.totalPool;
-      case '7d-volume':
-        return b.totalCasters - a.totalCasters;
-      default:
-        return b.totalPool - a.totalPool;
-    }
-  });
+  // Filter and sort markets based on selected option
+  const sortedMarkets = [...filteredMarkets]
+    .filter(market => {
+      if (selectedSort === 'past') return market.marketType === 'present';
+      if (selectedSort === 'future') return market.marketType === 'future';
+      return true;
+    })
+    .sort((a, b) => {
+      switch (selectedSort) {
+        case 'trending':
+          if (a.trending && !b.trending) return -1;
+          if (!a.trending && b.trending) return 1;
+          return b.totalPool - a.totalPool;
+        case 'high-volume':
+          return b.totalPool - a.totalPool;
+        case 'new':
+          return new Date(b.expiresAt).getTime() - new Date(a.expiresAt).getTime();
+        case 'ending-soon':
+          return new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime();
+        case 'past':
+        case 'future':
+          return b.totalPool - a.totalPool;
+        default:
+          return b.totalPool - a.totalPool;
+      }
+    });
 
   // Get unique categories and countries for filters
   const categories = ['all', ...Array.from(new Set(markets.map(m => m.category)))];
@@ -1050,7 +1055,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
               </svg>
-              {selectedSortLabel}
+              {selectedFilterLabel}
             </button>
 
             {/* Dropdown Menu */}
@@ -1064,7 +1069,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   className="absolute top-full mt-2 left-0 z-50 min-w-[200px] rounded-xl border border-zinc-800 shadow-xl overflow-hidden"
                   style={{ backgroundColor: '#1a1a1a' }}
                 >
-                  {sortOptions.map((option) => (
+                  {filterOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => {
