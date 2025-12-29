@@ -1115,14 +1115,22 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-medium whitespace-nowrap transition-all duration-200 border ${
-                selectedCategory !== category ? 'hover:border-[#06f6ff]' : ''
-              }`}
+              className="px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-medium whitespace-nowrap transition-all duration-200 border"
               style={{
                 backgroundColor: selectedCategory === category ? '#06f6ff' : 'transparent',
                 color: selectedCategory === category ? '#000000' : '#ffffff',
                 borderColor: selectedCategory === category ? '#06f6ff' : '#444',
                 boxShadow: selectedCategory === category ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== category) {
+                  e.currentTarget.style.borderColor = '#06f6ff';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== category) {
+                  e.currentTarget.style.borderColor = '#444';
+                }
               }}
             >
               {category === 'all' ? 'All' : category}
