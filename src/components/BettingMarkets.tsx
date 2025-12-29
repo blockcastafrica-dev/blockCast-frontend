@@ -1007,10 +1007,10 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           {/* Truth Markets heading removed as per requirements */}
         </div>
 
-        {/* Search and Filters - Horizontal Layout Matching Image */}
-        <div className="flex flex-col lg:flex-row lg:items-center gap-3 md:gap-4 lg:gap-4">
-          {/* Search Bar - Left Side */}
-          <div className="flex-1">
+        {/* Search and Active Markets Row */}
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Search Bar */}
+          <div className="flex-1 lg:flex-none lg:w-96">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -1018,7 +1018,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 placeholder="Search markets, categories, or sources..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 focus:border-primary text-sm md:text-base lg:text-base"
+                className="pl-10 h-9 md:h-10 lg:h-10 bg-background/50 border-primary/30 focus:border-primary text-sm md:text-base"
               />
             </div>
           </div>
