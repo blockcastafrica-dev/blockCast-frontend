@@ -626,4 +626,52 @@ const fee = grossProfit * 0.03;  // 3% of winnings only
 
 ---
 
-*Last Updated: December 28, 2025*
+## 13. Category Pills Redesign
+
+**File:** `src/components/BettingMarkets.tsx`
+
+### Commits:
+- `6b7cdaf` - Replace category dropdown with horizontal pill buttons
+
+### Changes:
+- Replaced "All Categories" dropdown select with horizontal scrollable pill buttons
+- Categories now displayed as clickable pill-shaped buttons in a row below search bar
+- Removed category dropdown from the filter row (kept Trending and All Types dropdowns)
+
+### Design Elements:
+
+**Category Pills Row:**
+- Horizontal scrollable container (`overflow-x-auto`)
+- Gap between pills: 8px (mobile) / 12px (desktop)
+- Margin top: 16px (`mt-4`)
+
+**Selected State:**
+| Property | Value |
+|----------|-------|
+| Background | Cyan (`#06f6ff`) |
+| Text Color | Black (`#000000`) |
+| Border | Cyan (`#06f6ff`) |
+| Shadow | Cyan glow (`0 4px 6px -1px rgba(6, 246, 255, 0.3)`) |
+
+**Unselected State:**
+| Property | Value |
+|----------|-------|
+| Background | Transparent |
+| Text Color | White (`#ffffff`) |
+| Border | Gray (`#444`) |
+| Hover Border | Cyan (`#06f6ff`) |
+
+**Button Styling:**
+- Padding: `px-4 py-2` (mobile) / `px-6 py-2.5` (desktop)
+- Border radius: Full (`rounded-full`)
+- Font: Medium weight, 14px (mobile) / 16px (desktop)
+- Transition: 200ms for smooth hover effects
+- White-space: `nowrap` to prevent text wrapping
+
+### Categories Displayed:
+- All (default selected)
+- Dynamic categories from markets (Entertainment, Gossip, Finance, Politics, Sports, Technology, Climate, Health, Business, Brand, etc.)
+
+---
+
+*Last Updated: December 29, 2025*
