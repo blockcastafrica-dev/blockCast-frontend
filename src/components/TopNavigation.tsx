@@ -1,4 +1,5 @@
 import { useState } from "react";
+import bnbChainLogo from "@/assets/bnb-bnb-logo.svg";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import {
@@ -265,31 +266,24 @@ export default function TopNavigation({
               </Button>
             )}
 
-            {/* Theme Toggle - Compact */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggleDarkMode}
-              className="p-2 cursor-pointer hidden lg:block"
-            >
-              {isDarkMode ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-
             {/* Conditional rendering based on login state */}
             {!isLoggedIn ? (
               // Logged out state - show Connect Wallet button
-              <button
-                onClick={handleConnectWalletClick}
-                className="flex items-center gap-2 px-4 md:px-5 lg:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-medium transition-all duration-200 hover:opacity-90"
-                style={{ backgroundColor: '#06f6ff', color: '#000000' }}
-              >
-                <Wallet className="h-4 w-4 md:h-5 md:w-5" />
-                Connect Wallet
-              </button>
+              <div className="flex items-center gap-4">
+                <img
+                  src={bnbChainLogo}
+                  alt="BNB Chain"
+                  className="h-7 w-7 md:h-8 md:w-8"
+                />
+                <button
+                  onClick={handleConnectWalletClick}
+                  className="flex items-center gap-2 px-4 md:px-5 lg:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-medium transition-all duration-200 hover:opacity-90"
+                  style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                >
+                  <Wallet className="h-4 w-4 md:h-5 md:w-5" />
+                  Connect Wallet
+                </button>
+              </div>
             ) : (
               // Logged in state - show user avatar dropdown
               <div className="hidden lg:block">
@@ -425,20 +419,7 @@ export default function TopNavigation({
                           <Settings className="h-4 w-4" />
                         </Button>
 
-                        {/* Theme Toggle - Compact */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={onToggleDarkMode}
-                          className="p-2 cursor-pointer"
-                        >
-                          {isDarkMode ? (
-                            <Sun className="h-4 w-4 text-primary" />
-                          ) : (
-                            <Moon className="h-4 w-4 text-primary" />
-                          )}
-                        </Button>
-                      </div>
+                        </div>
 
                       {/* Balance */}
                       <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-primary/10 to-secondary/10">
@@ -484,28 +465,20 @@ export default function TopNavigation({
                   ) : (
                     /* Logged Out State */
                     <>
-                      <div className="flex items-center justify-between gap-3 p-4 bg-muted/30 rounded-lg">
+                      <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg">
                         <div className="flex-1">
                           <p className="font-medium text-sm mb-1">Welcome to Blockcast</p>
                           <p className="text-xs text-muted-foreground">Connect your wallet to get started</p>
                         </div>
-                        {/* Theme Toggle - Compact */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={onToggleDarkMode}
-                          className="p-2 cursor-pointer"
-                        >
-                          {isDarkMode ? (
-                            <Sun className="h-4 w-4 text-primary" />
-                          ) : (
-                            <Moon className="h-4 w-4 text-primary" />
-                          )}
-                        </Button>
                       </div>
 
                       {/* Connect Wallet Button */}
-                      <div className="flex px-4 py-2">
+                      <div className="flex px-4 py-2 items-center gap-4">
+                        <img
+                          src={bnbChainLogo}
+                          alt="BNB Chain"
+                          className="h-7 w-7"
+                        />
                         <button
                           onClick={() => {
                             setShowMobileMenu(false);
