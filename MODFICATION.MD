@@ -985,4 +985,77 @@ onClick={(e) => {
 
 ---
 
+## 21. Community Hub Renamed to News Room
+
+**Files:**
+- `src/pages/CommunityHub.tsx` → `src/pages/NewsRoom.tsx`
+- `src/App.tsx`
+- `src/components/TopNavigation.tsx`
+- `src/components/Footer.tsx`
+
+### Commits:
+- `c621b05` - Rename Community Hub to News Room
+
+### Changes:
+
+**File Rename:**
+| Before | After |
+|--------|-------|
+| `CommunityHub.tsx` | `NewsRoom.tsx` |
+
+**Route Change:**
+| Before | After |
+|--------|-------|
+| `/community-hub` | `/news-room` |
+
+**Page Title:**
+| Before | After |
+|--------|-------|
+| "African Truth Community" | "News Room" |
+
+**Subtitle:**
+| Before | After |
+|--------|-------|
+| "Connect with truth seekers across Africa • Share insights • Combat misinformation together" | "Stay updated with the latest news • Share insights • Discover trending stories" |
+
+**Icon Change:**
+| Location | Before | After |
+|----------|--------|-------|
+| TopNavigation | `Users` | `Newspaper` |
+| Footer | `Users` | `Newspaper` |
+| Page Header | `Users` | `Newspaper` |
+
+### Files Updated:
+
+**App.tsx:**
+```jsx
+// Import
+import NewsRoom from '@/pages/NewsRoom';
+
+// Route
+{
+  path: "/news-room",
+  element: <NewsRoom />
+}
+```
+
+**TopNavigation.tsx:**
+```jsx
+{
+  id: "news-room",
+  label: "News Room",
+  icon: Newspaper,
+  path: "/news-room",
+}
+```
+
+**Footer.tsx:**
+```jsx
+community: "/news-room",
+// ...
+{ label: "News Room", icon: Newspaper, page: "community" }
+```
+
+---
+
 *Last Updated: December 29, 2025*
