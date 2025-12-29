@@ -375,6 +375,7 @@ export default function NewsRoom() {
   const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
   const [selectedSubRegion, setSelectedSubRegion] = useState<string | null>(null);
   const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>({ "1": true });
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Get the current effective region for filtering
@@ -451,9 +452,9 @@ export default function NewsRoom() {
         </div>
 
         {/* Map Section */}
-        <div className="lg:col-span-5 rounded-xl border border-zinc-800 p-4 relative" style={{ backgroundColor: '#0a0a0a', minHeight: '320px' }}>
+        <div className="lg:col-span-5 rounded-xl border border-zinc-800 p-4 flex flex-col justify-center" style={{ backgroundColor: '#0a0a0a', minHeight: '320px' }}>
           {/* Interactive Map - World or Zoomed Continent */}
-          <div className="w-full h-[280px] flex items-center justify-center relative overflow-hidden">
+          <div className="w-full h-[240px] flex items-center justify-center relative overflow-hidden">
             <ComposableMap
               projection="geoMercator"
               projectionConfig={{
@@ -553,47 +554,49 @@ export default function NewsRoom() {
             </ComposableMap>
           </div>
 
+          {/* Separator Line */}
+          <div className="border-t border-zinc-800 my-2"></div>
+
           {/* Region Selector Pills */}
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-4 bg-zinc-900/95 rounded-full p-1.5 backdrop-blur-sm z-20">
+          <div className="flex justify-center items-center gap-4 mx-auto bg-zinc-900/95 rounded-full p-1.5 w-fit">
             {/* Back to World button when zoomed */}
             {selectedContinent && (
               <button
                 onClick={() => { setSelectedContinent(null); setSelectedSubRegion(null); }}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-all bg-zinc-700 text-white hover:bg-zinc-600"
+                className="px-4 py-2 text-sm font-medium rounded-full transition-all bg-zinc-700 text-white hover:bg-zinc-600 cursor-pointer"
               >
                 ← World
               </button>
             )}
 
-            {/* World view pills */}
-            {!selectedContinent && ["All", "Africa", "America", "Europe"].map((region, index) => (
+            {/* Continent pills */}
+            {!selectedContinent && ["Africa", "America", "Europe"].map((region) => (
               <button
                 key={region}
                 onClick={() => {
-                  if (region !== 'All') {
-                    setSelectedContinent(region.toLowerCase());
-                    setSelectedSubRegion(null);
-                  }
+                  setSelectedContinent(region.toLowerCase());
+                  setSelectedSubRegion(null);
                 }}
-                className={`px-5 py-2 text-sm font-medium rounded-full transition-all cursor-pointer ${index !== 0 ? 'hover:bg-[#06f6ff] hover:text-black active:bg-[#05d4d9]' : ''}`}
-                style={{
-                  backgroundColor: index === 0 ? '#06f6ff' : 'transparent',
-                  color: index === 0 ? '#000' : '#fff'
-                }}
+                onMouseEnter={() => setHoveredButton(region)}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="px-5 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
+                style={{ color: hoveredButton === region ? '#06f6ff' : '#fff' }}
               >
                 {region}
               </button>
             ))}
 
             {/* Africa sub-regions */}
-            {selectedContinent === 'africa' && ["All", "North", "West", "Central", "East", "South"].map((region) => (
+            {selectedContinent === 'africa' && ["North", "West", "Central", "East", "South"].map((region) => (
               <button
                 key={region}
-                onClick={() => setSelectedSubRegion(region === 'All' ? null : region.toLowerCase())}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-all"
+                onClick={() => setSelectedSubRegion(region.toLowerCase())}
+                onMouseEnter={() => setHoveredButton(`africa-${region}`)}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
                 style={{
-                  backgroundColor: (region === 'All' && !selectedSubRegion) || selectedSubRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
-                  color: (region === 'All' && !selectedSubRegion) || selectedSubRegion === region.toLowerCase() ? '#000' : '#fff',
+                  backgroundColor: selectedSubRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
+                  color: selectedSubRegion === region.toLowerCase() ? '#000' : (hoveredButton === `africa-${region}` ? '#06f6ff' : '#fff'),
                 }}
               >
                 {region}
@@ -601,14 +604,16 @@ export default function NewsRoom() {
             ))}
 
             {/* America sub-regions */}
-            {selectedContinent === 'america' && ["All", "North", "Central", "South"].map((region) => (
+            {selectedContinent === 'america' && ["North", "Central", "South"].map((region) => (
               <button
                 key={region}
-                onClick={() => setSelectedSubRegion(region === 'All' ? null : `${region.toLowerCase()}-am`)}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-all"
+                onClick={() => setSelectedSubRegion(`${region.toLowerCase()}-am`)}
+                onMouseEnter={() => setHoveredButton(`america-${region}`)}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
                 style={{
-                  backgroundColor: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-am` ? '#06f6ff' : 'transparent',
-                  color: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-am` ? '#000' : '#fff',
+                  backgroundColor: selectedSubRegion === `${region.toLowerCase()}-am` ? '#06f6ff' : 'transparent',
+                  color: selectedSubRegion === `${region.toLowerCase()}-am` ? '#000' : (hoveredButton === `america-${region}` ? '#06f6ff' : '#fff'),
                 }}
               >
                 {region}
@@ -616,14 +621,16 @@ export default function NewsRoom() {
             ))}
 
             {/* Europe sub-regions */}
-            {selectedContinent === 'europe' && ["All", "North", "West", "East", "South"].map((region) => (
+            {selectedContinent === 'europe' && ["North", "West", "East", "South"].map((region) => (
               <button
                 key={region}
-                onClick={() => setSelectedSubRegion(region === 'All' ? null : `${region.toLowerCase()}-eu`)}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-all"
+                onClick={() => setSelectedSubRegion(`${region.toLowerCase()}-eu`)}
+                onMouseEnter={() => setHoveredButton(`europe-${region}`)}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
                 style={{
-                  backgroundColor: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-eu` ? '#06f6ff' : 'transparent',
-                  color: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-eu` ? '#000' : '#fff',
+                  backgroundColor: selectedSubRegion === `${region.toLowerCase()}-eu` ? '#06f6ff' : 'transparent',
+                  color: selectedSubRegion === `${region.toLowerCase()}-eu` ? '#000' : (hoveredButton === `europe-${region}` ? '#06f6ff' : '#fff'),
                 }}
               >
                 {region}
