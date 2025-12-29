@@ -883,4 +883,28 @@ onMouseLeave={(e) => {
 
 ---
 
+## 19. Search Bar and Layout Adjustments
+
+**File:** `src/components/BettingMarkets.tsx`
+
+### Changes:
+- Search bar width adjusted to align with "Brand" category pill on desktop
+- Create Market button positioned directly beside filter pill
+- Active Markets counter moved beside search bar
+
+### Desktop Layout:
+| Element | Width/Position |
+|---------|----------------|
+| Search Bar | `700px` on lg screens, full width on mobile |
+| Filter Pill | Beside search bar row |
+| Create Market | Beside filter pill |
+| Active Markets | Beside search bar (hidden on mobile) |
+
+### Search Bar Styling:
+```jsx
+<div className="flex-1 lg:flex-none lg:w-[700px]">
+```
+
+---
+
 *Last Updated: December 29, 2025*
