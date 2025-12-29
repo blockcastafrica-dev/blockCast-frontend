@@ -996,25 +996,6 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
           {/* Filter Dropdowns - Center */}
           <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
-            <Select
-              value={selectedCategory}
-              onValueChange={setSelectedCategory}
-            >
-              <SelectTrigger
-                className="w-full sm:w-36 md:w-40 lg:w-40 flex-1 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 text-xs md:text-sm lg:text-sm"
-                {...({} as any)}
-              >
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category === "all" ? "All Categories" : category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             <Select value="trending" onValueChange={() => {}}>
               <SelectTrigger
                 className="w-full sm:w-36 md:w-40 lg:w-40 flex-1 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 text-xs md:text-sm lg:text-sm"
@@ -1062,6 +1043,27 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               Create Market
             </Button>
           </div>
+        </div>
+
+        {/* Category Pills Row */}
+        <div className="flex items-center gap-2 md:gap-3 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-medium whitespace-nowrap transition-all duration-200 border ${
+                selectedCategory !== category ? 'hover:border-[#06f6ff]' : ''
+              }`}
+              style={{
+                backgroundColor: selectedCategory === category ? '#06f6ff' : 'transparent',
+                color: selectedCategory === category ? '#000000' : '#ffffff',
+                borderColor: selectedCategory === category ? '#06f6ff' : '#444',
+                boxShadow: selectedCategory === category ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+              }}
+            >
+              {category === 'all' ? 'All' : category}
+            </button>
+          ))}
         </div>
       </div>
 
