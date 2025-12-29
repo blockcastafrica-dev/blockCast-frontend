@@ -1,15 +1,24 @@
 import { useState, useEffect } from "react";
-import { X, Check, ChevronRight, ArrowLeft, Wallet, ExternalLink } from "lucide-react";
-import { useConnect, useAccount, useDisconnect } from 'wagmi';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { X, Check, ChevronRight, ArrowLeft, Wallet } from "lucide-react";
+import blockcastLogo from "@/assets/blockcast logo dark BG.svg";
 
 interface ConnectWalletModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConnect?: (wallet: string) => void;
+  onConnect: (wallet: string) => void;
 }
 
 type ModalView = 'main' | 'more-wallets' | 'social-login';
+
+// Wallet icons
+const walletIcons = {
+  binance: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=029",
+  metamask: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
+  okx: "https://www.okx.com/cdn/assets/imgs/226/DF8E072D3BA65498.png",
+  trustwallet: "https://trustwallet.com/assets/images/media/assets/TWT.png",
+  coinbase: "https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo.webp",
+  phantom: "https://phantom.app/img/phantom-logo.svg",
+};
 
 // Social icons as simple SVG components
 const GoogleIcon = () => (
@@ -47,51 +56,38 @@ const TelegramIcon = () => (
 
 export default function ConnectWalletModal({ isOpen, onClose, onConnect }: ConnectWalletModalProps) {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [detectedWallets, setDetectedWallets] = useState<string[]>([]);
   const [currentView, setCurrentView] = useState<ModalView>('main');
-  const [isPending, setIsPending] = useState(false);
 
-  // Wagmi hooks
-  const { connectors, connect, status, error } = useConnect();
-  const { isConnected, address } = useAccount();
-  const { openConnectModal } = useConnectModal();
-
-  // Close modal when connected
+  // Detect available wallets
   useEffect(() => {
-    if (isConnected && address) {
-      onConnect?.(address);
-      onClose();
+    const detected: string[] = [];
+    if (typeof window !== 'undefined') {
+      if ((window as any).ethereum?.isMetaMask) detected.push('metamask');
+      if ((window as any).BinanceChain) detected.push('binance');
+      if ((window as any).okxwallet) detected.push('okx');
+      if ((window as any).trustwallet) detected.push('trustwallet');
+      if ((window as any).coinbaseWalletExtension) detected.push('coinbase');
+      if ((window as any).phantom?.solana) detected.push('phantom');
     }
-  }, [isConnected, address, onConnect, onClose]);
+    setDetectedWallets(detected);
+  }, []);
 
   // Reset view when modal closes
   useEffect(() => {
     if (!isOpen) {
       setCurrentView('main');
-      setIsPending(false);
     }
   }, [isOpen]);
 
-  // Track pending state
-  useEffect(() => {
-    setIsPending(status === 'pending');
-  }, [status]);
-
-  const handleConnectorClick = (connector: any) => {
+  const handleWalletConnect = (wallet: string) => {
     if (!agreedToTerms) return;
-    connect({ connector });
-  };
-
-  const handleOpenRainbowKit = () => {
-    if (!agreedToTerms) return;
-    onClose();
-    openConnectModal?.();
+    onConnect(wallet);
   };
 
   const handleSocialConnect = (provider: string) => {
     if (!agreedToTerms) return;
-    // Social login would be implemented via a service like Web3Auth
-    // For now, we'll show a coming soon message
-    alert(`${provider} login coming soon! For now, please use a wallet.`);
+    onConnect(`social-${provider}`);
   };
 
   const resetAndClose = () => {
@@ -100,17 +96,17 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
     onClose();
   };
 
-  // Get wallet icon based on connector name
-  const getWalletIcon = (name: string): string => {
-    const icons: Record<string, string> = {
-      'MetaMask': 'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg',
-      'Coinbase Wallet': 'https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo.webp',
-      'WalletConnect': 'https://walletconnect.com/static/favicon.ico',
-      'Rainbow': 'https://rainbow.me/favicon.ico',
-      'Injected': 'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg',
-    };
-    return icons[name] || 'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg';
-  };
+  const mainWallets = [
+    { id: 'binance', name: 'Binance Wallet', icon: walletIcons.binance },
+    { id: 'metamask', name: 'MetaMask', icon: walletIcons.metamask },
+    { id: 'okx', name: 'OKX Wallet', icon: walletIcons.okx },
+  ];
+
+  const moreWallets = [
+    { id: 'trustwallet', name: 'Trust Wallet', icon: walletIcons.trustwallet },
+    { id: 'coinbase', name: 'Coinbase Wallet', icon: walletIcons.coinbase },
+    { id: 'phantom', name: 'Phantom', icon: walletIcons.phantom },
+  ];
 
   const socialProviders = [
     { id: 'google', name: 'Google', icon: GoogleIcon, bgColor: '#fff', textColor: '#000' },
@@ -180,12 +176,12 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
             <div>
               <h2 className="text-white font-bold text-sm">
                 {currentView === 'main' && 'Connect Wallet'}
-                {currentView === 'more-wallets' && 'All Wallets'}
+                {currentView === 'more-wallets' && 'More Wallets'}
                 {currentView === 'social-login' && 'Social Login'}
               </h2>
               <p className="text-gray-500 text-xs">
                 {currentView === 'main' && 'Choose how to connect'}
-                {currentView === 'more-wallets' && 'Select from all options'}
+                {currentView === 'more-wallets' && 'Select from more options'}
                 {currentView === 'social-login' && 'Connect with social account'}
               </p>
             </div>
@@ -209,13 +205,6 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4">
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm">{error.message}</p>
-            </div>
-          )}
-
           {/* Main View */}
           {currentView === 'main' && (
             <div className="space-y-3">
@@ -225,31 +214,27 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                 <div className="flex-1 h-px bg-gray-800"></div>
               </div>
 
-              {/* Show first 3 connectors */}
-              {connectors.slice(0, 3).map((connector) => (
+              {/* Wallet Options */}
+              {mainWallets.map((wallet) => (
                 <button
-                  key={connector.uid}
-                  onClick={() => handleConnectorClick(connector)}
-                  disabled={!agreedToTerms || isPending}
+                  key={wallet.id}
+                  onClick={() => handleWalletConnect(wallet.id)}
+                  disabled={!agreedToTerms}
                   className={`w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left transition-colors ${
-                    agreedToTerms && !isPending ? 'hover:border-cyan-500/50 cursor-pointer' : 'opacity-50 cursor-not-allowed'
+                    agreedToTerms ? 'hover:border-cyan-500/50 cursor-pointer' : 'opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg border border-gray-600 flex items-center justify-center bg-white/5">
-                        {connector.icon ? (
-                          <img src={connector.icon} alt={connector.name} className="w-6 h-6 object-contain" />
-                        ) : (
-                          <img src={getWalletIcon(connector.name)} alt={connector.name} className="w-6 h-6 object-contain" />
-                        )}
+                        <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
                       </div>
-                      <span className="text-white font-medium">{connector.name}</span>
+                      <span className="text-white font-medium">{wallet.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {isPending && status === 'pending' && (
-                        <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-[10px] rounded-full border border-cyan-500/30">
-                          Connecting...
+                      {detectedWallets.includes(wallet.id) && (
+                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] rounded-full border border-emerald-500/30">
+                          Detected
                         </span>
                       )}
                       <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -333,31 +318,26 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
           {/* More Wallets View */}
           {currentView === 'more-wallets' && (
             <div className="space-y-3">
-              {/* All connectors from wagmi */}
-              {connectors.map((connector) => (
+              {[...mainWallets, ...moreWallets].map((wallet) => (
                 <button
-                  key={connector.uid}
-                  onClick={() => handleConnectorClick(connector)}
-                  disabled={!agreedToTerms || isPending}
+                  key={wallet.id}
+                  onClick={() => handleWalletConnect(wallet.id)}
+                  disabled={!agreedToTerms}
                   className={`w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left transition-colors ${
-                    agreedToTerms && !isPending ? 'hover:border-cyan-500/50 cursor-pointer' : 'opacity-50 cursor-not-allowed'
+                    agreedToTerms ? 'hover:border-cyan-500/50 cursor-pointer' : 'opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg border border-gray-600 flex items-center justify-center bg-white/5">
-                        {connector.icon ? (
-                          <img src={connector.icon} alt={connector.name} className="w-6 h-6 object-contain" />
-                        ) : (
-                          <img src={getWalletIcon(connector.name)} alt={connector.name} className="w-6 h-6 object-contain" />
-                        )}
+                        <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
                       </div>
-                      <span className="text-white font-medium">{connector.name}</span>
+                      <span className="text-white font-medium">{wallet.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {isPending && (
-                        <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-[10px] rounded-full border border-cyan-500/30">
-                          Connecting...
+                      {detectedWallets.includes(wallet.id) && (
+                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] rounded-full border border-emerald-500/30">
+                          Detected
                         </span>
                       )}
                       <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -365,28 +345,6 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   </div>
                 </button>
               ))}
-
-              {/* Use RainbowKit Modal Button */}
-              <button
-                onClick={handleOpenRainbowKit}
-                disabled={!agreedToTerms}
-                className={`w-full p-4 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-xl text-left transition-colors ${
-                  agreedToTerms ? 'hover:border-cyan-500/50 cursor-pointer' : 'opacity-50 cursor-not-allowed'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg border border-cyan-500/30 flex items-center justify-center bg-gradient-to-br from-cyan-500/20 to-purple-500/20">
-                      <ExternalLink className="w-5 h-5 text-cyan-400" />
-                    </div>
-                    <div>
-                      <span className="text-white font-medium block">Open Full Wallet List</span>
-                      <span className="text-gray-500 text-xs">100+ wallets via WalletConnect</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-cyan-400" />
-                </div>
-              </button>
 
               {/* Terms reminder */}
               {!agreedToTerms && (
@@ -400,10 +358,6 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
           {/* Social Login View */}
           {currentView === 'social-login' && (
             <div className="space-y-3">
-              <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                <p className="text-yellow-400 text-sm">Social login requires Web3Auth integration. For now, please use a wallet.</p>
-              </div>
-
               {socialProviders.map((provider) => {
                 const Icon = provider.icon;
                 return (
