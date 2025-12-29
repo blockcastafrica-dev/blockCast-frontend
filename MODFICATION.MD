@@ -907,4 +907,82 @@ onMouseLeave={(e) => {
 
 ---
 
+## 20. Filter Dropdown Fix and New Options
+
+**File:** `src/components/BettingMarkets.tsx`
+
+### Commits:
+- `fbd5e44` - Update filter pill with new options: Trending, High Volume, New, Ending Soon, Past, Future
+- `603a054` - Fix filter dropdown display and interaction issues
+
+### Issues Fixed:
+1. **Dropdown not showing all options:** Parent container had `overflow-x-auto` which clipped the dropdown menu
+2. **Options not clickable:** Click events were being blocked by backdrop overlay
+3. **Hover effect not working:** CSS hover classes not reliable, switched to JS handlers
+4. **Wrong color scheme:** Selected item was orange, changed to cyan for consistency
+
+### Solution:
+- Moved dropdown to root level of component (outside all containers)
+- Used fixed positioning with dynamic position calculation based on button's bounding rect
+- Increased z-index to 9999 to ensure dropdown appears above all elements
+- Added `stopPropagation` to prevent event bubbling issues
+
+### New Filter Options:
+| Value | Label | Sorting Logic |
+|-------|-------|---------------|
+| `trending` | Trending | Trending markets first, then by pool size |
+| `high-volume` | High Volume | Sort by total pool descending |
+| `new` | New | Sort by expiry date descending |
+| `ending-soon` | Ending Soon | Sort by expiry date ascending |
+| `past` | Past | Filter to `marketType: 'present'` only |
+| `future` | Future | Filter to `marketType: 'future'` only |
+
+### Dropdown Styling:
+| Property | Value |
+|----------|-------|
+| Background | `#1a1a1a` |
+| Border | `border-zinc-800` |
+| Border Radius | `rounded-xl` |
+| Min Width | `200px` |
+| Z-Index | `9999` |
+| Position | Fixed (calculated from button position) |
+
+### Selected Option Styling:
+| Property | Value |
+|----------|-------|
+| Text Color | Cyan (`#06f6ff`) |
+| Background | `rgba(6, 246, 255, 0.1)` |
+| Checkmark | Cyan stroke |
+
+### Hover Effect (Unselected Options):
+| Property | Value |
+|----------|-------|
+| Text Color | Cyan (`#06f6ff`) |
+| Background | `rgba(6, 246, 255, 0.15)` |
+
+### Implementation:
+```jsx
+// Position calculation on button click
+onClick={(e) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  setDropdownPosition({ top: rect.bottom + 8, left: rect.left });
+  setShowSortDropdown(!showSortDropdown);
+}}
+
+// Dropdown rendered at root level with fixed positioning
+{showSortDropdown && (
+  <>
+    <div className="fixed inset-0" style={{ zIndex: 9998 }} onClick={() => setShowSortDropdown(false)} />
+    <div className="fixed min-w-[200px] rounded-xl border border-zinc-800 shadow-xl"
+      style={{ zIndex: 9999, backgroundColor: '#1a1a1a', top: dropdownPosition.top, left: dropdownPosition.left }}>
+      {filterOptions.map((option) => (
+        <button onMouseEnter={...} onMouseLeave={...}>...</button>
+      ))}
+    </div>
+  </>
+)}
+```
+
+---
+
 *Last Updated: December 29, 2025*
