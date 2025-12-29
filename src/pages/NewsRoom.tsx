@@ -16,17 +16,167 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 
-// GeoJSON URLs for maps
-const WORLD_GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+// GeoJSON URLs for maps - using Natural Earth TopoJSON
+const WORLD_GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
-// Country codes by region
+// Mapping from numeric country IDs (UN M49) to ISO_A3 codes - comprehensive list
+// Include both with and without leading zeros for compatibility
+const countryIdToISO: Record<string, string> = {
+  // Africa (with and without leading zeros)
+  "12": "DZA", "012": "DZA", "DZA": "DZA",
+  "24": "AGO", "024": "AGO", "AGO": "AGO",
+  "204": "BEN", "BEN": "BEN",
+  "72": "BWA", "072": "BWA", "BWA": "BWA",
+  "854": "BFA", "BFA": "BFA",
+  "108": "BDI", "BDI": "BDI",
+  "120": "CMR", "CMR": "CMR",
+  "132": "CPV", "CPV": "CPV",
+  "140": "CAF", "CAF": "CAF",
+  "148": "TCD", "TCD": "TCD",
+  "174": "COM", "COM": "COM",
+  "178": "COG", "COG": "COG",
+  "180": "COD", "COD": "COD",
+  "384": "CIV", "CIV": "CIV",
+  "262": "DJI", "DJI": "DJI",
+  "818": "EGY", "EGY": "EGY",
+  "226": "GNQ", "GNQ": "GNQ",
+  "232": "ERI", "ERI": "ERI",
+  "231": "ETH", "ETH": "ETH",
+  "266": "GAB", "GAB": "GAB",
+  "270": "GMB", "GMB": "GMB",
+  "288": "GHA", "GHA": "GHA",
+  "324": "GIN", "GIN": "GIN",
+  "624": "GNB", "GNB": "GNB",
+  "404": "KEN", "KEN": "KEN",
+  "426": "LSO", "LSO": "LSO",
+  "430": "LBR", "LBR": "LBR",
+  "434": "LBY", "LBY": "LBY",
+  "450": "MDG", "MDG": "MDG",
+  "454": "MWI", "MWI": "MWI",
+  "466": "MLI", "MLI": "MLI",
+  "478": "MRT", "MRT": "MRT",
+  "480": "MUS", "MUS": "MUS",
+  "504": "MAR", "MAR": "MAR",
+  "508": "MOZ", "MOZ": "MOZ",
+  "516": "NAM", "NAM": "NAM",
+  "562": "NER", "NER": "NER",
+  "566": "NGA", "NGA": "NGA",
+  "646": "RWA", "RWA": "RWA",
+  "678": "STP", "STP": "STP",
+  "686": "SEN", "SEN": "SEN",
+  "690": "SYC", "SYC": "SYC",
+  "694": "SLE", "SLE": "SLE",
+  "706": "SOM", "SOM": "SOM",
+  "710": "ZAF", "ZAF": "ZAF",
+  "728": "SSD", "SSD": "SSD",
+  "729": "SDN", "736": "SDN", "SDN": "SDN",
+  "748": "SWZ", "SWZ": "SWZ",
+  "834": "TZA", "TZA": "TZA",
+  "768": "TGO", "TGO": "TGO",
+  "788": "TUN", "TUN": "TUN",
+  "800": "UGA", "UGA": "UGA",
+  "894": "ZMB", "ZMB": "ZMB",
+  "716": "ZWE", "ZWE": "ZWE",
+  "732": "ESH", "ESH": "ESH",
+  // USA
+  "840": "USA", "USA": "USA",
+  // Europe
+  "8": "ALB", "008": "ALB", "ALB": "ALB",
+  "20": "AND", "020": "AND", "AND": "AND",
+  "40": "AUT", "040": "AUT", "AUT": "AUT",
+  "112": "BLR", "BLR": "BLR",
+  "56": "BEL", "056": "BEL", "BEL": "BEL",
+  "70": "BIH", "070": "BIH", "BIH": "BIH",
+  "100": "BGR", "BGR": "BGR",
+  "191": "HRV", "HRV": "HRV",
+  "196": "CYP", "CYP": "CYP",
+  "203": "CZE", "CZE": "CZE",
+  "208": "DNK", "DNK": "DNK",
+  "233": "EST", "EST": "EST",
+  "246": "FIN", "FIN": "FIN",
+  "250": "FRA", "FRA": "FRA",
+  "276": "DEU", "DEU": "DEU",
+  "300": "GRC", "GRC": "GRC",
+  "348": "HUN", "HUN": "HUN",
+  "352": "ISL", "ISL": "ISL",
+  "372": "IRL", "IRL": "IRL",
+  "380": "ITA", "ITA": "ITA",
+  "383": "XKX", "-99": "XKX", "XKX": "XKX",
+  "428": "LVA", "LVA": "LVA",
+  "438": "LIE", "LIE": "LIE",
+  "440": "LTU", "LTU": "LTU",
+  "442": "LUX", "LUX": "LUX",
+  "807": "MKD", "MKD": "MKD",
+  "470": "MLT", "MLT": "MLT",
+  "498": "MDA", "MDA": "MDA",
+  "492": "MCO", "MCO": "MCO",
+  "499": "MNE", "MNE": "MNE",
+  "528": "NLD", "NLD": "NLD",
+  "578": "NOR", "NOR": "NOR",
+  "616": "POL", "POL": "POL",
+  "620": "PRT", "PRT": "PRT",
+  "642": "ROU", "ROU": "ROU",
+  "643": "RUS", "RUS": "RUS",
+  "674": "SMR", "SMR": "SMR",
+  "688": "SRB", "SRB": "SRB",
+  "703": "SVK", "SVK": "SVK",
+  "705": "SVN", "SVN": "SVN",
+  "724": "ESP", "ESP": "ESP",
+  "752": "SWE", "SWE": "SWE",
+  "756": "CHE", "CHE": "CHE",
+  "804": "UKR", "UKR": "UKR",
+  "826": "GBR", "GBR": "GBR",
+  "336": "VAT", "VAT": "VAT",
+  // Other common countries
+  "4": "AFG", "004": "AFG",
+  "32": "ARG", "032": "ARG",
+  "36": "AUS", "036": "AUS",
+  "76": "BRA", "076": "BRA",
+  "124": "CAN",
+  "156": "CHN",
+  "356": "IND",
+  "392": "JPN",
+  "484": "MEX",
+  "682": "SAU",
+  "792": "TUR",
+  "784": "ARE",
+};
+
+// Country codes by region (using ISO_A3)
 const africaCountries = [
-  "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD", "COM", "COG", "COD", "CIV", "DJI", "EGY", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA", "STP", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "SWZ", "TZA", "TGO", "TUN", "UGA", "ZMB", "ZWE"
+  "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD", "COM", "COG", "COD", "CIV", "DJI", "EGY", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA", "STP", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "SWZ", "TZA", "TGO", "TUN", "UGA", "ZMB", "ZWE", "ESH"
 ];
+
+// Africa sub-regions
+const africaSubRegions: Record<string, string[]> = {
+  north: ["DZA", "EGY", "LBY", "MAR", "TUN", "SDN", "ESH"],
+  west: ["BEN", "BFA", "CPV", "CIV", "GMB", "GHA", "GIN", "GNB", "LBR", "MLI", "MRT", "NER", "NGA", "SEN", "SLE", "TGO"],
+  central: ["AGO", "CMR", "CAF", "TCD", "COG", "COD", "GNQ", "GAB", "STP"],
+  east: ["BDI", "COM", "DJI", "ERI", "ETH", "KEN", "MDG", "MWI", "MUS", "MOZ", "RWA", "SYC", "SOM", "SSD", "TZA", "UGA"],
+  south: ["BWA", "LSO", "NAM", "ZAF", "SWZ", "ZMB", "ZWE"],
+};
+
 const usCountries = ["USA"];
+
+// US sub-regions (states) - simplified for this demo
+const usSubRegions: Record<string, string[]> = {
+  northeast: ["USA"],
+  midwest: ["USA"],
+  "west-us": ["USA"],
+  "south-us": ["USA"],
+};
+
 const europeCountries = [
   "ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "XKX", "LVA", "LIE", "LTU", "LUX", "MKD", "MLT", "MDA", "MCO", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SMR", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR", "VAT"
 ];
+
+// Europe sub-regions
+const europeSubRegions: Record<string, string[]> = {
+  "north-eu": ["DNK", "EST", "FIN", "ISL", "LVA", "LTU", "NOR", "SWE"],
+  "west-eu": ["AUT", "BEL", "FRA", "DEU", "IRL", "LIE", "LUX", "MCO", "NLD", "CHE", "GBR"],
+  "east-eu": ["BLR", "BGR", "CZE", "HUN", "MDA", "POL", "ROU", "RUS", "SVK", "UKR"],
+  "south-eu": ["ALB", "AND", "BIH", "HRV", "CYP", "GRC", "ITA", "XKX", "MKD", "MLT", "MNE", "PRT", "SMR", "SRB", "SVN", "ESP", "VAT"],
+};
 
 // Map center and zoom for each continent
 const mapConfig: Record<string, { center: [number, number]; zoom: number }> = {
@@ -289,10 +439,13 @@ export default function NewsRoom() {
               <Geographies geography={WORLD_GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
-                    const countryCode = geo.properties.ISO_A3 || geo.id;
+                    // Get country code - convert numeric ID to ISO_A3
+                    const geoId = geo.id?.toString() || '';
+                    const countryCode = countryIdToISO[geoId] || geo.properties?.ISO_A3 || geo.properties?.iso_a3 || geoId;
 
-                    // Determine if country should be highlighted based on selected continent
+                    // Determine if country should be highlighted based on selected continent and sub-region
                     let isInSelectedContinent = false;
+                    let isInSelectedSubRegion = false;
                     let fillColor = 'rgba(50, 50, 50, 0.5)';
 
                     if (!selectedContinent) {
@@ -306,13 +459,37 @@ export default function NewsRoom() {
                       }
                     } else if (selectedContinent === 'africa') {
                       isInSelectedContinent = africaCountries.includes(countryCode);
-                      fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+
+                      if (selectedSubRegion && africaSubRegions[selectedSubRegion]) {
+                        isInSelectedSubRegion = africaSubRegions[selectedSubRegion].includes(countryCode);
+                        if (isInSelectedSubRegion) {
+                          fillColor = 'rgba(6, 246, 255, 0.7)';
+                        } else if (isInSelectedContinent) {
+                          fillColor = 'rgba(6, 246, 255, 0.2)';
+                        } else {
+                          fillColor = 'rgba(30, 30, 30, 0.3)';
+                        }
+                      } else {
+                        fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+                      }
                     } else if (selectedContinent === 'us') {
                       isInSelectedContinent = usCountries.includes(countryCode);
                       fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
                     } else if (selectedContinent === 'europe') {
                       isInSelectedContinent = europeCountries.includes(countryCode);
-                      fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+
+                      if (selectedSubRegion && europeSubRegions[selectedSubRegion]) {
+                        isInSelectedSubRegion = europeSubRegions[selectedSubRegion].includes(countryCode);
+                        if (isInSelectedSubRegion) {
+                          fillColor = 'rgba(6, 246, 255, 0.7)';
+                        } else if (isInSelectedContinent) {
+                          fillColor = 'rgba(6, 246, 255, 0.2)';
+                        } else {
+                          fillColor = 'rgba(30, 30, 30, 0.3)';
+                        }
+                      } else {
+                        fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+                      }
                     }
 
                     return (
@@ -320,12 +497,12 @@ export default function NewsRoom() {
                         key={geo.rsmKey}
                         geography={geo}
                         fill={fillColor}
-                        stroke="rgba(6, 246, 255, 0.2)"
-                        strokeWidth={0.5}
+                        stroke={isInSelectedSubRegion ? 'rgba(6, 246, 255, 0.6)' : 'rgba(6, 246, 255, 0.2)'}
+                        strokeWidth={isInSelectedSubRegion ? 1 : 0.5}
                         style={{
                           default: { outline: 'none' },
                           hover: {
-                            fill: isInSelectedContinent || !selectedContinent ? 'rgba(6, 246, 255, 0.5)' : fillColor,
+                            fill: isInSelectedSubRegion ? 'rgba(6, 246, 255, 0.8)' : (isInSelectedContinent || !selectedContinent ? 'rgba(6, 246, 255, 0.5)' : fillColor),
                             outline: 'none'
                           },
                           pressed: { outline: 'none' },
