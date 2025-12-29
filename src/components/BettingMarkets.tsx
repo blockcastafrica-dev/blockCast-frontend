@@ -872,6 +872,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [selectedConfidence, setSelectedConfidence] = useState('all');
+  const [selectedSort, setSelectedSort] = useState('trending');
   const { language } = useLanguage();
   const navigate = useNavigate();
 
@@ -893,11 +894,20 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
     return matchesSearch && matchesCategory && matchesCountry && matchesConfidence;
   });
 
-  // Sort markets (trending first, then by total pool)
+  // Sort markets based on selected sort option
   const sortedMarkets = [...filteredMarkets].sort((a, b) => {
-    if (a.trending && !b.trending) return -1;
-    if (!a.trending && b.trending) return 1;
-    return b.totalPool - a.totalPool;
+    switch (selectedSort) {
+      case 'trending':
+        if (a.trending && !b.trending) return -1;
+        if (!a.trending && b.trending) return 1;
+        return b.totalPool - a.totalPool;
+      case 'recent':
+        return new Date(b.expiresAt).getTime() - new Date(a.expiresAt).getTime();
+      case 'popular':
+        return b.totalCasters - a.totalCasters;
+      default:
+        return b.totalPool - a.totalPool;
+    }
   });
 
   // Get unique categories and countries for filters
@@ -994,62 +1004,59 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
             </div>
           </div>
 
-          {/* Filter Dropdowns - Center */}
-          <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
-            <Select value="trending" onValueChange={() => {}}>
-              <SelectTrigger
-                className="w-full sm:w-36 md:w-40 lg:w-40 flex-1 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 text-xs md:text-sm lg:text-sm"
-                {...({} as any)}
-              >
-                <SelectValue placeholder="Trending" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="trending">Trending</SelectItem>
-                <SelectItem value="recent">Recent</SelectItem>
-                <SelectItem value="popular">Popular</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value="all" onValueChange={() => {}}>
-              <SelectTrigger
-                className="w-full sm:w-36 md:w-40 lg:w-40 flex-1 h-9 md:h-10 lg:h-11 bg-background/50 border-primary/30 text-xs md:text-sm lg:text-sm"
-                {...({} as any)}
-              >
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="past">Past</SelectItem>
-                <SelectItem value="present">Present</SelectItem>
-                <SelectItem value="future">Future</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Active Markets Counter - Hidden on mobile, visible on lg */}
+          <div className="hidden lg:flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-muted-foreground">
+              31 Active Markets
+            </span>
           </div>
+        </div>
 
-          {/* Active Markets Counter and Create Button - Right Side */}
-          <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-muted-foreground">
-                31 Active Markets
-              </span>
-            </div>
+        {/* Sort Pills and Create Market - Row on mobile */}
+        <div className="flex items-center gap-2 mt-3 overflow-x-auto pb-2 scrollbar-hide">
+          {/* Sort Pills */}
+          {[
+            { value: 'trending', label: 'Trending' },
+            { value: 'recent', label: 'Recent' },
+            { value: 'popular', label: 'Popular' }
+          ].map((option) => (
             <button
-              className="font-medium gap-2 px-4 md:px-6 py-2 md:py-2.5 text-sm md:text-base rounded-full transition-all duration-200 flex items-center"
-              style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1px solid #444' }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#06f6ff'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#444'; }}
-              onClick={() => setShowCreateMarketModal(true)}
+              key={option.value}
+              onClick={() => setSelectedSort(option.value)}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
+                selectedSort !== option.value ? 'hover:border-[#06f6ff]' : ''
+              }`}
+              style={{
+                backgroundColor: selectedSort === option.value ? '#06f6ff' : 'transparent',
+                color: selectedSort === option.value ? '#000000' : '#ffffff',
+                borderColor: selectedSort === option.value ? '#06f6ff' : '#444',
+                boxShadow: selectedSort === option.value ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+              }}
             >
-              <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="12" y1="18" x2="12" y2="12"></line>
-                <line x1="9" y1="15" x2="15" y2="15"></line>
-              </svg>
-              Create Market
+              {option.label}
             </button>
-          </div>
+          ))}
+
+          {/* Spacer to push Create Market to right on larger screens */}
+          <div className="flex-1 hidden md:block"></div>
+
+          {/* Create Market Button */}
+          <button
+            className="font-medium gap-2 px-4 py-2 text-sm rounded-full transition-all duration-200 flex items-center whitespace-nowrap"
+            style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1px solid #444' }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#06f6ff'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#444'; }}
+            onClick={() => setShowCreateMarketModal(true)}
+          >
+            <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            Create Market
+          </button>
         </div>
 
         {/* Category Pills Row */}
