@@ -721,6 +721,7 @@ const fee = grossProfit * 0.03;  // 3% of winnings only
 
 ### Commits:
 - `345ca24` - Add Connect Wallet modal with wallet and social login options
+- `7a4501e` - Fix More Wallets button to match other wallet options styling
 
 ### Changes:
 
@@ -750,7 +751,7 @@ const fee = grossProfit * 0.03;  // 3% of winnings only
 
 **1. Main View:**
 - Wallet options: Binance Wallet, MetaMask, OKX Wallet
-- "More Wallets" button (dashed border)
+- "More Wallets" button (same styling as wallet options, with + icon)
 - "OR" divider
 - "Login with Social Account" button
 - Terms checkbox (centered)
