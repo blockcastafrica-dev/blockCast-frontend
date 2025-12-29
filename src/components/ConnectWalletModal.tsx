@@ -297,7 +297,7 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                     border: agreedToTerms ? 'none' : '2px solid #444',
                   }}
                 >
-                  {agreedToTerms && <Check className="w-3.5 h-3.5 text-black" />}
+                  {agreedToTerms && <Check className="w-3.5 h-3.5" style={{ color: '#000000' }} />}
                 </button>
                 <span className="text-sm text-gray-400">
                   I agree to the{' '}
