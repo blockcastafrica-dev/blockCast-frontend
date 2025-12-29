@@ -674,4 +674,45 @@ const fee = grossProfit * 0.03;  // 3% of winnings only
 
 ---
 
+## 14. Create Market Button & Modal Pill Styling
+
+**Files:** `src/components/BettingMarkets.tsx`, `src/components/CreateMarketModal.tsx`
+
+### Commits:
+- `0cc4018` - Update Create Market button and modal with pill button styling
+
+### Changes:
+
+**Create Market Button (BettingMarkets.tsx):**
+- Changed from cyan background to pill style matching category buttons
+- Transparent background with gray border (`#444`)
+- White text
+- Cyan border on hover (`#06f6ff`) using `onMouseEnter`/`onMouseLeave` handlers
+- Added document icon with plus sign
+- Rounded pill shape (`rounded-full`)
+
+**Create Market Modal (CreateMarketModal.tsx) - Step 2:**
+
+| Element | Before | After |
+|---------|--------|-------|
+| Categories | 2-column grid with filled backgrounds | Horizontal flex-wrap pill buttons |
+| Subcategories | Rounded-lg with tinted backgrounds | Rounded-full pill buttons |
+| Market Type | 2-column grid cards with descriptions | Simple pill buttons (Present/Future) |
+
+**Pill Button Styling (Applied to all selections):**
+
+| State | Background | Text | Border | Shadow |
+|-------|------------|------|--------|--------|
+| Selected | Cyan (`#06f6ff`) | Black (`#000000`) | Cyan | Cyan glow |
+| Unselected | Transparent | White (`#ffffff`) | Gray (`#444`) | None |
+| Hover | Transparent | White | Cyan (`#06f6ff`) | None |
+
+**Button Properties:**
+- Padding: `px-4 py-2`
+- Border radius: `rounded-full`
+- Font: 14px, medium weight
+- Transition: 200ms
+
+---
+
 *Last Updated: December 29, 2025*
