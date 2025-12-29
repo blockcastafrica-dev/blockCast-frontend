@@ -246,9 +246,17 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
               {/* More Wallets Button */}
               <button
                 onClick={() => setCurrentView('more-wallets')}
-                className="w-full p-3 border border-dashed border-gray-700 rounded-xl text-center hover:border-cyan-500/50 transition-colors"
+                className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
               >
-                <span className="text-gray-400 text-sm">More Wallets</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg border border-gray-600 flex items-center justify-center">
+                      <span className="text-gray-400 text-lg">+</span>
+                    </div>
+                    <span className="text-white font-medium">More Wallets</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-600" />
+                </div>
               </button>
 
               {/* OR Divider */}
