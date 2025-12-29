@@ -10,6 +10,7 @@ import {
   Search,
   Target,
   ChevronDown,
+  Newspaper,
 } from "lucide-react";
 import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
@@ -34,7 +35,7 @@ export default function Footer({ onNavigate }: FooterProps) {
     const routeMap: Record<string, string> = {
       markets: "/",
       verify: "/verify-truth",
-      community: "/community-hub",
+      community: "/news-room",
       about: "/about",
       contact: "/contact",
       privacy: "/privacy",
@@ -149,7 +150,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               {[
                 { label: "Truth Markets", icon: Globe, page: "markets" },
                 // { label: "Fact Verification", icon: Shield, page: "verify" },
-                { label: "Community Hub", icon: Users, page: "community" },
+                { label: "News Room", icon: Newspaper, page: "community" },
               ].map((item) => (
                 <div
                   key={item.label}

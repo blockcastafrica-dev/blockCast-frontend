@@ -28,6 +28,7 @@ import {
   Copy,
   Check,
   LogOut,
+  Newspaper,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -105,10 +106,10 @@ export default function TopNavigation({
     //   path: "/verify-truth",
     // },
     {
-      id: "community-hub",
-      label: "community Hub",
-      icon: Users,
-      path: "/community-hub",
+      id: "news-room",
+      label: "News Room",
+      icon: Newspaper,
+      path: "/news-room",
     },
   ];
 

@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Gift, Sparkles, Wallet, Shield, Target, Zap, Users } from 'lucide-react';
 import MarketDetailsPage from '@/pages/MarketDetailsPage';
-import CommunityHub from '@/pages/CommunityHub';
+import NewsRoom from '@/pages/NewsRoom';
 // Import the new page components
 import AboutPage from '@/pages/AboutPage';
 import ContactPage from '@/pages/ContactPage';
@@ -485,8 +485,8 @@ export default function App() {
         //   )
         // },
         {
-          path: "/community-hub",
-          element: <CommunityHub />
+          path: "/news-room",
+          element: <NewsRoom />
         },
         {
           path: "/settings",

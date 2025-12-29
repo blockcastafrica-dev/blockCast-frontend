@@ -48,6 +48,7 @@ import {
   Clock,
   Sparkles,
   Image,
+  Newspaper,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "../components/ui/avatar";
@@ -416,7 +417,7 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-export default function Social() {
+export default function NewsRoom() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("feed");
   const [newPost, setNewPost] = useState("");
@@ -660,12 +661,11 @@ export default function Social() {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-primary mb-1 flex items-center gap-2">
-            <Users className="h-7 w-7" />
-            African Truth Community
+            <Newspaper className="h-7 w-7" />
+            News Room
           </h1>
           <p className="text-sm text-muted-foreground">
-            Connect with truth seekers across Africa • Share insights • Combat
-            misinformation together
+            Stay updated with the latest news • Share insights • Discover trending stories
           </p>
         </div>
         <div className="flex gap-3">
