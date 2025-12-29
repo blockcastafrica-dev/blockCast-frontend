@@ -791,4 +791,18 @@ Auto-detects installed wallets and shows "Detected" badge:
 
 ---
 
+## 16. Deposit Button Rename
+
+**Files:** `src/components/TopNavigation.tsx`, `src/components/Settings.tsx`
+
+### Commits:
+- `b1114c4` - Change Add Funds button to + Deposit
+
+### Changes:
+- Renamed "+ Add Funds" button to "+ Deposit"
+- Updated in TopNavigation (header) and Settings (wallet section)
+- Simplified button content to single text span
+
+---
+
 *Last Updated: December 29, 2025*
