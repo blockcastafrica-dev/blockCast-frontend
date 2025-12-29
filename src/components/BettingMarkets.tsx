@@ -902,7 +902,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
     { value: 'high-volume', label: 'High Volume' },
     { value: 'new', label: 'New' },
     { value: 'ending-soon', label: 'Ending Soon' },
-    { value: 'past', label: 'Past' },
+    { value: 'disputable', label: 'Disputable' },
     { value: 'future', label: 'Future' },
   ];
 
@@ -911,7 +911,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   // Filter and sort markets based on selected option
   const sortedMarkets = [...filteredMarkets]
     .filter(market => {
-      if (selectedSort === 'past') return market.marketType === 'present';
+      if (selectedSort === 'disputable') return market.disputable === true;
       if (selectedSort === 'future') return market.marketType === 'future';
       return true;
     })
@@ -927,7 +927,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           return new Date(b.expiresAt).getTime() - new Date(a.expiresAt).getTime();
         case 'ending-soon':
           return new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime();
-        case 'past':
+        case 'disputable':
         case 'future':
           return b.totalPool - a.totalPool;
         default:
