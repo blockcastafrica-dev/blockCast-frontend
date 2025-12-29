@@ -293,11 +293,11 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   onClick={() => setAgreedToTerms(!agreedToTerms)}
                   className="w-5 h-5 rounded flex items-center justify-center transition-all"
                   style={{
-                    backgroundColor: agreedToTerms ? '#06f6ff' : 'transparent',
-                    border: agreedToTerms ? 'none' : '2px solid #444',
+                    backgroundColor: agreedToTerms ? 'rgba(6, 246, 255, 0.15)' : 'transparent',
+                    border: agreedToTerms ? '2px solid #06f6ff' : '2px solid #444',
                   }}
                 >
-                  {agreedToTerms && <Check className="w-3.5 h-3.5 text-black" />}
+                  {agreedToTerms && <Check className="w-3.5 h-3.5 text-[#06f6ff]" />}
                 </button>
                 <span className="text-sm text-gray-400">
                   I agree to the{' '}
