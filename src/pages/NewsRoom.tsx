@@ -718,23 +718,6 @@ export default function NewsRoom() {
 
         {/* News Section */}
         <div className="lg:col-span-4 rounded-xl border border-zinc-800 p-4 relative overflow-hidden" style={{ backgroundColor: '#141414' }}>
-          {/* Diagonal lines decoration */}
-          <div className="absolute top-2 right-2 opacity-20 pointer-events-none">
-            <svg width="80" height="100" viewBox="0 0 80 100">
-              {Array.from({ length: 20 }).map((_, i) => (
-                <line
-                  key={i}
-                  x1={(i % 5) * 16}
-                  y1={Math.floor(i / 5) * 25}
-                  x2={(i % 5) * 16 + 12}
-                  y2={Math.floor(i / 5) * 25 + 18}
-                  stroke="#fff"
-                  strokeWidth="2"
-                />
-              ))}
-            </svg>
-          </div>
-
           {/* Header with region tabs */}
           <div className="mb-4 flex gap-2">
             {["Africa", "America", "Europe"].map((region) => (
