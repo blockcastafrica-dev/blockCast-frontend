@@ -715,4 +715,79 @@ const fee = grossProfit * 0.03;  // 3% of winnings only
 
 ---
 
+## 15. Connect Wallet Modal & Button
+
+**Files:** `src/components/TopNavigation.tsx`, `src/components/ConnectWalletModal.tsx` (new)
+
+### Commits:
+- `345ca24` - Add Connect Wallet modal with wallet and social login options
+
+### Changes:
+
+**TopNavigation.tsx:**
+- Replaced "Login" and "Sign Up" buttons with single "Connect Wallet" button
+- Button styled with cyan background (`#06f6ff`), black text, rounded-full
+- Wallet icon added to button
+- Integrated ConnectWalletModal component
+
+**ConnectWalletModal.tsx (New Component):**
+
+### Modal Design (Matching Fund Wallet Style):
+| Property | Value |
+|----------|-------|
+| Background | `#0f1419` |
+| Border | `1px solid #1f2937` |
+| Border Radius | `16px` |
+| Max Width | `480px` |
+| Z-Index | `99999` |
+
+### Header:
+- Gradient icon container (cyan to purple)
+- Dynamic title based on current view
+- Close button with cyan hover effect
+
+### Views:
+
+**1. Main View:**
+- Wallet options: Binance Wallet, MetaMask, OKX Wallet
+- "More Wallets" button (dashed border)
+- "OR" divider
+- "Login with Social Account" button
+- Terms checkbox (centered)
+
+**2. More Wallets View:**
+- All wallets: Binance, MetaMask, OKX, Trust Wallet, Coinbase, Phantom
+- Back button to return to main
+
+**3. Social Login View:**
+- Google (white background)
+- Apple (black background)
+- X/Twitter (black background)
+- Discord (purple background `#5865F2`)
+- Telegram (blue background `#26A5E4`)
+
+### Wallet Detection:
+Auto-detects installed wallets and shows "Detected" badge:
+- MetaMask: `window.ethereum?.isMetaMask`
+- Binance: `window.BinanceChain`
+- OKX: `window.okxwallet`
+- Trust Wallet: `window.trustwallet`
+- Coinbase: `window.coinbaseWalletExtension`
+- Phantom: `window.phantom?.solana`
+
+### Terms Agreement:
+- Checkbox must be checked before connecting
+- Links to Privacy and Terms of Use pages
+- Wallet/social buttons disabled until agreed
+
+### Card Styling:
+| Property | Value |
+|----------|-------|
+| Background | `#1a1f26` |
+| Border | `1px solid` gray-700 |
+| Border Radius | `rounded-xl` |
+| Hover | `border-cyan-500/50` |
+
+---
+
 *Last Updated: December 29, 2025*
