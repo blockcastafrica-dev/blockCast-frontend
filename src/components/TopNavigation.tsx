@@ -51,6 +51,7 @@ import FooterAccordion from './FooterAccordion';
 import NavAccordion from "./NavAccordion";
 import FundWalletModal from "./FundWalletModal";
 import WithdrawWallet from "./WithdrawWallet";
+import ConnectWalletModal from "./ConnectWalletModal";
 import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
 
@@ -73,6 +74,7 @@ export default function TopNavigation({
   const [isVisible, setIsVisible] = useState(false);
   const [isWithdrawalVisible, setIsWithdrawalVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showConnectWallet, setShowConnectWallet] = useState(false);
 
   // Generate or get wallet address (in real app, this would come from wallet connection)
   const walletAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
@@ -130,14 +132,15 @@ export default function TopNavigation({
     return location.pathname === path;
   };
 
-  const handleLogin = () => {
-    // Simulate login - in real app, this would authenticate the user
-    setIsLoggedIn(true);
+  const handleConnectWalletClick = () => {
+    setShowConnectWallet(true);
   };
 
-  const handleSignUp = () => {
-    // Simulate sign up - in real app, this would create a new account
+  const handleWalletConnect = (wallet: string) => {
+    // Simulate wallet connection - in real app, this would connect to the actual wallet
+    console.log('Connecting to wallet:', wallet);
     setIsLoggedIn(true);
+    setShowConnectWallet(false);
   };
 
   const handleSignOut = () => {
@@ -278,25 +281,15 @@ export default function TopNavigation({
 
             {/* Conditional rendering based on login state */}
             {!isLoggedIn ? (
-              // Logged out state - show Login and Sign Up buttons
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogin}
-                  className="relative px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer text-primary hover:bg-primary/10"
-                >
-                  Login
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleSignUp}
-                  className="relative px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer"
-                  style={{ backgroundColor: '#06f6ff', color: '#000000' }}
-                >
-                  Sign Up
-                </Button>
-              </>
+              // Logged out state - show Connect Wallet button
+              <button
+                onClick={handleConnectWalletClick}
+                className="flex items-center gap-2 px-4 md:px-5 lg:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-medium transition-all duration-200 hover:opacity-90"
+                style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+              >
+                <Wallet className="h-4 w-4 md:h-5 md:w-5" />
+                Connect Wallet
+              </button>
             ) : (
               // Logged in state - show user avatar dropdown
               <div className="hidden lg:block">
@@ -511,28 +504,19 @@ export default function TopNavigation({
                         </Button>
                       </div>
 
-                      {/* Login/Sign Up Buttons */}
-                      <div className="flex gap-3 px-4 py-2">
-                        <Button
-                          variant="outline"
+                      {/* Connect Wallet Button */}
+                      <div className="flex px-4 py-2">
+                        <button
                           onClick={() => {
-                            handleLogin();
                             setShowMobileMenu(false);
+                            setShowConnectWallet(true);
                           }}
-                          className="flex-1"
-                        >
-                          Login
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            handleSignUp();
-                            setShowMobileMenu(false);
-                          }}
-                          className="flex-1"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-medium transition-all duration-200 hover:opacity-90"
                           style={{ backgroundColor: '#06f6ff', color: '#000000' }}
                         >
-                          Sign Up
-                        </Button>
+                          <Wallet className="h-4 w-4" />
+                          Connect Wallet
+                        </button>
                       </div>
                     </>
                   )}
@@ -758,6 +742,11 @@ export default function TopNavigation({
           onClose={() => setIsWithdrawalVisible(false)}
         />
       )}
+      <ConnectWalletModal
+        isOpen={showConnectWallet}
+        onClose={() => setShowConnectWallet(false)}
+        onConnect={handleWalletConnect}
+      />
     </>
   );
 }
