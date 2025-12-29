@@ -1090,9 +1090,6 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
             )}
           </div>
 
-          {/* Spacer to push Create Market to right on larger screens */}
-          <div className="flex-1 hidden md:block"></div>
-
           {/* Create Market Button */}
           <button
             className="font-medium gap-2 px-4 py-2 text-sm rounded-full transition-all duration-200 flex items-center whitespace-nowrap"
