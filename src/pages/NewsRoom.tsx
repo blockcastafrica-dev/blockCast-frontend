@@ -261,44 +261,120 @@ const upcomingEvents = [
   },
 ];
 
-// News Articles Data
-const newsArticles = [
-  {
-    id: "1",
-    title: "Nigeria's Inflation Rate Hits 28.9% in December...",
-    source: "Reuters.com",
-    timestamp: "2 hours ago",
-    imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=100&h=100&fit=crop",
-  },
-  {
-    id: "2",
-    title: "South Africa's Load Shedding Reduced to Stage 2...",
-    source: "BusinessDay.com",
-    timestamp: "4 hours ago",
-    imageUrl: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=100&h=100&fit=crop",
-  },
-  {
-    id: "3",
-    title: "Kenya's M-Pesa Processes Record $50B in 2024...",
-    source: "TechCabal.com",
-    timestamp: "6 hours ago",
-    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&h=100&fit=crop",
-  },
-  {
-    id: "4",
-    title: "Morocco Signs $10B Renewable Energy Deal with...",
-    source: "AfricaNews.com",
-    timestamp: "8 hours ago",
-    imageUrl: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=100&h=100&fit=crop",
-  },
-  {
-    id: "5",
-    title: "Ghana Cocoa Production Up 15% Despite Climate...",
-    source: "Bloomberg.com",
-    timestamp: "10 hours ago",
-    imageUrl: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=100&h=100&fit=crop",
-  },
-];
+// News Articles Data by Region
+const newsArticlesByRegion: Record<string, Array<{ id: string; title: string; source: string; timestamp: string; imageUrl: string }>> = {
+  africa: [
+    {
+      id: "1",
+      title: "Nigeria's Inflation Rate Hits 28.9% in December...",
+      source: "Reuters.com",
+      timestamp: "2 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=100&h=100&fit=crop",
+    },
+    {
+      id: "2",
+      title: "South Africa's Load Shedding Reduced to Stage 2...",
+      source: "BusinessDay.com",
+      timestamp: "4 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=100&h=100&fit=crop",
+    },
+    {
+      id: "3",
+      title: "Kenya's M-Pesa Processes Record $50B in 2024...",
+      source: "TechCabal.com",
+      timestamp: "6 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&h=100&fit=crop",
+    },
+    {
+      id: "4",
+      title: "Morocco Signs $10B Renewable Energy Deal with...",
+      source: "AfricaNews.com",
+      timestamp: "8 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=100&h=100&fit=crop",
+    },
+    {
+      id: "5",
+      title: "Ghana Cocoa Production Up 15% Despite Climate...",
+      source: "Bloomberg.com",
+      timestamp: "10 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=100&h=100&fit=crop",
+    },
+  ],
+  america: [
+    {
+      id: "1",
+      title: "Fed Signals Potential Rate Cuts in Q2 2025...",
+      source: "CNBC.com",
+      timestamp: "1 hour ago",
+      imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=100&h=100&fit=crop",
+    },
+    {
+      id: "2",
+      title: "Brazil's Petrobras Reports Record Oil Output...",
+      source: "Reuters.com",
+      timestamp: "3 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?w=100&h=100&fit=crop",
+    },
+    {
+      id: "3",
+      title: "Mexico's Nearshoring Boom Drives Manufacturing...",
+      source: "Bloomberg.com",
+      timestamp: "5 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=100&h=100&fit=crop",
+    },
+    {
+      id: "4",
+      title: "Argentina's New Economic Reforms Show Early Signs...",
+      source: "FT.com",
+      timestamp: "7 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=100&h=100&fit=crop",
+    },
+    {
+      id: "5",
+      title: "Canada's Tech Sector Attracts $15B in Investment...",
+      source: "TechCrunch.com",
+      timestamp: "9 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=100&h=100&fit=crop",
+    },
+  ],
+  europe: [
+    {
+      id: "1",
+      title: "ECB Maintains Rates Amid Inflation Concerns...",
+      source: "Reuters.com",
+      timestamp: "1 hour ago",
+      imageUrl: "https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=100&h=100&fit=crop",
+    },
+    {
+      id: "2",
+      title: "Germany's Manufacturing Sector Shows Recovery...",
+      source: "DW.com",
+      timestamp: "3 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=100&h=100&fit=crop",
+    },
+    {
+      id: "3",
+      title: "UK's Tech Industry Leads European Growth...",
+      source: "BBC.com",
+      timestamp: "5 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&h=100&fit=crop",
+    },
+    {
+      id: "4",
+      title: "France Unveils €50B Green Energy Investment Plan...",
+      source: "LeMonde.fr",
+      timestamp: "7 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=100&h=100&fit=crop",
+    },
+    {
+      id: "5",
+      title: "Spain's Tourism Revenue Hits All-Time High...",
+      source: "ElPais.com",
+      timestamp: "9 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=100&h=100&fit=crop",
+    },
+  ],
+};
 
 // Market Events Data
 const marketEvents = [
@@ -376,6 +452,7 @@ export default function NewsRoom() {
   const [selectedSubRegion, setSelectedSubRegion] = useState<string | null>(null);
   const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>({ "1": true });
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const [selectedNewsRegion, setSelectedNewsRegion] = useState<string>("africa");
   const navigate = useNavigate();
 
   // Get the current effective region for filtering
@@ -658,18 +735,27 @@ export default function NewsRoom() {
             </svg>
           </div>
 
-          {/* Header with highlight */}
-          <div className="mb-4">
-            <span
-              className="text-sm font-medium px-2 py-1 rounded"
-              style={{ backgroundColor: '#06f6ff', color: '#000' }}
-            >
-              Africa News
-            </span>
+          {/* Header with region tabs */}
+          <div className="mb-4 flex gap-2">
+            {["Africa", "America", "Europe"].map((region) => (
+              <button
+                key={region}
+                onClick={() => setSelectedNewsRegion(region.toLowerCase())}
+                onMouseEnter={() => setHoveredButton(`news-${region}`)}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="text-sm font-medium px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
+                style={{
+                  backgroundColor: selectedNewsRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
+                  color: selectedNewsRegion === region.toLowerCase() ? '#000' : (hoveredButton === `news-${region}` ? '#06f6ff' : '#fff'),
+                }}
+              >
+                {region}
+              </button>
+            ))}
           </div>
 
           <div className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
-            {newsArticles.map((article) => (
+            {newsArticlesByRegion[selectedNewsRegion]?.map((article) => (
               <div
                 key={article.id}
                 className="flex gap-3 cursor-pointer hover:bg-zinc-800/30 rounded-lg p-1 transition-colors"
