@@ -207,8 +207,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
                   className="gap-2 px-4 py-2 cursor-pointer flex-1"
                   style={{ backgroundColor: '#06f6ff', color: '#000000' }}
                 >
-                  <span className="text-lg font-bold leading-none">+</span>
-                  <span className="font-medium">Add Funds</span>
+                  <span className="font-medium">+ Deposit</span>
                 </Button>
                 <Button
                   onClick={() => setIsWithdrawVisible(true)}

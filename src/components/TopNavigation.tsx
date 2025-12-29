@@ -238,7 +238,7 @@ export default function TopNavigation({
               </div>
             )}
 
-            {/* Add Funds Button - Show when logged in (Desktop only) */}
+            {/* Deposit Button - Show when logged in (Desktop only) */}
             {isLoggedIn && (
               <Button
                 onClick={() => setIsVisible(true)}
@@ -246,8 +246,7 @@ export default function TopNavigation({
                 className="hidden lg:flex gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer"
                 style={{ backgroundColor: '#06f6ff', color: '#000000' }}
               >
-                <span className="text-base md:text-lg lg:text-lg font-bold leading-none">+</span>
-                <span className="font-medium">Add Funds</span>
+                <span className="font-medium">+ Deposit</span>
               </Button>
             )}
 
