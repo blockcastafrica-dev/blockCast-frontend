@@ -1038,12 +1038,14 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           <div className="relative">
             <button
               onClick={() => setShowSortDropdown(!showSortDropdown)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border hover:border-[#06f6ff]"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
               style={{
                 backgroundColor: 'transparent',
                 color: '#ffffff',
                 borderColor: '#444',
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#06f6ff'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#444'; }}
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
