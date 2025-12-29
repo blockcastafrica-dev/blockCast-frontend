@@ -1,26 +1,6 @@
-import {
-  Globe,
-  Twitter,
-  MessageCircle,
-  Mail,
-  Shield,
-  FileText,
-  Users,
-  Zap,
-  Search,
-  Target,
-  ChevronDown,
-  Newspaper,
-} from "lucide-react";
 import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-// import FooterAccordion from './FooterAccordion';
-import blockcastLogo from "@/assets/4714a7efb088ecf7991d3a7cb494d86ff45fc844.png";
 import { useNavigate } from "react-router-dom";
-// import hederaPrimary from "@/assets/hedera-primary.svg";
-import bnbLogo from "@/assets/bnb-bnb-logo.svg";
 
 interface FooterProps {
   onNavigate?: (page: string) => void;
@@ -28,19 +8,12 @@ interface FooterProps {
 
 export default function Footer({ onNavigate }: FooterProps) {
   const navigate = useNavigate();
-  // const [toggleSupport, setToggleSupport] = useState(false);
 
   const handleLinkClick = (page: string) => {
-    // Map page names to actual routes
     const routeMap: Record<string, string> = {
-      markets: "/",
-      verify: "/verify-truth",
-      community: "/news-room",
-      about: "/about",
-      contact: "/contact",
       privacy: "/privacy",
       terms: "/terms",
-      help: "/help",
+      contact: "/contact",
     };
 
     const route = routeMap[page];
@@ -51,210 +24,69 @@ export default function Footer({ onNavigate }: FooterProps) {
     }
   };
 
-  const handleLogoClick = () => {
-    navigate("/");
-  };
-
-
-  // const handleToggleSupport = () => {
-  //   setToggleSupport(!toggleSupport);
-  // };
-
   return (
-    <footer className="hidden lg:block bg-card border-t border-border mt-8 md:mt-10 lg:mt-12">
-      <div className="container mx-auto px-3 md:px-4 lg:px-4 py-8 md:py-10 lg:py-12">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-7 lg:gap-8">
-          {/* Brand Section - Tagline Removed */}
-          <div className="space-y-3 md:space-y-4 lg:space-y-4">
-            <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2">
-              <button
-                onClick={handleLogoClick}
-                className="flex items-center gap-1.5 md:gap-2 lg:gap-2 hover:opacity-80 transition-opacity focus:outline-none cursor-pointer"
-                aria-label="Go to Truth Markets"
-              >
-                <img
-                  src={blockcastLogo}
-                  alt="Blockcast Logo"
-                  className="w-7 md:w-8 lg:w-8 h-7 md:h-8 lg:h-8 rounded-lg"
-                />
-                <div>
-                  <h3 className="text-base md:text-lg lg:text-lg font-bold">Blockcast</h3>
-                </div>
-              </button>
-            </div>
-            <p className="text-xs md:text-sm lg:text-sm text-muted-foreground max-w-xs">
-              Africa's first AI-powered truth verification platform. Combating
-              misinformation through collective intelligence and
-              blockchain-secured credibility across the continent.
-            </p>
-            <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2">
-              <Button
-                {...({} as any)}
-                variant="ghost"
-                size="sm"
-                className="p-1.5 md:p-2 lg:p-2 cursor-pointer"
+    <footer className="hidden lg:block bg-card/80 backdrop-blur-sm border-t border-border/50 fixed bottom-0 left-0 right-0 z-40">
+      <div className="container mx-auto px-4 py-2">
+        <div className="flex items-center justify-between">
+          {/* Left side - Company name, copyright, and links */}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">Blockcast</span>
+            <span>© {new Date().getFullYear()}</span>
+            <span className="text-muted-foreground/50">•</span>
+            <button
+              onClick={() => handleLinkClick("privacy")}
+              className="hover:text-foreground transition-colors cursor-pointer"
+            >
+              Privacy
+            </button>
+            <span className="text-muted-foreground/50">•</span>
+            <button
+              onClick={() => handleLinkClick("terms")}
+              className="hover:text-foreground transition-colors cursor-pointer"
+            >
+              Terms of Use
+            </button>
+            <span className="text-muted-foreground/50">•</span>
+            <button
+              onClick={() => handleLinkClick("contact")}
+              className="hover:text-foreground transition-colors cursor-pointer"
+            >
+              Contact
+            </button>
+          </div>
+
+          {/* Right side - Social icons */}
+          <div className="flex items-center gap-1">
+            <button
                 onClick={() => window.open('https://x.com/BlockCastLive', '_blank')}
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                aria-label="X (Twitter)"
               >
-                <BsTwitterX className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
-              </Button>
-              <Button
-                {...({} as any)}
-                variant="ghost"
-                size="sm"
-                className="p-1.5 md:p-2 lg:p-2"
+                <BsTwitterX className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => window.open('https://discord.gg/blockcast', '_blank')}
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                aria-label="Discord"
               >
-                <FaDiscord className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
-              </Button>
-              <Button
-                {...({} as any)}
-                variant="ghost"
-                size="sm"
-                className="p-1.5 md:p-2 lg:p-2"
+                <FaDiscord className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => window.open('https://tiktok.com/@blockcast', '_blank')}
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                aria-label="TikTok"
               >
-                <FaTiktok className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
-              </Button>
-
-              <Button
-                {...({} as any)}
-                variant="ghost"
-                size="sm"
-                className="p-1.5 md:p-2 lg:p-2"
+                <FaTiktok className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => window.open('https://t.me/blockcast', '_blank')}
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                aria-label="Telegram"
               >
-                <FaTelegramPlane className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
-              </Button>
-            </div>
-            <div className="flex items-center text-xs md:text-sm lg:text-sm text-muted-foreground h-2 ">
-              <p>
-                &copy; {new Date().getFullYear()} Blockcast. Fighting
-                misinformation through truth.
-              </p>
-            </div>
-            <div className="flex items-center text-xs md:text-sm lg:text-sm text-muted-foreground gap-1.5 md:gap-2 lg:gap-2 h-10 md:pb-4">
-              <p>Built on </p>
-              <span className="flex items-center gap-1.5 md:gap-2 lg:gap-2">
-                <img
-                  className="h-5 md:h-6 lg:h-6 text-muted-foreground"
-                  src={bnbLogo}
-                  alt=""
-                />
-                <p>BNB CHAIN</p>
-              </span>
-            </div>
+                <FaTelegramPlane className="h-4 w-4" />
+              </button>
           </div>
-
-          {/* Truth Platform Links */}
-          <div className="space-y-3 md:space-y-4 lg:space-y-4">
-            <h4 className="font-semibold text-foreground text-sm md:text-base lg:text-base">Truth Platform</h4>
-            <div className="space-y-2">
-              {[
-                { label: "Truth Markets", icon: Globe, page: "markets" },
-                // { label: "Fact Verification", icon: Shield, page: "verify" },
-                { label: "News Room", icon: Newspaper, page: "community" },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  onClick={() => handleLinkClick(item.page)}
-                  className="w-full flex items-center gap-2 h-auto p-2 text-muted-foreground cursor-pointer text-sm relative z-10"
-                  role="button"
-                  tabIndex={0}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
-                </div>
-              ))}
-            </div>
-          </div>
-          {/************* Resource Links *************/}
-          <div className="space-y-3 md:space-y-4 lg:space-y-4">
-            <h4 className="font-semibold text-foreground text-sm md:text-base lg:text-base">Resources</h4>
-            <div className="space-y-2">
-              {[
-                { label: "How it Works", icon: "icon", page: "markets" },
-                { label: "FAQ", icon: "Users", page: "help" },
-                { label: "Contact Us", icon: "icon", page: "contact" },
-                // { label: "Fact Verification", icon: Shield, page: "verify" },
-                // { label: "Help Center", icon: Users, page: "community" },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  onClick={() => handleLinkClick(item.page)}
-                  className="w-full flex items-center gap-2 h-auto p-2 text-muted-foreground cursor-pointer text-sm relative z-10"
-                  role="button"
-                  tabIndex={0}
-                >
-                  {item.label}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/*************************** Truth Support *************************/}
-
-          <div className="space-y-3 md:space-y-4 lg:space-y-4">
-            <h4 className="font-semibold text-foreground text-sm md:text-base lg:text-base">Support & Legal</h4>
-            <div className="space-y-2">
-              {[
-                { label: "About us", page: "about" },
-                // { label: "Contact Us", page: "contact" },
-                { label: "Privacy Policy", page: "privacy" },
-                { label: "Terms & conditions", page: "terms" },
-                // { label: "Help Center", page: "help" },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  onClick={() => handleLinkClick(item.page)}
-                  className="w-full flex items-center h-auto p-2 text-muted-foreground cursor-pointer text-sm relative z-10"
-                  role="button"
-                  tabIndex={0}
-                >
-                  {item.label}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* <FooterAccordion handleLinkClick={handleLinkClick} /> */}
         </div>
-
-        <Separator className="my-8" />
-
-        {/* Bottom Footer */}
-        {/* <div className="flex flex-col items-center h-40 p-8 md:p-0 md:h-20">
-          <div className="flex items-center text-sm text-muted-foreground h-2 ">
-            <p>
-              &copy; {new Date().getFullYear()} Blockcast. Fighting
-              misinformation through truth.
-            </p>
-          </div>
-
-          <div className="flex items-center text-sm text-muted-foreground gap-2 h-20 md:pb-4">
-            <p>Built on</p>
-            <span className="flex items-center">
-              <img
-                className="h-6 text-muted-foreground"
-                src={hederaPrimary}
-                alt=""
-              />
-              <p>Hedera</p>
-            </span>
-          </div>
-        </div> */}
-
-        {/* <div className="flex items-center gap-4 w-full hidden lg:flex">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-muted-foreground">
-                Truth Engine: Active
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              <span className="text-sm text-muted-foreground">
-                AI Verification: Live
-              </span>
-            </div>
-          </div> */}
       </div>
     </footer>
   );
