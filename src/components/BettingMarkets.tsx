@@ -1084,7 +1084,11 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
         </div>
 
         {/* Category Pills Row */}
-        <div className="flex items-center gap-2 md:gap-3 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="mt-4 overflow-hidden">
+          <div
+            className="flex items-center gap-2 md:gap-3 overflow-x-auto"
+            style={{ paddingBottom: '30px', marginBottom: '-30px' }}
+          >
           {categories.map((category) => (
             <button
               key={category}
@@ -1109,6 +1113,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               {category === 'all' ? 'All' : category}
             </button>
           ))}
+          </div>
         </div>
       </div>
 
