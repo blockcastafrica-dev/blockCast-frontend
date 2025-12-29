@@ -872,7 +872,8 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [selectedConfidence, setSelectedConfidence] = useState('all');
-  const [selectedSort, setSelectedSort] = useState('trending');
+  const [selectedSort, setSelectedSort] = useState('24h-volume');
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const { language } = useLanguage();
   const navigate = useNavigate();
 
@@ -894,16 +895,34 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
     return matchesSearch && matchesCategory && matchesCountry && matchesConfidence;
   });
 
+  // Sort options
+  const sortOptions = [
+    { value: 'new', label: 'New' },
+    { value: 'ending-soon', label: 'Ending Soon' },
+    { value: 'volume-desc', label: 'Total Volume ↓' },
+    { value: 'volume-asc', label: 'Total Volume ↑' },
+    { value: '24h-volume', label: '24H Volume ↓' },
+    { value: '7d-volume', label: '7D Volume ↓' },
+  ];
+
+  const selectedSortLabel = sortOptions.find(opt => opt.value === selectedSort)?.label || '24H Volume ↓';
+
   // Sort markets based on selected sort option
   const sortedMarkets = [...filteredMarkets].sort((a, b) => {
     switch (selectedSort) {
-      case 'trending':
+      case 'new':
+        return new Date(b.expiresAt).getTime() - new Date(a.expiresAt).getTime();
+      case 'ending-soon':
+        return new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime();
+      case 'volume-desc':
+        return b.totalPool - a.totalPool;
+      case 'volume-asc':
+        return a.totalPool - b.totalPool;
+      case '24h-volume':
         if (a.trending && !b.trending) return -1;
         if (!a.trending && b.trending) return 1;
         return b.totalPool - a.totalPool;
-      case 'recent':
-        return new Date(b.expiresAt).getTime() - new Date(a.expiresAt).getTime();
-      case 'popular':
+      case '7d-volume':
         return b.totalCasters - a.totalCasters;
       default:
         return b.totalPool - a.totalPool;
@@ -1013,30 +1032,61 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           </div>
         </div>
 
-        {/* Sort Pills and Create Market - Row on mobile */}
+        {/* Sort Dropdown and Create Market - Row on mobile */}
         <div className="flex items-center gap-2 mt-3 overflow-x-auto pb-2 scrollbar-hide">
-          {/* Sort Pills */}
-          {[
-            { value: 'trending', label: 'Trending' },
-            { value: 'recent', label: 'Recent' },
-            { value: 'popular', label: 'Popular' }
-          ].map((option) => (
+          {/* Sort Dropdown Pill */}
+          <div className="relative">
             <button
-              key={option.value}
-              onClick={() => setSelectedSort(option.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
-                selectedSort !== option.value ? 'hover:border-[#06f6ff]' : ''
-              }`}
+              onClick={() => setShowSortDropdown(!showSortDropdown)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border hover:border-[#06f6ff]"
               style={{
-                backgroundColor: selectedSort === option.value ? '#06f6ff' : 'transparent',
-                color: selectedSort === option.value ? '#000000' : '#ffffff',
-                borderColor: selectedSort === option.value ? '#06f6ff' : '#444',
-                boxShadow: selectedSort === option.value ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+                backgroundColor: 'transparent',
+                color: '#ffffff',
+                borderColor: '#444',
               }}
             >
-              {option.label}
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
+              </svg>
+              {selectedSortLabel}
             </button>
-          ))}
+
+            {/* Dropdown Menu */}
+            {showSortDropdown && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowSortDropdown(false)}
+                />
+                <div
+                  className="absolute top-full mt-2 left-0 z-50 min-w-[200px] rounded-xl border border-zinc-800 shadow-xl overflow-hidden"
+                  style={{ backgroundColor: '#1a1a1a' }}
+                >
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSelectedSort(option.value);
+                        setShowSortDropdown(false);
+                      }}
+                      className="w-full px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-zinc-800/50 flex items-center justify-between"
+                      style={{
+                        color: selectedSort === option.value ? '#f97316' : '#ffffff',
+                        backgroundColor: selectedSort === option.value ? 'rgba(249, 115, 22, 0.1)' : 'transparent'
+                      }}
+                    >
+                      {option.label}
+                      {selectedSort === option.value && (
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
           {/* Spacer to push Create Market to right on larger screens */}
           <div className="flex-1 hidden md:block"></div>
