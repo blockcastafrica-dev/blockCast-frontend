@@ -874,6 +874,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   const [selectedConfidence, setSelectedConfidence] = useState('all');
   const [selectedSort, setSelectedSort] = useState('trending');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const { language } = useLanguage();
   const navigate = useNavigate();
 
@@ -1042,7 +1043,11 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           {/* Sort Dropdown Pill */}
           <div className="relative">
             <button
-              onClick={() => setShowSortDropdown(!showSortDropdown)}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setDropdownPosition({ top: rect.bottom + 8, left: rect.left });
+                setShowSortDropdown(!showSortDropdown);
+              }}
               className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
               style={{
                 backgroundColor: 'transparent',
@@ -1057,43 +1062,8 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               </svg>
               {selectedFilterLabel}
             </button>
-
-            {/* Dropdown Menu */}
-            {showSortDropdown && (
-              <>
-                <div
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowSortDropdown(false)}
-                />
-                <div
-                  className="absolute top-full mt-2 left-0 z-50 min-w-[200px] rounded-xl border border-zinc-800 shadow-xl overflow-hidden"
-                  style={{ backgroundColor: '#1a1a1a' }}
-                >
-                  {filterOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => {
-                        setSelectedSort(option.value);
-                        setShowSortDropdown(false);
-                      }}
-                      className="w-full px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-zinc-800/50 flex items-center justify-between"
-                      style={{
-                        color: selectedSort === option.value ? '#f97316' : '#ffffff',
-                        backgroundColor: selectedSort === option.value ? 'rgba(249, 115, 22, 0.1)' : 'transparent'
-                      }}
-                    >
-                      {option.label}
-                      {selectedSort === option.value && (
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="3">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
+
 
           {/* Create Market Button */}
           <button
@@ -1591,6 +1561,60 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           // TODO: Add market to backend/state
         }}
       />
+
+      {/* Filter Dropdown - Rendered at root level to avoid z-index issues */}
+      {showSortDropdown && (
+        <>
+          <div
+            className="fixed inset-0"
+            style={{ zIndex: 9998 }}
+            onClick={() => setShowSortDropdown(false)}
+          />
+          <div
+            className="fixed min-w-[200px] rounded-xl border border-zinc-800 shadow-xl"
+            style={{
+              zIndex: 9999,
+              backgroundColor: '#1a1a1a',
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+            }}
+          >
+            {filterOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => {
+                  setSelectedSort(option.value);
+                  setShowSortDropdown(false);
+                }}
+                className="w-full px-4 py-3 text-left text-sm font-medium transition-colors flex items-center justify-between"
+                style={{
+                  color: selectedSort === option.value ? '#06f6ff' : '#ffffff',
+                  backgroundColor: selectedSort === option.value ? 'rgba(6, 246, 255, 0.1)' : 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedSort !== option.value) {
+                    e.currentTarget.style.backgroundColor = 'rgba(6, 246, 255, 0.15)';
+                    e.currentTarget.style.color = '#06f6ff';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedSort !== option.value) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#ffffff';
+                  }
+                }}
+              >
+                {option.label}
+                {selectedSort === option.value && (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#06f6ff" strokeWidth="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
