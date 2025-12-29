@@ -1122,7 +1122,6 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 backgroundColor: selectedCategory === category ? '#06f6ff' : 'transparent',
                 color: selectedCategory === category ? '#000000' : '#ffffff',
                 borderColor: selectedCategory === category ? '#06f6ff' : '#444',
-                boxShadow: selectedCategory === category ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
               }}
               onMouseEnter={(e) => {
                 if (selectedCategory !== category) {
