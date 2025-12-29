@@ -1,19 +1,8 @@
 import { useState } from "react";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import {
-  Calendar,
-  ChevronDown,
-  ChevronUp,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import {
   ComposableMap,
   Geographies,
   Geography,
-  ZoomableGroup,
 } from "react-simple-maps";
 
 // GeoJSON URLs for maps - using Natural Earth TopoJSON
@@ -376,87 +365,11 @@ const newsArticlesByRegion: Record<string, Array<{ id: string; title: string; so
   ],
 };
 
-// Market Events Data
-const marketEvents = [
-  {
-    id: "1",
-    time: "19:00 PM, Jan 30",
-    impact: "high",
-    country: "NG",
-    countryFlag: "🇳🇬",
-    market: "CBN Interest Rate Decision",
-    marketMonth: "JAN",
-    previous: "27.5%",
-    forecast: "27.5%",
-    expanded: true,
-    options: [
-      { label: "No change", change: 0.34, volume: "29.55M", odds: "87.2%" },
-      { label: "25 bps increase", change: -5.51, volume: "27.28M", odds: "12%" },
-      { label: "Decrease", change: -7.14, volume: "199.93M", odds: "1.3%" },
-      { label: "50+ bps increase", change: -20, volume: "720.97M", odds: "1.2%" },
-    ],
-  },
-  {
-    id: "2",
-    time: "14:00 PM, Feb 5",
-    impact: "high",
-    country: "ZA",
-    countryFlag: "🇿🇦",
-    market: "SA Unemployment Rate",
-    marketMonth: "FEB",
-    previous: "32.1%",
-    forecast: "31.5%",
-    expanded: false,
-    options: [
-      { label: "Below 30%", change: -8, volume: "8.2M", odds: "2.1%" },
-      { label: "30-31%", change: 12, volume: "28.4M", odds: "15.8%" },
-      { label: "31-32%", change: 5.2, volume: "67.8M", odds: "58.4%" },
-      { label: "Above 32%", change: -3.1, volume: "22.1M", odds: "23.7%" },
-    ],
-  },
-  {
-    id: "3",
-    time: "10:00 AM, Feb 12",
-    impact: "medium",
-    country: "KE",
-    countryFlag: "🇰🇪",
-    market: "Kenya GDP Growth 2024",
-    marketMonth: "FEB",
-    previous: "5.0%",
-    forecast: "5.2%",
-    expanded: false,
-    options: [
-      { label: "Below 4.5%", change: -22, volume: "5.1M", odds: "4.2%" },
-      { label: "4.5-5%", change: 8.5, volume: "18.9M", odds: "22.1%" },
-      { label: "5-5.5%", change: 2.1, volume: "52.3M", odds: "52.8%" },
-      { label: "Above 5.5%", change: 15, volume: "15.6M", odds: "20.9%" },
-    ],
-  },
-];
-
-// Region filters
-const regionFilters = [
-  { value: "all", label: "All" },
-  { value: "africa", label: "Africa" },
-  { value: "america", label: "America" },
-  { value: "europe", label: "Europe" },
-];
-
-const categoryFilters = [
-  { value: "rates", label: "Rates" },
-  { value: "commodities", label: "Commodities" },
-];
-
 export default function NewsRoom() {
   const [selectedContinent, setSelectedContinent] = useState<string | null>(null);
   const [selectedSubRegion, setSelectedSubRegion] = useState<string | null>(null);
-  const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>({ "1": true });
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [selectedNewsRegion, setSelectedNewsRegion] = useState<string>("africa");
-  const navigate = useNavigate();
-
-  // Get the current effective region for filtering
-  const selectedRegion = selectedSubRegion || selectedContinent || 'all';
 
   // Calculate days until event
   const getDaysUntil = (date: Date) => {
@@ -465,71 +378,12 @@ export default function NewsRoom() {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
 
-  // Toggle event expansion
-  const toggleExpand = (eventId: string) => {
-    setExpandedEvents(prev => ({
-      ...prev,
-      [eventId]: !prev[eventId]
-    }));
-  };
-
-  // Get impact indicator bars
-  const getImpactBars = (impact: string) => {
-    const isHigh = impact === "high";
-    return (
-      <div className="flex gap-0.5">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div
-            key={i}
-            className="w-1 h-4 rounded-sm"
-            style={{ backgroundColor: isHigh ? '#22c55e' : (i <= 3 ? '#eab308' : '#374151') }}
-          />
-        ))}
-      </div>
-    );
-  };
-
   return (
-    <div className="space-y-6 max-w-screen-2xl mx-auto">
-      {/* Top Section: Calendar, Map, News */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Calendar Section */}
-        <div className="lg:col-span-3 rounded-xl border border-zinc-800 p-4" style={{ backgroundColor: '#141414' }}>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-base font-semibold text-white">Calendar</span>
-            <span className="text-xs text-zinc-400">Africa</span>
-          </div>
-
-          <div className="space-y-3">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="flex items-center gap-3 py-2 border-b border-zinc-800/50 last:border-0"
-              >
-                {/* Days Box */}
-                <div className="text-center min-w-[40px] p-1.5 rounded" style={{ backgroundColor: '#252525' }}>
-                  <div className="text-sm font-bold text-white">{getDaysUntil(event.date)}</div>
-                  <div className="text-[10px] text-zinc-500">Days</div>
-                </div>
-
-                {/* Event Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm text-white truncate">{event.title}</div>
-                  <div className="text-xs text-zinc-500">Forecast: {event.forecast}</div>
-                </div>
-
-                {/* Month & Flag */}
-                <div className="text-right">
-                  <div className="text-xs text-zinc-500">{event.month}</div>
-                  <div className="text-sm">{event.countryFlag} {event.country}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Map Section */}
-        <div className="lg:col-span-5 rounded-xl border border-zinc-800 p-4 flex flex-col justify-center" style={{ backgroundColor: '#0a0a0a', minHeight: '320px' }}>
+    <div className="max-w-screen-2xl mx-auto">
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Left Column - Map */}
+        <div className="rounded-xl border border-zinc-800 p-4 flex flex-col justify-center" style={{ backgroundColor: '#0a0a0a' }}>
           {/* Interactive Map - World or Zoomed Continent */}
           <div className="w-full h-[240px] flex items-center justify-center relative overflow-hidden">
             <ComposableMap
@@ -716,194 +570,86 @@ export default function NewsRoom() {
           </div>
         </div>
 
-        {/* News Section */}
-        <div className="lg:col-span-4 rounded-xl border border-zinc-800 p-4 relative overflow-hidden" style={{ backgroundColor: '#141414' }}>
-          {/* Header with region tabs */}
-          <div className="mb-4 flex gap-2">
-            {["Africa", "America", "Europe"].map((region) => (
-              <button
-                key={region}
-                onClick={() => setSelectedNewsRegion(region.toLowerCase())}
-                onMouseEnter={() => setHoveredButton(`news-${region}`)}
-                onMouseLeave={() => setHoveredButton(null)}
-                className="text-sm font-medium px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
-                style={{
-                  backgroundColor: selectedNewsRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
-                  color: selectedNewsRegion === region.toLowerCase() ? '#000' : (hoveredButton === `news-${region}` ? '#06f6ff' : '#fff'),
-                }}
-              >
-                {region}
-              </button>
-            ))}
-          </div>
-
-          <div className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
-            {newsArticlesByRegion[selectedNewsRegion]?.map((article) => (
-              <div
-                key={article.id}
-                className="flex gap-3 cursor-pointer hover:bg-zinc-800/30 rounded-lg p-1 transition-colors"
-              >
-                <img
-                  src={article.imageUrl}
-                  alt=""
-                  className="w-14 h-14 rounded object-cover flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm text-cyan-400 line-clamp-2 leading-tight">
-                    {article.title}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-xs text-zinc-500">{article.source}</span>
-                    <span className="text-xs text-zinc-600">{article.timestamp}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Filter Pills */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {regionFilters.map((filter) => (
-          <button
-            key={filter.value}
-            onClick={() => {
-              if (filter.value === 'all') {
-                setSelectedContinent(null);
-                setSelectedSubRegion(null);
-              } else {
-                setSelectedContinent(filter.value);
-                setSelectedSubRegion(null);
-              }
-            }}
-            className="px-5 py-2 rounded-full text-sm font-medium transition-all"
-            style={{
-              backgroundColor: (filter.value === 'all' && !selectedContinent) || selectedContinent === filter.value ? '#eab308' : '#252525',
-              color: (filter.value === 'all' && !selectedContinent) || selectedContinent === filter.value ? '#000' : '#fff',
-            }}
-          >
-            {filter.label}
-          </button>
-        ))}
-        {categoryFilters.map((filter) => (
-          <button
-            key={filter.value}
-            className="px-5 py-2 rounded-full text-sm font-medium transition-all"
-            style={{
-              backgroundColor: '#252525',
-              color: '#fff',
-            }}
-          >
-            {filter.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Market Events Table */}
-      <div className="rounded-xl border border-zinc-800 overflow-hidden" style={{ backgroundColor: '#141414' }}>
-        {/* Table Header */}
-        <div className="grid grid-cols-12 gap-2 px-4 py-3 border-b border-zinc-800 text-xs text-zinc-500">
-          <div className="col-span-2">Time</div>
-          <div className="col-span-1">Impact</div>
-          <div className="col-span-1">Country</div>
-          <div className="col-span-3">Market</div>
-          <div className="col-span-1 text-center">Previous</div>
-          <div className="col-span-1 text-center underline">Forecast</div>
-          <div className="col-span-3 text-right">Chance</div>
-        </div>
-
-        {/* Table Body */}
-        {marketEvents.map((event) => (
-          <div key={event.id} className="border-b border-zinc-800 last:border-b-0">
-            {/* Event Header Row */}
-            <div className="grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-zinc-800/20">
-              <div className="col-span-2 text-sm text-white">{event.time}</div>
-              <div className="col-span-1">{getImpactBars(event.impact)}</div>
-              <div className="col-span-1 flex items-center gap-1">
-                <span>{event.countryFlag}</span>
-                <span className="text-xs text-zinc-400">{event.country}</span>
-              </div>
-              <div className="col-span-3">
-                <span className="text-sm text-white">{event.market}</span>
-                <span className="text-xs text-zinc-500 ml-2">{event.marketMonth}</span>
-              </div>
-              <div className="col-span-1 text-sm text-zinc-400 text-center">{event.previous}</div>
-              <div className="col-span-1 text-sm text-zinc-400 text-center">{event.forecast}</div>
-              <div className="col-span-3 flex items-center justify-end gap-2">
-                <span className="text-xs text-zinc-500">24 hr change</span>
-                <span className="text-xs text-zinc-500">Total Volume</span>
-                <button
-                  onClick={() => toggleExpand(event.id)}
-                  className="flex items-center gap-1 px-4 py-1.5 rounded-full text-sm"
-                  style={{ backgroundColor: '#2a2a2a' }}
-                >
-                  <span className="text-cyan-400">{event.options.length} Markets</span>
-                  {expandedEvents[event.id] ? (
-                    <ChevronUp className="h-4 w-4 text-zinc-400" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-zinc-400" />
-                  )}
-                </button>
-              </div>
+        {/* Right Column - Calendar + News stacked */}
+        <div className="flex flex-col gap-4">
+          {/* Calendar Section */}
+          <div className="rounded-xl border border-zinc-800 p-4" style={{ backgroundColor: '#141414' }}>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-base font-semibold text-white">Calendar</span>
+              <span className="text-xs text-zinc-400">Upcoming Events</span>
             </div>
 
-            {/* Expanded Options */}
-            {expandedEvents[event.id] && (
-              <div style={{ backgroundColor: '#0d0d0d' }}>
-                {event.options.map((option, idx) => (
-                  <div
-                    key={idx}
-                    className="grid grid-cols-12 gap-2 px-4 py-3 items-center border-t border-zinc-800/50 hover:bg-zinc-800/30"
-                  >
-                    <div className="col-span-2" />
-                    <div className="col-span-2 text-sm text-white">{option.label}</div>
-                    <div className="col-span-3">
-                      {/* Mini Chart */}
-                      <div className="h-6 flex items-center">
-                        <svg className="w-full h-full" viewBox="0 0 120 24" preserveAspectRatio="none">
-                          <path
-                            d={`M0,12 ${Array.from({ length: 20 }).map((_, i) =>
-                              `L${i * 6},${12 + (Math.random() - 0.5) * 8}`
-                            ).join(' ')}`}
-                            fill="none"
-                            stroke={option.change >= 0 ? '#22c55e' : '#f97316'}
-                            strokeWidth="1.5"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="col-span-1">
-                      <span className={`text-sm flex items-center gap-0.5 ${option.change >= 0 ? 'text-green-400' : 'text-orange-400'}`}>
-                        {option.change >= 0 ? '↑' : '↓'} {Math.abs(option.change)}%
-                      </span>
-                    </div>
-                    <div className="col-span-1 text-xs text-zinc-500">Vol. {option.volume}</div>
-                    <div className="col-span-1 text-sm font-medium text-white">{option.odds}</div>
-                    <div className="col-span-2 flex items-center gap-2 justify-end">
-                      <Button
-                        size="sm"
-                        className="h-7 px-5 text-xs font-bold rounded"
-                        style={{ backgroundColor: '#22c55e', color: '#000' }}
-                        onClick={() => navigate('/')}
-                      >
-                        YES
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="h-7 px-5 text-xs font-bold rounded"
-                        style={{ backgroundColor: '#374151', color: '#fff' }}
-                        onClick={() => navigate('/')}
-                      >
-                        NO
-                      </Button>
+            <div className="space-y-2">
+              {upcomingEvents.slice(0, 3).map((event) => (
+                <div
+                  key={event.id}
+                  className="flex items-center gap-3 py-2 border-b border-zinc-800/50 last:border-0"
+                >
+                  {/* Days Box */}
+                  <div className="text-center min-w-[36px] p-1 rounded" style={{ backgroundColor: '#252525' }}>
+                    <div className="text-sm font-bold text-white">{getDaysUntil(event.date)}</div>
+                    <div className="text-[9px] text-zinc-500">Days</div>
+                  </div>
+
+                  {/* Event Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm text-white truncate">{event.title}</div>
+                    <div className="text-xs text-zinc-500">Forecast: {event.forecast}</div>
+                  </div>
+
+                  {/* Flag */}
+                  <div className="text-sm">{event.countryFlag}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* News Section */}
+          <div className="rounded-xl border border-zinc-800 p-4 flex-1" style={{ backgroundColor: '#141414' }}>
+            {/* Header with region tabs */}
+            <div className="mb-3 flex gap-2">
+              {["Africa", "America", "Europe"].map((region) => (
+                <button
+                  key={region}
+                  onClick={() => setSelectedNewsRegion(region.toLowerCase())}
+                  onMouseEnter={() => setHoveredButton(`news-${region}`)}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  className="text-sm font-medium px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
+                  style={{
+                    backgroundColor: selectedNewsRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
+                    color: selectedNewsRegion === region.toLowerCase() ? '#000' : (hoveredButton === `news-${region}` ? '#06f6ff' : '#fff'),
+                  }}
+                >
+                  {region}
+                </button>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              {newsArticlesByRegion[selectedNewsRegion]?.slice(0, 4).map((article) => (
+                <div
+                  key={article.id}
+                  className="flex gap-3 cursor-pointer hover:bg-zinc-800/30 rounded-lg p-1 transition-colors"
+                >
+                  <img
+                    src={article.imageUrl}
+                    alt=""
+                    className="w-12 h-12 rounded object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm text-cyan-400 line-clamp-2 leading-tight">
+                      {article.title}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-zinc-500">{article.source}</span>
+                      <span className="text-xs text-zinc-600">{article.timestamp}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
