@@ -1009,8 +1009,8 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
         {/* Search and Active Markets Row */}
         <div className="flex items-center gap-3 md:gap-4">
-          {/* Search Bar */}
-          <div className="flex-1 lg:flex-none lg:w-64">
+          {/* Search Bar - aligned with Brand pill */}
+          <div className="flex-1 lg:flex-none lg:w-[700px]">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
