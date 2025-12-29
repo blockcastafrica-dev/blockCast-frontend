@@ -78,8 +78,6 @@ const countryIdToISO: Record<string, string> = {
   "894": "ZMB", "ZMB": "ZMB",
   "716": "ZWE", "ZWE": "ZWE",
   "732": "ESH", "ESH": "ESH",
-  // USA
-  "840": "USA", "USA": "USA",
   // Europe
   "8": "ALB", "008": "ALB", "ALB": "ALB",
   "20": "AND", "020": "AND", "AND": "AND",
@@ -127,16 +125,40 @@ const countryIdToISO: Record<string, string> = {
   "804": "UKR", "UKR": "UKR",
   "826": "GBR", "GBR": "GBR",
   "336": "VAT", "VAT": "VAT",
+  // Americas
+  "124": "CAN", "CAN": "CAN",
+  "484": "MEX", "MEX": "MEX",
+  "840": "USA", "USA": "USA",
+  "32": "ARG", "032": "ARG", "ARG": "ARG",
+  "68": "BOL", "068": "BOL", "BOL": "BOL",
+  "76": "BRA", "076": "BRA", "BRA": "BRA",
+  "152": "CHL", "CHL": "CHL",
+  "170": "COL", "COL": "COL",
+  "188": "CRI", "CRI": "CRI",
+  "192": "CUB", "CUB": "CUB",
+  "214": "DOM", "DOM": "DOM",
+  "218": "ECU", "ECU": "ECU",
+  "222": "SLV", "SLV": "SLV",
+  "320": "GTM", "GTM": "GTM",
+  "328": "GUY", "GUY": "GUY",
+  "332": "HTI", "HTI": "HTI",
+  "340": "HND", "HND": "HND",
+  "388": "JAM", "JAM": "JAM",
+  "558": "NIC", "NIC": "NIC",
+  "591": "PAN", "PAN": "PAN",
+  "600": "PRY", "PRY": "PRY",
+  "604": "PER", "PER": "PER",
+  "630": "PRI", "PRI": "PRI",
+  "740": "SUR", "SUR": "SUR",
+  "858": "URY", "URY": "URY",
+  "862": "VEN", "VEN": "VEN",
+  "84": "BLZ", "084": "BLZ", "BLZ": "BLZ",
   // Other common countries
   "4": "AFG", "004": "AFG",
-  "32": "ARG", "032": "ARG",
   "36": "AUS", "036": "AUS",
-  "76": "BRA", "076": "BRA",
-  "124": "CAN",
   "156": "CHN",
   "356": "IND",
   "392": "JPN",
-  "484": "MEX",
   "682": "SAU",
   "792": "TUR",
   "784": "ARE",
@@ -156,14 +178,18 @@ const africaSubRegions: Record<string, string[]> = {
   south: ["BWA", "LSO", "NAM", "ZAF", "SWZ", "ZMB", "ZWE"],
 };
 
-const usCountries = ["USA"];
+// America countries (North, Central, South America)
+const americaCountries = [
+  "USA", "CAN", "MEX", "GTM", "BLZ", "HND", "SLV", "NIC", "CRI", "PAN",
+  "COL", "VEN", "ECU", "PER", "BOL", "BRA", "PRY", "URY", "ARG", "CHL",
+  "GUY", "SUR", "CUB", "JAM", "HTI", "DOM", "PRI"
+];
 
-// US sub-regions (states) - simplified for this demo
-const usSubRegions: Record<string, string[]> = {
-  northeast: ["USA"],
-  midwest: ["USA"],
-  "west-us": ["USA"],
-  "south-us": ["USA"],
+// America sub-regions
+const americaSubRegions: Record<string, string[]> = {
+  "north-am": ["USA", "CAN", "MEX"],
+  "central-am": ["GTM", "BLZ", "HND", "SLV", "NIC", "CRI", "PAN", "CUB", "JAM", "HTI", "DOM", "PRI"],
+  "south-am": ["COL", "VEN", "ECU", "PER", "BOL", "BRA", "PRY", "URY", "ARG", "CHL", "GUY", "SUR"],
 };
 
 const europeCountries = [
@@ -182,7 +208,7 @@ const europeSubRegions: Record<string, string[]> = {
 const mapConfig: Record<string, { center: [number, number]; zoom: number }> = {
   world: { center: [0, 20], zoom: 1 },
   africa: { center: [20, 5], zoom: 2.5 },
-  us: { center: [-98, 39], zoom: 4 },
+  america: { center: [-80, 10], zoom: 1.5 },
   europe: { center: [15, 54], zoom: 3.5 },
 };
 
@@ -336,7 +362,7 @@ const marketEvents = [
 const regionFilters = [
   { value: "all", label: "All" },
   { value: "africa", label: "Africa" },
-  { value: "us", label: "US" },
+  { value: "america", label: "America" },
   { value: "europe", label: "Europe" },
 ];
 
@@ -432,7 +458,7 @@ export default function NewsRoom() {
               projection="geoMercator"
               projectionConfig={{
                 center: mapConfig[selectedContinent || 'world'].center,
-                scale: selectedContinent ? (selectedContinent === 'us' ? 400 : selectedContinent === 'europe' ? 350 : 300) : 100,
+                scale: selectedContinent ? (selectedContinent === 'america' ? 150 : selectedContinent === 'europe' ? 350 : 300) : 100,
               }}
               style={{ width: '100%', height: '100%' }}
             >
@@ -452,7 +478,7 @@ export default function NewsRoom() {
                       // World view - highlight all three regions
                       if (africaCountries.includes(countryCode)) {
                         fillColor = 'rgba(6, 246, 255, 0.3)';
-                      } else if (usCountries.includes(countryCode)) {
+                      } else if (americaCountries.includes(countryCode)) {
                         fillColor = 'rgba(6, 246, 255, 0.3)';
                       } else if (europeCountries.includes(countryCode)) {
                         fillColor = 'rgba(6, 246, 255, 0.3)';
@@ -472,9 +498,21 @@ export default function NewsRoom() {
                       } else {
                         fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
                       }
-                    } else if (selectedContinent === 'us') {
-                      isInSelectedContinent = usCountries.includes(countryCode);
-                      fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+                    } else if (selectedContinent === 'america') {
+                      isInSelectedContinent = americaCountries.includes(countryCode);
+
+                      if (selectedSubRegion && americaSubRegions[selectedSubRegion]) {
+                        isInSelectedSubRegion = americaSubRegions[selectedSubRegion].includes(countryCode);
+                        if (isInSelectedSubRegion) {
+                          fillColor = 'rgba(6, 246, 255, 0.7)';
+                        } else if (isInSelectedContinent) {
+                          fillColor = 'rgba(6, 246, 255, 0.2)';
+                        } else {
+                          fillColor = 'rgba(30, 30, 30, 0.3)';
+                        }
+                      } else {
+                        fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+                      }
                     } else if (selectedContinent === 'europe') {
                       isInSelectedContinent = europeCountries.includes(countryCode);
 
@@ -528,7 +566,7 @@ export default function NewsRoom() {
             )}
 
             {/* World view pills */}
-            {!selectedContinent && ["All", "Africa", "US", "Europe"].map((region, index) => (
+            {!selectedContinent && ["All", "Africa", "America", "Europe"].map((region, index) => (
               <button
                 key={region}
                 onClick={() => {
@@ -562,21 +600,15 @@ export default function NewsRoom() {
               </button>
             ))}
 
-            {/* US sub-regions */}
-            {selectedContinent === 'us' && ["All", "Northeast", "Midwest", "West", "South"].map((region) => (
+            {/* America sub-regions */}
+            {selectedContinent === 'america' && ["All", "North", "Central", "South"].map((region) => (
               <button
                 key={region}
-                onClick={() => setSelectedSubRegion(region === 'All' ? null : (region === 'West' ? 'west-us' : region === 'South' ? 'south-us' : region.toLowerCase()))}
+                onClick={() => setSelectedSubRegion(region === 'All' ? null : `${region.toLowerCase()}-am`)}
                 className="px-4 py-2 text-sm font-medium rounded-full transition-all"
                 style={{
-                  backgroundColor: (region === 'All' && !selectedSubRegion) ||
-                    selectedSubRegion === region.toLowerCase() ||
-                    selectedSubRegion === 'west-us' && region === 'West' ||
-                    selectedSubRegion === 'south-us' && region === 'South' ? '#06f6ff' : 'transparent',
-                  color: (region === 'All' && !selectedSubRegion) ||
-                    selectedSubRegion === region.toLowerCase() ||
-                    selectedSubRegion === 'west-us' && region === 'West' ||
-                    selectedSubRegion === 'south-us' && region === 'South' ? '#000' : '#fff',
+                  backgroundColor: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-am` ? '#06f6ff' : 'transparent',
+                  color: (region === 'All' && !selectedSubRegion) || selectedSubRegion === `${region.toLowerCase()}-am` ? '#000' : '#fff',
                 }}
               >
                 {region}
