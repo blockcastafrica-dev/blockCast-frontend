@@ -489,7 +489,7 @@ export default function NewsRoom() {
   };
 
   return (
-    <div className="max-w-screen-2xl mx-auto">
+    <div className="max-w-screen-2xl mx-auto" onClick={() => setExpandedArticle(null)}>
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column - Map */}
@@ -772,7 +772,7 @@ export default function NewsRoom() {
                 <div key={article.id}>
                   {/* News Article */}
                   <div
-                    onClick={() => setExpandedArticle(expandedArticle === article.id ? null : article.id)}
+                    onClick={(e) => { e.stopPropagation(); setExpandedArticle(expandedArticle === article.id ? null : article.id); }}
                     className={`flex gap-3 cursor-pointer rounded-lg p-2 transition-colors ${expandedArticle === article.id ? 'bg-zinc-800/50' : 'hover:bg-zinc-800/30'}`}
                   >
                     <img
@@ -801,7 +801,7 @@ export default function NewsRoom() {
 
                   {/* Related Markets (Expanded) */}
                   {expandedArticle === article.id && (
-                    <div className="mt-2 mb-3 p-3 rounded-lg border border-zinc-700/50" style={{ backgroundColor: '#1a1a1a' }}>
+                    <div onClick={(e) => e.stopPropagation()} className="mt-2 mb-3 p-3 rounded-lg border border-zinc-700/50" style={{ backgroundColor: '#1a1a1a' }}>
                       <div className="text-xs text-zinc-400 mb-2">Related Markets:</div>
                       <div className="space-y-3">
                         {article.relatedMarkets.map((market) => (
