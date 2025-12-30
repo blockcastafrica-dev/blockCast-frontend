@@ -222,9 +222,20 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   key={wallet.id}
                   onClick={() => handleWalletConnect(wallet.id)}
                   disabled={!agreedToTerms}
-                  className={`w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left transition-colors ${
-                    agreedToTerms ? 'hover:border-cyan-500/50 cursor-pointer' : 'opacity-50 cursor-not-allowed'
+                  className={`w-full p-4 border rounded-xl text-left transition-all duration-200 ${
+                    agreedToTerms ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
                   }`}
+                  style={{ backgroundColor: '#1a1f26', borderColor: '#374151' }}
+                  onMouseEnter={(e) => {
+                    if (agreedToTerms) {
+                      e.currentTarget.style.backgroundColor = '#2a3140';
+                      e.currentTarget.style.borderColor = '#06b6d4';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#1a1f26';
+                    e.currentTarget.style.borderColor = '#374151';
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -252,7 +263,16 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
               {/* More Wallets Button */}
               <button
                 onClick={() => setCurrentView('more-wallets')}
-                className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
+                className="w-full p-4 border rounded-xl text-left transition-all duration-200 cursor-pointer"
+                style={{ backgroundColor: '#1a1f26', borderColor: '#374151' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2a3140';
+                  e.currentTarget.style.borderColor = '#06b6d4';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1a1f26';
+                  e.currentTarget.style.borderColor = '#374151';
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -275,7 +295,16 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
               {/* Social Login Button */}
               <button
                 onClick={() => setCurrentView('social-login')}
-                className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
+                className="w-full p-4 border rounded-xl text-left transition-all duration-200 cursor-pointer"
+                style={{ backgroundColor: '#1a1f26', borderColor: '#374151' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2a3140';
+                  e.currentTarget.style.borderColor = '#06b6d4';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1a1f26';
+                  e.currentTarget.style.borderColor = '#374151';
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -329,9 +358,20 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   key={wallet.id}
                   onClick={() => handleWalletConnect(wallet.id)}
                   disabled={!agreedToTerms}
-                  className={`w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left transition-colors ${
-                    agreedToTerms ? 'hover:border-cyan-500/50 cursor-pointer' : 'opacity-50 cursor-not-allowed'
+                  className={`w-full p-4 border rounded-xl text-left transition-all duration-200 ${
+                    agreedToTerms ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
                   }`}
+                  style={{ backgroundColor: '#1a1f26', borderColor: '#374151' }}
+                  onMouseEnter={(e) => {
+                    if (agreedToTerms) {
+                      e.currentTarget.style.backgroundColor = '#2a3140';
+                      e.currentTarget.style.borderColor = '#06b6d4';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#1a1f26';
+                    e.currentTarget.style.borderColor = '#374151';
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
