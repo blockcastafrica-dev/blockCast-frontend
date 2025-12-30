@@ -30,6 +30,7 @@ import {
   Check,
   LogOut,
   Newspaper,
+  FileText,
 } from "lucide-react";
 import {
   DropdownMenu,

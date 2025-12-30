@@ -1,5 +1,6 @@
 import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
+import { HiOutlineDocumentText } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 interface FooterProps {
@@ -52,6 +53,14 @@ export default function Footer({ onNavigate }: FooterProps) {
               className="hover:text-foreground transition-colors cursor-pointer"
             >
               Contact
+            </button>
+            <span className="text-muted-foreground/50">•</span>
+            <button
+              onClick={() => window.open('https://docs.blockcast.live', '_blank')}
+              className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+            >
+              <HiOutlineDocumentText className="h-4 w-4" />
+              Docs
             </button>
           </div>
 

@@ -46,19 +46,19 @@ const FooterAccordion = ({ handleLinkClick, enableMobileHover = false }) => {
           <div
             key={item.label}
             onClick={() => handleLinkClick(item.page)}
-            onMouseEnter={() => enableMobileHover && setHoveredItem(index)}
-            onMouseLeave={() => enableMobileHover && setHoveredItem(null)}
-            className={`flex items-center gap-2 px-2 ml-6 cursor-pointer py-1 transition-all ${mobileItemHover}`}
+            onMouseEnter={() => setHoveredItem(index)}
+            onMouseLeave={() => setHoveredItem(null)}
+            className={`flex items-center gap-2 px-2 ml-6 cursor-pointer py-1 transition-all rounded-md ${mobileItemHover}`}
             style={
-              enableMobileHover && hoveredItem === index
-                ? { backgroundColor: 'rgba(6, 182, 212, 0.2)' }
+              hoveredItem === index
+                ? { backgroundColor: '#2a3140' }
                 : {}
             }
           >
             <span
               className="text-sm text-muted-foreground transition-colors"
               style={
-                enableMobileHover && hoveredItem === index
+                hoveredItem === index
                   ? { color: '#06b6d4' }
                   : {}
               }
