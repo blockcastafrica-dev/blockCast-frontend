@@ -330,6 +330,46 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
         { id: "gh-cocoa-1", claim: "Will Ghana cocoa exports exceed $4B in 2025?", category: "Finance", yesOdds: 1.7, noOdds: 2.2, totalPool: 98000, expiresAt: new Date("2025-12-31"), country: "Ghana" },
       ],
     },
+    {
+      id: "af-6",
+      title: "Ethiopia's Tech Startup Ecosystem Grows 40%...",
+      source: "TechAfrica.com",
+      timestamp: "12 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "et-tech-1", claim: "Will Ethiopia attract $500M in tech investment by 2025?", category: "Technology", yesOdds: 2.4, noOdds: 1.6, totalPool: 67000, expiresAt: new Date("2025-12-31"), country: "Ethiopia" },
+      ],
+    },
+    {
+      id: "af-7",
+      title: "Tanzania Opens New $1.2B Port Facility...",
+      source: "AfricaNews.com",
+      timestamp: "14 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "tz-port-1", claim: "Will Tanzania become East Africa's top port hub by 2026?", category: "Business", yesOdds: 1.9, noOdds: 2.0, totalPool: 89000, expiresAt: new Date("2026-12-31"), country: "Tanzania" },
+      ],
+    },
+    {
+      id: "af-8",
+      title: "Rwanda Launches Africa's First Drone Delivery Network...",
+      source: "CNN.com",
+      timestamp: "16 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "rw-drone-1", claim: "Will Rwanda's drone network expand to 5 countries by 2026?", category: "Technology", yesOdds: 2.1, noOdds: 1.8, totalPool: 54000, expiresAt: new Date("2026-12-31"), country: "Rwanda" },
+      ],
+    },
+    {
+      id: "af-9",
+      title: "Egypt's Suez Canal Revenue Drops Amid Red Sea Crisis...",
+      source: "Reuters.com",
+      timestamp: "18 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1569074187119-c87815b476da?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "eg-suez-1", claim: "Will Suez Canal traffic return to normal by Q3 2025?", category: "Politics", yesOdds: 2.8, noOdds: 1.5, totalPool: 178000, expiresAt: new Date("2025-09-30"), country: "Egypt" },
+      ],
+    },
   ],
   america: [
     {
@@ -383,6 +423,46 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
         { id: "ca-tech-1", claim: "Will Canada's tech sector create 100K jobs in 2025?", category: "Technology", yesOdds: 1.9, noOdds: 2.0, totalPool: 112000, expiresAt: new Date("2025-12-31"), country: "Canada" },
       ],
     },
+    {
+      id: "am-6",
+      title: "Chile's Lithium Production Surges to Meet EV Demand...",
+      source: "MiningWeekly.com",
+      timestamp: "11 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "cl-lithium-1", claim: "Will Chile become world's top lithium exporter by 2026?", category: "Business", yesOdds: 1.6, noOdds: 2.5, totalPool: 145000, expiresAt: new Date("2026-12-31"), country: "Chile" },
+      ],
+    },
+    {
+      id: "am-7",
+      title: "Colombia's Coffee Exports Hit Record High...",
+      source: "Reuters.com",
+      timestamp: "13 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "co-coffee-1", claim: "Will Colombia coffee prices exceed $3/lb in 2025?", category: "Finance", yesOdds: 2.2, noOdds: 1.7, totalPool: 87000, expiresAt: new Date("2025-12-31"), country: "Colombia" },
+      ],
+    },
+    {
+      id: "am-8",
+      title: "Peru's Mining Sector Faces Environmental Protests...",
+      source: "Bloomberg.com",
+      timestamp: "15 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "pe-mining-1", claim: "Will Peru approve new mining regulations by Q2 2025?", category: "Politics", yesOdds: 2.0, noOdds: 1.9, totalPool: 98000, expiresAt: new Date("2025-06-30"), country: "Peru" },
+      ],
+    },
+    {
+      id: "am-9",
+      title: "US Tech Giants Report Record AI Revenue Growth...",
+      source: "WSJ.com",
+      timestamp: "17 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "us-ai-1", claim: "Will US AI market exceed $200B by 2025?", category: "Technology", yesOdds: 1.4, noOdds: 3.2, totalPool: 456000, expiresAt: new Date("2025-12-31"), country: "USA" },
+      ],
+    },
   ],
   europe: [
     {
@@ -434,6 +514,46 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       imageUrl: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=100&h=100&fit=crop",
       relatedMarkets: [
         { id: "es-tourism-1", claim: "Will Spain welcome 100M tourists in 2025?", category: "Finance", yesOdds: 1.5, noOdds: 2.7, totalPool: 134000, expiresAt: new Date("2025-12-31"), country: "Spain" },
+      ],
+    },
+    {
+      id: "eu-6",
+      title: "Netherlands Leads Europe in AI Chip Manufacturing...",
+      source: "TechEU.com",
+      timestamp: "11 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "nl-chips-1", claim: "Will ASML stock reach €1000 by 2025?", category: "Technology", yesOdds: 2.3, noOdds: 1.7, totalPool: 234000, expiresAt: new Date("2025-12-31"), country: "Netherlands" },
+      ],
+    },
+    {
+      id: "eu-7",
+      title: "Poland's Economy Grows Fastest in EU...",
+      source: "Reuters.com",
+      timestamp: "13 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1519197924294-4ba991a11128?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "pl-gdp-1", claim: "Will Poland's GDP growth exceed 4% in 2025?", category: "Finance", yesOdds: 1.8, noOdds: 2.1, totalPool: 156000, expiresAt: new Date("2025-12-31"), country: "Poland" },
+      ],
+    },
+    {
+      id: "eu-8",
+      title: "Sweden's Electric Vehicle Adoption Reaches 50%...",
+      source: "Electrek.co",
+      timestamp: "15 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "se-ev-1", claim: "Will Sweden ban petrol car sales before 2030?", category: "Politics", yesOdds: 1.6, noOdds: 2.4, totalPool: 98000, expiresAt: new Date("2030-12-31"), country: "Sweden" },
+      ],
+    },
+    {
+      id: "eu-9",
+      title: "Italy's Fashion Industry Rebounds Post-Pandemic...",
+      source: "Vogue.com",
+      timestamp: "17 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "it-fashion-1", claim: "Will Italian luxury exports exceed €100B in 2025?", category: "Business", yesOdds: 1.9, noOdds: 2.0, totalPool: 145000, expiresAt: new Date("2025-12-31"), country: "Italy" },
       ],
     },
   ],
@@ -854,8 +974,8 @@ export default function NewsRoom() {
               ))}
             </div>
 
-            <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
-              {newsArticlesByRegion[selectedNewsRegion]?.slice(0, 5).map((article) => (
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {newsArticlesByRegion[selectedNewsRegion]?.map((article) => (
                 <div key={article.id}>
                   {/* News Article */}
                   <div
