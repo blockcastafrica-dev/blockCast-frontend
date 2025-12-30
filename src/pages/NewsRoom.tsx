@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   ComposableMap,
   Geographies,
   Geography,
+  Marker,
 } from "react-simple-maps";
+import { Badge } from "@/components/ui/badge";
 
 // GeoJSON URLs for maps - using Natural Earth TopoJSON
 const WORLD_GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
@@ -250,117 +252,187 @@ const upcomingEvents = [
   },
 ];
 
-// News Articles Data by Region
-const newsArticlesByRegion: Record<string, Array<{ id: string; title: string; source: string; timestamp: string; imageUrl: string }>> = {
+// Related Markets interface
+interface RelatedMarket {
+  id: string;
+  claim: string;
+  category: string;
+  yesOdds: number;
+  noOdds: number;
+  totalPool: number;
+  country?: string;
+}
+
+// News Article interface with related markets
+interface NewsArticle {
+  id: string;
+  title: string;
+  source: string;
+  timestamp: string;
+  imageUrl: string;
+  relatedMarkets: RelatedMarket[];
+}
+
+// News Articles Data by Region with Related Markets
+const newsArticlesByRegion: Record<string, NewsArticle[]> = {
   africa: [
     {
-      id: "1",
+      id: "af-1",
       title: "Nigeria's Inflation Rate Hits 28.9% in December...",
       source: "Reuters.com",
       timestamp: "2 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "ng-inflation-1", claim: "Will Nigeria's inflation drop below 25% by Q2 2025?", category: "Finance", yesOdds: 2.1, noOdds: 1.8, totalPool: 125000, country: "Nigeria" },
+        { id: "ng-naira-1", claim: "Will Naira strengthen to ₦1200/$ by March 2025?", category: "Finance", yesOdds: 3.2, noOdds: 1.4, totalPool: 89000, country: "Nigeria" },
+      ],
     },
     {
-      id: "2",
+      id: "af-2",
       title: "South Africa's Load Shedding Reduced to Stage 2...",
       source: "BusinessDay.com",
       timestamp: "4 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "za-energy-1", claim: "Will South Africa end load shedding by mid-2025?", category: "Politics", yesOdds: 4.5, noOdds: 1.2, totalPool: 234000, country: "South Africa" },
+      ],
     },
     {
-      id: "3",
+      id: "af-3",
       title: "Kenya's M-Pesa Processes Record $50B in 2024...",
       source: "TechCabal.com",
       timestamp: "6 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "ke-fintech-1", claim: "Will M-Pesa reach $75B transaction volume in 2025?", category: "Technology", yesOdds: 1.6, noOdds: 2.4, totalPool: 156000, country: "Kenya" },
+        { id: "ke-crypto-1", claim: "Will Kenya launch a CBDC in 2025?", category: "Finance", yesOdds: 2.8, noOdds: 1.5, totalPool: 78000, country: "Kenya" },
+      ],
     },
     {
-      id: "4",
+      id: "af-4",
       title: "Morocco Signs $10B Renewable Energy Deal with...",
       source: "AfricaNews.com",
       timestamp: "8 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "ma-energy-1", claim: "Will Morocco achieve 52% renewable energy by 2030?", category: "Politics", yesOdds: 1.9, noOdds: 2.0, totalPool: 145000, country: "Morocco" },
+      ],
     },
     {
-      id: "5",
+      id: "af-5",
       title: "Ghana Cocoa Production Up 15% Despite Climate...",
       source: "Bloomberg.com",
       timestamp: "10 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "gh-cocoa-1", claim: "Will Ghana cocoa exports exceed $4B in 2025?", category: "Finance", yesOdds: 1.7, noOdds: 2.2, totalPool: 98000, country: "Ghana" },
+      ],
     },
   ],
   america: [
     {
-      id: "1",
+      id: "am-1",
       title: "Fed Signals Potential Rate Cuts in Q2 2025...",
       source: "CNBC.com",
       timestamp: "1 hour ago",
       imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "us-fed-1", claim: "Will the Fed cut rates by 50bps in Q2 2025?", category: "Finance", yesOdds: 1.8, noOdds: 2.1, totalPool: 567000, country: "USA" },
+        { id: "us-sp500-1", claim: "Will S&P 500 reach 5500 by June 2025?", category: "Finance", yesOdds: 2.0, noOdds: 1.9, totalPool: 345000, country: "USA" },
+      ],
     },
     {
-      id: "2",
+      id: "am-2",
       title: "Brazil's Petrobras Reports Record Oil Output...",
       source: "Reuters.com",
       timestamp: "3 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "br-oil-1", claim: "Will Brazil become top 5 oil producer by 2026?", category: "Finance", yesOdds: 1.5, noOdds: 2.7, totalPool: 234000, country: "Brazil" },
+      ],
     },
     {
-      id: "3",
+      id: "am-3",
       title: "Mexico's Nearshoring Boom Drives Manufacturing...",
       source: "Bloomberg.com",
       timestamp: "5 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "mx-trade-1", claim: "Will Mexico overtake China as top US trade partner?", category: "Politics", yesOdds: 1.4, noOdds: 3.0, totalPool: 189000, country: "Mexico" },
+      ],
     },
     {
-      id: "4",
+      id: "am-4",
       title: "Argentina's New Economic Reforms Show Early Signs...",
       source: "FT.com",
       timestamp: "7 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "ar-reform-1", claim: "Will Argentina's inflation drop below 100% in 2025?", category: "Finance", yesOdds: 2.3, noOdds: 1.7, totalPool: 156000, country: "Argentina" },
+      ],
     },
     {
-      id: "5",
+      id: "am-5",
       title: "Canada's Tech Sector Attracts $15B in Investment...",
       source: "TechCrunch.com",
       timestamp: "9 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "ca-tech-1", claim: "Will Canada's tech sector create 100K jobs in 2025?", category: "Technology", yesOdds: 1.9, noOdds: 2.0, totalPool: 112000, country: "Canada" },
+      ],
     },
   ],
   europe: [
     {
-      id: "1",
+      id: "eu-1",
       title: "ECB Maintains Rates Amid Inflation Concerns...",
       source: "Reuters.com",
       timestamp: "1 hour ago",
       imageUrl: "https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "eu-ecb-1", claim: "Will ECB cut rates before Q3 2025?", category: "Finance", yesOdds: 2.2, noOdds: 1.7, totalPool: 445000, country: "EU" },
+        { id: "eu-euro-1", claim: "Will EUR/USD reach 1.15 by mid-2025?", category: "Finance", yesOdds: 2.5, noOdds: 1.6, totalPool: 289000, country: "EU" },
+      ],
     },
     {
-      id: "2",
+      id: "eu-2",
       title: "Germany's Manufacturing Sector Shows Recovery...",
       source: "DW.com",
       timestamp: "3 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "de-gdp-1", claim: "Will Germany avoid recession in 2025?", category: "Finance", yesOdds: 1.6, noOdds: 2.4, totalPool: 312000, country: "Germany" },
+      ],
     },
     {
-      id: "3",
+      id: "eu-3",
       title: "UK's Tech Industry Leads European Growth...",
       source: "BBC.com",
       timestamp: "5 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "uk-tech-1", claim: "Will UK tech valuations exceed $1T by 2026?", category: "Technology", yesOdds: 2.8, noOdds: 1.5, totalPool: 198000, country: "UK" },
+      ],
     },
     {
-      id: "4",
+      id: "eu-4",
       title: "France Unveils €50B Green Energy Investment Plan...",
       source: "LeMonde.fr",
       timestamp: "7 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "fr-energy-1", claim: "Will France achieve 40% renewable energy by 2030?", category: "Politics", yesOdds: 1.7, noOdds: 2.2, totalPool: 176000, country: "France" },
+      ],
     },
     {
-      id: "5",
+      id: "eu-5",
       title: "Spain's Tourism Revenue Hits All-Time High...",
       source: "ElPais.com",
       timestamp: "9 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "es-tourism-1", claim: "Will Spain welcome 100M tourists in 2025?", category: "Finance", yesOdds: 1.5, noOdds: 2.7, totalPool: 134000, country: "Spain" },
+      ],
     },
   ],
 };
@@ -370,6 +442,44 @@ export default function NewsRoom() {
   const [selectedSubRegion, setSelectedSubRegion] = useState<string | null>(null);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [selectedNewsRegion, setSelectedNewsRegion] = useState<string>("africa");
+  const [expandedArticle, setExpandedArticle] = useState<string | null>(null);
+
+  // Calculate market counts per region
+  const marketCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      africa: 0,
+      america: 0,
+      europe: 0,
+    };
+
+    Object.entries(newsArticlesByRegion).forEach(([region, articles]) => {
+      articles.forEach(article => {
+        counts[region] += article.relatedMarkets.length;
+      });
+    });
+
+    return counts;
+  }, []);
+
+  // Continent marker positions (longitude, latitude)
+  const continentMarkers = [
+    { name: "Africa", coordinates: [20, 0] as [number, number], region: "africa" },
+    { name: "America", coordinates: [-60, -5] as [number, number], region: "america" },
+    { name: "Europe", coordinates: [15, 52] as [number, number], region: "europe" },
+  ];
+
+  // Get current marker to display based on selected continent
+  const getCurrentMarker = () => {
+    if (!selectedContinent) return continentMarkers;
+    return continentMarkers.filter(m => m.region === selectedContinent);
+  };
+
+  // Format pool amount
+  const formatPool = (amount: number) => {
+    if (amount >= 1000000) return `USDT ${(amount / 1000000).toFixed(1)}M`;
+    if (amount >= 1000) return `USDT ${(amount / 1000).toFixed(0)}K`;
+    return `USDT ${amount}`;
+  };
 
   // Calculate days until event
   const getDaysUntil = (date: Date) => {
@@ -482,6 +592,36 @@ export default function NewsRoom() {
                   })
                 }
               </Geographies>
+
+              {/* Market count markers */}
+              {getCurrentMarker().map((marker) => (
+                <Marker key={marker.name} coordinates={marker.coordinates}>
+                  <g
+                    onClick={() => {
+                      if (!selectedContinent) {
+                        setSelectedContinent(marker.region);
+                        setSelectedSubRegion(null);
+                      }
+                    }}
+                    style={{ cursor: selectedContinent ? 'default' : 'pointer' }}
+                  >
+                    <circle r={selectedContinent ? 20 : 16} fill="#a855f7" fillOpacity={0.95} />
+                    <circle r={selectedContinent ? 20 : 16} fill="none" stroke="#fff" strokeWidth={2} />
+                    <text
+                      textAnchor="middle"
+                      y={5}
+                      style={{
+                        fontFamily: 'system-ui',
+                        fontSize: selectedContinent ? '14px' : '11px',
+                        fontWeight: 'bold',
+                        fill: '#fff',
+                      }}
+                    >
+                      {marketCounts[marker.region]}
+                    </text>
+                  </g>
+                </Marker>
+              ))}
             </ComposableMap>
           </div>
 
@@ -605,13 +745,13 @@ export default function NewsRoom() {
           </div>
 
           {/* News Section */}
-          <div className="rounded-xl border border-zinc-800 p-4 flex-1" style={{ backgroundColor: '#141414' }}>
+          <div className="rounded-xl border border-zinc-800 p-4 flex-1 overflow-hidden" style={{ backgroundColor: '#141414' }}>
             {/* Header with region tabs */}
             <div className="mb-3 flex gap-2">
               {["Africa", "America", "Europe"].map((region) => (
                 <button
                   key={region}
-                  onClick={() => setSelectedNewsRegion(region.toLowerCase())}
+                  onClick={() => { setSelectedNewsRegion(region.toLowerCase()); setExpandedArticle(null); }}
                   onMouseEnter={() => setHoveredButton(`news-${region}`)}
                   onMouseLeave={() => setHoveredButton(null)}
                   className="text-sm font-medium px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
@@ -625,26 +765,61 @@ export default function NewsRoom() {
               ))}
             </div>
 
-            <div className="space-y-2">
-              {newsArticlesByRegion[selectedNewsRegion]?.slice(0, 4).map((article) => (
-                <div
-                  key={article.id}
-                  className="flex gap-3 cursor-pointer hover:bg-zinc-800/30 rounded-lg p-1 transition-colors"
-                >
-                  <img
-                    src={article.imageUrl}
-                    alt=""
-                    className="w-12 h-12 rounded object-cover flex-shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm text-cyan-400 line-clamp-2 leading-tight">
-                      {article.title}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-zinc-500">{article.source}</span>
-                      <span className="text-xs text-zinc-600">{article.timestamp}</span>
+            <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+              {newsArticlesByRegion[selectedNewsRegion]?.slice(0, 5).map((article) => (
+                <div key={article.id}>
+                  {/* News Article */}
+                  <div
+                    onClick={() => setExpandedArticle(expandedArticle === article.id ? null : article.id)}
+                    className={`flex gap-3 cursor-pointer rounded-lg p-2 transition-colors ${expandedArticle === article.id ? 'bg-zinc-800/50' : 'hover:bg-zinc-800/30'}`}
+                  >
+                    <img
+                      src={article.imageUrl}
+                      alt=""
+                      className="w-12 h-12 rounded object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm text-cyan-400 line-clamp-2 leading-tight">
+                        {article.title}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-zinc-500">{article.source}</span>
+                        <span className="text-xs text-zinc-600">{article.timestamp}</span>
+                        <span
+                          onMouseEnter={() => setHoveredButton(`markets-${article.id}`)}
+                          onMouseLeave={() => setHoveredButton(null)}
+                          className="text-xs ml-auto cursor-pointer transition-colors duration-200"
+                          style={{ color: hoveredButton === `markets-${article.id}` ? '#06f6ff' : 'rgba(6, 246, 255, 0.6)' }}
+                        >{article.relatedMarkets.length} {article.relatedMarkets.length === 1 ? 'market' : 'markets'}</span>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Related Markets (Expanded) */}
+                  {expandedArticle === article.id && (
+                    <div className="ml-2 mt-2 mb-3 p-2 rounded-lg border border-zinc-700/50" style={{ backgroundColor: '#1a1a1a' }}>
+                      <div className="text-xs text-zinc-400 mb-2">Related Markets:</div>
+                      <div className="space-y-2">
+                        {article.relatedMarkets.map((market) => (
+                          <div
+                            key={market.id}
+                            className="p-2 rounded bg-zinc-800/50 hover:bg-zinc-700/50 cursor-pointer transition-colors"
+                          >
+                            <div className="text-xs text-white leading-tight mb-1.5">{market.claim}</div>
+                            <div className="flex items-center gap-2 text-[10px]">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">{market.category}</Badge>
+                              <span className="text-[#06f6ff]">True {market.yesOdds.toFixed(2)}</span>
+                              <span className="text-purple-500">False {market.noOdds.toFixed(2)}</span>
+                              <div className="ml-auto text-right">
+                                <div className="text-[9px] text-zinc-500">Market Pool</div>
+                                <div className="text-zinc-300">{formatPool(market.totalPool)}</div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
