@@ -184,19 +184,21 @@ export default function TopNavigation({
                 const active = isActive(item.path);
 
                 return (
-                  <Button
+                  <button
                     key={item.id}
-                    variant={active ? "default" : "ghost"}
                     onClick={() => handleNavClick(item.path)}
-                    className={`gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-2 h-9 md:h-10 lg:h-10 cursor-pointer text-sm md:text-base lg:text-base ${
-                      active
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                    }`}
+                    className="flex items-center gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-2 h-9 md:h-10 lg:h-10 cursor-pointer text-sm md:text-base lg:text-base transition-colors"
+                    style={{ color: '#9ca3af' }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = '#22d3ee';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#9ca3af';
+                    }}
                   >
                     <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
                     <span className="font-medium">{item.label}</span>
-                  </Button>
+                  </button>
                 );
               })}
             </nav>
