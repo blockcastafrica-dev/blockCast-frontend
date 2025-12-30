@@ -1006,13 +1006,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Hero Section - Enhanced Mobile Layout */}
-      <div className="py-3 md:py-5 lg:py-8">
-        <div className="text-center mb-3 md:mb-4 lg:mb-6">
-          {/* Truth Markets heading removed as per requirements */}
-        </div>
-
+      <div className="py-2 md:py-3 lg:py-4">
         {/* Search and Active Markets Row */}
         <div className="flex items-center gap-3 md:gap-4">
           {/* Search Bar - aligned with Brand pill */}
@@ -1039,7 +1035,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
         </div>
 
         {/* Sort Dropdown and Create Market - Row on mobile */}
-        <div className="flex items-center gap-2 mt-3 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex items-center gap-2 mt-2 overflow-x-auto pb-1 scrollbar-hide">
           {/* Sort Dropdown Pill */}
           <div className="relative">
             <button
@@ -1084,7 +1080,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
         </div>
 
         {/* Category Pills Row */}
-        <div className="mt-4 overflow-hidden">
+        <div className="mt-2 overflow-hidden">
           <div
             className="flex items-center gap-2 md:gap-3 overflow-x-auto"
             style={{ paddingBottom: '30px', marginBottom: '-30px' }}
