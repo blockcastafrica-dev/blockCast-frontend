@@ -463,6 +463,40 @@ export default function NewsRoom() {
     return counts;
   }, []);
 
+  // Country name to sub-region mapping
+  const countryToSubRegion: Record<string, string> = {
+    // Africa
+    "Nigeria": "west", "South Africa": "south", "Kenya": "east", "Morocco": "north", "Ghana": "west",
+    "Egypt": "north", "Ethiopia": "east", "Tanzania": "east", "Uganda": "east", "Algeria": "north",
+    // America
+    "USA": "north-am", "Canada": "north-am", "Mexico": "north-am",
+    "Brazil": "south-am", "Argentina": "south-am", "Colombia": "south-am", "Chile": "south-am", "Peru": "south-am",
+    "Guatemala": "central-am", "Panama": "central-am", "Costa Rica": "central-am",
+    // Europe
+    "EU": "west-eu", "Germany": "west-eu", "France": "west-eu", "UK": "west-eu", "Spain": "south-eu",
+    "Italy": "south-eu", "Poland": "east-eu", "Netherlands": "west-eu", "Sweden": "north-eu",
+  };
+
+  // Calculate market counts per sub-region
+  const subRegionMarketCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+
+    Object.values(newsArticlesByRegion).forEach(articles => {
+      articles.forEach(article => {
+        article.relatedMarkets.forEach(market => {
+          if (market.country) {
+            const subRegion = countryToSubRegion[market.country];
+            if (subRegion) {
+              counts[subRegion] = (counts[subRegion] || 0) + 1;
+            }
+          }
+        });
+      });
+    });
+
+    return counts;
+  }, []);
+
   // Continent marker positions (longitude, latitude)
   const continentMarkers = [
     { name: "Africa", coordinates: [20, 0] as [number, number], region: "africa" },
@@ -470,10 +504,32 @@ export default function NewsRoom() {
     { name: "Europe", coordinates: [15, 52] as [number, number], region: "europe" },
   ];
 
-  // Get current marker to display based on selected continent
-  const getCurrentMarker = () => {
-    if (!selectedContinent) return continentMarkers;
-    return continentMarkers.filter(m => m.region === selectedContinent);
+  // Sub-region marker positions
+  const subRegionMarkers: Record<string, { name: string; coordinates: [number, number]; subRegion: string }[]> = {
+    africa: [
+      { name: "North", coordinates: [15, 28] as [number, number], subRegion: "north" },
+      { name: "West", coordinates: [-5, 12] as [number, number], subRegion: "west" },
+      { name: "Central", coordinates: [18, 2] as [number, number], subRegion: "central" },
+      { name: "East", coordinates: [38, 2] as [number, number], subRegion: "east" },
+      { name: "South", coordinates: [25, -25] as [number, number], subRegion: "south" },
+    ],
+    america: [
+      { name: "North", coordinates: [-100, 45] as [number, number], subRegion: "north-am" },
+      { name: "Central", coordinates: [-85, 15] as [number, number], subRegion: "central-am" },
+      { name: "South", coordinates: [-60, -15] as [number, number], subRegion: "south-am" },
+    ],
+    europe: [
+      { name: "North", coordinates: [18, 62] as [number, number], subRegion: "north-eu" },
+      { name: "West", coordinates: [2, 48] as [number, number], subRegion: "west-eu" },
+      { name: "East", coordinates: [30, 52] as [number, number], subRegion: "east-eu" },
+      { name: "South", coordinates: [14, 42] as [number, number], subRegion: "south-eu" },
+    ],
+  };
+
+  // Get current markers to display based on selected continent
+  const getCurrentMarkers = () => {
+    if (!selectedContinent) return { type: 'continent', markers: continentMarkers };
+    return { type: 'subregion', markers: subRegionMarkers[selectedContinent] || [] };
   };
 
   // Format pool amount
@@ -611,34 +667,48 @@ export default function NewsRoom() {
               </Geographies>
 
               {/* Market count markers */}
-              {getCurrentMarker().map((marker) => (
-                <Marker key={marker.name} coordinates={marker.coordinates}>
-                  <g
-                    onClick={() => {
-                      if (!selectedContinent) {
-                        setSelectedContinent(marker.region);
-                        setSelectedSubRegion(null);
-                      }
-                    }}
-                    style={{ cursor: selectedContinent ? 'default' : 'pointer' }}
-                  >
-                    <circle r={selectedContinent ? 20 : 16} fill="#a855f7" fillOpacity={0.95} />
-                    <circle r={selectedContinent ? 20 : 16} fill="none" stroke="#fff" strokeWidth={2} />
-                    <text
-                      textAnchor="middle"
-                      y={5}
-                      style={{
-                        fontFamily: 'system-ui',
-                        fontSize: selectedContinent ? '14px' : '11px',
-                        fontWeight: 'bold',
-                        fill: '#fff',
-                      }}
-                    >
-                      {marketCounts[marker.region]}
-                    </text>
-                  </g>
-                </Marker>
-              ))}
+              {(() => {
+                const { type, markers } = getCurrentMarkers();
+                return markers.map((marker) => {
+                  const count = type === 'continent'
+                    ? marketCounts[(marker as { region: string }).region]
+                    : subRegionMarketCounts[(marker as { subRegion: string }).subRegion] || 0;
+
+                  // Don't render marker if count is 0 for sub-regions
+                  if (type === 'subregion' && count === 0) return null;
+
+                  return (
+                    <Marker key={marker.name} coordinates={marker.coordinates}>
+                      <g
+                        onClick={() => {
+                          if (type === 'continent') {
+                            setSelectedContinent((marker as { region: string }).region);
+                            setSelectedSubRegion(null);
+                          } else {
+                            setSelectedSubRegion((marker as { subRegion: string }).subRegion);
+                          }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <circle r={type === 'subregion' ? 18 : 16} fill="#a855f7" fillOpacity={0.95} />
+                        <circle r={type === 'subregion' ? 18 : 16} fill="none" stroke="#fff" strokeWidth={2} />
+                        <text
+                          textAnchor="middle"
+                          y={5}
+                          style={{
+                            fontFamily: 'system-ui',
+                            fontSize: type === 'subregion' ? '12px' : '11px',
+                            fontWeight: 'bold',
+                            fill: '#fff',
+                          }}
+                        >
+                          {count}
+                        </text>
+                      </g>
+                    </Marker>
+                  );
+                });
+              })()}
             </ComposableMap>
           </div>
 
