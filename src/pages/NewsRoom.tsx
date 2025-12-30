@@ -781,20 +781,20 @@ export default function NewsRoom() {
                       className="w-12 h-12 rounded object-cover flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm text-cyan-400 line-clamp-2 leading-tight">
-                        {article.title}
-                      </h3>
-                      <div className="flex items-center justify-between gap-2 mt-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs text-zinc-500">{article.source}</span>
-                          <span className="text-xs text-zinc-600">· {article.timestamp}</span>
-                        </div>
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-sm text-cyan-400 line-clamp-2 leading-tight">
+                          {article.title}
+                        </h3>
                         <span
                           onMouseEnter={() => setHoveredButton(`markets-${article.id}`)}
                           onMouseLeave={() => setHoveredButton(null)}
                           className="text-xs cursor-pointer transition-colors duration-200 flex-shrink-0"
                           style={{ color: hoveredButton === `markets-${article.id}` ? '#06f6ff' : 'rgba(6, 246, 255, 0.6)' }}
                         >{article.relatedMarkets.length} {article.relatedMarkets.length === 1 ? 'market' : 'markets'}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className="text-xs text-zinc-500">{article.source}</span>
+                        <span className="text-xs text-zinc-600">· {article.timestamp}</span>
                       </div>
                     </div>
                   </div>
