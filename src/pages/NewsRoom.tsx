@@ -500,7 +500,7 @@ export default function NewsRoom() {
   // Continent marker positions (longitude, latitude)
   const continentMarkers = [
     { name: "Africa", coordinates: [20, 0] as [number, number], region: "africa" },
-    { name: "America", coordinates: [-60, -5] as [number, number], region: "america" },
+    { name: "America", coordinates: [-90, 20] as [number, number], region: "america" },
     { name: "Europe", coordinates: [15, 52] as [number, number], region: "europe" },
   ];
 
