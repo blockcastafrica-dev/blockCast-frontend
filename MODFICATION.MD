@@ -1083,6 +1083,32 @@ community: "/news-room",
 - Clickable markers to zoom into continent
 - Markers visible in both world and zoomed views
 - White border around markers for visibility
+- America continent marker centered at [-90, 20] (Central America/Caribbean)
+
+**Sub-Region Market Count Markers:**
+- When zoomed into a continent, sub-region markers show active markets per sub-region
+- Africa sub-regions: North, West, Central, East, South
+- America sub-regions: North, Central, South
+- Europe sub-regions: North, West, East, South
+- Clickable sub-region markers to select and highlight countries
+- Markers with zero markets are hidden
+- Country-to-subregion mapping for accurate market categorization
+
+**Sub-Region Marker Coordinates:**
+| Continent | Sub-Region | Coordinates |
+|-----------|------------|-------------|
+| Africa | North | [15, 28] |
+| Africa | West | [-5, 12] |
+| Africa | Central | [18, 2] |
+| Africa | East | [38, 2] |
+| Africa | South | [25, -25] |
+| America | North | [-100, 45] |
+| America | Central | [-85, 15] |
+| America | South | [-60, -15] |
+| Europe | North | [18, 62] |
+| Europe | West | [2, 48] |
+| Europe | East | [30, 52] |
+| Europe | South | [14, 42] |
 
 **News Section with Related Markets:**
 - Each news article linked to related prediction markets
@@ -1181,6 +1207,44 @@ const marketCounts = useMemo(() => {
   });
   return counts;
 }, []);
+```
+
+**Sub-Region Market Counts Calculation:**
+```typescript
+const countryToSubRegion: Record<string, string> = {
+  // Africa
+  "Nigeria": "west", "South Africa": "south", "Kenya": "east", "Morocco": "north", "Ghana": "west",
+  // America
+  "USA": "north-am", "Canada": "north-am", "Mexico": "north-am",
+  "Brazil": "south-am", "Argentina": "south-am",
+  // Europe
+  "EU": "west-eu", "Germany": "west-eu", "France": "west-eu", "UK": "west-eu", "Spain": "south-eu",
+};
+
+const subRegionMarketCounts = useMemo(() => {
+  const counts: Record<string, number> = {};
+  Object.values(newsArticlesByRegion).forEach(articles => {
+    articles.forEach(article => {
+      article.relatedMarkets.forEach(market => {
+        if (market.country) {
+          const subRegion = countryToSubRegion[market.country];
+          if (subRegion) {
+            counts[subRegion] = (counts[subRegion] || 0) + 1;
+          }
+        }
+      });
+    });
+  });
+  return counts;
+}, []);
+```
+
+**Dynamic Marker Rendering:**
+```typescript
+const getCurrentMarkers = () => {
+  if (!selectedContinent) return { type: 'continent', markers: continentMarkers };
+  return { type: 'subregion', markers: subRegionMarkers[selectedContinent] || [] };
+};
 ```
 
 ---
