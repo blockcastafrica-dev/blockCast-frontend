@@ -1067,6 +1067,8 @@ community: "/news-room",
 - `26e15ff` - Fix mobile responsive layout for region selector pills
 - `8b4174d` - Improve mobile layout for news section and related markets
 - `de3a7a4` - Add click-outside to close expanded related markets
+- `2aca32a` - Fix news article layout - align markets count with title
+- `f8cd084` - Add expiry time with clock icon to related markets
 
 ### Changes:
 
@@ -1090,24 +1092,37 @@ community: "/news-room",
 **News Article Display:**
 | Element | Styling |
 |---------|---------|
-| Title | Cyan-400, line-clamp-2 |
-| Source | Zinc-500 text |
-| Timestamp | Zinc-600 text |
-| Markets count | Cyan with hover effect |
+| Title | Cyan-400, line-clamp-2, left side |
+| Markets count | Cyan with hover effect, aligned right with title |
+| Source | Zinc-500 text, separate row below |
+| Timestamp | Zinc-600 text, with dot separator |
 
 **Related Markets (Expanded View):**
 | Element | Styling |
 |---------|---------|
-| Container | Dark background (#1a1a1a), border |
-| Market claim | White text, xs size |
+| Container | Dark background (#1a1a1a), border, p-3 |
+| Market claim | White text, xs size, mb-2 |
 | Category | Badge with outline variant |
 | True odds | Cyan (#06f6ff) |
 | False odds | Purple-500 |
-| Market Pool | USDT format, center-justified |
+| Market Pool | USDT format, inline after odds |
+| Expiry time | Clock icon + time left (e.g., "182d 5h left") |
+
+**Inline Market Info Display:**
+- Format: `[Badge] True X.XX · False X.XX · USDT XXK · 🕐 XXd Xh left`
+- All elements on same row with dot separators
+- Clock icon from lucide-react
 
 **Market Pool Display:**
 - Format: `USDT ${value}` (e.g., "USDT 125K")
 - Supports K (thousands) and M (millions) suffixes
+
+**Expiry Time Display (matching market page):**
+- Format: `${days}d ${hours}h left` (e.g., "182d 5h left")
+- `${hours}h left` for less than 1 day
+- `Ending soon` for less than 1 hour
+- `Expired` for past dates
+- Clock icon before time
 
 **Region Selector Pills (Mobile Responsive):**
 | Property | Mobile | Desktop |
@@ -1138,6 +1153,7 @@ interface RelatedMarket {
   yesOdds: number;
   noOdds: number;
   totalPool: number;
+  expiresAt: Date;
   country?: string;
 }
 ```
