@@ -784,13 +784,15 @@ export default function NewsRoom() {
                       <h3 className="text-sm text-cyan-400 line-clamp-2 leading-tight">
                         {article.title}
                       </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-zinc-500">{article.source}</span>
-                        <span className="text-xs text-zinc-600">{article.timestamp}</span>
+                      <div className="flex items-center justify-between gap-2 mt-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-zinc-500">{article.source}</span>
+                          <span className="text-xs text-zinc-600">· {article.timestamp}</span>
+                        </div>
                         <span
                           onMouseEnter={() => setHoveredButton(`markets-${article.id}`)}
                           onMouseLeave={() => setHoveredButton(null)}
-                          className="text-xs ml-auto cursor-pointer transition-colors duration-200"
+                          className="text-xs cursor-pointer transition-colors duration-200 flex-shrink-0"
                           style={{ color: hoveredButton === `markets-${article.id}` ? '#06f6ff' : 'rgba(6, 246, 255, 0.6)' }}
                         >{article.relatedMarkets.length} {article.relatedMarkets.length === 1 ? 'market' : 'markets'}</span>
                       </div>
@@ -799,20 +801,20 @@ export default function NewsRoom() {
 
                   {/* Related Markets (Expanded) */}
                   {expandedArticle === article.id && (
-                    <div className="ml-2 mt-2 mb-3 p-2 rounded-lg border border-zinc-700/50" style={{ backgroundColor: '#1a1a1a' }}>
+                    <div className="mt-2 mb-3 p-3 rounded-lg border border-zinc-700/50" style={{ backgroundColor: '#1a1a1a' }}>
                       <div className="text-xs text-zinc-400 mb-2">Related Markets:</div>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {article.relatedMarkets.map((market) => (
                           <div
                             key={market.id}
-                            className="p-2 rounded bg-zinc-800/50 hover:bg-zinc-700/50 cursor-pointer transition-colors"
+                            className="p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 cursor-pointer transition-colors"
                           >
-                            <div className="text-xs text-white leading-tight mb-1.5">{market.claim}</div>
-                            <div className="flex items-center gap-2 text-[10px]">
+                            <div className="text-xs text-white leading-tight mb-2">{market.claim}</div>
+                            <div className="flex flex-wrap items-center gap-2 text-[10px]">
                               <Badge variant="outline" className="text-[10px] px-1.5 py-0">{market.category}</Badge>
                               <span className="text-[#06f6ff]">True {market.yesOdds.toFixed(2)}</span>
                               <span className="text-purple-500">False {market.noOdds.toFixed(2)}</span>
-                              <div className="ml-auto text-right">
+                              <div className="ml-auto text-center">
                                 <div className="text-[9px] text-zinc-500">Market Pool</div>
                                 <div className="text-zinc-300">{formatPool(market.totalPool)}</div>
                               </div>
