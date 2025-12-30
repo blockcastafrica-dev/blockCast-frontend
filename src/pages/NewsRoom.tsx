@@ -626,15 +626,16 @@ export default function NewsRoom() {
           </div>
 
           {/* Separator Line */}
-          <div className="border-t border-zinc-800 my-2"></div>
+          <div className="border-t border-zinc-800"></div>
 
-          {/* Region Selector Pills */}
-          <div className="flex justify-center items-center gap-4 mx-auto bg-zinc-900/95 rounded-full p-1.5 w-fit">
+          {/* Region Selector Pills - Centered */}
+          <div className="flex-1 flex items-center justify-center py-4 px-2 overflow-x-auto">
+            <div className="flex items-center gap-1.5 md:gap-4 bg-zinc-900/95 rounded-full p-1.5 whitespace-nowrap">
             {/* Back to World button when zoomed */}
             {selectedContinent && (
               <button
                 onClick={() => { setSelectedContinent(null); setSelectedSubRegion(null); }}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-all bg-zinc-700 text-white hover:bg-zinc-600 cursor-pointer"
+                className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-full transition-all bg-zinc-700 text-white hover:bg-zinc-600 cursor-pointer"
               >
                 ← World
               </button>
@@ -650,7 +651,7 @@ export default function NewsRoom() {
                 }}
                 onMouseEnter={() => setHoveredButton(region)}
                 onMouseLeave={() => setHoveredButton(null)}
-                className="px-5 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
+                className="px-3 py-1.5 md:px-5 md:py-2 text-xs md:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
                 style={{ color: hoveredButton === region ? '#06f6ff' : '#fff' }}
               >
                 {region}
@@ -664,7 +665,7 @@ export default function NewsRoom() {
                 onClick={() => setSelectedSubRegion(region.toLowerCase())}
                 onMouseEnter={() => setHoveredButton(`africa-${region}`)}
                 onMouseLeave={() => setHoveredButton(null)}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
+                className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
                 style={{
                   backgroundColor: selectedSubRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
                   color: selectedSubRegion === region.toLowerCase() ? '#000' : (hoveredButton === `africa-${region}` ? '#06f6ff' : '#fff'),
@@ -681,7 +682,7 @@ export default function NewsRoom() {
                 onClick={() => setSelectedSubRegion(`${region.toLowerCase()}-am`)}
                 onMouseEnter={() => setHoveredButton(`america-${region}`)}
                 onMouseLeave={() => setHoveredButton(null)}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
+                className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
                 style={{
                   backgroundColor: selectedSubRegion === `${region.toLowerCase()}-am` ? '#06f6ff' : 'transparent',
                   color: selectedSubRegion === `${region.toLowerCase()}-am` ? '#000' : (hoveredButton === `america-${region}` ? '#06f6ff' : '#fff'),
@@ -698,7 +699,7 @@ export default function NewsRoom() {
                 onClick={() => setSelectedSubRegion(`${region.toLowerCase()}-eu`)}
                 onMouseEnter={() => setHoveredButton(`europe-${region}`)}
                 onMouseLeave={() => setHoveredButton(null)}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
+                className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
                 style={{
                   backgroundColor: selectedSubRegion === `${region.toLowerCase()}-eu` ? '#06f6ff' : 'transparent',
                   color: selectedSubRegion === `${region.toLowerCase()}-eu` ? '#000' : (hoveredButton === `europe-${region}` ? '#06f6ff' : '#fff'),
@@ -707,6 +708,7 @@ export default function NewsRoom() {
                 {region}
               </button>
             ))}
+            </div>
           </div>
         </div>
 
