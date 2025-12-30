@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { X, Check, ChevronRight, ArrowLeft, Wallet } from "lucide-react";
 import blockcastLogo from "@/assets/blockcast logo dark BG.svg";
+import phantomLogo from "@/assets/phantom-logo.svg";
+import { WalletOkx } from "@web3icons/react";
 
 interface ConnectWalletModalProps {
   isOpen: boolean;
@@ -11,13 +13,13 @@ interface ConnectWalletModalProps {
 type ModalView = 'main' | 'more-wallets' | 'social-login';
 
 // Wallet icons
-const walletIcons = {
+const walletIcons: Record<string, string | null> = {
   binance: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=029",
   metamask: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
-  okx: "https://static.okx.com/cdn/assets/imgs/2212/F91E303BE1A44F63.png",
+  okx: null, // Using WalletOkx component
   trustwallet: "https://trustwallet.com/assets/images/media/assets/TWT.png",
   coinbase: "https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo.webp",
-  phantom: "https://cryptologos.cc/logos/phantom-phantom-logo.png?v=040",
+  phantom: phantomLogo,
 };
 
 // Social icons as simple SVG components
@@ -99,12 +101,12 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
   const mainWallets = [
     { id: 'binance', name: 'Binance Wallet', icon: walletIcons.binance },
     { id: 'metamask', name: 'MetaMask', icon: walletIcons.metamask },
-    { id: 'okx', name: 'OKX Wallet', icon: walletIcons.okx },
+    { id: 'coinbase', name: 'Coinbase Wallet', icon: walletIcons.coinbase },
   ];
 
   const moreWallets = [
     { id: 'trustwallet', name: 'Trust Wallet', icon: walletIcons.trustwallet },
-    { id: 'coinbase', name: 'Coinbase Wallet', icon: walletIcons.coinbase },
+    { id: 'okx', name: 'OKX Wallet', icon: walletIcons.okx },
     { id: 'phantom', name: 'Phantom', icon: walletIcons.phantom },
   ];
 
@@ -227,7 +229,11 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg border border-gray-600 flex items-center justify-center bg-white/5">
-                        <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
+                        {wallet.id === 'okx' ? (
+                          <WalletOkx variant="mono" size={24} color="#fff" />
+                        ) : (
+                          <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
+                        )}
                       </div>
                       <span className="text-white font-medium">{wallet.name}</span>
                     </div>
@@ -318,7 +324,7 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
           {/* More Wallets View */}
           {currentView === 'more-wallets' && (
             <div className="space-y-3">
-              {[...mainWallets, ...moreWallets].map((wallet) => (
+              {moreWallets.map((wallet) => (
                 <button
                   key={wallet.id}
                   onClick={() => handleWalletConnect(wallet.id)}
@@ -330,7 +336,11 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg border border-gray-600 flex items-center justify-center bg-white/5">
-                        <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
+                        {wallet.id === 'okx' ? (
+                          <WalletOkx variant="mono" size={24} color="#fff" />
+                        ) : (
+                          <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
+                        )}
                       </div>
                       <span className="text-white font-medium">{wallet.name}</span>
                     </div>
