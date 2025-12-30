@@ -14,10 +14,10 @@ type ModalView = 'main' | 'more-wallets' | 'social-login';
 const walletIcons = {
   binance: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=029",
   metamask: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
-  okx: "https://www.okx.com/cdn/assets/imgs/226/DF8E072D3BA65498.png",
+  okx: "https://static.okx.com/cdn/assets/imgs/2212/F91E303BE1A44F63.png",
   trustwallet: "https://trustwallet.com/assets/images/media/assets/TWT.png",
   coinbase: "https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo.webp",
-  phantom: "https://phantom.app/img/phantom-logo.svg",
+  phantom: "https://cryptologos.cc/logos/phantom-phantom-logo.png?v=040",
 };
 
 // Social icons as simple SVG components
