@@ -1058,4 +1058,115 @@ community: "/news-room",
 
 ---
 
-*Last Updated: December 29, 2025*
+## 22. News Room Page Redesign
+
+**File:** `src/pages/NewsRoom.tsx`
+
+### Commits:
+- `282d116` - Add related markets to news and market count markers on map
+- `26e15ff` - Fix mobile responsive layout for region selector pills
+- `8b4174d` - Improve mobile layout for news section and related markets
+- `de3a7a4` - Add click-outside to close expanded related markets
+
+### Changes:
+
+**Two-Column Layout:**
+- Left (50%): Interactive map with region selector
+- Right (50%): Calendar + News stacked vertically
+- Reduced items shown (3 calendar events, 5 news articles)
+
+**Interactive Map Enhancements:**
+- Purple market count markers on each continent (#a855f7)
+- Markers show total related markets per region
+- Clickable markers to zoom into continent
+- Markers visible in both world and zoomed views
+- White border around markers for visibility
+
+**News Section with Related Markets:**
+- Each news article linked to related prediction markets
+- Expandable view showing market details on click
+- Click-outside to close expanded markets
+
+**News Article Display:**
+| Element | Styling |
+|---------|---------|
+| Title | Cyan-400, line-clamp-2 |
+| Source | Zinc-500 text |
+| Timestamp | Zinc-600 text |
+| Markets count | Cyan with hover effect |
+
+**Related Markets (Expanded View):**
+| Element | Styling |
+|---------|---------|
+| Container | Dark background (#1a1a1a), border |
+| Market claim | White text, xs size |
+| Category | Badge with outline variant |
+| True odds | Cyan (#06f6ff) |
+| False odds | Purple-500 |
+| Market Pool | USDT format, center-justified |
+
+**Market Pool Display:**
+- Format: `USDT ${value}` (e.g., "USDT 125K")
+- Supports K (thousands) and M (millions) suffixes
+
+**Region Selector Pills (Mobile Responsive):**
+| Property | Mobile | Desktop |
+|----------|--------|---------|
+| Gap | 1.5 | 4 |
+| Padding | px-2.5 py-1.5 | px-4 py-2 |
+| Text size | xs | sm |
+| Overflow | Horizontal scroll | Normal |
+| Wrap | No wrap (single line) | No wrap |
+
+**News Region Tabs:**
+- Africa, America, Europe tabs
+- Cyan background when selected (#06f6ff)
+- Cyan hover effect on text
+
+**Click-Outside Behavior:**
+- Clicking anywhere outside news article closes expanded markets
+- Uses `stopPropagation()` on clickable elements to prevent unwanted closing
+
+### Data Structure:
+
+**RelatedMarket Interface:**
+```typescript
+interface RelatedMarket {
+  id: string;
+  claim: string;
+  category: string;
+  yesOdds: number;
+  noOdds: number;
+  totalPool: number;
+  country?: string;
+}
+```
+
+**NewsArticle Interface:**
+```typescript
+interface NewsArticle {
+  id: string;
+  title: string;
+  source: string;
+  timestamp: string;
+  imageUrl: string;
+  relatedMarkets: RelatedMarket[];
+}
+```
+
+**Market Counts Calculation:**
+```typescript
+const marketCounts = useMemo(() => {
+  const counts: Record<string, number> = { africa: 0, america: 0, europe: 0 };
+  Object.entries(newsArticlesByRegion).forEach(([region, articles]) => {
+    articles.forEach(article => {
+      counts[region] += article.relatedMarkets.length;
+    });
+  });
+  return counts;
+}, []);
+```
+
+---
+
+*Last Updated: December 30, 2025*
