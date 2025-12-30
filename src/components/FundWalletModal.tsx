@@ -214,7 +214,16 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               {/* Crypto - skip currency, go to step 3 */}
               <button
                 onClick={() => { setMethod("crypto"); setStep(3); }}
-                className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
+                className="w-full p-4 border rounded-xl text-left transition-all duration-200 cursor-pointer"
+                style={{ backgroundColor: '#1a1f26', borderColor: '#374151' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2a3140';
+                  e.currentTarget.style.borderColor = '#06b6d4';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1a1f26';
+                  e.currentTarget.style.borderColor = '#374151';
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -285,7 +294,16 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               {/* Mobile Money */}
               <button
                 onClick={() => toast.info("Mobile Money coming soon!")}
-                className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
+                className="w-full p-4 border rounded-xl text-left transition-all duration-200 cursor-pointer"
+                style={{ backgroundColor: '#1a1f26', borderColor: '#374151' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2a3140';
+                  e.currentTarget.style.borderColor = '#06b6d4';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1a1f26';
+                  e.currentTarget.style.borderColor = '#374151';
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -328,7 +346,16 @@ export default function FundWalletModal({ isOpen, onClose }: FundWalletModalProp
               {/* Card */}
               <button
                 onClick={() => toast.info("Credit/Debit Card coming soon!")}
-                className="w-full p-4 bg-[#1a1f26] border border-gray-700 rounded-xl text-left hover:border-cyan-500/50 transition-colors"
+                className="w-full p-4 border rounded-xl text-left transition-all duration-200 cursor-pointer"
+                style={{ backgroundColor: '#1a1f26', borderColor: '#374151' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2a3140';
+                  e.currentTarget.style.borderColor = '#06b6d4';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1a1f26';
+                  e.currentTarget.style.borderColor = '#374151';
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
