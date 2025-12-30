@@ -6,6 +6,7 @@ import {
   Marker,
 } from "react-simple-maps";
 import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
 
 // GeoJSON URLs for maps - using Natural Earth TopoJSON
 const WORLD_GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
@@ -260,6 +261,7 @@ interface RelatedMarket {
   yesOdds: number;
   noOdds: number;
   totalPool: number;
+  expiresAt: Date;
   country?: string;
 }
 
@@ -283,8 +285,8 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "2 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "ng-inflation-1", claim: "Will Nigeria's inflation drop below 25% by Q2 2025?", category: "Finance", yesOdds: 2.1, noOdds: 1.8, totalPool: 125000, country: "Nigeria" },
-        { id: "ng-naira-1", claim: "Will Naira strengthen to ₦1200/$ by March 2025?", category: "Finance", yesOdds: 3.2, noOdds: 1.4, totalPool: 89000, country: "Nigeria" },
+        { id: "ng-inflation-1", claim: "Will Nigeria's inflation drop below 25% by Q2 2025?", category: "Finance", yesOdds: 2.1, noOdds: 1.8, totalPool: 125000, expiresAt: new Date("2025-06-30"), country: "Nigeria" },
+        { id: "ng-naira-1", claim: "Will Naira strengthen to ₦1200/$ by March 2025?", category: "Finance", yesOdds: 3.2, noOdds: 1.4, totalPool: 89000, expiresAt: new Date("2025-03-31"), country: "Nigeria" },
       ],
     },
     {
@@ -294,7 +296,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "4 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "za-energy-1", claim: "Will South Africa end load shedding by mid-2025?", category: "Politics", yesOdds: 4.5, noOdds: 1.2, totalPool: 234000, country: "South Africa" },
+        { id: "za-energy-1", claim: "Will South Africa end load shedding by mid-2025?", category: "Politics", yesOdds: 4.5, noOdds: 1.2, totalPool: 234000, expiresAt: new Date("2025-06-30"), country: "South Africa" },
       ],
     },
     {
@@ -304,8 +306,8 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "6 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "ke-fintech-1", claim: "Will M-Pesa reach $75B transaction volume in 2025?", category: "Technology", yesOdds: 1.6, noOdds: 2.4, totalPool: 156000, country: "Kenya" },
-        { id: "ke-crypto-1", claim: "Will Kenya launch a CBDC in 2025?", category: "Finance", yesOdds: 2.8, noOdds: 1.5, totalPool: 78000, country: "Kenya" },
+        { id: "ke-fintech-1", claim: "Will M-Pesa reach $75B transaction volume in 2025?", category: "Technology", yesOdds: 1.6, noOdds: 2.4, totalPool: 156000, expiresAt: new Date("2025-12-31"), country: "Kenya" },
+        { id: "ke-crypto-1", claim: "Will Kenya launch a CBDC in 2025?", category: "Finance", yesOdds: 2.8, noOdds: 1.5, totalPool: 78000, expiresAt: new Date("2025-12-31"), country: "Kenya" },
       ],
     },
     {
@@ -315,7 +317,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "8 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "ma-energy-1", claim: "Will Morocco achieve 52% renewable energy by 2030?", category: "Politics", yesOdds: 1.9, noOdds: 2.0, totalPool: 145000, country: "Morocco" },
+        { id: "ma-energy-1", claim: "Will Morocco achieve 52% renewable energy by 2030?", category: "Politics", yesOdds: 1.9, noOdds: 2.0, totalPool: 145000, expiresAt: new Date("2030-12-31"), country: "Morocco" },
       ],
     },
     {
@@ -325,7 +327,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "10 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "gh-cocoa-1", claim: "Will Ghana cocoa exports exceed $4B in 2025?", category: "Finance", yesOdds: 1.7, noOdds: 2.2, totalPool: 98000, country: "Ghana" },
+        { id: "gh-cocoa-1", claim: "Will Ghana cocoa exports exceed $4B in 2025?", category: "Finance", yesOdds: 1.7, noOdds: 2.2, totalPool: 98000, expiresAt: new Date("2025-12-31"), country: "Ghana" },
       ],
     },
   ],
@@ -337,8 +339,8 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "1 hour ago",
       imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "us-fed-1", claim: "Will the Fed cut rates by 50bps in Q2 2025?", category: "Finance", yesOdds: 1.8, noOdds: 2.1, totalPool: 567000, country: "USA" },
-        { id: "us-sp500-1", claim: "Will S&P 500 reach 5500 by June 2025?", category: "Finance", yesOdds: 2.0, noOdds: 1.9, totalPool: 345000, country: "USA" },
+        { id: "us-fed-1", claim: "Will the Fed cut rates by 50bps in Q2 2025?", category: "Finance", yesOdds: 1.8, noOdds: 2.1, totalPool: 567000, expiresAt: new Date("2025-06-30"), country: "USA" },
+        { id: "us-sp500-1", claim: "Will S&P 500 reach 5500 by June 2025?", category: "Finance", yesOdds: 2.0, noOdds: 1.9, totalPool: 345000, expiresAt: new Date("2025-06-30"), country: "USA" },
       ],
     },
     {
@@ -348,7 +350,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "3 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "br-oil-1", claim: "Will Brazil become top 5 oil producer by 2026?", category: "Finance", yesOdds: 1.5, noOdds: 2.7, totalPool: 234000, country: "Brazil" },
+        { id: "br-oil-1", claim: "Will Brazil become top 5 oil producer by 2026?", category: "Finance", yesOdds: 1.5, noOdds: 2.7, totalPool: 234000, expiresAt: new Date("2026-12-31"), country: "Brazil" },
       ],
     },
     {
@@ -358,7 +360,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "5 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "mx-trade-1", claim: "Will Mexico overtake China as top US trade partner?", category: "Politics", yesOdds: 1.4, noOdds: 3.0, totalPool: 189000, country: "Mexico" },
+        { id: "mx-trade-1", claim: "Will Mexico overtake China as top US trade partner?", category: "Politics", yesOdds: 1.4, noOdds: 3.0, totalPool: 189000, expiresAt: new Date("2025-12-31"), country: "Mexico" },
       ],
     },
     {
@@ -368,7 +370,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "7 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "ar-reform-1", claim: "Will Argentina's inflation drop below 100% in 2025?", category: "Finance", yesOdds: 2.3, noOdds: 1.7, totalPool: 156000, country: "Argentina" },
+        { id: "ar-reform-1", claim: "Will Argentina's inflation drop below 100% in 2025?", category: "Finance", yesOdds: 2.3, noOdds: 1.7, totalPool: 156000, expiresAt: new Date("2025-12-31"), country: "Argentina" },
       ],
     },
     {
@@ -378,7 +380,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "9 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "ca-tech-1", claim: "Will Canada's tech sector create 100K jobs in 2025?", category: "Technology", yesOdds: 1.9, noOdds: 2.0, totalPool: 112000, country: "Canada" },
+        { id: "ca-tech-1", claim: "Will Canada's tech sector create 100K jobs in 2025?", category: "Technology", yesOdds: 1.9, noOdds: 2.0, totalPool: 112000, expiresAt: new Date("2025-12-31"), country: "Canada" },
       ],
     },
   ],
@@ -390,8 +392,8 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "1 hour ago",
       imageUrl: "https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "eu-ecb-1", claim: "Will ECB cut rates before Q3 2025?", category: "Finance", yesOdds: 2.2, noOdds: 1.7, totalPool: 445000, country: "EU" },
-        { id: "eu-euro-1", claim: "Will EUR/USD reach 1.15 by mid-2025?", category: "Finance", yesOdds: 2.5, noOdds: 1.6, totalPool: 289000, country: "EU" },
+        { id: "eu-ecb-1", claim: "Will ECB cut rates before Q3 2025?", category: "Finance", yesOdds: 2.2, noOdds: 1.7, totalPool: 445000, expiresAt: new Date("2025-09-30"), country: "EU" },
+        { id: "eu-euro-1", claim: "Will EUR/USD reach 1.15 by mid-2025?", category: "Finance", yesOdds: 2.5, noOdds: 1.6, totalPool: 289000, expiresAt: new Date("2025-06-30"), country: "EU" },
       ],
     },
     {
@@ -401,7 +403,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "3 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "de-gdp-1", claim: "Will Germany avoid recession in 2025?", category: "Finance", yesOdds: 1.6, noOdds: 2.4, totalPool: 312000, country: "Germany" },
+        { id: "de-gdp-1", claim: "Will Germany avoid recession in 2025?", category: "Finance", yesOdds: 1.6, noOdds: 2.4, totalPool: 312000, expiresAt: new Date("2025-12-31"), country: "Germany" },
       ],
     },
     {
@@ -411,7 +413,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "5 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "uk-tech-1", claim: "Will UK tech valuations exceed $1T by 2026?", category: "Technology", yesOdds: 2.8, noOdds: 1.5, totalPool: 198000, country: "UK" },
+        { id: "uk-tech-1", claim: "Will UK tech valuations exceed $1T by 2026?", category: "Technology", yesOdds: 2.8, noOdds: 1.5, totalPool: 198000, expiresAt: new Date("2026-12-31"), country: "UK" },
       ],
     },
     {
@@ -421,7 +423,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "7 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "fr-energy-1", claim: "Will France achieve 40% renewable energy by 2030?", category: "Politics", yesOdds: 1.7, noOdds: 2.2, totalPool: 176000, country: "France" },
+        { id: "fr-energy-1", claim: "Will France achieve 40% renewable energy by 2030?", category: "Politics", yesOdds: 1.7, noOdds: 2.2, totalPool: 176000, expiresAt: new Date("2030-12-31"), country: "France" },
       ],
     },
     {
@@ -431,7 +433,7 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       timestamp: "9 hours ago",
       imageUrl: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=100&h=100&fit=crop",
       relatedMarkets: [
-        { id: "es-tourism-1", claim: "Will Spain welcome 100M tourists in 2025?", category: "Finance", yesOdds: 1.5, noOdds: 2.7, totalPool: 134000, country: "Spain" },
+        { id: "es-tourism-1", claim: "Will Spain welcome 100M tourists in 2025?", category: "Finance", yesOdds: 1.5, noOdds: 2.7, totalPool: 134000, expiresAt: new Date("2025-12-31"), country: "Spain" },
       ],
     },
   ],
@@ -479,6 +481,21 @@ export default function NewsRoom() {
     if (amount >= 1000000) return `USDT ${(amount / 1000000).toFixed(1)}M`;
     if (amount >= 1000) return `USDT ${(amount / 1000).toFixed(0)}K`;
     return `USDT ${amount}`;
+  };
+
+  // Format time left until expiry (same as market page)
+  const formatTimeLeft = (expiresAt: Date) => {
+    const now = new Date();
+    const diff = expiresAt.getTime() - now.getTime();
+
+    if (diff <= 0) return 'Expired';
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h`;
+    return 'Ending soon';
   };
 
   // Calculate days until event
@@ -814,10 +831,15 @@ export default function NewsRoom() {
                               <Badge variant="outline" className="text-[10px] px-1.5 py-0">{market.category}</Badge>
                               <span className="text-[#06f6ff]">True {market.yesOdds.toFixed(2)}</span>
                               <span className="text-purple-500">False {market.noOdds.toFixed(2)}</span>
-                              <div className="ml-auto text-center">
-                                <div className="text-[9px] text-zinc-500">Market Pool</div>
-                                <div className="text-zinc-300">{formatPool(market.totalPool)}</div>
-                              </div>
+                              <span className="text-zinc-500">·</span>
+                              <span className="text-zinc-300">{formatPool(market.totalPool)}</span>
+                              <span className="text-zinc-500">·</span>
+                              <span className="text-zinc-400 flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {formatTimeLeft(market.expiresAt) === 'Expired' || formatTimeLeft(market.expiresAt) === 'Ending soon'
+                                  ? formatTimeLeft(market.expiresAt)
+                                  : `${formatTimeLeft(market.expiresAt)} left`}
+                              </span>
                             </div>
                           </div>
                         ))}
