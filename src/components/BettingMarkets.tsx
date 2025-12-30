@@ -1007,37 +1007,24 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
   return (
     <div className="space-y-4">
-      {/* Hero Section - Enhanced Mobile Layout */}
+      {/* Hero Section */}
       <div className="py-2 md:py-3 lg:py-4">
-        {/* Search and Active Markets Row */}
-        <div className="flex items-center gap-3 md:gap-4">
-          {/* Search Bar - aligned with Brand pill */}
-          <div className="flex-1 lg:flex-none lg:w-[700px]">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="markets-search-input"
-                placeholder="Search markets, categories, or sources..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-9 md:h-10 lg:h-10 bg-background/50 border-primary/30 focus:border-primary text-sm md:text-base"
-              />
-            </div>
+        {/* Desktop: All controls in one row */}
+        <div className="hidden lg:flex items-center gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {/* Search Bar - compact */}
+          <div className="relative flex-shrink-0" style={{ width: '280px' }}>
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="markets-search-input-desktop"
+              placeholder="Search markets..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-9 w-full bg-background/50 border-primary/30 focus:border-primary text-sm"
+            />
           </div>
 
-          {/* Active Markets Counter - Hidden on mobile, visible on lg */}
-          <div className="hidden lg:flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-muted-foreground">
-              31 Active Markets
-            </span>
-          </div>
-        </div>
-
-        {/* Sort Dropdown and Create Market - Row on mobile */}
-        <div className="flex items-center gap-2 mt-2 overflow-x-auto pb-1 scrollbar-hide">
           {/* Sort Dropdown Pill */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <button
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
@@ -1060,10 +1047,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
             </button>
           </div>
 
-
           {/* Create Market Button */}
           <button
-            className="font-medium gap-2 px-4 py-2 text-sm rounded-full transition-all duration-200 flex items-center whitespace-nowrap"
+            className="flex-shrink-0 font-medium gap-2 px-4 py-2 text-sm rounded-full transition-all duration-200 flex items-center whitespace-nowrap"
             style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1px solid #444' }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#06f6ff'; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#444'; }}
@@ -1077,19 +1063,24 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
             </svg>
             Create Market
           </button>
-        </div>
 
-        {/* Category Pills Row */}
-        <div className="mt-2 overflow-hidden">
-          <div
-            className="flex items-center gap-2 md:gap-3 overflow-x-auto"
-            style={{ paddingBottom: '30px', marginBottom: '-30px' }}
-          >
+          {/* Active Markets Counter */}
+          <div className="flex-shrink-0 flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+              31 Active Markets
+            </span>
+          </div>
+
+          {/* Separator */}
+          <div className="flex-shrink-0 w-px h-6 bg-zinc-700 mx-1"></div>
+
+          {/* Category Pills - inline */}
           {categories.map((category) => (
             <button
-              key={category}
+              key={`desktop-${category}`}
               onClick={() => setSelectedCategory(category)}
-              className="px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-medium whitespace-nowrap transition-all duration-200 border"
+              className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
               style={{
                 backgroundColor: selectedCategory === category ? '#06f6ff' : 'transparent',
                 color: selectedCategory === category ? '#000000' : '#ffffff',
@@ -1109,6 +1100,100 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               {category === 'all' ? 'All' : category}
             </button>
           ))}
+        </div>
+
+        {/* Mobile/Tablet: Multi-row layout */}
+        <div className="lg:hidden">
+          {/* Search Bar - full width */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="markets-search-input-mobile"
+              placeholder="Search markets..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-9 w-full bg-background/50 border-primary/30 focus:border-primary text-sm"
+            />
+          </div>
+
+          {/* Sort, Create Market, Active Markets Row */}
+          <div className="flex items-center gap-2 mt-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {/* Sort Dropdown Pill */}
+            <button
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setDropdownPosition({ top: rect.bottom + 8, left: rect.left });
+                setShowSortDropdown(!showSortDropdown);
+              }}
+              className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
+              style={{
+                backgroundColor: 'transparent',
+                color: '#ffffff',
+                borderColor: '#444',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#06f6ff'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#444'; }}
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
+              </svg>
+              {selectedFilterLabel}
+            </button>
+
+            {/* Create Market Button */}
+            <button
+              className="flex-shrink-0 font-medium gap-2 px-4 py-2 text-sm rounded-full transition-all duration-200 flex items-center whitespace-nowrap"
+              style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1px solid #444' }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#06f6ff'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#444'; }}
+              onClick={() => setShowCreateMarketModal(true)}
+            >
+              <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+              </svg>
+              Create Market
+            </button>
+
+            {/* Active Markets Counter */}
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                31 Active Markets
+              </span>
+            </div>
+          </div>
+
+          {/* Category Pills Row */}
+          <div className="mt-2 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="flex items-center gap-2">
+              {categories.map((category) => (
+                <button
+                  key={`mobile-${category}`}
+                  onClick={() => setSelectedCategory(category)}
+                  className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
+                  style={{
+                    backgroundColor: selectedCategory === category ? '#06f6ff' : 'transparent',
+                    color: selectedCategory === category ? '#000000' : '#ffffff',
+                    borderColor: selectedCategory === category ? '#06f6ff' : '#444',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedCategory !== category) {
+                      e.currentTarget.style.borderColor = '#06f6ff';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedCategory !== category) {
+                      e.currentTarget.style.borderColor = '#444';
+                    }
+                  }}
+                >
+                  {category === 'all' ? 'All' : category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
