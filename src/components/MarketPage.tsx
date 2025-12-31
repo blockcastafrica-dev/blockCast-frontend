@@ -473,6 +473,8 @@ export default function MarketPage({
                 likeCount={formatNumber(Math.floor(Math.random() * 500) + 100)}
                 isBookmarked={isBookmarked}
                 onBookmarkToggle={() => setIsBookmarked(!isBookmarked)}
+                isMultipleChoice={market.isMultipleChoice}
+                outcomes={market.outcomes}
               />
             </div>
           </div>

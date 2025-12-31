@@ -5,6 +5,14 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowUp, ArrowDown, Share2, Heart, Bookmark } from 'lucide-react';
 import blockcastLogo from '@/assets/blockcast logo dark BG.svg';
 
+interface MarketOutcome {
+  id: string;
+  label: string;
+  pool: number;
+  odds: number;
+  color?: string;
+}
+
 interface ProbabilityChartProps {
   yesPercentage: number;
   noPercentage: number;
@@ -17,6 +25,8 @@ interface ProbabilityChartProps {
   likeCount?: number;
   isBookmarked?: boolean;
   onBookmarkToggle?: () => void;
+  isMultipleChoice?: boolean;
+  outcomes?: MarketOutcome[];
 }
 
 // Generate realistic historical data based on current pool percentages
@@ -70,6 +80,51 @@ const generateChartData = (currentYes: number, currentNo: number) => {
   return data;
 };
 
+// Generate chart data for multiple choice outcomes
+const generateMultipleChoiceChartData = (outcomes: MarketOutcome[], totalPool: number) => {
+  const data = [];
+  const now = new Date();
+  const hoursPoints = [168, 156, 144, 132, 120, 108, 96, 84, 72, 60, 48, 36, 24, 12, 6, 0];
+
+  // Calculate current percentages for each outcome
+  const currentPercentages: Record<string, number> = {};
+  outcomes.forEach(outcome => {
+    currentPercentages[outcome.id] = (outcome.pool / totalPool) * 100;
+  });
+
+  // Start from equal distribution
+  const startPercentage = 100 / outcomes.length;
+
+  hoursPoints.forEach((hoursAgo) => {
+    const progress = 1 - (hoursAgo / 168);
+    const easedProgress = progress * progress;
+    const seed = Math.sin(hoursAgo * 0.1) * 2;
+    const fluctuation = hoursAgo === 0 ? 0 : seed;
+
+    const date = new Date(now.getTime() - hoursAgo * 60 * 60 * 1000);
+    const dataPoint: Record<string, any> = {
+      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      timestamp: date.getTime(),
+    };
+
+    outcomes.forEach(outcome => {
+      const diff = currentPercentages[outcome.id] - startPercentage;
+      let percent = startPercentage + (diff * easedProgress) + fluctuation;
+
+      if (hoursAgo === 0) {
+        percent = currentPercentages[outcome.id];
+      }
+
+      percent = Math.max(2, Math.min(60, percent));
+      dataPoint[outcome.id] = Number(percent.toFixed(1));
+    });
+
+    data.push(dataPoint);
+  });
+
+  return data;
+};
+
 type TimeRange = '24H' | '7D' | '30D' | 'ALL';
 
 const formatCurrency = (amount: number): string => {
@@ -92,14 +147,19 @@ export default function ProbabilityChart({
   onLikeToggle,
   likeCount,
   isBookmarked,
-  onBookmarkToggle
+  onBookmarkToggle,
+  isMultipleChoice,
+  outcomes
 }: ProbabilityChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>('7D');
 
   // Generate chart data based on current percentages
   const chartData = useMemo(() => {
+    if (isMultipleChoice && outcomes && outcomes.length > 0 && totalPool) {
+      return generateMultipleChoiceChartData(outcomes, totalPool);
+    }
     return generateChartData(yesPercentage, noPercentage);
-  }, [yesPercentage, noPercentage]);
+  }, [yesPercentage, noPercentage, isMultipleChoice, outcomes, totalPool]);
 
   const timeRanges: TimeRange[] = ['24H', '7D', '30D', 'ALL'];
 
@@ -114,17 +174,42 @@ export default function ProbabilityChart({
     return chartData.filter(d => now - d.timestamp <= ranges[timeRange]);
   }, [chartData, timeRange]);
 
-  // Calculate trend
-  const firstYes = filteredData[0]?.yes || yesPercentage;
-  const lastYes = filteredData[filteredData.length - 1]?.yes || yesPercentage;
-  const trend = lastYes - firstYes;
-  const trendPercentage = Math.abs(trend).toFixed(1);
-  const isPositive = trend >= 0;
+  // Calculate trend and leading outcome
+  const { leadingOutcome, leadingPercentage, trend, trendPercentage, isPositive } = useMemo(() => {
+    if (isMultipleChoice && outcomes && outcomes.length > 0 && totalPool) {
+      // Find leading outcome for multiple choice
+      const sorted = [...outcomes].sort((a, b) => b.pool - a.pool);
+      const leading = sorted[0];
+      const leadingPct = (leading.pool / totalPool) * 100;
 
-  // Determine which outcome is leading
-  const isNoLeading = noPercentage > yesPercentage;
-  const leadingOutcome = isNoLeading ? 'False' : 'True';
-  const leadingPercentage = isNoLeading ? noPercentage : yesPercentage;
+      // Calculate trend for leading outcome
+      const firstValue = filteredData[0]?.[leading.id] || leadingPct;
+      const lastValue = filteredData[filteredData.length - 1]?.[leading.id] || leadingPct;
+      const trendValue = lastValue - firstValue;
+
+      return {
+        leadingOutcome: leading.label,
+        leadingPercentage: leadingPct,
+        trend: trendValue,
+        trendPercentage: Math.abs(trendValue).toFixed(1),
+        isPositive: trendValue >= 0
+      };
+    }
+
+    // Binary market logic
+    const firstYes = filteredData[0]?.yes || yesPercentage;
+    const lastYes = filteredData[filteredData.length - 1]?.yes || yesPercentage;
+    const trendValue = lastYes - firstYes;
+    const isNoLeading = noPercentage > yesPercentage;
+
+    return {
+      leadingOutcome: isNoLeading ? 'False' : 'True',
+      leadingPercentage: isNoLeading ? noPercentage : yesPercentage,
+      trend: trendValue,
+      trendPercentage: Math.abs(trendValue).toFixed(1),
+      isPositive: trendValue >= 0
+    };
+  }, [filteredData, yesPercentage, noPercentage, isMultipleChoice, outcomes, totalPool]);
 
   const formatCurrency = (amount: number): string => {
     if (amount >= 1000000) {
@@ -156,15 +241,33 @@ export default function ProbabilityChart({
 
         {/* Legend & Actions */}
         <div className="flex flex-col items-end gap-1.5 md:gap-2 lg:gap-2">
-          <div className="flex items-center gap-2 md:gap-3 lg:gap-4 text-xs md:text-sm lg:text-sm">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#22d3ee' }}></div>
-              <span className="text-slate-300">True {yesPercentage.toFixed(1)}%</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#7c3aed' }}></div>
-              <span className="text-slate-300">False {noPercentage.toFixed(1)}%</span>
-            </div>
+          <div className="flex items-center flex-wrap justify-end gap-2 md:gap-3 lg:gap-4 text-xs md:text-sm lg:text-sm">
+            {isMultipleChoice && outcomes && outcomes.length > 0 && totalPool ? (
+              // Multiple choice outcomes legend
+              outcomes.slice(0, 4).map((outcome) => (
+                <div key={outcome.id} className="flex items-center gap-1.5">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: outcome.color || '#6B7280' }}
+                  ></div>
+                  <span className="text-slate-300">
+                    {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
+                  </span>
+                </div>
+              ))
+            ) : (
+              // Binary market legend
+              <>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#22d3ee' }}></div>
+                  <span className="text-slate-300">True {yesPercentage.toFixed(1)}%</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#7c3aed' }}></div>
+                  <span className="text-slate-300">False {noPercentage.toFixed(1)}%</span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -280,20 +383,37 @@ export default function ProbabilityChart({
                 }}
                 labelStyle={{ color: '#94a3b8' }}
               />
-              <Line
-                dataKey="yes"
-                stroke="#22d3ee"
-                strokeWidth={3}
-                dot={false}
-                name="True"
-              />
-              <Line
-                dataKey="no"
-                stroke="#7c3aed"
-                strokeWidth={3}
-                dot={false}
-                name="False"
-              />
+              {isMultipleChoice && outcomes && outcomes.length > 0 ? (
+                // Multiple choice lines
+                outcomes.map((outcome) => (
+                  <Line
+                    key={outcome.id}
+                    dataKey={outcome.id}
+                    stroke={outcome.color || '#6B7280'}
+                    strokeWidth={3}
+                    dot={false}
+                    name={outcome.label}
+                  />
+                ))
+              ) : (
+                // Binary market lines
+                <>
+                  <Line
+                    dataKey="yes"
+                    stroke="#22d3ee"
+                    strokeWidth={3}
+                    dot={false}
+                    name="True"
+                  />
+                  <Line
+                    dataKey="no"
+                    stroke="#7c3aed"
+                    strokeWidth={3}
+                    dot={false}
+                    name="False"
+                  />
+                </>
+              )}
             </LineChart>
           </ResponsiveContainer>
         ) : (
