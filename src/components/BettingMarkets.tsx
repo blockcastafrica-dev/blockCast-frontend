@@ -15,6 +15,14 @@ import ShareModal from '@/components/ShareModal';
 import CreateMarketModal from '@/components/CreateMarketModal';
 import { useNavigate } from 'react-router-dom';
 
+export interface MarketOutcome {
+  id: string;
+  label: string;
+  pool: number;
+  odds: number;
+  color?: string;
+}
+
 export interface BettingMarket {
   id: string;
   claim: string;
@@ -40,7 +48,7 @@ export interface BettingMarket {
   totalCasters: number;
   expiresAt: Date;
   status: 'active' | 'resolving' | 'resolved';
-  resolution?: 'yes' | 'no';
+  resolution?: 'yes' | 'no' | string;
   trending: boolean;
   imageUrl?: string;
   country?: string;
@@ -48,6 +56,9 @@ export interface BettingMarket {
   marketType: 'present' | 'future';
   confidenceLevel: 'high' | 'medium' | 'low';
   disputable?: boolean;
+  // Multiple outcomes support
+  isMultipleChoice?: boolean;
+  outcomes?: MarketOutcome[];
 }
 
 interface BettingMarketsProps {
@@ -858,6 +869,112 @@ export const realTimeMarkets: BettingMarket[] = [
     disputable: true,
     imageUrl:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHw1ZyUyMG5ldHdvcmslMjB0ZWxlY29tfGVufDF8fHx8MTc1NTc4Nzc5NHww&ixlib=rb-4.1.0&q=80&w=1080",
+  },
+  // MULTIPLE CHOICE MARKETS
+  {
+    id: "multi-afcon-winner-2025",
+    claim: "Who will win AFCON 2025?",
+    claimTranslations: {
+      en: "Who will win AFCON 2025?",
+      fr: "Qui va gagner la CAN 2025?",
+      sw: "Nani atashinda AFCON 2025?",
+    },
+    category: "Sports",
+    subcategory: "Football",
+    source: "CAF",
+    description: "Predict which national team will win the Africa Cup of Nations 2025 tournament hosted in Morocco.",
+    totalPool: 5420000,
+    yesPool: 0,
+    noPool: 0,
+    yesOdds: 0,
+    noOdds: 0,
+    totalCasters: 45230,
+    expiresAt: new Date("2025-02-15"),
+    status: "active",
+    trending: true,
+    region: "Continental Africa",
+    marketType: "future",
+    confidenceLevel: "high",
+    disputable: false,
+    isMultipleChoice: true,
+    outcomes: [
+      { id: "nigeria", label: "Nigeria", pool: 1625000, odds: 3.33, color: "#008751" },
+      { id: "egypt", label: "Egypt", pool: 1355000, odds: 4.0, color: "#C8102E" },
+      { id: "morocco", label: "Morocco", pool: 1084000, odds: 5.0, color: "#C1272D" },
+      { id: "senegal", label: "Senegal", pool: 813000, odds: 6.67, color: "#00853F" },
+      { id: "other", label: "Other", pool: 543000, odds: 10.0, color: "#6B7280" },
+    ],
+    imageUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=1080",
+  },
+  {
+    id: "multi-african-startup-funding-2025",
+    claim: "Which sector will receive the most startup funding in Africa in 2025?",
+    claimTranslations: {
+      en: "Which sector will receive the most startup funding in Africa in 2025?",
+      fr: "Quel secteur recevra le plus de financement de startups en Afrique en 2025?",
+      sw: "Sekta gani itapata ufadhili zaidi wa kuanzisha biashara Afrika mnamo 2025?",
+    },
+    category: "Business",
+    subcategory: "Startups",
+    source: "Partech Africa",
+    description: "Predict which industry sector will attract the highest venture capital investment in African startups during 2025.",
+    totalPool: 3180000,
+    yesPool: 0,
+    noPool: 0,
+    yesOdds: 0,
+    noOdds: 0,
+    totalCasters: 28450,
+    expiresAt: new Date("2025-12-31"),
+    status: "active",
+    trending: true,
+    region: "Continental Africa",
+    marketType: "future",
+    confidenceLevel: "medium",
+    disputable: false,
+    isMultipleChoice: true,
+    outcomes: [
+      { id: "fintech", label: "Fintech", pool: 1113000, odds: 2.86, color: "#06f6ff" },
+      { id: "healthtech", label: "Healthtech", pool: 795000, odds: 4.0, color: "#10B981" },
+      { id: "agritech", label: "Agritech", pool: 636000, odds: 5.0, color: "#84CC16" },
+      { id: "cleantech", label: "Clean Energy", pool: 477000, odds: 6.67, color: "#F59E0B" },
+      { id: "logistics", label: "Logistics", pool: 159000, odds: 20.0, color: "#8B5CF6" },
+    ],
+    imageUrl: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=1080",
+  },
+  {
+    id: "multi-next-african-billionaire-2025",
+    claim: "Which country will produce the next African billionaire?",
+    claimTranslations: {
+      en: "Which country will produce the next African billionaire?",
+      fr: "Quel pays produira le prochain milliardaire africain?",
+      sw: "Nchi gani itazalisha bilionea wa Afrika anayefuata?",
+    },
+    category: "Business",
+    subcategory: "Wealth",
+    source: "Forbes Africa",
+    description: "Predict which African nation will be home to the continent's next billionaire entrepreneur.",
+    totalPool: 2750000,
+    yesPool: 0,
+    noPool: 0,
+    yesOdds: 0,
+    noOdds: 0,
+    totalCasters: 31200,
+    expiresAt: new Date("2025-12-31"),
+    status: "active",
+    trending: false,
+    region: "Continental Africa",
+    marketType: "future",
+    confidenceLevel: "low",
+    disputable: false,
+    isMultipleChoice: true,
+    outcomes: [
+      { id: "nigeria", label: "Nigeria", pool: 962500, odds: 2.86, color: "#008751" },
+      { id: "south-africa", label: "South Africa", pool: 687500, odds: 4.0, color: "#FFB612" },
+      { id: "kenya", label: "Kenya", pool: 550000, odds: 5.0, color: "#006600" },
+      { id: "egypt", label: "Egypt", pool: 412500, odds: 6.67, color: "#C8102E" },
+      { id: "other", label: "Other", pool: 137500, odds: 20.0, color: "#6B7280" },
+    ],
+    imageUrl: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.0.3&q=80&w=1080",
   },
 ];
 
