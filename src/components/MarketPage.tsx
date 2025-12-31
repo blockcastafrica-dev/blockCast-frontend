@@ -1175,8 +1175,8 @@ export default function MarketPage({
                 </div>
               </div>
 
-              {/* Holders List - Scrollable */}
-              <div className="px-4 pb-4 max-h-80 overflow-y-auto">
+              {/* Holders List - Scrollable (shows 5, scroll for more) */}
+              <div className="px-4 pb-4 overflow-y-auto scrollbar-hide" style={{ maxHeight: '220px' }}>
                 <div className="space-y-1">
                   {holdersData[holdersPosition].map((holder, index) => (
                     <div
@@ -2011,8 +2011,8 @@ export default function MarketPage({
                 </div>
               </div>
 
-              {/* Holders List - Scrollable */}
-              <div className="px-4 md:px-5 lg:px-6 pb-4 md:pb-5 lg:pb-6 max-h-80 overflow-y-auto">
+              {/* Holders List - Scrollable (shows 5, scroll for more) */}
+              <div className="px-4 md:px-5 lg:px-6 pb-4 md:pb-5 lg:pb-6 overflow-y-auto scrollbar-hide" style={{ maxHeight: '220px' }}>
                 <div className="space-y-1">
                   {holdersData[holdersPosition].map((holder, index) => (
                     <div
