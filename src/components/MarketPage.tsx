@@ -1194,9 +1194,9 @@ export default function MarketPage({
               </div>
 
               {/* Outcome Toggle */}
-              <div className="px-4 pt-4">
+              <div className="px-4 pt-4 pb-2">
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}
@@ -2349,9 +2349,9 @@ export default function MarketPage({
               </div>
 
               {/* YES/NO Toggle or Outcome Toggle */}
-              <div className="px-4 md:px-5 lg:px-6 pt-4">
+              <div className="px-4 md:px-5 lg:px-6 pt-4 pb-2">
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}

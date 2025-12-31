@@ -396,7 +396,7 @@ export default function ProbabilityChart({
                     key={outcome.id}
                     dataKey={outcome.id}
                     stroke={outcome.color || '#6B7280'}
-                    strokeWidth={3}
+                    strokeWidth={1.5}
                     dot={false}
                     name={outcome.label}
                   />
@@ -407,14 +407,14 @@ export default function ProbabilityChart({
                   <Line
                     dataKey="yes"
                     stroke="#22d3ee"
-                    strokeWidth={3}
+                    strokeWidth={1.5}
                     dot={false}
                     name="True"
                   />
                   <Line
                     dataKey="no"
                     stroke="#7c3aed"
-                    strokeWidth={3}
+                    strokeWidth={1.5}
                     dot={false}
                     name="False"
                   />
