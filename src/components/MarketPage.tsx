@@ -126,36 +126,52 @@ export default function MarketPage({
   const [holdersPosition, setHoldersPosition] = useState<"yes" | "no">("yes");
   const [holdersPage, setHoldersPage] = useState<number>(1);
 
-  // Mock top holders data
-  const mockHolders = {
-    yes: [
-      { rank: 1, username: "FeeDis", amount: 1857.26, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=feedis" },
-      { rank: 2, username: "User_817c97", amount: 967.96, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=817c97" },
-      { rank: 3, username: "xiashaonianxu", amount: 487.12, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=xia" },
-      { rank: 4, username: "remaren", amount: 400.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=remaren" },
-      { rank: 5, username: "WibeCode", amount: 384.25, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=wibe" },
-      { rank: 6, username: "isjdkwe41", amount: 31.25, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=isjd" },
-      { rank: 7, username: "yuchen", amount: 12.95, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=yuchen" },
-      { rank: 8, username: "Sergej", amount: 7.29, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sergej" },
-      { rank: 9, username: "User_2659a5", amount: 1.63, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2659" },
-      { rank: 10, username: "User_a584cc", amount: 1.05, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=a584" },
-    ],
-    no: [
-      { rank: 1, username: "CryptoKing", amount: 2150.50, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=king" },
-      { rank: 2, username: "BlockMaster", amount: 1420.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=block" },
-      { rank: 3, username: "TruthSeeker", amount: 890.75, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=truth" },
-      { rank: 4, username: "DeFiWhale", amount: 650.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=whale" },
-      { rank: 5, username: "MarketMaker", amount: 520.30, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maker" },
-      { rank: 6, username: "User_7f8e21", amount: 125.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=7f8e" },
-      { rank: 7, username: "hodler99", amount: 45.50, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=hodl" },
-      { rank: 8, username: "Alpha_Trader", amount: 28.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=alpha" },
-      { rank: 9, username: "User_b3c4d5", amount: 12.75, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=b3c4" },
-      { rank: 10, username: "newbie2025", amount: 5.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=newbie" },
-    ]
+  // Activity data - single source of truth
+  const activityData = [
+    { id: "1", wallet: "0x7835...892f", action: "bought", shares: 143, position: "no", price: 0.28, total: 39.8, time: "25 minutes ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1" },
+    { id: "2", wallet: "0x66CE...A2E3", action: "bought", shares: 93.1, position: "no", price: 0.27, total: 25.4, time: "2 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2" },
+    { id: "3", wallet: "freedom", action: "bought", shares: 101, position: "no", price: 0.26, total: 26.6, time: "2 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3" },
+    { id: "4", wallet: "Senzer", action: "bought", shares: 81.6, position: "yes", price: 0.75, total: 61.3, time: "2 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=4" },
+    { id: "5", wallet: "wildegou", action: "bought", shares: 178, position: "no", price: 0.25, total: 44.9, time: "5 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=5" },
+    { id: "6", wallet: "KnightXBT", action: "bought", shares: 132, position: "yes", price: 0.76, total: 100, time: "5 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=6" },
+    { id: "7", wallet: "FeeDis", action: "bought", shares: 45.5, position: "yes", price: 0.74, total: 33.7, time: "6 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=feedis" },
+    { id: "8", wallet: "xiashaonianxu", action: "bought", shares: 38.2, position: "yes", price: 0.73, total: 27.9, time: "8 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=xia" },
+    { id: "9", wallet: "BlockMaster", action: "bought", shares: 65.0, position: "no", price: 0.24, total: 15.6, time: "10 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=block" },
+    { id: "10", wallet: "TruthSeeker", action: "bought", shares: 52.3, position: "no", price: 0.23, total: 12.0, time: "12 hours ago", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=truth" },
+  ];
+
+  // Compute holders from activity data
+  const computeHolders = (position: "yes" | "no") => {
+    const holdersMap = new Map<string, { wallet: string; shares: number; avatar: string }>();
+
+    activityData
+      .filter(a => a.position === position)
+      .forEach(activity => {
+        const existing = holdersMap.get(activity.wallet);
+        if (existing) {
+          existing.shares += activity.action === "bought" ? activity.shares : -activity.shares;
+        } else {
+          holdersMap.set(activity.wallet, {
+            wallet: activity.wallet,
+            shares: activity.action === "bought" ? activity.shares : -activity.shares,
+            avatar: activity.avatar
+          });
+        }
+      });
+
+    return Array.from(holdersMap.values())
+      .filter(h => h.shares > 0)
+      .sort((a, b) => b.shares - a.shares)
+      .map((h, i) => ({ rank: i + 1, username: h.wallet, shares: h.shares, avatar: h.avatar }));
+  };
+
+  const holdersData = {
+    yes: computeHolders("yes"),
+    no: computeHolders("no")
   };
 
   const holdersPerPage = 10;
-  const totalHoldersPages = 5; // Mock total pages
+  const totalHoldersPages = Math.ceil(holdersData[holdersPosition].length / holdersPerPage) || 1;
 
   const isSelling = castInterface === "sell";
   const isBuying = castInterface === "buy";
@@ -900,74 +916,7 @@ export default function MarketPage({
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {/* Activity Feed */}
-                {[
-                  {
-                    id: "1",
-                    wallet: "0x7835...892f",
-                    action: "bought",
-                    shares: 143,
-                    position: "no",
-                    price: 0.28,
-                    total: 39.8,
-                    time: "25 minutes ago",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1"
-                  },
-                  {
-                    id: "2",
-                    wallet: "0x66CE...A2E3",
-                    action: "bought",
-                    shares: 93.1,
-                    position: "no",
-                    price: 0.27,
-                    total: 25.4,
-                    time: "2 hours ago",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2"
-                  },
-                  {
-                    id: "3",
-                    wallet: "freedom",
-                    action: "bought",
-                    shares: 101,
-                    position: "no",
-                    price: 0.26,
-                    total: 26.6,
-                    time: "2 hours ago",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3"
-                  },
-                  {
-                    id: "4",
-                    wallet: "Senzer",
-                    action: "sold",
-                    shares: 81.6,
-                    position: "yes",
-                    price: 0.75,
-                    total: 61.3,
-                    time: "2 hours ago",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=4"
-                  },
-                  {
-                    id: "5",
-                    wallet: "wildegou",
-                    action: "sold",
-                    shares: 178,
-                    position: "no",
-                    price: 0.25,
-                    total: 44.9,
-                    time: "5 hours ago",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=5"
-                  },
-                  {
-                    id: "6",
-                    wallet: "KnightXBT",
-                    action: "bought",
-                    shares: 132,
-                    position: "yes",
-                    price: 0.76,
-                    total: 100,
-                    time: "5 hours ago",
-                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=6"
-                  },
-                ].map((activity) => (
+                {activityData.map((activity) => (
                   <div
                     key={activity.id}
                     className="flex gap-3 p-4 rounded-lg bg-card/30 hover:bg-card/50 transition-colors border border-border/50"
@@ -1214,7 +1163,7 @@ export default function MarketPage({
                       color: holdersPosition === "yes" ? '#000000' : '#71717a'
                     }}
                   >
-                    YES
+                    TRUE
                   </button>
                   <button
                     type="button"
@@ -1225,14 +1174,14 @@ export default function MarketPage({
                       color: holdersPosition === "no" ? '#ffffff' : '#71717a'
                     }}
                   >
-                    NO
+                    FALSE
                   </button>
                 </div>
               </div>
 
               {/* Holders List */}
               <div className="p-4 space-y-3">
-                {mockHolders[holdersPosition].map((holder, index) => (
+                {holdersData[holdersPosition].map((holder, index) => (
                   <div
                     key={holder.rank}
                     className="flex items-center gap-3 py-2"
@@ -1260,9 +1209,9 @@ export default function MarketPage({
                       {holder.username}
                     </span>
 
-                    {/* Amount */}
+                    {/* Shares */}
                     <span className="text-sm font-semibold text-white">
-                      {holder.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {holder.shares.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                 ))}
@@ -2100,7 +2049,7 @@ export default function MarketPage({
                       color: holdersPosition === "yes" ? '#000000' : '#71717a'
                     }}
                   >
-                    YES
+                    TRUE
                   </button>
                   <button
                     type="button"
@@ -2111,14 +2060,14 @@ export default function MarketPage({
                       color: holdersPosition === "no" ? '#ffffff' : '#71717a'
                     }}
                   >
-                    NO
+                    FALSE
                   </button>
                 </div>
               </div>
 
               {/* Holders List */}
               <div className="p-4 md:p-5 lg:p-6 space-y-3">
-                {mockHolders[holdersPosition].map((holder, index) => (
+                {holdersData[holdersPosition].map((holder, index) => (
                   <div
                     key={holder.rank}
                     className="flex items-center gap-3 py-2"
@@ -2146,9 +2095,9 @@ export default function MarketPage({
                       {holder.username}
                     </span>
 
-                    {/* Amount */}
+                    {/* Shares */}
                     <span className="text-sm font-semibold text-white">
-                      {holder.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {holder.shares.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                 ))}
