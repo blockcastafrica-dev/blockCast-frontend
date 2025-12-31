@@ -124,7 +124,6 @@ export default function MarketPage({
   const [evidenceLink, setEvidenceLink] = useState("");
   const [castInterface, setCastInterface] = useState<"buy" | "sell">("buy");
   const [holdersPosition, setHoldersPosition] = useState<"yes" | "no">("yes");
-  const [holdersPage, setHoldersPage] = useState<number>(1);
 
   // Activity data - single source of truth
   const activityData = [
@@ -169,9 +168,6 @@ export default function MarketPage({
     yes: computeHolders("yes"),
     no: computeHolders("no")
   };
-
-  const holdersPerPage = 10;
-  const totalHoldersPages = Math.ceil(holdersData[holdersPosition].length / holdersPerPage) || 1;
 
   const isSelling = castInterface === "sell";
   const isBuying = castInterface === "buy";
@@ -1156,7 +1152,7 @@ export default function MarketPage({
                 <div className="flex rounded-full border border-zinc-700/50 p-1.5">
                   <button
                     type="button"
-                    onClick={() => { setHoldersPosition("yes"); setHoldersPage(1); }}
+                    onClick={() => setHoldersPosition("yes")}
                     className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
                     style={{
                       backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
@@ -1167,7 +1163,7 @@ export default function MarketPage({
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setHoldersPosition("no"); setHoldersPage(1); }}
+                    onClick={() => setHoldersPosition("no")}
                     className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
                     style={{
                       backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
@@ -1179,93 +1175,43 @@ export default function MarketPage({
                 </div>
               </div>
 
-              {/* Holders List */}
-              <div className="p-4 space-y-3">
-                {holdersData[holdersPosition].map((holder, index) => (
-                  <div
-                    key={holder.rank}
-                    className="flex items-center gap-3 py-2"
-                  >
-                    {/* Rank Badge */}
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                      holder.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50' :
-                      holder.rank === 2 ? 'bg-zinc-400/20 text-zinc-300 ring-1 ring-zinc-400/50' :
-                      holder.rank === 3 ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' :
-                      'text-zinc-500'
-                    }`}>
-                      {holder.rank}
-                    </div>
-
-                    {/* Avatar */}
-                    <Avatar className="h-8 w-8 shrink-0">
-                      <AvatarImage src={holder.avatar} />
-                      <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">
-                        {holder.username.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    {/* Username */}
-                    <span className="flex-1 text-sm text-white truncate">
-                      {holder.username}
-                    </span>
-
-                    {/* Shares */}
-                    <span className="text-sm font-semibold text-white">
-                      {holder.shares.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              <div className="px-4 pb-4">
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => setHoldersPage(Math.max(1, holdersPage - 1))}
-                    disabled={holdersPage === 1}
-                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-
-                  {[1, 2, 3].map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setHoldersPage(page)}
-                      className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
-                        holdersPage === page
-                          ? 'bg-zinc-700 text-white'
-                          : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
-                      }`}
+              {/* Holders List - Scrollable */}
+              <div className="px-4 pb-4 max-h-80 overflow-y-auto">
+                <div className="space-y-1">
+                  {holdersData[holdersPosition].map((holder, index) => (
+                    <div
+                      key={holder.rank}
+                      className="flex items-center gap-3 py-2"
                     >
-                      {page}
-                    </button>
+                      {/* Rank Badge */}
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                        holder.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50' :
+                        holder.rank === 2 ? 'bg-zinc-400/20 text-zinc-300 ring-1 ring-zinc-400/50' :
+                        holder.rank === 3 ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' :
+                        'text-zinc-500'
+                      }`}>
+                        {holder.rank}
+                      </div>
+
+                      {/* Avatar */}
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarImage src={holder.avatar} />
+                        <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">
+                          {holder.username.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+
+                      {/* Username */}
+                      <span className="flex-1 text-sm text-white truncate">
+                        {holder.username}
+                      </span>
+
+                      {/* Shares */}
+                      <span className="text-sm font-semibold text-white">
+                        {holder.shares.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
                   ))}
-
-                  <span className="text-zinc-600 px-1">...</span>
-
-                  <button
-                    onClick={() => setHoldersPage(totalHoldersPages)}
-                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
-                      holdersPage === totalHoldersPages
-                        ? 'bg-zinc-700 text-white'
-                        : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
-                    }`}
-                  >
-                    {totalHoldersPages}
-                  </button>
-
-                  <button
-                    onClick={() => setHoldersPage(Math.min(totalHoldersPages, holdersPage + 1))}
-                    disabled={holdersPage === totalHoldersPages}
-                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
                 </div>
               </div>
             </div>
@@ -2042,7 +1988,7 @@ export default function MarketPage({
                 <div className="flex rounded-full border border-zinc-700/50 p-1.5">
                   <button
                     type="button"
-                    onClick={() => { setHoldersPosition("yes"); setHoldersPage(1); }}
+                    onClick={() => setHoldersPosition("yes")}
                     className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
                     style={{
                       backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
@@ -2053,7 +1999,7 @@ export default function MarketPage({
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setHoldersPosition("no"); setHoldersPage(1); }}
+                    onClick={() => setHoldersPosition("no")}
                     className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
                     style={{
                       backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
@@ -2065,93 +2011,43 @@ export default function MarketPage({
                 </div>
               </div>
 
-              {/* Holders List */}
-              <div className="p-4 md:p-5 lg:p-6 space-y-3">
-                {holdersData[holdersPosition].map((holder, index) => (
-                  <div
-                    key={holder.rank}
-                    className="flex items-center gap-3 py-2"
-                  >
-                    {/* Rank Badge */}
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                      holder.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50' :
-                      holder.rank === 2 ? 'bg-zinc-400/20 text-zinc-300 ring-1 ring-zinc-400/50' :
-                      holder.rank === 3 ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' :
-                      'text-zinc-500'
-                    }`}>
-                      {holder.rank}
-                    </div>
-
-                    {/* Avatar */}
-                    <Avatar className="h-8 w-8 shrink-0">
-                      <AvatarImage src={holder.avatar} />
-                      <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">
-                        {holder.username.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    {/* Username */}
-                    <span className="flex-1 text-sm text-white truncate">
-                      {holder.username}
-                    </span>
-
-                    {/* Shares */}
-                    <span className="text-sm font-semibold text-white">
-                      {holder.shares.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              <div className="px-4 md:px-5 lg:px-6 pb-4 md:pb-5 lg:pb-6">
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => setHoldersPage(Math.max(1, holdersPage - 1))}
-                    disabled={holdersPage === 1}
-                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-
-                  {[1, 2, 3].map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setHoldersPage(page)}
-                      className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
-                        holdersPage === page
-                          ? 'bg-zinc-700 text-white'
-                          : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
-                      }`}
+              {/* Holders List - Scrollable */}
+              <div className="px-4 md:px-5 lg:px-6 pb-4 md:pb-5 lg:pb-6 max-h-80 overflow-y-auto">
+                <div className="space-y-1">
+                  {holdersData[holdersPosition].map((holder, index) => (
+                    <div
+                      key={holder.rank}
+                      className="flex items-center gap-3 py-2"
                     >
-                      {page}
-                    </button>
+                      {/* Rank Badge */}
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                        holder.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50' :
+                        holder.rank === 2 ? 'bg-zinc-400/20 text-zinc-300 ring-1 ring-zinc-400/50' :
+                        holder.rank === 3 ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' :
+                        'text-zinc-500'
+                      }`}>
+                        {holder.rank}
+                      </div>
+
+                      {/* Avatar */}
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarImage src={holder.avatar} />
+                        <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">
+                          {holder.username.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+
+                      {/* Username */}
+                      <span className="flex-1 text-sm text-white truncate">
+                        {holder.username}
+                      </span>
+
+                      {/* Shares */}
+                      <span className="text-sm font-semibold text-white">
+                        {holder.shares.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
                   ))}
-
-                  <span className="text-zinc-600 px-1">...</span>
-
-                  <button
-                    onClick={() => setHoldersPage(totalHoldersPages)}
-                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
-                      holdersPage === totalHoldersPages
-                        ? 'bg-zinc-700 text-white'
-                        : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
-                    }`}
-                  >
-                    {totalHoldersPages}
-                  </button>
-
-                  <button
-                    onClick={() => setHoldersPage(Math.min(totalHoldersPages, holdersPage + 1))}
-                    disabled={holdersPage === totalHoldersPages}
-                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
                 </div>
               </div>
             </div>
