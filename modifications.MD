@@ -78,3 +78,42 @@ Enhanced the buy/sell modal and market card layouts for better display of multip
 ### Files Modified
 - `src/components/BettingMarkets.tsx` - Betting modal info display, market card buttons
 - `src/components/MarketPage.tsx` - Buy/sell sections, helper functions, mobile modal
+
+## Create Market Modal - Multiple Choice Support (December 2024)
+
+### Overview
+Added support for creating multiple choice markets through the Create Market modal.
+
+### Features Added
+
+#### 1. Outcome Type Selection
+- Toggle between "Binary (True/False)" and "Multiple Choice" market types
+- Located in Step 1 of the market creation flow
+- Consistent button styling with brand colors
+
+#### 2. Multiple Choice Outcome Inputs
+- Dynamic outcome input fields (minimum 2, maximum 6)
+- Color indicators for each outcome using brand palette:
+  - `#06F6FF` (Neon Pulse)
+  - `#05DDFF` (Neon Pulse Shade 1)
+  - `#5B3AE8` (Deep Purple)
+  - `#432AC5` (Deep Purple Shade 1)
+  - `#2C1CA4` (Deep Purple Shade 2)
+  - `#05B3FF` (Neon Pulse Shade 2)
+- Add/remove outcome buttons
+- Remove button only visible when more than 2 outcomes exist
+
+#### 3. Validation
+- Step 1 validation requires at least 2 filled outcomes for multiple choice markets
+- Submit validation prevents creation without valid outcomes
+
+#### 4. Market Summary Display
+- Shows "Outcome Type" row (Binary/Multiple Choice)
+- Displays color-coded outcome pills for multiple choice markets
+
+### Interfaces Added
+- `MarketOutcome` interface with `id`, `label`, `color` properties
+- Extended `NewMarket` interface with `isMultipleChoice` and `outcomes` fields
+
+### Files Modified
+- `src/components/CreateMarketModal.tsx` - Full multiple choice market creation support

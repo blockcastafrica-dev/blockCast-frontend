@@ -56,7 +56,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             </button>
             <span className="text-muted-foreground/50">•</span>
             <button
-              onClick={() => window.open('https://docs.blockcast.live', '_blank')}
+              onClick={() => window.open('https://docs.google.com/document/d/1esCM5JK1aGh3r_IC4JoXU590GpnmYsAIMuHwRm7HXo0/edit?usp=drive_web&ouid=100361246679737946923', '_blank')}
               className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
             >
               <HiOutlineDocumentText className="h-4 w-4" />

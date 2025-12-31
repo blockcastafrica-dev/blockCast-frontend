@@ -8,6 +8,12 @@ interface CreateMarketModalProps {
   onCreateMarket?: (market: NewMarket) => void;
 }
 
+export interface MarketOutcome {
+  id: string;
+  label: string;
+  color: string;
+}
+
 export interface NewMarket {
   claim: string;
   category: string;
@@ -20,7 +26,19 @@ export interface NewMarket {
   marketType: 'present' | 'future';
   imageFile: File;
   imagePreview: string;
+  isMultipleChoice: boolean;
+  outcomes?: MarketOutcome[];
 }
+
+// Brand colors for outcomes
+const outcomeColors = [
+  "#06F6FF", // Neon Pulse
+  "#05DDFF", // Neon Pulse Shade 1
+  "#5B3AE8", // Deep Purple
+  "#432AC5", // Deep Purple Shade 1
+  "#2C1CA4", // Deep Purple Shade 2
+  "#05B3FF", // Neon Pulse Shade 2
+];
 
 const categories = [
   { id: "entertainment", name: "Entertainment", subcategories: ["Film Industry", "Music Awards", "Sports Broadcasting", "Music Charts", "Streaming", "Events"] },
@@ -58,6 +76,31 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isMultipleChoice, setIsMultipleChoice] = useState(false);
+  const [outcomes, setOutcomes] = useState<MarketOutcome[]>([
+    { id: '1', label: '', color: outcomeColors[0] },
+    { id: '2', label: '', color: outcomeColors[1] },
+    { id: '3', label: '', color: outcomeColors[2] },
+  ]);
+
+  const addOutcome = () => {
+    if (outcomes.length < 6) {
+      setOutcomes([
+        ...outcomes,
+        { id: String(Date.now()), label: '', color: outcomeColors[outcomes.length % outcomeColors.length] }
+      ]);
+    }
+  };
+
+  const removeOutcome = (id: string) => {
+    if (outcomes.length > 2) {
+      setOutcomes(outcomes.filter(o => o.id !== id));
+    }
+  };
+
+  const updateOutcomeLabel = (id: string, label: string) => {
+    setOutcomes(outcomes.map(o => o.id === id ? { ...o, label } : o));
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,6 +135,12 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
     setExpiryDate("");
     setImageFile(null);
     setImagePreview("");
+    setIsMultipleChoice(false);
+    setOutcomes([
+      { id: '1', label: '', color: outcomeColors[0] },
+      { id: '2', label: '', color: outcomeColors[1] },
+      { id: '3', label: '', color: outcomeColors[2] },
+    ]);
     onClose();
   };
 
@@ -99,6 +148,15 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
     if (!claim || !selectedCategory || !expiryDate || !imageFile) {
       toast.error("Please fill in all required fields");
       return;
+    }
+
+    // Validate outcomes if multiple choice
+    if (isMultipleChoice) {
+      const validOutcomes = outcomes.filter(o => o.label.trim().length > 0);
+      if (validOutcomes.length < 2) {
+        toast.error("Please provide at least 2 outcomes for multiple choice market");
+        return;
+      }
     }
 
     const newMarket: NewMarket = {
@@ -113,6 +171,8 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
       marketType,
       imageFile,
       imagePreview,
+      isMultipleChoice,
+      outcomes: isMultipleChoice ? outcomes.filter(o => o.label.trim().length > 0) : undefined,
     };
 
     onCreateMarket?.(newMarket);
@@ -120,7 +180,8 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
     resetAndClose();
   };
 
-  const isStep1Valid = claim.length >= 10 && description.length >= 10 && source.length >= 3;
+  const hasValidOutcomes = !isMultipleChoice || outcomes.filter(o => o.label.trim().length > 0).length >= 2;
+  const isStep1Valid = claim.length >= 10 && description.length >= 10 && source.length >= 3 && hasValidOutcomes;
   const isStep2Valid = selectedCategory && selectedSubcategory;
   const isStep3Valid = expiryDate && selectedRegion && selectedCountry && imageFile;
 
@@ -302,6 +363,98 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                   }}
                 />
               </div>
+
+              {/* Outcome Type Selection */}
+              <div>
+                <label className="text-gray-300 text-sm mb-2 block">
+                  Outcome Type
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsMultipleChoice(false)}
+                    className={`flex-1 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
+                      !isMultipleChoice ? '' : 'hover:border-[#06f6ff]'
+                    }`}
+                    style={{
+                      backgroundColor: !isMultipleChoice ? '#06f6ff' : 'transparent',
+                      color: !isMultipleChoice ? '#000000' : '#ffffff',
+                      borderColor: !isMultipleChoice ? '#06f6ff' : '#444',
+                    }}
+                  >
+                    Binary (True/False)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsMultipleChoice(true)}
+                    className={`flex-1 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
+                      isMultipleChoice ? '' : 'hover:border-[#06f6ff]'
+                    }`}
+                    style={{
+                      backgroundColor: isMultipleChoice ? '#06f6ff' : 'transparent',
+                      color: isMultipleChoice ? '#000000' : '#ffffff',
+                      borderColor: isMultipleChoice ? '#06f6ff' : '#444',
+                    }}
+                  >
+                    Multiple Choice
+                  </button>
+                </div>
+              </div>
+
+              {/* Multiple Choice Outcomes */}
+              {isMultipleChoice && (
+                <div>
+                  <label className="text-gray-300 text-sm mb-2 block">
+                    Outcomes <span className="text-red-400">*</span>
+                    <span className="text-gray-500 ml-2">(min 2, max 6)</span>
+                  </label>
+                  <div className="space-y-2">
+                    {outcomes.map((outcome, index) => (
+                      <div key={outcome.id} className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: outcome.color }}
+                        />
+                        <input
+                          type="text"
+                          value={outcome.label}
+                          onChange={(e) => updateOutcomeLabel(outcome.id, e.target.value)}
+                          placeholder={`Outcome ${index + 1}`}
+                          style={{
+                            flex: 1,
+                            padding: '10px 12px',
+                            backgroundColor: '#1a1f26',
+                            border: '1px solid #374151',
+                            borderRadius: '10px',
+                            color: 'white',
+                            fontSize: '14px',
+                            outline: 'none',
+                          }}
+                        />
+                        {outcomes.length > 2 && (
+                          <button
+                            type="button"
+                            onClick={() => removeOutcome(outcome.id)}
+                            className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {outcomes.length < 6 && (
+                    <button
+                      type="button"
+                      onClick={addOutcome}
+                      className="mt-2 flex items-center gap-1 text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Outcome
+                    </button>
+                  )}
+                </div>
+              )}
 
               <button
                 onClick={() => isStep1Valid && setStep(2)}
@@ -593,6 +746,26 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                   <span className="text-gray-400">Type</span>
                   <span className="text-white capitalize">{marketType}</span>
                 </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Outcome Type</span>
+                  <span className="text-white">{isMultipleChoice ? 'Multiple Choice' : 'Binary (True/False)'}</span>
+                </div>
+                {isMultipleChoice && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Outcomes</span>
+                    <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
+                      {outcomes.filter(o => o.label.trim()).map((outcome) => (
+                        <span
+                          key={outcome.id}
+                          className="px-2 py-0.5 rounded text-xs"
+                          style={{ backgroundColor: `${outcome.color}20`, color: outcome.color }}
+                        >
+                          {outcome.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Location</span>
                   <span className="text-white">{selectedCountry}, {currentRegion?.name}</span>
