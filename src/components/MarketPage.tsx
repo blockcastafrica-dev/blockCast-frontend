@@ -124,6 +124,7 @@ export default function MarketPage({
   const [evidenceLink, setEvidenceLink] = useState("");
   const [castInterface, setCastInterface] = useState<"buy" | "sell">("buy");
   const [holdersPosition, setHoldersPosition] = useState<"yes" | "no">("yes");
+  const [holdersDropdownOpen, setHoldersDropdownOpen] = useState(false);
 
   // Activity data - single source of truth
   const activityData = [
@@ -359,7 +360,7 @@ export default function MarketPage({
       </div>
 
       {/* Main Two-Column Layout for Desktop */}
-      <div className="flex flex-col lg:flex-row" style={{ gap: '60px' }}>
+      <div className="flex flex-col lg:flex-row lg:items-start" style={{ gap: '60px' }}>
         {/* Left Column - All Content */}
         <div className="flex-1 min-w-0 space-y-3 md:space-y-4">
           {/* Market Header Card */}
@@ -1138,11 +1139,30 @@ export default function MarketPage({
               <div className="p-4 border-b border-zinc-800/30">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-white">Top Holders</h3>
-                  <div className="flex items-center gap-2 text-sm text-[#c5f82a]">
-                    <span className="truncate max-w-[100px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 12)}...</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setHoldersDropdownOpen(!holdersDropdownOpen)}
+                      className="flex items-center gap-2 text-sm text-[#c5f82a] hover:text-[#d4ff4a] transition-colors cursor-pointer"
+                    >
+                      <span className="truncate max-w-[100px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 12)}...</span>
+                      <svg className={`w-4 h-4 transition-transform ${holdersDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {holdersDropdownOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-50" style={{ backgroundColor: '#18181b' }}>
+                        <div className="py-1">
+                          <button
+                            onClick={() => setHoldersDropdownOpen(false)}
+                            className="w-full px-4 py-2 text-left text-sm text-[#c5f82a] hover:bg-zinc-800"
+                            style={{ backgroundColor: '#27272a' }}
+                          >
+                            {getTranslatedText(market.claim, market.claimTranslations).substring(0, 20)}...
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1594,7 +1614,7 @@ export default function MarketPage({
 
         {/* Right Column - Betting Modal (Desktop Only - Sticky) */}
         {!market.disputable && (
-          <aside className="hidden lg:block lg:w-[380px] shrink-0" style={{ position: 'sticky', top: '100px', alignSelf: 'flex-start', height: 'fit-content' }}>
+          <aside className="hidden lg:block lg:w-[380px] shrink-0" style={{ position: 'sticky', top: '96px', alignSelf: 'flex-start' }}>
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
               <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
@@ -1974,11 +1994,30 @@ export default function MarketPage({
               <div className="p-4 md:p-5 lg:p-6 border-b border-zinc-800/30">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-white">Top Holders</h3>
-                  <div className="flex items-center gap-2 text-sm text-[#c5f82a]">
-                    <span className="truncate max-w-[120px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 15)}...</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setHoldersDropdownOpen(!holdersDropdownOpen)}
+                      className="flex items-center gap-2 text-sm text-[#c5f82a] hover:text-[#d4ff4a] transition-colors cursor-pointer"
+                    >
+                      <span className="truncate max-w-[120px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 15)}...</span>
+                      <svg className={`w-4 h-4 transition-transform ${holdersDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {holdersDropdownOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-56 border border-zinc-700 rounded-lg shadow-xl z-50" style={{ backgroundColor: '#18181b' }}>
+                        <div className="py-1">
+                          <button
+                            onClick={() => setHoldersDropdownOpen(false)}
+                            className="w-full px-4 py-2 text-left text-sm text-[#c5f82a] hover:bg-zinc-800"
+                            style={{ backgroundColor: '#27272a' }}
+                          >
+                            {getTranslatedText(market.claim, market.claimTranslations).substring(0, 25)}...
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
