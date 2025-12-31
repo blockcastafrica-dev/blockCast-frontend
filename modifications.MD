@@ -45,3 +45,36 @@ Added support for prediction markets with multiple outcome options (beyond binar
 - Increased spacing between outcome pills and holders list
 - Hover highlight effects using outcome-specific colors
 - Responsive scrollable buttons for markets with many outcomes
+
+## Buy/Sell Modal & Market Card Improvements (December 2024)
+
+### Overview
+Enhanced the buy/sell modal and market card layouts for better display of multiple choice outcomes.
+
+### Features Added
+
+#### 1. Buy/Sell Modal Info Display
+- Added **Outcome** label showing selected outcome name
+- Added **Probability** percentage for the selected outcome
+- Added **Odds** display (e.g., 3.33x)
+- **Price per share** calculation (1 / odds)
+- **Shares** quantity based on amount entered
+- **Max profit** and **Max payout** calculations with 3% fee
+
+#### 2. Helper Functions (`MarketPage.tsx`)
+- `getCurrentPercentage()` - returns probability % for selected outcome
+- `getSelectedOutcomeLabel()` - returns name of selected outcome (e.g., "Nigeria", "True")
+
+#### 3. Mobile Modal Improvements
+- Made modal content scrollable while keeping header fixed
+- Reduced button margin for better space utilization
+- Added spacing between Top Holders toggle buttons and list (mobile)
+
+#### 4. Market Card Outcome Buttons
+- Changed to 3-column grid layout (3 buttons first row, 2 second row)
+- Second row buttons centered using flexbox with `justify-center`
+- Consistent sizing with `calc(33.333% - 6px)` width
+
+### Files Modified
+- `src/components/BettingMarkets.tsx` - Betting modal info display, market card buttons
+- `src/components/MarketPage.tsx` - Buy/sell sections, helper functions, mobile modal

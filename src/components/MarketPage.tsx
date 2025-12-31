@@ -277,6 +277,26 @@ export default function MarketPage({
     return castPosition === "yes" ? market.yesOdds : market.noOdds;
   };
 
+  // Helper to get current percentage based on market type
+  const getCurrentPercentage = () => {
+    if (market.isMultipleChoice && market.outcomes && selectedOutcome) {
+      const outcome = market.outcomes.find(o => o.id === selectedOutcome);
+      return outcome ? Math.round((outcome.pool / market.totalPool) * 100) : 0;
+    }
+    return castPosition === "yes"
+      ? Math.round((market.yesPool / market.totalPool) * 100)
+      : Math.round((market.noPool / market.totalPool) * 100);
+  };
+
+  // Helper to get selected outcome label
+  const getSelectedOutcomeLabel = () => {
+    if (market.isMultipleChoice && market.outcomes && selectedOutcome) {
+      const outcome = market.outcomes.find(o => o.id === selectedOutcome);
+      return outcome ? outcome.label : '';
+    }
+    return castPosition === "yes" ? "True" : "False";
+  };
+
   const calculateProfit = (amount: number, position: "yes" | "no") => {
     const odds = market.isMultipleChoice ? getCurrentOdds() : (position === "yes" ? market.yesOdds : market.noOdds);
     const grossPayout = amount * odds;
@@ -1194,9 +1214,9 @@ export default function MarketPage({
               </div>
 
               {/* Outcome Toggle */}
-              <div className="px-4 pt-4 pb-2">
+              <div className="px-4 pt-4 pb-4">
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide justify-center">
+                  <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide justify-center">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}
@@ -1434,8 +1454,8 @@ export default function MarketPage({
               <X className="h-5 w-5 text-gray-400" />
             </button>
 
-            {/* Static Content - No Scroll */}
-            <div className="flex-1 flex flex-col">
+            {/* Header - Fixed */}
+            <div className="flex-shrink-0">
               {/* Spacer for close button */}
               <div className="h-8"></div>
 
@@ -1474,19 +1494,19 @@ export default function MarketPage({
                   )}
                 </button>
               </div>
+            </div>
 
-              {/* Content */}
-              <div className="px-6 py-4">
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto px-6 py-4">
                 <div className="space-y-4">
                   {/* Progress Bar with Percentages */}
                   {market.isMultipleChoice && market.outcomes ? (
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between flex-wrap gap-1">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between flex-wrap gap-x-4 gap-y-1">
                         {market.outcomes.slice(0, 3).map((outcome) => (
                           <span
                             key={outcome.id}
-                            className="text-xs font-medium"
-                            style={{ color: outcome.color }}
+                            className="text-xs font-medium text-white"
                           >
                             {outcome.label}: {Math.round((outcome.pool / market.totalPool) * 100)}%
                           </span>
@@ -1535,7 +1555,7 @@ export default function MarketPage({
                       {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
                     </h3>
                     {market.isMultipleChoice && market.outcomes ? (
-                      <div className="space-y-2 max-h-[180px] overflow-y-auto scrollbar-hide">
+                      <div className="space-y-2">
                         {market.outcomes.map((outcome) => (
                           <button
                             key={outcome.id}
@@ -1575,7 +1595,7 @@ export default function MarketPage({
                               </span>
                               <div className="flex items-center gap-3">
                                 <span className="text-xs text-white">
-                                  {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
+                                  {Math.round((outcome.pool / market.totalPool) * 100)}%
                                 </span>
                                 <span className="text-sm font-bold text-white">
                                   {outcome.odds.toFixed(2)}x
@@ -1652,21 +1672,33 @@ export default function MarketPage({
                     <>
                       <div className="space-y-2 text-sm mt-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-zinc-500">Current odds</span>
+                          <span className="text-zinc-500">Outcome</span>
+                          <span className="text-zinc-300">
+                            {getSelectedOutcomeLabel()}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-500">Probability</span>
+                          <span className="text-zinc-300">
+                            {getCurrentPercentage()}%
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-500">Odds</span>
                           <span className="text-zinc-300">
                             {getCurrentOdds().toFixed(2)}x
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-500">Price per share</span>
+                          <span className="text-zinc-300">
+                            ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / getCurrentOdds()).toFixed(2)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Shares</span>
                           <span className="text-zinc-300">
                             {profitCalculation ? profitCalculation.shares : 0}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-zinc-500">Avg. price</span>
-                          <span className="text-zinc-300">
-                            ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : "0.00"}
                           </span>
                         </div>
                       </div>
@@ -1706,7 +1738,7 @@ export default function MarketPage({
                       <Button
                         onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
                         disabled={!castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance}
-                        className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer mt-14"
+                        className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer mt-6"
                         style={{
                           backgroundColor: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#334155' : '#06f6ff',
                           color: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#000000'
@@ -1721,6 +1753,18 @@ export default function MarketPage({
                   {castInterface === "sell" && (
                     <>
                       <div className="space-y-2 text-sm mt-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-500">Outcome</span>
+                          <span className="text-zinc-300">
+                            {getSelectedOutcomeLabel()}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-zinc-500">Probability</span>
+                          <span className="text-zinc-300">
+                            {getCurrentPercentage()}%
+                          </span>
+                        </div>
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Price per share</span>
                           <span className="text-zinc-300">
@@ -1767,7 +1811,7 @@ export default function MarketPage({
                       <Button
                         onClick={() => { handleCustomCast(); setShowMobileBetModal(false); }}
                         disabled={!castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance}
-                        className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer mt-14"
+                        className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer mt-6"
                         style={{
                           backgroundColor: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#334155' : '#ef4444',
                           color: !castAmount || parseFloat(castAmount) < MIN_BET_AMOUNT || parseFloat(castAmount) > userBalance ? '#94a3b8' : '#ffffff'
@@ -1779,14 +1823,13 @@ export default function MarketPage({
                   )}
                 </div>
               </div>
-            </div>
           </div>
           </>
         )}
 
         {/* Right Column - Betting Modal (Desktop Only - Sticky) */}
         {!market.disputable && (
-          <aside className="hidden lg:block shrink-0" style={{ position: 'sticky', top: '96px', width: '300px' }}>
+          <aside className="hidden lg:block shrink-0" style={{ position: 'sticky', top: '96px', width: '380px' }}>
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
               <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
@@ -1830,18 +1873,17 @@ export default function MarketPage({
                   <div className="space-y-4">
                     {market.isMultipleChoice && market.outcomes ? (
                       <>
-                        <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center justify-between flex-wrap gap-x-4 gap-y-1">
                           {market.outcomes.slice(0, 3).map((outcome) => (
                             <span
                               key={outcome.id}
-                              className="text-sm font-semibold"
-                              style={{ color: outcome.color }}
+                              className="text-sm font-semibold text-white"
                             >
                               {outcome.label}: {Math.round((outcome.pool / market.totalPool) * 100)}%
                             </span>
                           ))}
                         </div>
-                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg border border-zinc-800/50">
+                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg border border-zinc-800/50 mt-3">
                           {market.outcomes.map((outcome) => (
                             <div
                               key={outcome.id}
@@ -1887,7 +1929,7 @@ export default function MarketPage({
                       {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
                     </h3>
                     {market.isMultipleChoice && market.outcomes ? (
-                      <div className="space-y-2 max-h-[200px] overflow-y-auto scrollbar-hide">
+                      <div className="space-y-2">
                         {market.outcomes.map((outcome) => (
                           <button
                             key={outcome.id}
@@ -1927,7 +1969,7 @@ export default function MarketPage({
                               </span>
                               <div className="flex items-center gap-3">
                                 <span className="text-xs text-white">
-                                  {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
+                                  {Math.round((outcome.pool / market.totalPool) * 100)}%
                                 </span>
                                 <span className="text-sm font-bold text-white">
                                   {outcome.odds.toFixed(2)}x
@@ -2003,21 +2045,33 @@ export default function MarketPage({
                   {/* Market Info */}
                   <div className="space-y-3 py-4 border-t border-zinc-800/50">
                     <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Current odds</span>
+                      <span className="text-base text-white text-left font-normal">Outcome</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {getSelectedOutcomeLabel()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Probability</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {getCurrentPercentage()}%
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Odds</span>
                       <span className="text-base font-medium text-white text-right">
                         {getCurrentOdds().toFixed(2)}x
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Price per share</span>
+                      <span className="text-base font-medium text-white text-right">
+                        ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / getCurrentOdds()).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Shares</span>
                       <span className="text-base font-medium text-white text-right">
                         {profitCalculation ? profitCalculation.shares : 0}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-base text-white text-left font-normal">Avg. price</span>
-                      <span className="text-base font-medium text-white text-right">
-                        {profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : "0.00"} USDT
                       </span>
                     </div>
                   </div>
@@ -2106,18 +2160,17 @@ export default function MarketPage({
                   <div className="space-y-4">
                     {market.isMultipleChoice && market.outcomes ? (
                       <>
-                        <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center justify-between flex-wrap gap-x-4 gap-y-1">
                           {market.outcomes.slice(0, 3).map((outcome) => (
                             <span
                               key={outcome.id}
-                              className="text-sm font-semibold"
-                              style={{ color: outcome.color }}
+                              className="text-sm font-semibold text-white"
                             >
                               {outcome.label}: {Math.round((outcome.pool / market.totalPool) * 100)}%
                             </span>
                           ))}
                         </div>
-                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg border border-zinc-800/50">
+                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg border border-zinc-800/50 mt-3">
                           {market.outcomes.map((outcome) => (
                             <div
                               key={outcome.id}
@@ -2163,7 +2216,7 @@ export default function MarketPage({
                       {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
                     </h3>
                     {market.isMultipleChoice && market.outcomes ? (
-                      <div className="space-y-2 max-h-[200px] overflow-y-auto scrollbar-hide">
+                      <div className="space-y-2">
                         {market.outcomes.map((outcome) => (
                           <button
                             key={outcome.id}
@@ -2203,7 +2256,7 @@ export default function MarketPage({
                               </span>
                               <div className="flex items-center gap-3">
                                 <span className="text-xs text-white">
-                                  {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
+                                  {Math.round((outcome.pool / market.totalPool) * 100)}%
                                 </span>
                                 <span className="text-sm font-bold text-white">
                                   {outcome.odds.toFixed(2)}x
@@ -2279,6 +2332,18 @@ export default function MarketPage({
                   {/* Market Info */}
                   <div className="space-y-3 py-4 border-t border-zinc-800/50">
                     <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Outcome</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {getSelectedOutcomeLabel()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-white text-left font-normal">Probability</span>
+                      <span className="text-base font-medium text-white text-right">
+                        {getCurrentPercentage()}%
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Price per share</span>
                       <span className="text-base font-medium text-white text-right">
                         ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / getCurrentOdds()).toFixed(2)}
@@ -2340,14 +2405,14 @@ export default function MarketPage({
               </div>
 
               {/* YES/NO Toggle or Outcome Toggle */}
-              <div className="px-4 md:px-5 lg:px-6 pt-4 pb-2">
+              <div className="px-4 md:px-5 lg:px-6 pt-4 pb-4">
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide justify-center">
+                  <div className="flex gap-1.5 pb-6 justify-center">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}
                         onClick={() => setSelectedHoldersOutcome(outcome.id)}
-                        className="flex-shrink-0 py-2 px-4 rounded-full text-sm font-semibold transition-all cursor-pointer border-2"
+                        className="flex-1 py-1.5 px-1 rounded-full text-xs font-semibold transition-all cursor-pointer border-2 truncate"
                         style={{
                           backgroundColor: selectedHoldersOutcome === outcome.id ? `${outcome.color}20` : 'transparent',
                           borderColor: selectedHoldersOutcome === outcome.id ? outcome.color : '#3f3f46',
