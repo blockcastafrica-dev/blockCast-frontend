@@ -1445,8 +1445,8 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
                 {/* 4. Betting Buttons - Mobile Optimized */}
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                    {market.outcomes.slice(0, 3).map((outcome) => (
+                  <div className="flex flex-wrap gap-2 pb-1 justify-center">
+                    {market.outcomes.map((outcome) => (
                       <Button
                         key={outcome.id}
                         variant="outline"
@@ -1455,7 +1455,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                           e.stopPropagation();
                           handleOpenBetDialog(market, "yes", outcome.id);
                         }}
-                        className="flex-1 min-w-[80px] bg-transparent border-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold tracking-wide transition-all"
+                        className="bg-transparent border-2 h-8 px-3 text-xs font-bold tracking-wide transition-all"
                         style={{
                           borderColor: `${outcome.color}80`,
                           color: outcome.color
@@ -1600,9 +1600,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 <div className="space-y-3">
                   {selectedMarket.isMultipleChoice && selectedMarket.outcomes ? (
                     <>
-                      <div className="flex items-center justify-between flex-wrap gap-2">
-                        {selectedMarket.outcomes.slice(0, 3).map((outcome) => (
-                          <span key={outcome.id} className="text-sm font-semibold" style={{ color: outcome.color }}>
+                      <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1">
+                        {selectedMarket.outcomes.map((outcome) => (
+                          <span key={outcome.id} className="text-xs font-semibold" style={{ color: outcome.color }}>
                             {outcome.label}: {Math.round((outcome.pool / selectedMarket.totalPool) * 100)}%
                           </span>
                         ))}
@@ -1686,7 +1686,10 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-semibold">{outcome.label}</span>
-                              <span className="text-sm">{outcome.odds.toFixed(2)}x ({outcomePercent}%)</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-white">{outcomePercent}.0%</span>
+                                <span className="text-sm font-bold text-white">{outcome.odds.toFixed(2)}x</span>
+                              </div>
                             </div>
                           </button>
                         );
@@ -1791,7 +1794,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       <>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-zinc-400">Current odds</span>
-                          <span className="text-sm font-medium text-white">{odds.toFixed(2)}x ({probability.toFixed(0)}%)</span>
+                          <span className="text-sm font-medium text-white">{odds.toFixed(2)}x</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-zinc-400">Price per share</span>

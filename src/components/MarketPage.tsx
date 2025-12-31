@@ -1196,7 +1196,7 @@ export default function MarketPage({
               {/* Outcome Toggle */}
               <div className="px-4 pt-4 pb-2">
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
+                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide justify-center">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}
@@ -1297,13 +1297,13 @@ export default function MarketPage({
             >
               {market.isMultipleChoice && market.outcomes ? (
                 <>
-                  {/* Multiple Choice - Scrollable Outcomes */}
-                  <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide justify-center">
+                  {/* Multiple Choice - Compact Outcomes */}
+                  <div className="flex gap-1.5 justify-center pb-2">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}
                         onClick={() => { setSelectedOutcome(outcome.id); setShowMobileBetModal(true); }}
-                        className={`flex-shrink-0 py-2 px-4 rounded-full transition-all text-center cursor-pointer ${
+                        className={`flex-1 min-w-0 py-1.5 px-2 rounded-full transition-all text-center cursor-pointer ${
                           selectedOutcome === outcome.id
                             ? "border-2 shadow-lg"
                             : "border-2"
@@ -1318,13 +1318,13 @@ export default function MarketPage({
                         }}
                       >
                         <div
-                          className="text-sm font-bold whitespace-nowrap"
+                          className="text-xs font-bold truncate"
                           style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
                         >
                           {outcome.label}
                         </div>
                         <div
-                          className="text-xs whitespace-nowrap"
+                          className="text-[10px] truncate"
                           style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a', opacity: 0.8 }}
                         >
                           {((outcome.pool / market.totalPool) * 100).toFixed(0)}% · {outcome.odds.toFixed(2)}x
@@ -1574,13 +1574,10 @@ export default function MarketPage({
                                 {outcome.label}
                               </span>
                               <div className="flex items-center gap-3">
-                                <span className="text-xs text-zinc-400">
+                                <span className="text-xs text-white">
                                   {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
                                 </span>
-                                <span
-                                  className="text-sm font-bold"
-                                  style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a' }}
-                                >
+                                <span className="text-sm font-bold text-white">
                                   {outcome.odds.toFixed(2)}x
                                 </span>
                               </div>
@@ -1929,13 +1926,10 @@ export default function MarketPage({
                                 {outcome.label}
                               </span>
                               <div className="flex items-center gap-3">
-                                <span className="text-xs text-zinc-400">
+                                <span className="text-xs text-white">
                                   {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
                                 </span>
-                                <span
-                                  className="text-sm font-bold"
-                                  style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a' }}
-                                >
+                                <span className="text-sm font-bold text-white">
                                   {outcome.odds.toFixed(2)}x
                                 </span>
                               </div>
@@ -2208,13 +2202,10 @@ export default function MarketPage({
                                 {outcome.label}
                               </span>
                               <div className="flex items-center gap-3">
-                                <span className="text-xs text-zinc-400">
+                                <span className="text-xs text-white">
                                   {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
                                 </span>
-                                <span
-                                  className="text-sm font-bold"
-                                  style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a' }}
-                                >
+                                <span className="text-sm font-bold text-white">
                                   {outcome.odds.toFixed(2)}x
                                 </span>
                               </div>
@@ -2351,7 +2342,7 @@ export default function MarketPage({
               {/* YES/NO Toggle or Outcome Toggle */}
               <div className="px-4 md:px-5 lg:px-6 pt-4 pb-2">
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
+                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide justify-center">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}
