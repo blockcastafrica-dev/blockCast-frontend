@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -125,6 +125,9 @@ export default function MarketPage({
   const [castInterface, setCastInterface] = useState<"buy" | "sell">("buy");
   const [holdersPosition, setHoldersPosition] = useState<"yes" | "no">("yes");
   const [holdersDropdownOpen, setHoldersDropdownOpen] = useState(false);
+  const [selectedOutcome, setSelectedOutcome] = useState<string | null>(
+    market.isMultipleChoice && market.outcomes?.[0] ? market.outcomes[0].id : null
+  );
 
   // Activity data - single source of truth
   const activityData = [
@@ -236,8 +239,17 @@ export default function MarketPage({
   const MIN_BET_AMOUNT = 1; // Minimum bet amount in USDT
   const FEE_PERCENTAGE = 0.03; // 3% fee on winnings
 
+  // Helper to get current odds based on market type
+  const getCurrentOdds = () => {
+    if (market.isMultipleChoice && market.outcomes && selectedOutcome) {
+      const outcome = market.outcomes.find(o => o.id === selectedOutcome);
+      return outcome ? outcome.odds : 1;
+    }
+    return castPosition === "yes" ? market.yesOdds : market.noOdds;
+  };
+
   const calculateProfit = (amount: number, position: "yes" | "no") => {
-    const odds = position === "yes" ? market.yesOdds : market.noOdds;
+    const odds = market.isMultipleChoice ? getCurrentOdds() : (position === "yes" ? market.yesOdds : market.noOdds);
     const grossPayout = amount * odds;
     const grossProfit = grossPayout - amount;
     const fee = grossProfit * FEE_PERCENTAGE;
@@ -265,6 +277,16 @@ export default function MarketPage({
       setProfitCalculation(calculateProfit(amount, position));
     }
   };
+
+  // Recalculate profit when selectedOutcome changes for multiple choice markets
+  useEffect(() => {
+    if (market.isMultipleChoice && selectedOutcome) {
+      const amount = parseFloat(castAmount);
+      if (!isNaN(amount) && amount > 0) {
+        setProfitCalculation(calculateProfit(amount, castPosition));
+      }
+    }
+  }, [selectedOutcome]);
 
   const handleCustomCast = () => {
     const amount = parseFloat(castAmount);
@@ -1391,64 +1413,136 @@ export default function MarketPage({
               <div className="px-6 py-4">
                 <div className="space-y-4">
                   {/* Progress Bar with Percentages */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-white font-medium text-sm">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                    <div className="flex-1 rounded-full overflow-hidden flex" style={{ height: '10px', backgroundColor: '#1a1a2e' }}>
-                      <div
-                        className="h-full"
-                        style={{
-                          width: `${(market.yesPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
-                        }}
-                      />
-                      <div
-                        className="h-full"
-                        style={{
-                          width: `${(market.noPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
-                        }}
-                      />
+                  {market.isMultipleChoice && market.outcomes ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between flex-wrap gap-1">
+                        {market.outcomes.slice(0, 3).map((outcome) => (
+                          <span
+                            key={outcome.id}
+                            className="text-xs font-medium"
+                            style={{ color: outcome.color }}
+                          >
+                            {outcome.label}: {Math.round((outcome.pool / market.totalPool) * 100)}%
+                          </span>
+                        ))}
+                      </div>
+                      <div className="rounded-full overflow-hidden flex" style={{ height: '10px', backgroundColor: '#1a1a2e' }}>
+                        {market.outcomes.map((outcome) => (
+                          <div
+                            key={outcome.id}
+                            className="h-full transition-all duration-500"
+                            style={{
+                              width: `${(outcome.pool / market.totalPool) * 100}%`,
+                              backgroundColor: outcome.color,
+                              opacity: selectedOutcome === outcome.id ? 1 : 0.5
+                            }}
+                          />
+                        ))}
+                      </div>
                     </div>
-                    <span className="text-white font-medium text-sm">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
-                  </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <span className="text-white font-medium text-sm">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                      <div className="flex-1 rounded-full overflow-hidden flex" style={{ height: '10px', backgroundColor: '#1a1a2e' }}>
+                        <div
+                          className="h-full"
+                          style={{
+                            width: `${(market.yesPool / market.totalPool) * 100}%`,
+                            background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
+                          }}
+                        />
+                        <div
+                          className="h-full"
+                          style={{
+                            width: `${(market.noPool / market.totalPool) * 100}%`,
+                            background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
+                          }}
+                        />
+                      </div>
+                      <span className="text-white font-medium text-sm">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+                    </div>
+                  )}
 
                   {/* Pick a Side */}
                   <div className="space-y-3">
-                    <h3 className="text-sm text-zinc-400">Pick a side</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button
-                        onClick={() => handlePositionChange("yes")}
-                        className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                          castPosition === "yes"
-                            ? "border-2 shadow-lg"
-                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                        }`}
-                        style={castPosition === "yes" ? {
-                          background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                          borderColor: 'rgba(34, 211, 238, 0.6)',
-                          color: '#22d3ee',
-                          boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                        } : {}}
-                      >
-                        TRUE
-                      </button>
-                      <button
-                        onClick={() => handlePositionChange("no")}
-                        className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                          castPosition === "no"
-                            ? "border-2 shadow-lg"
-                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                        }`}
-                        style={castPosition === "no" ? {
-                          background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                          borderColor: 'rgba(192, 132, 252, 0.6)',
-                          color: '#7c3aed',
-                          boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                        } : {}}
-                      >
-                        FALSE
-                      </button>
-                    </div>
+                    <h3 className="text-sm text-zinc-400">
+                      {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
+                    </h3>
+                    {market.isMultipleChoice && market.outcomes ? (
+                      <div className="space-y-2 max-h-[180px] overflow-y-auto scrollbar-hide">
+                        {market.outcomes.map((outcome) => (
+                          <button
+                            key={outcome.id}
+                            onClick={() => setSelectedOutcome(outcome.id)}
+                            className={`w-full py-3 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                              selectedOutcome === outcome.id
+                                ? "border-2 shadow-lg"
+                                : "bg-zinc-900/80 border-2 border-zinc-700/50 hover:bg-zinc-800/80"
+                            }`}
+                            style={selectedOutcome === outcome.id ? {
+                              background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
+                              borderColor: outcome.color,
+                              boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                            } : {}}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span
+                                className="font-semibold text-sm"
+                                style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
+                              >
+                                {outcome.label}
+                              </span>
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-zinc-400">
+                                  {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
+                                </span>
+                                <span
+                                  className="text-sm font-bold"
+                                  style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a' }}
+                                >
+                                  {outcome.odds.toFixed(2)}x
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-4">
+                        <button
+                          onClick={() => handlePositionChange("yes")}
+                          className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                            castPosition === "yes"
+                              ? "border-2 shadow-lg"
+                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                          }`}
+                          style={castPosition === "yes" ? {
+                            background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                            borderColor: 'rgba(34, 211, 238, 0.6)',
+                            color: '#22d3ee',
+                            boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                          } : {}}
+                        >
+                          TRUE
+                        </button>
+                        <button
+                          onClick={() => handlePositionChange("no")}
+                          className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                            castPosition === "no"
+                              ? "border-2 shadow-lg"
+                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                          }`}
+                          style={castPosition === "no" ? {
+                            background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                            borderColor: 'rgba(192, 132, 252, 0.6)',
+                            color: '#7c3aed',
+                            boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                          } : {}}
+                        >
+                          FALSE
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Amount Input */}
@@ -1482,7 +1576,7 @@ export default function MarketPage({
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Current odds</span>
                           <span className="text-zinc-300">
-                            {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x
+                            {getCurrentOdds().toFixed(2)}x
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -1552,7 +1646,7 @@ export default function MarketPage({
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-500">Price per share</span>
                           <span className="text-zinc-300">
-                            ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
+                            ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / getCurrentOdds()).toFixed(2)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -1656,65 +1750,139 @@ export default function MarketPage({
                 <div className="p-4 md:p-5 lg:p-6 space-y-3 md:space-y-4 lg:space-y-4">
                   {/* Percentage Bar */}
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-4xl font-bold text-white">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                      <span className="text-4xl font-bold text-white">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
-                    </div>
-                    <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
-                      <div
-                        className="h-full transition-all duration-500"
-                        style={{
-                          width: `${(market.yesPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
-                        }}
-                      />
-                      <div
-                        className="h-full transition-all duration-500"
-                        style={{
-                          width: `${(market.noPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
-                        }}
-                      />
-                    </div>
+                    {market.isMultipleChoice && market.outcomes ? (
+                      <>
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          {market.outcomes.slice(0, 3).map((outcome) => (
+                            <span
+                              key={outcome.id}
+                              className="text-sm font-semibold"
+                              style={{ color: outcome.color }}
+                            >
+                              {outcome.label}: {Math.round((outcome.pool / market.totalPool) * 100)}%
+                            </span>
+                          ))}
+                        </div>
+                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg border border-zinc-800/50">
+                          {market.outcomes.map((outcome) => (
+                            <div
+                              key={outcome.id}
+                              className="h-full transition-all duration-500"
+                              style={{
+                                width: `${(outcome.pool / market.totalPool) * 100}%`,
+                                backgroundColor: outcome.color,
+                                opacity: selectedOutcome === outcome.id ? 1 : 0.5
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <span className="text-4xl font-bold text-white">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                          <span className="text-4xl font-bold text-white">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+                        </div>
+                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
+                          <div
+                            className="h-full transition-all duration-500"
+                            style={{
+                              width: `${(market.yesPool / market.totalPool) * 100}%`,
+                              background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
+                            }}
+                          />
+                          <div
+                            className="h-full transition-all duration-500"
+                            style={{
+                              width: `${(market.noPool / market.totalPool) * 100}%`,
+                              background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Pick a Side */}
                   <div className="space-y-2 pt-2">
-                    <h3 className="text-sm font-medium text-white text-left">Pick a side</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button
-                        onClick={() => handlePositionChange("yes")}
-                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                          castPosition === "yes"
-                            ? "border-2 shadow-lg"
-                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                        }`}
-                        style={castPosition === "yes" ? {
-                          background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                          borderColor: 'rgba(34, 211, 238, 0.6)',
-                          color: '#22d3ee',
-                          boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                        } : {}}
-                      >
-                        TRUE
-                      </button>
-                      <button
-                        onClick={() => handlePositionChange("no")}
-                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                          castPosition === "no"
-                            ? "border-2 shadow-lg"
-                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                        }`}
-                        style={castPosition === "no" ? {
-                          background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                          borderColor: 'rgba(192, 132, 252, 0.6)',
-                          color: '#7c3aed',
-                          boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                        } : {}}
-                      >
-                        FALSE
-                      </button>
-                    </div>
+                    <h3 className="text-sm font-medium text-white text-left">
+                      {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
+                    </h3>
+                    {market.isMultipleChoice && market.outcomes ? (
+                      <div className="space-y-2 max-h-[200px] overflow-y-auto scrollbar-hide">
+                        {market.outcomes.map((outcome) => (
+                          <button
+                            key={outcome.id}
+                            onClick={() => setSelectedOutcome(outcome.id)}
+                            className={`w-full py-3 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                              selectedOutcome === outcome.id
+                                ? "border-2 shadow-lg"
+                                : "bg-zinc-900/80 border-2 border-zinc-700/50 hover:bg-zinc-800/80"
+                            }`}
+                            style={selectedOutcome === outcome.id ? {
+                              background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
+                              borderColor: outcome.color,
+                              boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                            } : {}}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span
+                                className="font-semibold"
+                                style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
+                              >
+                                {outcome.label}
+                              </span>
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-zinc-400">
+                                  {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
+                                </span>
+                                <span
+                                  className="text-sm font-bold"
+                                  style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a' }}
+                                >
+                                  {outcome.odds.toFixed(2)}x
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => handlePositionChange("yes")}
+                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                            castPosition === "yes"
+                              ? "border-2 shadow-lg"
+                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                          }`}
+                          style={castPosition === "yes" ? {
+                            background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                            borderColor: 'rgba(34, 211, 238, 0.6)',
+                            color: '#22d3ee',
+                            boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                          } : {}}
+                        >
+                          TRUE
+                        </button>
+                        <button
+                          onClick={() => handlePositionChange("no")}
+                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                            castPosition === "no"
+                              ? "border-2 shadow-lg"
+                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                          }`}
+                          style={castPosition === "no" ? {
+                            background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                            borderColor: 'rgba(192, 132, 252, 0.6)',
+                            color: '#7c3aed',
+                            boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                          } : {}}
+                        >
+                          FALSE
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Amount Input */}
@@ -1747,7 +1915,7 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Current odds</span>
                       <span className="text-base font-medium text-white text-right">
-                        {(castPosition === "yes" ? market.yesOdds : market.noOdds).toFixed(2)}x
+                        {getCurrentOdds().toFixed(2)}x
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -1846,65 +2014,139 @@ export default function MarketPage({
                 <div className="p-4 md:p-5 lg:p-6 space-y-3 md:space-y-4 lg:space-y-4">
                   {/* Percentage Bar */}
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-4xl font-bold text-white">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
-                      <span className="text-4xl font-bold text-white">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
-                    </div>
-                    <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
-                      <div
-                        className="h-full transition-all duration-500"
-                        style={{
-                          width: `${(market.yesPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
-                        }}
-                      />
-                      <div
-                        className="h-full transition-all duration-500"
-                        style={{
-                          width: `${(market.noPool / market.totalPool) * 100}%`,
-                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
-                        }}
-                      />
-                    </div>
+                    {market.isMultipleChoice && market.outcomes ? (
+                      <>
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          {market.outcomes.slice(0, 3).map((outcome) => (
+                            <span
+                              key={outcome.id}
+                              className="text-sm font-semibold"
+                              style={{ color: outcome.color }}
+                            >
+                              {outcome.label}: {Math.round((outcome.pool / market.totalPool) * 100)}%
+                            </span>
+                          ))}
+                        </div>
+                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg border border-zinc-800/50">
+                          {market.outcomes.map((outcome) => (
+                            <div
+                              key={outcome.id}
+                              className="h-full transition-all duration-500"
+                              style={{
+                                width: `${(outcome.pool / market.totalPool) * 100}%`,
+                                backgroundColor: outcome.color,
+                                opacity: selectedOutcome === outcome.id ? 1 : 0.5
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <span className="text-4xl font-bold text-white">{Math.round((market.yesPool / market.totalPool) * 100)}%</span>
+                          <span className="text-4xl font-bold text-white">{Math.round((market.noPool / market.totalPool) * 100)}%</span>
+                        </div>
+                        <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
+                          <div
+                            className="h-full transition-all duration-500"
+                            style={{
+                              width: `${(market.yesPool / market.totalPool) * 100}%`,
+                              background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
+                            }}
+                          />
+                          <div
+                            className="h-full transition-all duration-500"
+                            style={{
+                              width: `${(market.noPool / market.totalPool) * 100}%`,
+                              background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Pick a Side */}
                   <div className="space-y-2 pt-2">
-                    <h3 className="text-sm font-medium text-white text-left">Pick a side</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button
-                        onClick={() => handlePositionChange("yes")}
-                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                          castPosition === "yes"
-                            ? "border-2 shadow-lg"
-                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                        }`}
-                        style={castPosition === "yes" ? {
-                          background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                          borderColor: 'rgba(34, 211, 238, 0.6)',
-                          color: '#22d3ee',
-                          boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                        } : {}}
-                      >
-                        TRUE
-                      </button>
-                      <button
-                        onClick={() => handlePositionChange("no")}
-                        className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                          castPosition === "no"
-                            ? "border-2 shadow-lg"
-                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                        }`}
-                        style={castPosition === "no" ? {
-                          background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                          borderColor: 'rgba(192, 132, 252, 0.6)',
-                          color: '#7c3aed',
-                          boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                        } : {}}
-                      >
-                        FALSE
-                      </button>
-                    </div>
+                    <h3 className="text-sm font-medium text-white text-left">
+                      {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
+                    </h3>
+                    {market.isMultipleChoice && market.outcomes ? (
+                      <div className="space-y-2 max-h-[200px] overflow-y-auto scrollbar-hide">
+                        {market.outcomes.map((outcome) => (
+                          <button
+                            key={outcome.id}
+                            onClick={() => setSelectedOutcome(outcome.id)}
+                            className={`w-full py-3 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                              selectedOutcome === outcome.id
+                                ? "border-2 shadow-lg"
+                                : "bg-zinc-900/80 border-2 border-zinc-700/50 hover:bg-zinc-800/80"
+                            }`}
+                            style={selectedOutcome === outcome.id ? {
+                              background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
+                              borderColor: outcome.color,
+                              boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                            } : {}}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span
+                                className="font-semibold"
+                                style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
+                              >
+                                {outcome.label}
+                              </span>
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-zinc-400">
+                                  {((outcome.pool / market.totalPool) * 100).toFixed(1)}%
+                                </span>
+                                <span
+                                  className="text-sm font-bold"
+                                  style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a' }}
+                                >
+                                  {outcome.odds.toFixed(2)}x
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => handlePositionChange("yes")}
+                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                            castPosition === "yes"
+                              ? "border-2 shadow-lg"
+                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                          }`}
+                          style={castPosition === "yes" ? {
+                            background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                            borderColor: 'rgba(34, 211, 238, 0.6)',
+                            color: '#22d3ee',
+                            boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                          } : {}}
+                        >
+                          TRUE
+                        </button>
+                        <button
+                          onClick={() => handlePositionChange("no")}
+                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                            castPosition === "no"
+                              ? "border-2 shadow-lg"
+                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                          }`}
+                          style={castPosition === "no" ? {
+                            background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                            borderColor: 'rgba(192, 132, 252, 0.6)',
+                            color: '#7c3aed',
+                            boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                          } : {}}
+                        >
+                          FALSE
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Amount Input */}
@@ -1937,7 +2179,7 @@ export default function MarketPage({
                     <div className="flex items-center justify-between">
                       <span className="text-base text-white text-left font-normal">Price per share</span>
                       <span className="text-base font-medium text-white text-right">
-                        ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / (castPosition === "yes" ? market.yesOdds : market.noOdds)).toFixed(2)}
+                        ${profitCalculation ? profitCalculation.pricePerShare.toFixed(2) : (1 / getCurrentOdds()).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
