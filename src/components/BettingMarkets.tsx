@@ -1185,7 +1185,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           <div className="flex-shrink-0 flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
-              31 Active Markets
+              {filteredMarkets.length} Active Markets
             </span>
           </div>
 
