@@ -123,7 +123,39 @@ export default function MarketPage({
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [evidenceLink, setEvidenceLink] = useState("");
   const [castInterface, setCastInterface] = useState<"buy" | "sell">("buy");
+  const [holdersPosition, setHoldersPosition] = useState<"yes" | "no">("yes");
+  const [holdersPage, setHoldersPage] = useState<number>(1);
 
+  // Mock top holders data
+  const mockHolders = {
+    yes: [
+      { rank: 1, username: "FeeDis", amount: 1857.26, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=feedis" },
+      { rank: 2, username: "User_817c97", amount: 967.96, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=817c97" },
+      { rank: 3, username: "xiashaonianxu", amount: 487.12, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=xia" },
+      { rank: 4, username: "remaren", amount: 400.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=remaren" },
+      { rank: 5, username: "WibeCode", amount: 384.25, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=wibe" },
+      { rank: 6, username: "isjdkwe41", amount: 31.25, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=isjd" },
+      { rank: 7, username: "yuchen", amount: 12.95, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=yuchen" },
+      { rank: 8, username: "Sergej", amount: 7.29, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sergej" },
+      { rank: 9, username: "User_2659a5", amount: 1.63, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2659" },
+      { rank: 10, username: "User_a584cc", amount: 1.05, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=a584" },
+    ],
+    no: [
+      { rank: 1, username: "CryptoKing", amount: 2150.50, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=king" },
+      { rank: 2, username: "BlockMaster", amount: 1420.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=block" },
+      { rank: 3, username: "TruthSeeker", amount: 890.75, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=truth" },
+      { rank: 4, username: "DeFiWhale", amount: 650.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=whale" },
+      { rank: 5, username: "MarketMaker", amount: 520.30, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=maker" },
+      { rank: 6, username: "User_7f8e21", amount: 125.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=7f8e" },
+      { rank: 7, username: "hodler99", amount: 45.50, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=hodl" },
+      { rank: 8, username: "Alpha_Trader", amount: 28.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=alpha" },
+      { rank: 9, username: "User_b3c4d5", amount: 12.75, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=b3c4" },
+      { rank: 10, username: "newbie2025", amount: 5.00, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=newbie" },
+    ]
+  };
+
+  const holdersPerPage = 10;
+  const totalHoldersPages = 5; // Mock total pages
 
   const isSelling = castInterface === "sell";
   const isBuying = castInterface === "buy";
@@ -1153,6 +1185,142 @@ export default function MarketPage({
           )}
           </div>
           {/* End of Tab Content */}
+
+          {/* TOP HOLDERS SECTION - Mobile */}
+          {!market.disputable && (
+            <div className="lg:hidden mt-4 rounded-2xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl mb-32">
+              {/* Header */}
+              <div className="p-4 border-b border-zinc-800/30">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-white">Top Holders</h3>
+                  <div className="flex items-center gap-2 text-sm text-[#c5f82a]">
+                    <span className="truncate max-w-[100px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 12)}...</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* YES/NO Toggle */}
+              <div className="px-4 pt-4">
+                <div className="flex rounded-full border border-zinc-700/50 p-1.5">
+                  <button
+                    type="button"
+                    onClick={() => { setHoldersPosition("yes"); setHoldersPage(1); }}
+                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                    style={{
+                      backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
+                      color: holdersPosition === "yes" ? '#000000' : '#71717a'
+                    }}
+                  >
+                    YES
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setHoldersPosition("no"); setHoldersPage(1); }}
+                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                    style={{
+                      backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
+                      color: holdersPosition === "no" ? '#ffffff' : '#71717a'
+                    }}
+                  >
+                    NO
+                  </button>
+                </div>
+              </div>
+
+              {/* Holders List */}
+              <div className="p-4 space-y-3">
+                {mockHolders[holdersPosition].map((holder, index) => (
+                  <div
+                    key={holder.rank}
+                    className="flex items-center gap-3 py-2"
+                  >
+                    {/* Rank Badge */}
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                      holder.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50' :
+                      holder.rank === 2 ? 'bg-zinc-400/20 text-zinc-300 ring-1 ring-zinc-400/50' :
+                      holder.rank === 3 ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' :
+                      'text-zinc-500'
+                    }`}>
+                      {holder.rank}
+                    </div>
+
+                    {/* Avatar */}
+                    <Avatar className="h-8 w-8 shrink-0">
+                      <AvatarImage src={holder.avatar} />
+                      <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">
+                        {holder.username.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {/* Username */}
+                    <span className="flex-1 text-sm text-white truncate">
+                      {holder.username}
+                    </span>
+
+                    {/* Amount */}
+                    <span className="text-sm font-semibold text-white">
+                      {holder.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              <div className="px-4 pb-4">
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setHoldersPage(Math.max(1, holdersPage - 1))}
+                    disabled={holdersPage === 1}
+                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  {[1, 2, 3].map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setHoldersPage(page)}
+                      className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
+                        holdersPage === page
+                          ? 'bg-zinc-700 text-white'
+                          : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <span className="text-zinc-600 px-1">...</span>
+
+                  <button
+                    onClick={() => setHoldersPage(totalHoldersPages)}
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
+                      holdersPage === totalHoldersPages
+                        ? 'bg-zinc-700 text-white'
+                        : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
+                    }`}
+                  >
+                    {totalHoldersPages}
+                  </button>
+
+                  <button
+                    onClick={() => setHoldersPage(Math.min(totalHoldersPages, holdersPage + 1))}
+                    disabled={holdersPage === totalHoldersPages}
+                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         {/* End of Left Column */}
 
@@ -1905,7 +2073,139 @@ export default function MarketPage({
                 </div>
               </div>
             )}
-            {/* <Card></div> */}
+            {/* TOP HOLDERS SECTION - Desktop */}
+            <div className="mt-6 rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl">
+              {/* Header */}
+              <div className="p-4 md:p-5 lg:p-6 border-b border-zinc-800/30">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-white">Top Holders</h3>
+                  <div className="flex items-center gap-2 text-sm text-[#c5f82a]">
+                    <span className="truncate max-w-[120px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 15)}...</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* YES/NO Toggle */}
+              <div className="px-4 md:px-5 lg:px-6 pt-4">
+                <div className="flex rounded-full border border-zinc-700/50 p-1.5">
+                  <button
+                    type="button"
+                    onClick={() => { setHoldersPosition("yes"); setHoldersPage(1); }}
+                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                    style={{
+                      backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
+                      color: holdersPosition === "yes" ? '#000000' : '#71717a'
+                    }}
+                  >
+                    YES
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setHoldersPosition("no"); setHoldersPage(1); }}
+                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                    style={{
+                      backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
+                      color: holdersPosition === "no" ? '#ffffff' : '#71717a'
+                    }}
+                  >
+                    NO
+                  </button>
+                </div>
+              </div>
+
+              {/* Holders List */}
+              <div className="p-4 md:p-5 lg:p-6 space-y-3">
+                {mockHolders[holdersPosition].map((holder, index) => (
+                  <div
+                    key={holder.rank}
+                    className="flex items-center gap-3 py-2"
+                  >
+                    {/* Rank Badge */}
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                      holder.rank === 1 ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50' :
+                      holder.rank === 2 ? 'bg-zinc-400/20 text-zinc-300 ring-1 ring-zinc-400/50' :
+                      holder.rank === 3 ? 'bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/50' :
+                      'text-zinc-500'
+                    }`}>
+                      {holder.rank}
+                    </div>
+
+                    {/* Avatar */}
+                    <Avatar className="h-8 w-8 shrink-0">
+                      <AvatarImage src={holder.avatar} />
+                      <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">
+                        {holder.username.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {/* Username */}
+                    <span className="flex-1 text-sm text-white truncate">
+                      {holder.username}
+                    </span>
+
+                    {/* Amount */}
+                    <span className="text-sm font-semibold text-white">
+                      {holder.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              <div className="px-4 md:px-5 lg:px-6 pb-4 md:pb-5 lg:pb-6">
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setHoldersPage(Math.max(1, holdersPage - 1))}
+                    disabled={holdersPage === 1}
+                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  {[1, 2, 3].map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setHoldersPage(page)}
+                      className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
+                        holdersPage === page
+                          ? 'bg-zinc-700 text-white'
+                          : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <span className="text-zinc-600 px-1">...</span>
+
+                  <button
+                    onClick={() => setHoldersPage(totalHoldersPages)}
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
+                      holdersPage === totalHoldersPages
+                        ? 'bg-zinc-700 text-white'
+                        : 'text-zinc-500 hover:text-white hover:bg-zinc-800'
+                    }`}
+                  >
+                    {totalHoldersPages}
+                  </button>
+
+                  <button
+                    onClick={() => setHoldersPage(Math.min(totalHoldersPages, holdersPage + 1))}
+                    disabled={holdersPage === totalHoldersPages}
+                    className="p-2 text-zinc-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </aside>
         )}
       </div>
