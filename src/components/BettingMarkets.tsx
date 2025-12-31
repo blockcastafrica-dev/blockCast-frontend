@@ -982,6 +982,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   const [showBetDialog, setShowBetDialog] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState<BettingMarket | null>(null);
   const [betPosition, setBetPosition] = useState<'yes' | 'no'>('yes');
+  const [selectedOutcome, setSelectedOutcome] = useState<string | null>(null);
   const [betAmount, setBetAmount] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
   const [showCreateMarketModal, setShowCreateMarketModal] = useState(false);
@@ -1056,9 +1057,10 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
   const categories = ['all', ...Array.from(new Set(markets.map(m => m.category)))];
   const countries = ['all', ...Array.from(new Set(markets.map(m => m.country || m.region).filter(Boolean)))];
 
-  const handleOpenBetDialog = (market: BettingMarket, position: 'yes' | 'no') => {
+  const handleOpenBetDialog = (market: BettingMarket, position: 'yes' | 'no', outcomeId?: string) => {
     setSelectedMarket(market);
     setBetPosition(position);
+    setSelectedOutcome(outcomeId || (market.isMultipleChoice && market.outcomes?.[0] ? market.outcomes[0].id : null));
     setBetAmount('');
     setShowBetDialog(true);
   };
@@ -1400,66 +1402,101 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* 2. Progress Bar with Inline Percentages */}
-                <div className="flex items-center gap-2">
-                  {/* Left Percentage (True) */}
-                  <span className="text-xs text-white shrink-0 min-w-[40px] text-left">
-                    {((market.yesPool / market.totalPool) * 100).toFixed(1)}%
-                  </span>
-
-                  {/* Progress Bar */}
+                {market.isMultipleChoice && market.outcomes ? (
                   <div className="flex-1 rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10">
-                    <div
-                      className="h-full transition-all duration-500"
-                      style={{
-                        width: `${(market.yesPool / market.totalPool) * 100}%`,
-                        background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)',
-                      }}
-                    />
-                    <div
-                      className="h-full transition-all duration-500"
-                      style={{
-                        width: `${(market.noPool / market.totalPool) * 100}%`,
-                        background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)',
-                      }}
-                    />
+                    {market.outcomes.map((outcome) => (
+                      <div
+                        key={outcome.id}
+                        className="h-full transition-all duration-500"
+                        style={{
+                          width: `${(outcome.pool / market.totalPool) * 100}%`,
+                          backgroundColor: outcome.color,
+                          opacity: 0.8
+                        }}
+                      />
+                    ))}
                   </div>
-
-                  {/* Right Percentage (False) */}
-                  <span className="text-xs text-white shrink-0 min-w-[40px] text-right">
-                    {((market.noPool / market.totalPool) * 100).toFixed(1)}%
-                  </span>
-                </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-white shrink-0 min-w-[40px] text-left">
+                      {((market.yesPool / market.totalPool) * 100).toFixed(1)}%
+                    </span>
+                    <div className="flex-1 rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10">
+                      <div
+                        className="h-full transition-all duration-500"
+                        style={{
+                          width: `${(market.yesPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)',
+                        }}
+                      />
+                      <div
+                        className="h-full transition-all duration-500"
+                        style={{
+                          width: `${(market.noPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)',
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-white shrink-0 min-w-[40px] text-right">
+                      {((market.noPool / market.totalPool) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                )}
 
                 {/* 4. Betting Buttons - Mobile Optimized */}
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenBetDialog(market, "yes");
-                    }}
-                    className="flex-1 bg-transparent border-2 border-primary/50 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold uppercase tracking-wide shadow-lg shadow-primary/20 transition-all"
-                    {...({} as any)}
-                  >
-                    <TrendingUp className="h-3 w-3 md:h-3.5 md:w-3.5 lg:h-3.5 lg:w-3.5 mr-1" />
-                    True {market.yesOdds.toFixed(2)}x
-                  </Button>
+                {market.isMultipleChoice && market.outcomes ? (
+                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                    {market.outcomes.slice(0, 3).map((outcome) => (
+                      <Button
+                        key={outcome.id}
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenBetDialog(market, "yes", outcome.id);
+                        }}
+                        className="flex-1 min-w-[80px] bg-transparent border-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold tracking-wide transition-all"
+                        style={{
+                          borderColor: `${outcome.color}80`,
+                          color: outcome.color
+                        }}
+                        {...({} as any)}
+                      >
+                        {outcome.label} {outcome.odds.toFixed(1)}x
+                      </Button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenBetDialog(market, "yes");
+                      }}
+                      className="flex-1 bg-transparent border-2 border-primary/50 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold uppercase tracking-wide shadow-lg shadow-primary/20 transition-all"
+                      {...({} as any)}
+                    >
+                      <TrendingUp className="h-3 w-3 md:h-3.5 md:w-3.5 lg:h-3.5 lg:w-3.5 mr-1" />
+                      True {market.yesOdds.toFixed(2)}x
+                    </Button>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenBetDialog(market, "no");
-                    }}
-                    className="flex-1 bg-transparent border-2 border-secondary/50 hover:border-secondary hover:bg-secondary/5 text-secondary hover:text-secondary h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold uppercase tracking-wide shadow-lg shadow-secondary/20 transition-all"
-                    {...({} as any)}
-                  >
-                    <TrendingDown className="h-3 w-3 md:h-3.5 md:w-3.5 lg:h-3.5 lg:w-3.5 mr-1" />
-                    False {market.noOdds.toFixed(2)}x
-                  </Button>
-                </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenBetDialog(market, "no");
+                      }}
+                      className="flex-1 bg-transparent border-2 border-secondary/50 hover:border-secondary hover:bg-secondary/5 text-secondary hover:text-secondary h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm font-bold uppercase tracking-wide shadow-lg shadow-secondary/20 transition-all"
+                      {...({} as any)}
+                    >
+                      <TrendingDown className="h-3 w-3 md:h-3.5 md:w-3.5 lg:h-3.5 lg:w-3.5 mr-1" />
+                      False {market.noOdds.toFixed(2)}x
+                    </Button>
+                  </div>
+                )}
 
                 {/* Separator Line */}
                 <div className="h-px bg-border"></div>
@@ -1520,11 +1557,11 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md rounded-2xl md:rounded-3xl border border-zinc-800/50 shadow-2xl overflow-hidden" style={{ backgroundColor: '#0f1419' }}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:p-6">
+            <div className="w-full max-w-[calc(100%-2rem)] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl md:rounded-3xl border border-zinc-800/50 shadow-2xl" style={{ backgroundColor: '#0f1419' }}>
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-zinc-800/30">
-                <h2 className="text-lg font-bold text-white">Cast Your Truth Position</h2>
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b border-zinc-800/30">
+                <h2 className="text-base sm:text-lg font-bold text-white">Cast Your Truth Position</h2>
                 <button
                   type="button"
                   onClick={() => setShowBetDialog(false)}
@@ -1543,7 +1580,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               </div>
 
               {/* Content */}
-              <div className="p-4 md:p-5 lg:p-6 space-y-4">
+              <div className="p-3 sm:p-4 md:p-5 lg:p-6 space-y-3 sm:space-y-4">
                 {/* Market Claim */}
                 <div className="flex items-start gap-3 p-3 bg-zinc-900/50 rounded-xl border border-zinc-800/50">
                   {selectedMarket.imageUrl && (
@@ -1561,65 +1598,136 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
 
                 {/* Percentage Bar */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-white">{Math.round((selectedMarket.yesPool / selectedMarket.totalPool) * 100)}%</span>
-                    <span className="text-2xl font-bold text-white">{Math.round((selectedMarket.noPool / selectedMarket.totalPool) * 100)}%</span>
-                  </div>
-                  <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
-                    <div
-                      className="h-full transition-all duration-500"
-                      style={{
-                        width: `${(selectedMarket.yesPool / selectedMarket.totalPool) * 100}%`,
-                        background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
-                      }}
-                    />
-                    <div
-                      className="h-full transition-all duration-500"
-                      style={{
-                        width: `${(selectedMarket.noPool / selectedMarket.totalPool) * 100}%`,
-                        background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
-                      }}
-                    />
-                  </div>
+                  {selectedMarket.isMultipleChoice && selectedMarket.outcomes ? (
+                    <>
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        {selectedMarket.outcomes.slice(0, 3).map((outcome) => (
+                          <span key={outcome.id} className="text-sm font-semibold" style={{ color: outcome.color }}>
+                            {outcome.label}: {Math.round((outcome.pool / selectedMarket.totalPool) * 100)}%
+                          </span>
+                        ))}
+                      </div>
+                      <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
+                        {selectedMarket.outcomes.map((outcome) => (
+                          <div
+                            key={outcome.id}
+                            className="h-full transition-all duration-500"
+                            style={{
+                              width: `${(outcome.pool / selectedMarket.totalPool) * 100}%`,
+                              backgroundColor: outcome.color,
+                              opacity: 0.8
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold text-white">{Math.round((selectedMarket.yesPool / selectedMarket.totalPool) * 100)}%</span>
+                        <span className="text-2xl font-bold text-white">{Math.round((selectedMarket.noPool / selectedMarket.totalPool) * 100)}%</span>
+                      </div>
+                      <div className="rounded-full h-3 overflow-hidden flex shadow-lg shadow-cyan-500/10 border border-zinc-800/50">
+                        <div
+                          className="h-full transition-all duration-500"
+                          style={{
+                            width: `${(selectedMarket.yesPool / selectedMarket.totalPool) * 100}%`,
+                            background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.5) 0%, rgba(6, 246, 255, 0.6) 50%, rgba(167, 139, 250, 0.3) 100%)'
+                          }}
+                        />
+                        <div
+                          className="h-full transition-all duration-500"
+                          style={{
+                            width: `${(selectedMarket.noPool / selectedMarket.totalPool) * 100}%`,
+                            background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.3) 0%, rgba(139, 92, 246, 0.5) 50%, rgba(124, 58, 237, 0.6) 100%)'
+                          }}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
 
-                {/* Pick a Side */}
+                {/* Pick a Side / Pick an Outcome */}
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-white text-left">Pick a side</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => setBetPosition("yes")}
-                      className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                        betPosition === "yes"
-                          ? "border-2 shadow-lg"
-                          : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                      }`}
-                      style={betPosition === "yes" ? {
-                        background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                        borderColor: 'rgba(34, 211, 238, 0.6)',
-                        color: '#22d3ee',
-                        boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                      } : {}}
-                    >
-                      TRUE
-                    </button>
-                    <button
-                      onClick={() => setBetPosition("no")}
-                      className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                        betPosition === "no"
-                          ? "border-2 shadow-lg"
-                          : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                      }`}
-                      style={betPosition === "no" ? {
-                        background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                        borderColor: 'rgba(192, 132, 252, 0.6)',
-                        color: '#7c3aed',
-                        boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                      } : {}}
-                    >
-                      FALSE
-                    </button>
-                  </div>
+                  <h3 className="text-sm font-medium text-white text-left">
+                    {selectedMarket.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
+                  </h3>
+                  {selectedMarket.isMultipleChoice && selectedMarket.outcomes ? (
+                    <div className="space-y-2 max-h-[150px] sm:max-h-[200px] overflow-y-auto scrollbar-hide">
+                      {selectedMarket.outcomes.map((outcome) => {
+                        const outcomePercent = Math.round((outcome.pool / selectedMarket.totalPool) * 100);
+                        return (
+                          <button
+                            key={outcome.id}
+                            onClick={() => setSelectedOutcome(outcome.id)}
+                            className={`w-full py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-left transition-all cursor-pointer ${
+                              selectedOutcome === outcome.id
+                                ? "border-2 shadow-lg"
+                                : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400"
+                            }`}
+                            style={selectedOutcome === outcome.id ? {
+                              background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
+                              borderColor: outcome.color,
+                              color: outcome.color,
+                              boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                            } : {}}
+                            onMouseEnter={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.borderColor = outcome.color;
+                                e.currentTarget.style.backgroundColor = `${outcome.color}10`;
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.borderColor = 'rgba(63, 63, 70, 0.5)';
+                                e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.8)';
+                              }
+                            }}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold">{outcome.label}</span>
+                              <span className="text-sm">{outcome.odds.toFixed(2)}x ({outcomePercent}%)</span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      <button
+                        onClick={() => setBetPosition("yes")}
+                        className={`py-2.5 sm:py-3 px-3 sm:px-4 rounded-full text-sm sm:text-base font-bold transition-all text-center cursor-pointer ${
+                          betPosition === "yes"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                        }`}
+                        style={betPosition === "yes" ? {
+                          background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                          borderColor: 'rgba(34, 211, 238, 0.6)',
+                          color: '#22d3ee',
+                          boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                        } : {}}
+                      >
+                        TRUE
+                      </button>
+                      <button
+                        onClick={() => setBetPosition("no")}
+                        className={`py-2.5 sm:py-3 px-3 sm:px-4 rounded-full text-sm sm:text-base font-bold transition-all text-center cursor-pointer ${
+                          betPosition === "no"
+                            ? "border-2 shadow-lg"
+                            : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                        }`}
+                        style={betPosition === "no" ? {
+                          background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                          borderColor: 'rgba(192, 132, 252, 0.6)',
+                          color: '#7c3aed',
+                          boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                        } : {}}
+                      >
+                        FALSE
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Amount Input */}
@@ -1631,7 +1739,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     </span>
                   </div>
                   <div className="relative">
-                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none" style={{ left: '20px', fontSize: '18px' }}>
+                    <span className="absolute top-1/2 -translate-y-1/2 font-semibold text-zinc-400 pointer-events-none left-4 text-sm">
                       USDT
                     </span>
                     <Input
@@ -1643,10 +1751,9 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                         setBetAmount(value);
                       }}
                       placeholder="0.00"
-                      className="w-full h-14 pr-4 font-bold text-white text-left bg-zinc-900/80 border-2 rounded-xl focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="w-full h-12 sm:h-14 pr-4 font-bold text-white text-left bg-zinc-900/80 border-2 rounded-xl focus:ring-0 transition-all placeholder:text-zinc-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-base sm:text-lg"
                       style={{
-                        paddingLeft: '90px',
-                        fontSize: '18px',
+                        paddingLeft: '80px',
                         borderColor: betAmount ? '#06b6d4' : 'rgba(63, 63, 70, 0.5)'
                       }}
                     />
@@ -1654,10 +1761,23 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 </div>
 
                 {/* Market Info */}
-                <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                <div className="space-y-2 sm:space-y-3 py-3 sm:py-4 border-t border-zinc-800/50">
                   {(() => {
                     const amount = betAmount ? parseFloat(betAmount) : 0;
-                    const odds = betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds;
+                    let odds: number;
+                    let probability: number;
+
+                    if (selectedMarket.isMultipleChoice && selectedMarket.outcomes && selectedOutcome) {
+                      const outcome = selectedMarket.outcomes.find(o => o.id === selectedOutcome);
+                      odds = outcome?.odds || 1;
+                      probability = outcome ? (outcome.pool / selectedMarket.totalPool) * 100 : 0;
+                    } else {
+                      odds = betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds;
+                      probability = betPosition === "yes"
+                        ? (selectedMarket.yesPool / selectedMarket.totalPool) * 100
+                        : (selectedMarket.noPool / selectedMarket.totalPool) * 100;
+                    }
+
                     const pricePerShare = 1 / odds;
                     const shares = amount > 0 ? Math.floor(amount / pricePerShare) : 0;
                     const grossPayout = amount * odds;
@@ -1671,7 +1791,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       <>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-zinc-400">Current odds</span>
-                          <span className="text-sm font-medium text-white">{odds.toFixed(2)}x</span>
+                          <span className="text-sm font-medium text-white">{odds.toFixed(2)}x ({probability.toFixed(0)}%)</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-zinc-400">Price per share</span>
@@ -1687,10 +1807,18 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 </div>
 
                 {/* Fee Info */}
-                <div className="space-y-3 py-4 border-t border-zinc-800/50">
+                <div className="space-y-2 sm:space-y-3 py-3 sm:py-4 border-t border-zinc-800/50">
                   {(() => {
                     const amount = betAmount ? parseFloat(betAmount) : 0;
-                    const odds = betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds;
+                    let odds: number;
+
+                    if (selectedMarket.isMultipleChoice && selectedMarket.outcomes && selectedOutcome) {
+                      const outcome = selectedMarket.outcomes.find(o => o.id === selectedOutcome);
+                      odds = outcome?.odds || 1;
+                    } else {
+                      odds = betPosition === "yes" ? selectedMarket.yesOdds : selectedMarket.noOdds;
+                    }
+
                     const grossPayout = amount * odds;
                     const grossProfit = grossPayout - amount;
                     const fee = grossProfit * 0.03;
@@ -1723,7 +1851,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                 <Button
                   onClick={handlePlaceBet}
                   disabled={!betAmount || parseFloat(betAmount) < MIN_BET_AMOUNT || parseFloat(betAmount) > userBalance}
-                  className="w-full h-14 text-lg font-bold rounded-xl cursor-pointer"
+                  className="w-full h-12 sm:h-14 text-base sm:text-lg font-bold rounded-xl cursor-pointer"
                   style={{
                     backgroundColor: !betAmount || parseFloat(betAmount) < MIN_BET_AMOUNT || parseFloat(betAmount) > userBalance ? '#334155' : '#06f6ff',
                     color: !betAmount || parseFloat(betAmount) < MIN_BET_AMOUNT || parseFloat(betAmount) > userBalance ? '#94a3b8' : '#000000'
