@@ -394,7 +394,7 @@ export default function MarketPage({
   };
 
   return (
-    <div className="space-y-3 md:space-y-4 lg:space-y-4 mx-auto scroll-smooth max-w-7xl"> {/* Added max-width for better desktop layout */}
+    <div className="space-y-3 md:space-y-4 lg:space-y-4 mx-auto scroll-smooth max-w-[1400px]"> {/* Added max-width for better desktop layout */}
       {/* Header */}
       <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
         <Button
@@ -411,7 +411,7 @@ export default function MarketPage({
       </div>
 
       {/* Main Two-Column Layout for Desktop */}
-      <div className="flex flex-col lg:flex-row lg:items-start" style={{ gap: '60px' }}>
+      <div className="flex flex-col lg:flex-row lg:items-start gap-6">
         {/* Left Column - All Content */}
         <div className="flex-1 min-w-0 space-y-3 md:space-y-4">
           {/* Market Header Card */}
@@ -1789,7 +1789,7 @@ export default function MarketPage({
 
         {/* Right Column - Betting Modal (Desktop Only - Sticky) */}
         {!market.disputable && (
-          <aside className="hidden lg:block lg:w-[380px] shrink-0" style={{ position: 'sticky', top: '96px', alignSelf: 'flex-start' }}>
+          <aside className="hidden lg:block shrink-0" style={{ position: 'sticky', top: '96px', width: '300px' }}>
             {/* BUY INTERFACE */}
             {castInterface === "buy" && (
               <div className="rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300">
