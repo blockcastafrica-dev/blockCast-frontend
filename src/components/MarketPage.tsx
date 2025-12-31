@@ -124,8 +124,10 @@ export default function MarketPage({
   const [evidenceLink, setEvidenceLink] = useState("");
   const [castInterface, setCastInterface] = useState<"buy" | "sell">("buy");
   const [holdersPosition, setHoldersPosition] = useState<"yes" | "no">("yes");
-  const [holdersDropdownOpen, setHoldersDropdownOpen] = useState(false);
   const [selectedOutcome, setSelectedOutcome] = useState<string | null>(
+    market.isMultipleChoice && market.outcomes?.[0] ? market.outcomes[0].id : null
+  );
+  const [selectedHoldersOutcome, setSelectedHoldersOutcome] = useState<string | null>(
     market.isMultipleChoice && market.outcomes?.[0] ? market.outcomes[0].id : null
   );
 
@@ -172,6 +174,33 @@ export default function MarketPage({
     yes: computeHolders("yes"),
     no: computeHolders("no")
   };
+
+  // Generate mock holders for multiple choice outcomes
+  const generateOutcomeHolders = (outcomeId: string, index: number) => {
+    const wallets = [
+      "0x7835...892f", "0x66CE...A2E3", "freedom", "Senzer", "wildegou",
+      "KnightXBT", "FeeDis", "xiashaonianxu", "BlockMaster", "TruthSeeker",
+      "CryptoKing", "AfricaRising", "TokenMaster", "DeFiPro", "ChainLink"
+    ];
+    // Use different subset of wallets based on outcome index
+    const startIdx = (index * 3) % wallets.length;
+    const selectedWallets = [...wallets.slice(startIdx), ...wallets.slice(0, startIdx)].slice(0, 8);
+
+    return selectedWallets.map((wallet, i) => ({
+      rank: i + 1,
+      username: wallet,
+      shares: Math.floor((200 - i * 20) * (1 + Math.sin(index + i) * 0.3)),
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${outcomeId}${i}`
+    }));
+  };
+
+  // Create holders data for multiple choice outcomes
+  const outcomeHoldersData: Record<string, { rank: number; username: string; shares: number; avatar: string }[]> = {};
+  if (market.isMultipleChoice && market.outcomes) {
+    market.outcomes.forEach((outcome, index) => {
+      outcomeHoldersData[outcome.id] = generateOutcomeHolders(outcome.id, index);
+    });
+  }
 
   const isSelling = castInterface === "sell";
   const isBuying = castInterface === "buy";
@@ -1161,68 +1190,61 @@ export default function MarketPage({
             <div className="lg:hidden mt-4 rounded-2xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl mb-32">
               {/* Header */}
               <div className="p-4 border-b border-zinc-800/30">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-white">Top Holders</h3>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setHoldersDropdownOpen(!holdersDropdownOpen)}
-                      className="flex items-center gap-2 text-sm text-[#c5f82a] hover:text-[#d4ff4a] transition-colors cursor-pointer"
-                    >
-                      <span className="truncate max-w-[100px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 12)}...</span>
-                      <svg className={`w-4 h-4 transition-transform ${holdersDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    {holdersDropdownOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-48 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-50" style={{ backgroundColor: '#18181b' }}>
-                        <div className="py-1">
-                          <button
-                            onClick={() => setHoldersDropdownOpen(false)}
-                            className="w-full px-4 py-2 text-left text-sm text-[#c5f82a] hover:bg-zinc-800"
-                            style={{ backgroundColor: '#27272a' }}
-                          >
-                            {getTranslatedText(market.claim, market.claimTranslations).substring(0, 20)}...
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <h3 className="text-lg font-bold text-white">Top Holders</h3>
               </div>
 
-              {/* YES/NO Toggle */}
+              {/* Outcome Toggle */}
               <div className="px-4 pt-4">
-                <div className="flex rounded-full border border-zinc-700/50 p-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setHoldersPosition("yes")}
-                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
-                    style={{
-                      backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
-                      color: holdersPosition === "yes" ? '#000000' : '#71717a'
-                    }}
-                  >
-                    TRUE
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHoldersPosition("no")}
-                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
-                    style={{
-                      backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
-                      color: holdersPosition === "no" ? '#ffffff' : '#71717a'
-                    }}
-                  >
-                    FALSE
-                  </button>
-                </div>
+                {market.isMultipleChoice && market.outcomes ? (
+                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {market.outcomes.map((outcome) => (
+                      <button
+                        key={outcome.id}
+                        type="button"
+                        onClick={() => setSelectedHoldersOutcome(outcome.id)}
+                        className="flex-shrink-0 py-2 px-4 rounded-full text-sm font-semibold transition-all cursor-pointer border-2"
+                        style={{
+                          backgroundColor: selectedHoldersOutcome === outcome.id ? `${outcome.color}20` : 'transparent',
+                          borderColor: selectedHoldersOutcome === outcome.id ? outcome.color : '#3f3f46',
+                          color: selectedHoldersOutcome === outcome.id ? outcome.color : '#71717a'
+                        }}
+                      >
+                        {outcome.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex rounded-full border border-zinc-700/50 p-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setHoldersPosition("yes")}
+                      className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                      style={{
+                        backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
+                        color: holdersPosition === "yes" ? '#000000' : '#71717a'
+                      }}
+                    >
+                      TRUE
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setHoldersPosition("no")}
+                      className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                      style={{
+                        backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
+                        color: holdersPosition === "no" ? '#ffffff' : '#71717a'
+                      }}
+                    >
+                      FALSE
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Holders List - Scrollable (shows 5, scroll for more) */}
               <div className="px-4 pb-4 overflow-y-auto scrollbar-hide" style={{ maxHeight: '220px' }}>
                 <div className="space-y-1">
-                  {holdersData[holdersPosition].map((holder, index) => (
+                  {(market.isMultipleChoice && selectedHoldersOutcome ? outcomeHoldersData[selectedHoldersOutcome] : holdersData[holdersPosition])?.map((holder, index) => (
                     <div
                       key={holder.rank}
                       className="flex items-center gap-3 py-2"
@@ -1276,7 +1298,7 @@ export default function MarketPage({
               {market.isMultipleChoice && market.outcomes ? (
                 <>
                   {/* Multiple Choice - Scrollable Outcomes */}
-                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide justify-center">
                     {market.outcomes.map((outcome) => (
                       <button
                         key={outcome.id}
@@ -2323,68 +2345,63 @@ export default function MarketPage({
             <div className="mt-6 rounded-2xl md:rounded-3xl lg:rounded-3xl bg-gradient-to-b from-zinc-950 to-black border border-zinc-800/50 shadow-2xl overflow-hidden backdrop-blur-xl">
               {/* Header */}
               <div className="p-4 md:p-5 lg:p-6 border-b border-zinc-800/30">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-white">Top Holders</h3>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setHoldersDropdownOpen(!holdersDropdownOpen)}
-                      className="flex items-center gap-2 text-sm text-[#c5f82a] hover:text-[#d4ff4a] transition-colors cursor-pointer"
-                    >
-                      <span className="truncate max-w-[120px]">{getTranslatedText(market.claim, market.claimTranslations).substring(0, 15)}...</span>
-                      <svg className={`w-4 h-4 transition-transform ${holdersDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    {holdersDropdownOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-56 border border-zinc-700 rounded-lg shadow-xl z-50" style={{ backgroundColor: '#18181b' }}>
-                        <div className="py-1">
-                          <button
-                            onClick={() => setHoldersDropdownOpen(false)}
-                            className="w-full px-4 py-2 text-left text-sm text-[#c5f82a] hover:bg-zinc-800"
-                            style={{ backgroundColor: '#27272a' }}
-                          >
-                            {getTranslatedText(market.claim, market.claimTranslations).substring(0, 25)}...
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <h3 className="text-lg font-bold text-white">Top Holders</h3>
               </div>
 
-              {/* YES/NO Toggle */}
+              {/* YES/NO Toggle or Outcome Toggle */}
               <div className="px-4 md:px-5 lg:px-6 pt-4">
-                <div className="flex rounded-full border border-zinc-700/50 p-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setHoldersPosition("yes")}
-                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
-                    style={{
-                      backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
-                      color: holdersPosition === "yes" ? '#000000' : '#71717a'
-                    }}
-                  >
-                    TRUE
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHoldersPosition("no")}
-                    className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
-                    style={{
-                      backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
-                      color: holdersPosition === "no" ? '#ffffff' : '#71717a'
-                    }}
-                  >
-                    FALSE
-                  </button>
-                </div>
+                {market.isMultipleChoice && market.outcomes ? (
+                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {market.outcomes.map((outcome) => (
+                      <button
+                        key={outcome.id}
+                        onClick={() => setSelectedHoldersOutcome(outcome.id)}
+                        className="flex-shrink-0 py-2 px-4 rounded-full text-sm font-semibold transition-all cursor-pointer border-2"
+                        style={{
+                          backgroundColor: selectedHoldersOutcome === outcome.id ? `${outcome.color}20` : 'transparent',
+                          borderColor: selectedHoldersOutcome === outcome.id ? outcome.color : '#3f3f46',
+                          color: selectedHoldersOutcome === outcome.id ? outcome.color : '#71717a'
+                        }}
+                      >
+                        {outcome.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex rounded-full border border-zinc-700/50 p-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setHoldersPosition("yes")}
+                      className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                      style={{
+                        backgroundColor: holdersPosition === "yes" ? '#06f6ff' : 'transparent',
+                        color: holdersPosition === "yes" ? '#000000' : '#71717a'
+                      }}
+                    >
+                      TRUE
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setHoldersPosition("no")}
+                      className="flex-1 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                      style={{
+                        backgroundColor: holdersPosition === "no" ? '#7c3aed' : 'transparent',
+                        color: holdersPosition === "no" ? '#ffffff' : '#71717a'
+                      }}
+                    >
+                      FALSE
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Holders List - Scrollable (shows 5, scroll for more) */}
               <div className="px-4 md:px-5 lg:px-6 pb-4 md:pb-5 lg:pb-6 overflow-y-auto scrollbar-hide" style={{ maxHeight: '220px' }}>
                 <div className="space-y-1">
-                  {holdersData[holdersPosition].map((holder, index) => (
+                  {(market.isMultipleChoice && market.outcomes && selectedHoldersOutcome
+                    ? outcomeHoldersData[selectedHoldersOutcome] || []
+                    : holdersData[holdersPosition]
+                  ).map((holder, index) => (
                     <div
                       key={holder.rank}
                       className="flex items-center gap-3 py-2"
