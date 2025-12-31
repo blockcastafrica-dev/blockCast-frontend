@@ -1273,74 +1273,116 @@ export default function MarketPage({
               className="mx-3 rounded-2xl p-4"
               style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937' }}
             >
-              {/* Progress Bar with Percentages */}
-              <div className="flex items-center gap-3 mb-4">
-                <span className="font-bold text-base text-white" style={{ minWidth: '42px' }}>
-                  {Math.round((market.yesPool / market.totalPool) * 100)}%
-                </span>
-                <div
-                  className="flex-1 rounded-full overflow-hidden flex"
-                  style={{ height: '12px', backgroundColor: '#1a1a2e' }}
-                >
-                  <div
-                    className="h-full"
-                    style={{
-                      width: `${(market.yesPool / market.totalPool) * 100}%`,
-                      background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
-                    }}
-                  />
-                  <div
-                    className="h-full"
-                    style={{
-                      width: `${(market.noPool / market.totalPool) * 100}%`,
-                      background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
-                    }}
-                  />
-                </div>
-                <span className="font-bold text-base text-right text-white" style={{ minWidth: '42px' }}>
-                  {Math.round((market.noPool / market.totalPool) * 100)}%
-                </span>
-              </div>
+              {market.isMultipleChoice && market.outcomes ? (
+                <>
+                  {/* Multiple Choice - Scrollable Outcomes */}
+                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {market.outcomes.map((outcome) => (
+                      <button
+                        key={outcome.id}
+                        onClick={() => { setSelectedOutcome(outcome.id); setShowMobileBetModal(true); }}
+                        className={`flex-shrink-0 py-2 px-4 rounded-full transition-all text-center cursor-pointer ${
+                          selectedOutcome === outcome.id
+                            ? "border-2 shadow-lg"
+                            : "border-2"
+                        }`}
+                        style={selectedOutcome === outcome.id ? {
+                          background: `linear-gradient(to right, ${outcome.color}30, ${outcome.color}15)`,
+                          borderColor: outcome.color,
+                          boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                        } : {
+                          backgroundColor: '#18181b',
+                          borderColor: '#3f3f46'
+                        }}
+                      >
+                        <div
+                          className="text-sm font-bold whitespace-nowrap"
+                          style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
+                        >
+                          {outcome.label}
+                        </div>
+                        <div
+                          className="text-xs whitespace-nowrap"
+                          style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a', opacity: 0.8 }}
+                        >
+                          {((outcome.pool / market.totalPool) * 100).toFixed(0)}% · {outcome.odds.toFixed(2)}x
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Binary Market - Progress Bar with Percentages */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="font-bold text-base text-white" style={{ minWidth: '42px' }}>
+                      {Math.round((market.yesPool / market.totalPool) * 100)}%
+                    </span>
+                    <div
+                      className="flex-1 rounded-full overflow-hidden flex"
+                      style={{ height: '12px', backgroundColor: '#1a1a2e' }}
+                    >
+                      <div
+                        className="h-full"
+                        style={{
+                          width: `${(market.yesPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(6, 246, 255, 0.7) 50%, rgba(167, 139, 250, 0.4) 100%)'
+                        }}
+                      />
+                      <div
+                        className="h-full"
+                        style={{
+                          width: `${(market.noPool / market.totalPool) * 100}%`,
+                          background: 'linear-gradient(90deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 50%, rgba(124, 58, 237, 0.7) 100%)'
+                        }}
+                      />
+                    </div>
+                    <span className="font-bold text-base text-right text-white" style={{ minWidth: '42px' }}>
+                      {Math.round((market.noPool / market.totalPool) * 100)}%
+                    </span>
+                  </div>
 
-              {/* Pool Buttons */}
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => { handlePositionChange("yes"); setShowMobileBetModal(true); }}
-                  className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
-                    castPosition === "yes"
-                      ? "border-2 shadow-lg"
-                      : "bg-zinc-900/80 border-2 border-zinc-700/50"
-                  }`}
-                  style={castPosition === "yes" ? {
-                    background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                    borderColor: 'rgba(34, 211, 238, 0.6)',
-                    boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                  } : {}}
-                >
-                  <div className={`text-base font-bold ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>True</div>
-                  <div className={`text-xs ${castPosition === "yes" ? "text-cyan-300" : "text-zinc-500"}`}>
-                    ${market.yesPool >= 1000 ? (market.yesPool / 1000).toFixed(1) + 'K' : market.yesPool.toFixed(0)}
+                  {/* Pool Buttons */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => { handlePositionChange("yes"); setShowMobileBetModal(true); }}
+                      className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
+                        castPosition === "yes"
+                          ? "border-2 shadow-lg"
+                          : "bg-zinc-900/80 border-2 border-zinc-700/50"
+                      }`}
+                      style={castPosition === "yes" ? {
+                        background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                        borderColor: 'rgba(34, 211, 238, 0.6)',
+                        boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
+                      } : {}}
+                    >
+                      <div className={`text-base font-bold ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>True</div>
+                      <div className={`text-xs ${castPosition === "yes" ? "text-cyan-300" : "text-zinc-500"}`}>
+                        ${market.yesPool >= 1000 ? (market.yesPool / 1000).toFixed(1) + 'K' : market.yesPool.toFixed(0)}
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => { handlePositionChange("no"); setShowMobileBetModal(true); }}
+                      className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
+                        castPosition === "no"
+                          ? "border-2 shadow-lg"
+                          : "bg-zinc-900/80 border-2 border-zinc-700/50"
+                      }`}
+                      style={castPosition === "no" ? {
+                        background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                        borderColor: 'rgba(192, 132, 252, 0.6)',
+                        boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                      } : {}}
+                    >
+                      <div className={`text-base font-bold ${castPosition === "no" ? "text-purple-400" : "text-zinc-400"}`}>False</div>
+                      <div className={`text-xs ${castPosition === "no" ? "text-purple-300" : "text-zinc-500"}`}>
+                        ${market.noPool >= 1000 ? (market.noPool / 1000).toFixed(1) + 'K' : market.noPool.toFixed(0)}
+                      </div>
+                    </button>
                   </div>
-                </button>
-                <button
-                  onClick={() => { handlePositionChange("no"); setShowMobileBetModal(true); }}
-                  className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
-                    castPosition === "no"
-                      ? "border-2 shadow-lg"
-                      : "bg-zinc-900/80 border-2 border-zinc-700/50"
-                  }`}
-                  style={castPosition === "no" ? {
-                    background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                    borderColor: 'rgba(192, 132, 252, 0.6)',
-                    boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                  } : {}}
-                >
-                  <div className={`text-base font-bold ${castPosition === "no" ? "text-purple-400" : "text-zinc-400"}`}>False</div>
-                  <div className={`text-xs ${castPosition === "no" ? "text-purple-300" : "text-zinc-500"}`}>
-                    ${market.noPool >= 1000 ? (market.noPool / 1000).toFixed(1) + 'K' : market.noPool.toFixed(0)}
-                  </div>
-                </button>
-              </div>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1476,16 +1518,31 @@ export default function MarketPage({
                           <button
                             key={outcome.id}
                             onClick={() => setSelectedOutcome(outcome.id)}
-                            className={`w-full py-3 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                            className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer ${
                               selectedOutcome === outcome.id
                                 ? "border-2 shadow-lg"
-                                : "bg-zinc-900/80 border-2 border-zinc-700/50 hover:bg-zinc-800/80"
+                                : "border-2"
                             }`}
                             style={selectedOutcome === outcome.id ? {
                               background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
                               borderColor: outcome.color,
                               boxShadow: `0 4px 12px -2px ${outcome.color}40`
-                            } : {}}
+                            } : {
+                              backgroundColor: '#18181b',
+                              borderColor: '#3f3f46'
+                            }}
+                            onMouseEnter={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.backgroundColor = '#27272a';
+                                e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.backgroundColor = '#18181b';
+                                e.currentTarget.style.borderColor = '#3f3f46';
+                              }
+                            }}
                           >
                             <div className="flex items-center justify-between">
                               <span
@@ -1816,16 +1873,31 @@ export default function MarketPage({
                           <button
                             key={outcome.id}
                             onClick={() => setSelectedOutcome(outcome.id)}
-                            className={`w-full py-3 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                            className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer ${
                               selectedOutcome === outcome.id
                                 ? "border-2 shadow-lg"
-                                : "bg-zinc-900/80 border-2 border-zinc-700/50 hover:bg-zinc-800/80"
+                                : "border-2"
                             }`}
                             style={selectedOutcome === outcome.id ? {
                               background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
                               borderColor: outcome.color,
                               boxShadow: `0 4px 12px -2px ${outcome.color}40`
-                            } : {}}
+                            } : {
+                              backgroundColor: '#18181b',
+                              borderColor: '#3f3f46'
+                            }}
+                            onMouseEnter={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.backgroundColor = '#27272a';
+                                e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.backgroundColor = '#18181b';
+                                e.currentTarget.style.borderColor = '#3f3f46';
+                              }
+                            }}
                           >
                             <div className="flex items-center justify-between">
                               <span
@@ -2080,16 +2152,31 @@ export default function MarketPage({
                           <button
                             key={outcome.id}
                             onClick={() => setSelectedOutcome(outcome.id)}
-                            className={`w-full py-3 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                            className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer ${
                               selectedOutcome === outcome.id
                                 ? "border-2 shadow-lg"
-                                : "bg-zinc-900/80 border-2 border-zinc-700/50 hover:bg-zinc-800/80"
+                                : "border-2"
                             }`}
                             style={selectedOutcome === outcome.id ? {
                               background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
                               borderColor: outcome.color,
                               boxShadow: `0 4px 12px -2px ${outcome.color}40`
-                            } : {}}
+                            } : {
+                              backgroundColor: '#18181b',
+                              borderColor: '#3f3f46'
+                            }}
+                            onMouseEnter={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.backgroundColor = '#27272a';
+                                e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (selectedOutcome !== outcome.id) {
+                                e.currentTarget.style.backgroundColor = '#18181b';
+                                e.currentTarget.style.borderColor = '#3f3f46';
+                              }
+                            }}
                           >
                             <div className="flex items-center justify-between">
                               <span

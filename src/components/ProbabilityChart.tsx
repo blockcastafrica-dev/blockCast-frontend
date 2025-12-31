@@ -98,24 +98,29 @@ const generateMultipleChoiceChartData = (outcomes: MarketOutcome[], totalPool: n
   hoursPoints.forEach((hoursAgo) => {
     const progress = 1 - (hoursAgo / 168);
     const easedProgress = progress * progress;
-    const seed = Math.sin(hoursAgo * 0.1) * 2;
-    const fluctuation = hoursAgo === 0 ? 0 : seed;
 
+    // Different fluctuation per outcome based on its index for variety
     const date = new Date(now.getTime() - hoursAgo * 60 * 60 * 1000);
     const dataPoint: Record<string, any> = {
       date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       timestamp: date.getTime(),
     };
 
-    outcomes.forEach(outcome => {
+    outcomes.forEach((outcome, index) => {
+      // Use outcome index for varied fluctuation
+      const seed = Math.sin(hoursAgo * 0.1 + index * 1.5) * 1.5;
+      const fluctuation = hoursAgo === 0 ? 0 : seed;
+
       const diff = currentPercentages[outcome.id] - startPercentage;
       let percent = startPercentage + (diff * easedProgress) + fluctuation;
 
+      // Final point must match exact current percentage
       if (hoursAgo === 0) {
         percent = currentPercentages[outcome.id];
       }
 
-      percent = Math.max(2, Math.min(60, percent));
+      // Clamp between 1 and 80 to keep lines visible but allow realistic ranges
+      percent = Math.max(1, Math.min(80, percent));
       dataPoint[outcome.id] = Number(percent.toFixed(1));
     });
 
@@ -370,7 +375,7 @@ export default function ProbabilityChart({
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
-                domain={[0, 100]}
+                domain={isMultipleChoice ? [0, 60] : [0, 100]}
                 tickFormatter={(value) => `${value}%`}
                 orientation="right"
                 width={35}
@@ -382,6 +387,7 @@ export default function ProbabilityChart({
                   borderRadius: '8px',
                 }}
                 labelStyle={{ color: '#94a3b8' }}
+                formatter={(value: number, name: string) => [`${value.toFixed(1)}%`, name]}
               />
               {isMultipleChoice && outcomes && outcomes.length > 0 ? (
                 // Multiple choice lines
