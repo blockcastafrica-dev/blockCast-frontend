@@ -315,13 +315,13 @@ export default function TopNavigation({
                         <p className="text-sm font-medium">John Doe</p>
                         <button
                           onClick={handleCopyAddress}
-                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
+                          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                         >
                           <span className="font-mono">{formatAddress(walletAddress)}</span>
-                          {copied ? (
-                            <Check className="h-3 w-3 text-green-500" />
+{copied ? (
+                            <Check className="h-3.5 w-3.5 text-green-500" />
                           ) : (
-                            <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Copy className="h-3.5 w-3.5" />
                           )}
                         </button>
                       </div>
@@ -401,13 +401,13 @@ export default function TopNavigation({
                           <p className="font-medium">John Doe</p>
                           <button
                             onClick={handleCopyAddress}
-                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                           >
                             <span className="font-mono">{formatAddress(walletAddress)}</span>
-                            {copied ? (
-                              <Check className="h-3 w-3 text-green-500" />
+{copied ? (
+                              <Check className="h-4 w-4 text-green-500" />
                             ) : (
-                              <Copy className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <Copy className="h-4 w-4" />
                             )}
                           </button>
                         </div>
