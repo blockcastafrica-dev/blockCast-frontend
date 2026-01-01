@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { X, Check, ChevronRight, ArrowLeft, Wallet } from "lucide-react";
 import blockcastLogo from "@/assets/blockcast logo dark BG.svg";
 import phantomLogo from "@/assets/phantom-logo.svg";
-import { WalletOkx } from "@web3icons/react";
+import { WalletWalletConnect } from "@web3icons/react";
 import { FaDiscord, FaTelegramPlane } from "react-icons/fa";
 
 interface ConnectWalletModalProps {
@@ -17,7 +17,7 @@ type ModalView = 'main' | 'more-wallets' | 'social-login';
 const walletIcons: Record<string, string | null> = {
   binance: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=029",
   metamask: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
-  okx: null, // Using WalletOkx component
+  walletconnect: null, // Using WalletWalletConnect component
   trustwallet: "https://trustwallet.com/assets/images/media/assets/TWT.png",
   coinbase: "https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo.webp",
   phantom: phantomLogo,
@@ -64,7 +64,6 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
     if (typeof window !== 'undefined') {
       if ((window as any).ethereum?.isMetaMask) detected.push('metamask');
       if ((window as any).BinanceChain) detected.push('binance');
-      if ((window as any).okxwallet) detected.push('okx');
       if ((window as any).trustwallet) detected.push('trustwallet');
       if ((window as any).coinbaseWalletExtension) detected.push('coinbase');
       if ((window as any).phantom?.solana) detected.push('phantom');
@@ -103,8 +102,8 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
 
   const moreWallets = [
     { id: 'trustwallet', name: 'Trust Wallet', icon: walletIcons.trustwallet },
-    { id: 'okx', name: 'OKX Wallet', icon: walletIcons.okx },
     { id: 'phantom', name: 'Phantom', icon: walletIcons.phantom },
+    { id: 'walletconnect', name: 'WalletConnect', icon: walletIcons.walletconnect },
   ];
 
   const socialProviders = [
@@ -236,11 +235,7 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg border border-gray-600 flex items-center justify-center bg-white/5">
-                        {wallet.id === 'okx' ? (
-                          <WalletOkx variant="mono" size={24} color="#fff" />
-                        ) : (
-                          <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
-                        )}
+                        <img src={wallet.icon!} alt={wallet.name} className="w-6 h-6 object-contain" />
                       </div>
                       <span className="text-white font-medium">{wallet.name}</span>
                     </div>
@@ -372,10 +367,10 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg border border-gray-600 flex items-center justify-center bg-white/5">
-                        {wallet.id === 'okx' ? (
-                          <WalletOkx variant="mono" size={24} color="#fff" />
+                        {wallet.id === 'walletconnect' ? (
+                          <WalletWalletConnect size={24} />
                         ) : (
-                          <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 object-contain" />
+                          <img src={wallet.icon!} alt={wallet.name} className="w-6 h-6 object-contain" />
                         )}
                       </div>
                       <span className="text-white font-medium">{wallet.name}</span>
