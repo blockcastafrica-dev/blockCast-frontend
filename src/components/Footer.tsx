@@ -2,6 +2,7 @@ import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import geminiLogo from "@/assets/gemini-logo.svg";
 
 interface FooterProps {
   onNavigate?: (page: string) => void;
@@ -64,8 +65,25 @@ export default function Footer({ onNavigate }: FooterProps) {
             </button>
           </div>
 
-          {/* Right side - Social icons */}
-          <div className="flex items-center gap-1">
+          {/* Right side - Powered by AI + Social icons */}
+          <div className="flex items-center gap-4">
+            {/* Powered by AI */}
+            <div className="flex items-baseline gap-3 text-sm text-foreground">
+              <span>Powered by</span>
+              <img src={geminiLogo} alt="Gemini" className="h-4 self-center" />
+              <span>&</span>
+              <div className="flex items-center gap-1.5 self-center">
+                <svg className="h-4 w-4" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M101.008 42L190.99 124.905L190.99 124.886L190.99 42.1913H208.506L208.506 125.276L298.891 42V136.524L336 136.524V272.866H299.005V357.035L208.506 277.525L208.506 357.948H190.99L190.99 278.836L101.11 358V272.866H64V136.524H101.008V42ZM177.785 153.826H81.5159V255.564H101.088V223.472L177.785 153.826ZM118.625 231.149V319.392L190.99 255.655L190.99 165.421L118.625 231.149ZM209.01 254.812V165.336L281.396 231.068V272.866H281.489V318.491L209.01 254.812ZM299.005 255.564H318.484V153.826L222.932 153.826L299.005 222.751V255.564ZM281.375 136.524V81.7983L221.977 136.524L281.375 136.524ZM177.921 136.524H118.524V81.7983L177.921 136.524Z" fill="currentColor"/>
+                </svg>
+                <span>Perplexity</span>
+              </div>
+            </div>
+
+            <span className="text-muted-foreground/50">•</span>
+
+            {/* Social icons */}
+            <div className="flex items-center gap-1">
             <button
                 onClick={() => window.open('https://x.com/BlockCastLive', '_blank')}
                 className="p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -94,6 +112,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               >
                 <FaTelegramPlane className="h-4 w-4" />
               </button>
+            </div>
           </div>
         </div>
       </div>
