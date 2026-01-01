@@ -1452,31 +1452,56 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                   </div>
                 )}
 
-                {/* 4. Betting Buttons - Mobile Optimized */}
+                {/* 4. Betting Buttons - Desktop: 3 on first row, 2 on second row centered */}
                 {market.isMultipleChoice && market.outcomes ? (
-                  <div className="flex flex-wrap gap-2 pb-1 justify-center" style={{ maxWidth: '100%' }}>
-                    {market.outcomes.map((outcome) => (
-                      <Button
-                        key={outcome.id}
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenBetDialog(market, "yes", outcome.id);
-                        }}
-                        className="bg-transparent border-2 h-8 text-xs font-bold tracking-wide transition-all"
-                        style={{
-                          borderColor: `${outcome.color}80`,
-                          color: outcome.color,
-                          width: 'calc(33.333% - 6px)',
-                          minWidth: '90px',
-                          padding: '0 8px'
-                        }}
-                        {...({} as any)}
-                      >
-                        {outcome.label} {outcome.odds.toFixed(1)}x
-                      </Button>
-                    ))}
+                  <div className="space-y-2 pb-1">
+                    {/* First row - 3 items */}
+                    <div className="grid grid-cols-3 gap-2">
+                      {market.outcomes.slice(0, 3).map((outcome) => (
+                        <Button
+                          key={outcome.id}
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenBetDialog(market, "yes", outcome.id);
+                          }}
+                          className="bg-transparent border-2 h-8 text-xs font-bold tracking-wide transition-all w-full"
+                          style={{
+                            borderColor: `${outcome.color}80`,
+                            color: outcome.color,
+                          }}
+                          {...({} as any)}
+                        >
+                          {outcome.label} {outcome.odds.toFixed(1)}x
+                        </Button>
+                      ))}
+                    </div>
+                    {/* Second row - remaining items centered */}
+                    {market.outcomes.length > 3 && (
+                      <div className="flex justify-center gap-2">
+                        {market.outcomes.slice(3).map((outcome) => (
+                          <Button
+                            key={outcome.id}
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenBetDialog(market, "yes", outcome.id);
+                            }}
+                            className="bg-transparent border-2 h-8 text-xs font-bold tracking-wide transition-all"
+                            style={{
+                              borderColor: `${outcome.color}80`,
+                              color: outcome.color,
+                              width: 'calc(33.333% - 4px)',
+                            }}
+                            {...({} as any)}
+                          >
+                            {outcome.label} {outcome.odds.toFixed(1)}x
+                          </Button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
