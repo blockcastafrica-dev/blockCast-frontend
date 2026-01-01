@@ -37,7 +37,7 @@ const FooterAccordion = ({ handleLinkClick, enableMobileHover = false }) => {
         }`}
       >
         {[
-          { label: "About Blockcast", page: "about" },
+          { label: "Documentation", page: "documentation", external: "https://docs.google.com/document/d/1esCM5JK1aGh3r_IC4JoXU590GpnmYsAIMuHwRm7HXo0/edit?tab=t.0" },
           { label: "Contact Us", page: "contact" },
           { label: "Privacy Policy", page: "privacy" },
           { label: "Terms of Service", page: "terms" },
@@ -45,7 +45,7 @@ const FooterAccordion = ({ handleLinkClick, enableMobileHover = false }) => {
         ].map((item, index) => (
           <div
             key={item.label}
-            onClick={() => handleLinkClick(item.page)}
+            onClick={() => item.external ? window.open(item.external, '_blank') : handleLinkClick(item.page)}
             onMouseEnter={() => setHoveredItem(index)}
             onMouseLeave={() => setHoveredItem(null)}
             className={`flex items-center gap-2 px-2 ml-6 cursor-pointer py-1 transition-all rounded-md ${mobileItemHover}`}
