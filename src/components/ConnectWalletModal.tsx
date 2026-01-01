@@ -420,7 +420,7 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
                       key={provider.id}
                       onClick={() => handleSocialConnect(provider.id)}
                       disabled={!agreedToTerms}
-                      className={`w-full py-4 px-6 rounded-full flex items-center justify-center gap-3 transition-all duration-200 ${
+                      className={`max-w-[280px] w-full mx-auto py-4 px-6 rounded-full flex items-center justify-center gap-3 transition-all duration-200 ${
                         agreedToTerms ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
                       }`}
                       style={{
