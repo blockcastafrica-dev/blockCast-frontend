@@ -24,7 +24,7 @@ const walletIcons: Record<string, string | null> = {
 
 // Social icons as simple SVG components
 const GoogleIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24">
+  <svg className="w-7 h-7" viewBox="0 0 24 24">
     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -33,26 +33,26 @@ const GoogleIcon = () => (
 );
 
 const AppleIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
+  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="white">
     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
   </svg>
 );
 
 const XIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
+  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="white">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
   </svg>
 );
 
 const DiscordIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#5865F2">
-    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+  <svg className="w-7 h-7" viewBox="0 0 71 55" fill="white">
+    <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3## 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.0383 50.6034 51.2557 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1099 30.1693C30.1099 34.1136 27.2680 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.7018 30.1693C53.7018 34.1136 50.9 37.3253 47.3178 37.3253Z"/>
   </svg>
 );
 
 const TelegramIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#26A5E4">
-    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="white">
+    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472z"/>
   </svg>
 );
 
@@ -112,7 +112,6 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
 
   const socialProviders = [
     { id: 'google', name: 'Google', icon: GoogleIcon, bgColor: '#fff', textColor: '#000' },
-    { id: 'apple', name: 'Apple', icon: AppleIcon, bgColor: '#000', textColor: '#fff' },
     { id: 'twitter', name: 'X (Twitter)', icon: XIcon, bgColor: '#000', textColor: '#fff' },
     { id: 'discord', name: 'Discord', icon: DiscordIcon, bgColor: '#5865F2', textColor: '#fff' },
     { id: 'telegram', name: 'Telegram', icon: TelegramIcon, bgColor: '#26A5E4', textColor: '#fff' },
@@ -407,34 +406,47 @@ export default function ConnectWalletModal({ isOpen, onClose, onConnect }: Conne
 
           {/* Social Login View */}
           {currentView === 'social-login' && (
-            <div className="space-y-3">
-              {socialProviders.map((provider) => {
-                const Icon = provider.icon;
-                return (
-                  <button
-                    key={provider.id}
-                    onClick={() => handleSocialConnect(provider.id)}
-                    disabled={!agreedToTerms}
-                    className={`w-full p-4 rounded-xl text-left transition-all ${
-                      agreedToTerms ? 'cursor-pointer hover:opacity-90' : 'opacity-50 cursor-not-allowed'
-                    }`}
-                    style={{
-                      backgroundColor: provider.bgColor,
-                      border: provider.id === 'google' ? '1px solid #e5e7eb' : '1px solid transparent',
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Icon />
-                        <span className="font-medium" style={{ color: provider.textColor }}>
-                          Continue with {provider.name}
-                        </span>
-                      </div>
-                      <ChevronRight className="w-5 h-5" style={{ color: provider.textColor, opacity: 0.5 }} />
-                    </div>
-                  </button>
-                );
-              })}
+            <div className="flex flex-col gap-4">
+              {/* Login with divider */}
+              <div className="flex items-center gap-4 mb-2">
+                <div className="flex-1 h-px bg-gray-700"></div>
+                <span className="text-gray-400 text-sm">Login with</span>
+                <div className="flex-1 h-px bg-gray-700"></div>
+              </div>
+
+              {/* Social buttons */}
+              <div className="space-y-3">
+                {socialProviders.map((provider) => {
+                  const Icon = provider.icon;
+                  return (
+                    <button
+                      key={provider.id}
+                      onClick={() => handleSocialConnect(provider.id)}
+                      disabled={!agreedToTerms}
+                      className={`w-full py-4 px-6 rounded-full flex items-center justify-center gap-3 transition-all duration-200 ${
+                        agreedToTerms ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
+                      }`}
+                      style={{
+                        backgroundColor: '#1a1f26',
+                        border: '1px solid #374151',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (agreedToTerms) {
+                          e.currentTarget.style.backgroundColor = '#2a3140';
+                          e.currentTarget.style.borderColor = '#06b6d4';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#1a1f26';
+                        e.currentTarget.style.borderColor = '#374151';
+                      }}
+                    >
+                      <Icon />
+                      <span className="text-white font-medium">{provider.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
               {/* Terms reminder */}
               {!agreedToTerms && (
