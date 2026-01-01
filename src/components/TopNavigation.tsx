@@ -320,9 +320,9 @@ export default function TopNavigation({
                         >
                           <span className="font-mono">{formatAddress(walletAddress)}</span>
 {copied ? (
-                            <Check className="h-3.5 w-3.5 text-green-500" />
+                            <Check className="h-3 w-3 text-green-500" />
                           ) : (
-                            <Copy className="h-3.5 w-3.5" />
+                            <Copy className="h-3 w-3" />
                           )}
                         </button>
                       </div>
