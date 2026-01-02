@@ -563,60 +563,37 @@ export default function MarketPage({
         <div className="flex-1 min-w-0 space-y-3 md:space-y-4">
           {/* Market Header Card - Modern Compact Design */}
           <div className="overflow-hidden border border-border rounded-xl bg-transparent">
-        <CardContent className="p-4 md:p-5 lg:p-6">
-          <div className="space-y-4">
-            {/* Compact Header with Image Thumbnail */}
-            <div className="flex gap-4">
+        <CardContent className="p-3 md:p-4">
+          <div className="space-y-3">
+            {/* Header with Image Thumbnail */}
+            <div className="flex gap-3">
               {market.imageUrl && (
                 <img
                   src={market.imageUrl}
                   alt={getTranslatedText(market.claim, market.claimTranslations)}
-                  className="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover flex-shrink-0"
+                  className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover flex-shrink-0"
                 />
               )}
               <div className="flex-1 min-w-0">
-                <Badge
-                  variant="outline"
-                  className="text-[10px] md:text-xs mb-2 bg-background/80"
-                >
-                  {market.category}
-                </Badge>
-                <h1 className="text-base md:text-lg lg:text-xl font-bold text-white leading-tight">
+                <h1 className="text-base md:text-lg font-bold text-white leading-tight">
                   {getTranslatedText(market.claim, market.claimTranslations)}
                 </h1>
-              </div>
-            </div>
-
-            {/* Description */}
-            <p className="text-sm text-muted-foreground">
-              {getTranslatedText(
-                market.description,
-                market.descriptionTranslations
-              )}
-            </p>
-
-            {/* Meta Info - Single Row */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <Globe className="h-3.5 w-3.5" />
-                <span>{market.country || market.region}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Shield className="h-3.5 w-3.5" />
-                <span>{market.source}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                <span>{getTimeRemaining(market.expiresAt)}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <TrendingUp className="h-3.5 w-3.5" />
-                <span>${(market.totalPool / 1000).toFixed(1)}k Pool</span>
+                {/* Meta Info - Inline with title */}
+                <div className="flex flex-wrap items-center gap-6 text-base text-white mt-2">
+                  <div className="flex items-center">
+                    <Clock className="h-5 w-5 flex-shrink-0 mr-2" />
+                    <span>Expires in {getTimeRemaining(market.expiresAt)}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <TrendingUp className="h-5 w-5 flex-shrink-0 mr-2" />
+                    <span>${(market.totalPool / 1000).toFixed(1)}k Pool</span>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Probability Chart - Full Width */}
-            <div className="w-full">
+            <div className="w-full -mb-1">
               <ProbabilityChart
                 yesPercentage={(market.yesPool / market.totalPool) * 100}
                 noPercentage={(market.noPool / market.totalPool) * 100}
