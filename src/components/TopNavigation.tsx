@@ -249,8 +249,8 @@ export default function TopNavigation({
               <Button
                 onClick={() => setIsVisible(true)}
                 size="sm"
-                className="hidden lg:flex gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer"
-                style={{ backgroundColor: '#06f6ff', color: '#000000' }}
+                variant="outline"
+                className="hidden lg:flex gap-1.5 md:gap-2 lg:gap-2 px-4 md:px-5 lg:px-6 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer rounded-full border-2 border-primary text-primary hover:bg-primary/10 hover:text-primary"
               >
                 <span className="font-medium">+ Deposit</span>
               </Button>
