@@ -21,6 +21,7 @@ import WithdrawWallet from './WithdrawWallet';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 
 import { useLocation } from 'react-router-dom';
+import { TokenUSDT } from '@web3icons/react';
 
 interface SettingsProps {
   isDarkMode: boolean;
@@ -197,9 +198,13 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
           {/* Balance Display */}
           <div className="border border-border rounded-xl bg-transparent">
             <CardContent className="p-6">
-              <div className="text-sm text-muted-foreground mb-1">Total Balance</div>
-              <div className="text-4xl font-bold text-primary mb-4">
-                {userBalance.toFixed(3)} USDT
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                <Wallet className="h-5 w-5" />
+                <span>Total Balance</span>
+              </div>
+              <div className="flex items-center gap-2 text-4xl font-bold text-primary mb-4">
+                <TokenUSDT variant="mono" size={36} color="#FFFFFF" />
+                <span>${userBalance.toFixed(3)} USDT</span>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button

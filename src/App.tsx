@@ -30,6 +30,7 @@ import ContactPage from '@/pages/ContactPage';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
 import TermsOfServicePage from '@/pages/TermsOfServicePage';
 import HelpCenterPage from '@/pages/HelpCenterPage';
+import AdminPage from '@/pages/AdminPage';
 // Import browser-compatible database functions
 import { getUser, createUser, getAllMarkets, getUserBets, createBet, createVerification, getUserVerifications, updateUser } from '@/utils/browserDB';
 
@@ -535,6 +536,10 @@ export default function App() {
           element: <HelpCenterPage />
         }
       ]
+    },
+    {
+      path: "/admin",
+      element: <AdminPage />
     }
   ]);
 
