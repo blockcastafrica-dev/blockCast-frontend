@@ -86,7 +86,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
       {/* Desktop Sidebar Backdrop - click to close */}
       {desktopSidebarOpen && (
         <div
-          className="hidden lg:block fixed inset-0 z-30"
+          className="hidden lg:block fixed inset-0 z-30 bg-black/30 cursor-pointer"
           onClick={() => setDesktopSidebarOpen(false)}
         />
       )}
