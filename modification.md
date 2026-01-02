@@ -11,7 +11,7 @@
 #### New Types Added:
 - `SellCalculation` - Interface for sell-specific calculations
 - `UserPosition` - Interface for tracking user's share holdings and cost basis
-- `SELL_FEE_PERCENTAGE = 0.01` (1% trading fee on sales)
+- `SELL_FEE_PERCENTAGE = 0.03` (3% trading fee on sales)
 
 #### New State & Functions:
 - `sellCalculation` - State for sell calculation results
@@ -24,7 +24,7 @@
 #### Sell Calculation Logic:
 - **Current price** = probability percentage / 100 (e.g., 30% = $0.30)
 - **Gross proceeds** = shares to sell × current price
-- **Trading fee** = 1% of gross proceeds
+- **Trading fee** = 3% of gross proceeds
 - **Net proceeds** = gross proceeds - fee
 - **Profit/Loss** = net proceeds - (shares × average cost basis)
 
@@ -37,7 +37,7 @@
   - Current sell price
   - Average cost basis (what user paid per share)
   - Gross proceeds
-  - Trading fee (1%)
+  - Trading fee (3%)
   - Net proceeds
   - Profit/Loss with percentage (green if profit, red if loss)
 - Validation checks against user's owned shares (not USDT balance)

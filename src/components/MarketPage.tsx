@@ -110,7 +110,7 @@ interface UserPosition {
   avgCostBasis: number; // Average price paid per share
 }
 
-const SELL_FEE_PERCENTAGE = 0.01; // 1% fee on sell proceeds
+const SELL_FEE_PERCENTAGE = 0.03; // 3% fee on sell proceeds
 
 const quickCastAmounts = [0.01, 0.05, 0.1, 0.5, 1.0];
 
@@ -1930,7 +1930,7 @@ export default function MarketPage({
                             <AlertCircle className="w-3 h-3 text-zinc-600" />
                           </div>
                           <span className="text-zinc-300">
-                            1% (-${sellCalculation ? sellCalculation.fee.toFixed(2) : "0.00"})
+                            3% (-${sellCalculation ? sellCalculation.fee.toFixed(2) : "0.00"})
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -2533,7 +2533,7 @@ export default function MarketPage({
                         <AlertCircle className="w-4 h-4 text-zinc-500" />
                       </div>
                       <span className="text-base font-medium text-white text-right">
-                        1% (-${sellCalculation ? sellCalculation.fee.toFixed(2) : "0.00"})
+                        3% (-${sellCalculation ? sellCalculation.fee.toFixed(2) : "0.00"})
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
