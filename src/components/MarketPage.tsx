@@ -121,7 +121,7 @@ export default function MarketPage({
   onBack,
 }: MarketPageProps) {
   const { t, language } = useLanguage();
-  const [castPosition, setCastPosition] = useState<"yes" | "no">("yes");
+  const [castPosition, setCastPosition] = useState<"yes" | "no" | null>(null);
   const [castAmount, setCastAmount] = useState<string>("");
   const [profitCalculation, setProfitCalculation] =
     useState<ProfitCalculation | null>(null);
@@ -145,9 +145,7 @@ export default function MarketPage({
   const [evidenceLink, setEvidenceLink] = useState("");
   const [castInterface, setCastInterface] = useState<"buy" | "sell">("buy");
   const [holdersPosition, setHoldersPosition] = useState<"yes" | "no">("yes");
-  const [selectedOutcome, setSelectedOutcome] = useState<string | null>(
-    market.isMultipleChoice && market.outcomes?.[0] ? market.outcomes[0].id : null
-  );
+  const [selectedOutcome, setSelectedOutcome] = useState<string | null>(null);
   const [selectedHoldersOutcome, setSelectedHoldersOutcome] = useState<string | null>(
     market.isMultipleChoice && market.outcomes?.[0] ? market.outcomes[0].id : null
   );
@@ -175,6 +173,40 @@ export default function MarketPage({
   };
 
   const userPosition = getUserPosition();
+
+  // Get position details with current price and profit/loss for any outcome
+  const getPositionDetails = (outcomeId: string) => {
+    const position = userPositions.find(p => p.outcomeId === outcomeId);
+    if (!position || position.shares === 0) return null;
+
+    // Get current price based on outcome
+    let currentPrice: number;
+    if (market.isMultipleChoice && market.outcomes) {
+      const outcome = market.outcomes.find(o => o.id === outcomeId);
+      currentPrice = outcome ? (outcome.pool / market.totalPool) : 0;
+    } else {
+      currentPrice = outcomeId === 'yes'
+        ? (market.yesPool / market.totalPool)
+        : (market.noPool / market.totalPool);
+    }
+
+    const currentValue = position.shares * currentPrice;
+    const costBasis = position.shares * position.avgCostBasis;
+    const profitLoss = currentValue - costBasis;
+    const profitLossPercent = costBasis > 0 ? (profitLoss / costBasis) * 100 : 0;
+
+    return {
+      shares: position.shares,
+      avgCostBasis: position.avgCostBasis,
+      currentPrice,
+      currentValue,
+      profitLoss,
+      profitLossPercent,
+    };
+  };
+
+  // Get positions with shares > 0 for sell mode
+  const positionsWithShares = userPositions.filter(p => p.shares > 0);
 
   // Activity data - single source of truth
   const activityData = [
@@ -1407,10 +1439,10 @@ export default function MarketPage({
                       <button
                         key={outcome.id}
                         onClick={() => { setSelectedOutcome(outcome.id); setShowMobileBetModal(true); }}
-                        className={`flex-1 min-w-0 py-1.5 px-2 rounded-full transition-all text-center cursor-pointer ${
+                        className={`flex-1 min-w-0 py-1.5 px-2 rounded-full transition-all text-center cursor-pointer border-2 ${
                           selectedOutcome === outcome.id
-                            ? "border-2 shadow-lg"
-                            : "border-2"
+                            ? "shadow-lg"
+                            : ""
                         }`}
                         style={selectedOutcome === outcome.id ? {
                           background: `linear-gradient(to right, ${outcome.color}30, ${outcome.color}15)`,
@@ -1420,15 +1452,35 @@ export default function MarketPage({
                           backgroundColor: '#18181b',
                           borderColor: '#3f3f46'
                         }}
+                        onMouseEnter={(e) => {
+                          if (selectedOutcome !== outcome.id) {
+                            e.currentTarget.style.backgroundColor = '#27272a';
+                            e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                            const titleEl = e.currentTarget.querySelector('.outcome-title') as HTMLElement;
+                            const statsEl = e.currentTarget.querySelector('.outcome-stats') as HTMLElement;
+                            if (titleEl) titleEl.style.color = outcome.color || '#a1a1aa';
+                            if (statsEl) statsEl.style.color = outcome.color || '#71717a';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (selectedOutcome !== outcome.id) {
+                            e.currentTarget.style.backgroundColor = '#18181b';
+                            e.currentTarget.style.borderColor = '#3f3f46';
+                            const titleEl = e.currentTarget.querySelector('.outcome-title') as HTMLElement;
+                            const statsEl = e.currentTarget.querySelector('.outcome-stats') as HTMLElement;
+                            if (titleEl) titleEl.style.color = '#a1a1aa';
+                            if (statsEl) statsEl.style.color = '#71717a';
+                          }
+                        }}
                       >
                         <div
-                          className="text-xs font-bold truncate"
+                          className="outcome-title text-xs font-bold truncate"
                           style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
                         >
                           {outcome.label}
                         </div>
                         <div
-                          className="text-[10px] truncate"
+                          className="outcome-stats text-[10px] truncate"
                           style={{ color: selectedOutcome === outcome.id ? outcome.color : '#71717a', opacity: 0.8 }}
                         >
                           {((outcome.pool / market.totalPool) * 100).toFixed(0)}% · {outcome.odds.toFixed(2)}x
@@ -1472,37 +1524,83 @@ export default function MarketPage({
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={() => { handlePositionChange("yes"); setShowMobileBetModal(true); }}
-                      className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
+                      className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer border-2 ${
                         castPosition === "yes"
-                          ? "border-2 shadow-lg"
-                          : "bg-zinc-900/80 border-2 border-zinc-700/50"
+                          ? "shadow-lg"
+                          : "bg-zinc-900/80 border-zinc-700/50"
                       }`}
                       style={castPosition === "yes" ? {
                         background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
                         borderColor: 'rgba(34, 211, 238, 0.6)',
                         boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                      } : {}}
+                      } : {
+                        backgroundColor: '#18181b',
+                        borderColor: '#3f3f46'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (castPosition !== "yes") {
+                          e.currentTarget.style.backgroundColor = '#27272a';
+                          e.currentTarget.style.borderColor = 'rgba(34, 211, 238, 0.6)';
+                          const titleEl = e.currentTarget.querySelector('.pool-title') as HTMLElement;
+                          const amountEl = e.currentTarget.querySelector('.pool-amount') as HTMLElement;
+                          if (titleEl) titleEl.style.color = '#22d3ee';
+                          if (amountEl) amountEl.style.color = '#67e8f9';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (castPosition !== "yes") {
+                          e.currentTarget.style.backgroundColor = '#18181b';
+                          e.currentTarget.style.borderColor = '#3f3f46';
+                          const titleEl = e.currentTarget.querySelector('.pool-title') as HTMLElement;
+                          const amountEl = e.currentTarget.querySelector('.pool-amount') as HTMLElement;
+                          if (titleEl) titleEl.style.color = '#a1a1aa';
+                          if (amountEl) amountEl.style.color = '#71717a';
+                        }
+                      }}
                     >
-                      <div className={`text-base font-bold ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>True</div>
-                      <div className={`text-xs ${castPosition === "yes" ? "text-cyan-300" : "text-zinc-500"}`}>
+                      <div className={`pool-title text-base font-bold ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>True</div>
+                      <div className={`pool-amount text-xs ${castPosition === "yes" ? "text-cyan-300" : "text-zinc-500"}`}>
                         ${market.yesPool >= 1000 ? (market.yesPool / 1000).toFixed(1) + 'K' : market.yesPool.toFixed(0)}
                       </div>
                     </button>
                     <button
                       onClick={() => { handlePositionChange("no"); setShowMobileBetModal(true); }}
-                      className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer ${
+                      className={`py-3 px-4 rounded-full transition-all text-center cursor-pointer border-2 ${
                         castPosition === "no"
-                          ? "border-2 shadow-lg"
-                          : "bg-zinc-900/80 border-2 border-zinc-700/50"
+                          ? "shadow-lg"
+                          : "bg-zinc-900/80 border-zinc-700/50"
                       }`}
                       style={castPosition === "no" ? {
                         background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
                         borderColor: 'rgba(192, 132, 252, 0.6)',
                         boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                      } : {}}
+                      } : {
+                        backgroundColor: '#18181b',
+                        borderColor: '#3f3f46'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (castPosition !== "no") {
+                          e.currentTarget.style.backgroundColor = '#27272a';
+                          e.currentTarget.style.borderColor = 'rgba(192, 132, 252, 0.6)';
+                          const titleEl = e.currentTarget.querySelector('.pool-title') as HTMLElement;
+                          const amountEl = e.currentTarget.querySelector('.pool-amount') as HTMLElement;
+                          if (titleEl) titleEl.style.color = '#c084fc';
+                          if (amountEl) amountEl.style.color = '#d8b4fe';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (castPosition !== "no") {
+                          e.currentTarget.style.backgroundColor = '#18181b';
+                          e.currentTarget.style.borderColor = '#3f3f46';
+                          const titleEl = e.currentTarget.querySelector('.pool-title') as HTMLElement;
+                          const amountEl = e.currentTarget.querySelector('.pool-amount') as HTMLElement;
+                          if (titleEl) titleEl.style.color = '#a1a1aa';
+                          if (amountEl) amountEl.style.color = '#71717a';
+                        }
+                      }}
                     >
-                      <div className={`text-base font-bold ${castPosition === "no" ? "text-purple-400" : "text-zinc-400"}`}>False</div>
-                      <div className={`text-xs ${castPosition === "no" ? "text-purple-300" : "text-zinc-500"}`}>
+                      <div className={`pool-title text-base font-bold ${castPosition === "no" ? "text-purple-400" : "text-zinc-400"}`}>False</div>
+                      <div className={`pool-amount text-xs ${castPosition === "no" ? "text-purple-300" : "text-zinc-500"}`}>
                         ${market.noPool >= 1000 ? (market.noPool / 1000).toFixed(1) + 'K' : market.noPool.toFixed(0)}
                       </div>
                     </button>
@@ -1633,99 +1731,340 @@ export default function MarketPage({
                     </div>
                   )}
 
-                  {/* Pick a Side */}
-                  <div className="space-y-3">
-                    <h3 className="text-sm text-zinc-400">
-                      {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
-                    </h3>
-                    {market.isMultipleChoice && market.outcomes ? (
-                      <div className="space-y-2">
-                        {market.outcomes.map((outcome) => (
+                  {/* Pick a Side - Buy Mode */}
+                  {castInterface === "buy" && (
+                    <div
+                      className="space-y-3"
+                      onClick={(e) => {
+                        // Deselect only if clicking outside of buttons
+                        if (!(e.target as HTMLElement).closest('button')) {
+                          if (market.isMultipleChoice) {
+                            setSelectedOutcome(null);
+                          } else {
+                            setCastPosition(null);
+                          }
+                        }
+                      }}
+                    >
+                      <h3 className="text-sm text-zinc-400">
+                        {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
+                      </h3>
+                      {market.isMultipleChoice && market.outcomes ? (
+                        <div className="space-y-2">
+                          {market.outcomes.map((outcome) => (
+                            <button
+                              key={outcome.id}
+                              onClick={() => setSelectedOutcome(outcome.id)}
+                              className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer ${
+                                selectedOutcome === outcome.id
+                                  ? "border-2 shadow-lg"
+                                  : "border-2"
+                              }`}
+                              style={selectedOutcome === outcome.id ? {
+                                background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
+                                borderColor: outcome.color,
+                                boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                              } : {
+                                backgroundColor: '#18181b',
+                                borderColor: '#3f3f46'
+                              }}
+                              onMouseEnter={(e) => {
+                                if (selectedOutcome !== outcome.id) {
+                                  e.currentTarget.style.backgroundColor = '#27272a';
+                                  e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (selectedOutcome !== outcome.id) {
+                                  e.currentTarget.style.backgroundColor = '#18181b';
+                                  e.currentTarget.style.borderColor = '#3f3f46';
+                                }
+                              }}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span
+                                  className="font-semibold text-sm"
+                                  style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
+                                >
+                                  {outcome.label}
+                                </span>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-xs text-white">
+                                    {Math.round((outcome.pool / market.totalPool) * 100)}%
+                                  </span>
+                                  <span className="text-sm font-bold text-white">
+                                    {outcome.odds.toFixed(2)}x
+                                  </span>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-4">
                           <button
-                            key={outcome.id}
-                            onClick={() => setSelectedOutcome(outcome.id)}
-                            className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer ${
-                              selectedOutcome === outcome.id
-                                ? "border-2 shadow-lg"
-                                : "border-2"
+                            onClick={() => handlePositionChange("yes")}
+                            className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer border-2 ${
+                              castPosition === "yes"
+                                ? "shadow-lg"
+                                : "bg-zinc-900/80 border-zinc-700/50 text-zinc-400"
                             }`}
-                            style={selectedOutcome === outcome.id ? {
-                              background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
-                              borderColor: outcome.color,
-                              boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                            style={castPosition === "yes" ? {
+                              background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
+                              borderColor: 'rgba(34, 211, 238, 0.6)',
+                              color: '#22d3ee',
+                              boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
                             } : {
                               backgroundColor: '#18181b',
                               borderColor: '#3f3f46'
                             }}
                             onMouseEnter={(e) => {
-                              if (selectedOutcome !== outcome.id) {
+                              if (castPosition !== "yes") {
                                 e.currentTarget.style.backgroundColor = '#27272a';
-                                e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                                e.currentTarget.style.borderColor = 'rgba(34, 211, 238, 0.6)';
+                                e.currentTarget.style.color = '#22d3ee';
                               }
                             }}
                             onMouseLeave={(e) => {
-                              if (selectedOutcome !== outcome.id) {
+                              if (castPosition !== "yes") {
                                 e.currentTarget.style.backgroundColor = '#18181b';
                                 e.currentTarget.style.borderColor = '#3f3f46';
+                                e.currentTarget.style.color = '#a1a1aa';
                               }
                             }}
                           >
-                            <div className="flex items-center justify-between">
-                              <span
-                                className="font-semibold text-sm"
-                                style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
-                              >
-                                {outcome.label}
-                              </span>
-                              <div className="flex items-center gap-3">
-                                <span className="text-xs text-white">
-                                  {Math.round((outcome.pool / market.totalPool) * 100)}%
-                                </span>
-                                <span className="text-sm font-bold text-white">
-                                  {outcome.odds.toFixed(2)}x
-                                </span>
-                              </div>
-                            </div>
+                            TRUE
                           </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-4">
-                        <button
-                          onClick={() => handlePositionChange("yes")}
-                          className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                            castPosition === "yes"
-                              ? "border-2 shadow-lg"
-                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                          }`}
-                          style={castPosition === "yes" ? {
-                            background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                            borderColor: 'rgba(34, 211, 238, 0.6)',
-                            color: '#22d3ee',
-                            boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                          } : {}}
-                        >
-                          TRUE
-                        </button>
-                        <button
-                          onClick={() => handlePositionChange("no")}
-                          className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                            castPosition === "no"
-                              ? "border-2 shadow-lg"
-                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                          }`}
-                          style={castPosition === "no" ? {
-                            background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                            borderColor: 'rgba(192, 132, 252, 0.6)',
-                            color: '#7c3aed',
-                            boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                          } : {}}
-                        >
-                          FALSE
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                          <button
+                            onClick={() => handlePositionChange("no")}
+                            className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer border-2 ${
+                              castPosition === "no"
+                                ? "shadow-lg"
+                                : "bg-zinc-900/80 border-zinc-700/50 text-zinc-400"
+                            }`}
+                            style={castPosition === "no" ? {
+                              background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
+                              borderColor: 'rgba(192, 132, 252, 0.6)',
+                              color: '#7c3aed',
+                              boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
+                            } : {
+                              backgroundColor: '#18181b',
+                              borderColor: '#3f3f46'
+                            }}
+                            onMouseEnter={(e) => {
+                              if (castPosition !== "no") {
+                                e.currentTarget.style.backgroundColor = '#27272a';
+                                e.currentTarget.style.borderColor = 'rgba(192, 132, 252, 0.6)';
+                                e.currentTarget.style.color = '#c084fc';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (castPosition !== "no") {
+                                e.currentTarget.style.backgroundColor = '#18181b';
+                                e.currentTarget.style.borderColor = '#3f3f46';
+                                e.currentTarget.style.color = '#a1a1aa';
+                              }
+                            }}
+                          >
+                            FALSE
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Your Positions - Sell Mode */}
+                  {castInterface === "sell" && (
+                    <div
+                      className="space-y-3"
+                      onClick={(e) => {
+                        // Deselect only if clicking outside of buttons
+                        if (!(e.target as HTMLElement).closest('button')) {
+                          if (market.isMultipleChoice) {
+                            setSelectedOutcome(null);
+                          } else {
+                            setCastPosition(null);
+                          }
+                        }
+                      }}
+                    >
+                      <h3 className="text-sm text-zinc-400">Your Positions</h3>
+                      {positionsWithShares.length > 0 ? (
+                        <div className="space-y-2">
+                          {market.isMultipleChoice && market.outcomes ? (
+                            // Multiple choice - show outcomes where user has shares
+                            market.outcomes
+                              .filter(outcome => positionsWithShares.some(p => p.outcomeId === outcome.id))
+                              .map((outcome) => {
+                                const details = getPositionDetails(outcome.id);
+                                if (!details) return null;
+                                return (
+                                  <button
+                                    key={outcome.id}
+                                    onClick={() => setSelectedOutcome(outcome.id)}
+                                    className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer border-2 ${
+                                      selectedOutcome === outcome.id ? "shadow-lg" : ""
+                                    }`}
+                                    style={selectedOutcome === outcome.id ? {
+                                      background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
+                                      borderColor: outcome.color,
+                                      boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                                    } : {
+                                      backgroundColor: '#18181b',
+                                      borderColor: '#3f3f46'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      if (selectedOutcome !== outcome.id) {
+                                        e.currentTarget.style.backgroundColor = '#27272a';
+                                        e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                                      }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      if (selectedOutcome !== outcome.id) {
+                                        e.currentTarget.style.backgroundColor = '#18181b';
+                                        e.currentTarget.style.borderColor = '#3f3f46';
+                                      }
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span
+                                        className="font-semibold text-sm"
+                                        style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
+                                      >
+                                        {outcome.label}
+                                      </span>
+                                      <span className="text-sm font-bold text-white">
+                                        {details.shares} shares
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-zinc-500">
+                                        Avg ${details.avgCostBasis.toFixed(2)} → ${details.currentPrice.toFixed(2)}
+                                      </span>
+                                      <span className={details.profitLossPercent >= 0 ? "text-emerald-400" : "text-red-400"}>
+                                        {details.profitLossPercent >= 0 ? '+' : ''}{details.profitLossPercent.toFixed(0)}%
+                                      </span>
+                                    </div>
+                                  </button>
+                                );
+                              })
+                          ) : (
+                            // Binary - show YES/NO positions where user has shares
+                            <>
+                              {positionsWithShares.some(p => p.outcomeId === 'yes') && (() => {
+                                const details = getPositionDetails('yes');
+                                if (!details) return null;
+                                return (
+                                  <button
+                                    onClick={() => setCastPosition("yes")}
+                                    className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer border-2 ${
+                                      castPosition === "yes" ? "shadow-lg" : ""
+                                    }`}
+                                    style={castPosition === "yes" ? {
+                                      background: 'linear-gradient(to right, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.1))',
+                                      borderColor: 'rgba(34, 211, 238, 0.6)',
+                                      boxShadow: '0 4px 12px -2px rgba(34, 211, 238, 0.4)'
+                                    } : {
+                                      backgroundColor: '#18181b',
+                                      borderColor: '#3f3f46'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      if (castPosition !== "yes") {
+                                        e.currentTarget.style.backgroundColor = '#27272a';
+                                        e.currentTarget.style.borderColor = 'rgba(34, 211, 238, 0.6)';
+                                      }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      if (castPosition !== "yes") {
+                                        e.currentTarget.style.backgroundColor = '#18181b';
+                                        e.currentTarget.style.borderColor = '#3f3f46';
+                                      }
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span className={`font-semibold text-sm ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>
+                                        TRUE
+                                      </span>
+                                      <span className="text-sm font-bold text-white">
+                                        {details.shares} shares
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-zinc-500">
+                                        Avg ${details.avgCostBasis.toFixed(2)} → ${details.currentPrice.toFixed(2)}
+                                      </span>
+                                      <span className={details.profitLossPercent >= 0 ? "text-emerald-400" : "text-red-400"}>
+                                        {details.profitLossPercent >= 0 ? '+' : ''}{details.profitLossPercent.toFixed(0)}%
+                                      </span>
+                                    </div>
+                                  </button>
+                                );
+                              })()}
+                              {positionsWithShares.some(p => p.outcomeId === 'no') && (() => {
+                                const details = getPositionDetails('no');
+                                if (!details) return null;
+                                return (
+                                  <button
+                                    onClick={() => setCastPosition("no")}
+                                    className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer border-2 ${
+                                      castPosition === "no" ? "shadow-lg" : ""
+                                    }`}
+                                    style={castPosition === "no" ? {
+                                      background: 'linear-gradient(to right, rgba(192, 132, 252, 0.2), rgba(192, 132, 252, 0.1))',
+                                      borderColor: 'rgba(192, 132, 252, 0.6)',
+                                      boxShadow: '0 4px 12px -2px rgba(192, 132, 252, 0.4)'
+                                    } : {
+                                      backgroundColor: '#18181b',
+                                      borderColor: '#3f3f46'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      if (castPosition !== "no") {
+                                        e.currentTarget.style.backgroundColor = '#27272a';
+                                        e.currentTarget.style.borderColor = 'rgba(192, 132, 252, 0.6)';
+                                      }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      if (castPosition !== "no") {
+                                        e.currentTarget.style.backgroundColor = '#18181b';
+                                        e.currentTarget.style.borderColor = '#3f3f46';
+                                      }
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span className={`font-semibold text-sm ${castPosition === "no" ? "text-purple-400" : "text-zinc-400"}`}>
+                                        FALSE
+                                      </span>
+                                      <span className="text-sm font-bold text-white">
+                                        {details.shares} shares
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-zinc-500">
+                                        Avg ${details.avgCostBasis.toFixed(2)} → ${details.currentPrice.toFixed(2)}
+                                      </span>
+                                      <span className={details.profitLossPercent >= 0 ? "text-emerald-400" : "text-red-400"}>
+                                        {details.profitLossPercent >= 0 ? '+' : ''}{details.profitLossPercent.toFixed(0)}%
+                                      </span>
+                                    </div>
+                                  </button>
+                                );
+                              })()}
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center">
+                          <p className="text-zinc-500 text-sm">You don't have any positions to sell</p>
+                          <button
+                            onClick={() => setCastInterface("buy")}
+                            className="mt-3 text-sm text-cyan-400 hover:text-cyan-300"
+                          >
+                            Buy shares instead →
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Amount Input - Buy Mode */}
                   {castInterface === "buy" && (
@@ -2064,7 +2403,19 @@ export default function MarketPage({
                   </div>
 
                   {/* Pick a Side */}
-                  <div className="space-y-2 pt-2">
+                  <div
+                    className="space-y-2 pt-2"
+                    onClick={(e) => {
+                      // Deselect only if clicking outside of buttons
+                      if (!(e.target as HTMLElement).closest('button')) {
+                        if (market.isMultipleChoice) {
+                          setSelectedOutcome(null);
+                        } else {
+                          setCastPosition(null);
+                        }
+                      }
+                    }}
+                  >
                     <h3 className="text-sm font-medium text-white text-left">
                       {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
                     </h3>
@@ -2123,33 +2474,67 @@ export default function MarketPage({
                       <div className="grid grid-cols-2 gap-3">
                         <button
                           onClick={() => handlePositionChange("yes")}
-                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer border-2 ${
                             castPosition === "yes"
-                              ? "border-2 shadow-lg"
-                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                              ? "shadow-lg"
+                              : "bg-zinc-900/80 border-zinc-700/50 text-zinc-400"
                           }`}
                           style={castPosition === "yes" ? {
                             background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
                             borderColor: 'rgba(34, 211, 238, 0.6)',
                             color: '#22d3ee',
                             boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                          } : {}}
+                          } : {
+                            backgroundColor: '#18181b',
+                            borderColor: '#3f3f46'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (castPosition !== "yes") {
+                              e.currentTarget.style.backgroundColor = '#27272a';
+                              e.currentTarget.style.borderColor = 'rgba(34, 211, 238, 0.6)';
+                              e.currentTarget.style.color = '#22d3ee';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (castPosition !== "yes") {
+                              e.currentTarget.style.backgroundColor = '#18181b';
+                              e.currentTarget.style.borderColor = '#3f3f46';
+                              e.currentTarget.style.color = '#a1a1aa';
+                            }
+                          }}
                         >
                           TRUE
                         </button>
                         <button
                           onClick={() => handlePositionChange("no")}
-                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer border-2 ${
                             castPosition === "no"
-                              ? "border-2 shadow-lg"
-                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
+                              ? "shadow-lg"
+                              : "bg-zinc-900/80 border-zinc-700/50 text-zinc-400"
                           }`}
                           style={castPosition === "no" ? {
                             background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
                             borderColor: 'rgba(192, 132, 252, 0.6)',
                             color: '#7c3aed',
                             boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                          } : {}}
+                          } : {
+                            backgroundColor: '#18181b',
+                            borderColor: '#3f3f46'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (castPosition !== "no") {
+                              e.currentTarget.style.backgroundColor = '#27272a';
+                              e.currentTarget.style.borderColor = 'rgba(192, 132, 252, 0.6)';
+                              e.currentTarget.style.color = '#c084fc';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (castPosition !== "no") {
+                              e.currentTarget.style.backgroundColor = '#18181b';
+                              e.currentTarget.style.borderColor = '#3f3f46';
+                              e.currentTarget.style.color = '#a1a1aa';
+                            }
+                          }}
                         >
                           FALSE
                         </button>
@@ -2350,95 +2735,192 @@ export default function MarketPage({
                     )}
                   </div>
 
-                  {/* Pick a Side */}
-                  <div className="space-y-2 pt-2">
-                    <h3 className="text-sm font-medium text-white text-left">
-                      {market.isMultipleChoice ? "Pick an outcome" : "Pick a side"}
-                    </h3>
-                    {market.isMultipleChoice && market.outcomes ? (
+                  {/* Your Positions - Sell Mode */}
+                  <div
+                    className="space-y-2 pt-2"
+                    onClick={(e) => {
+                      // Deselect only if clicking outside of buttons
+                      if (!(e.target as HTMLElement).closest('button')) {
+                        if (market.isMultipleChoice) {
+                          setSelectedOutcome(null);
+                        } else {
+                          setCastPosition(null);
+                        }
+                      }
+                    }}
+                  >
+                    <h3 className="text-sm font-medium text-white text-left">Your Positions</h3>
+                    {positionsWithShares.length > 0 ? (
                       <div className="space-y-2">
-                        {market.outcomes.map((outcome) => (
-                          <button
-                            key={outcome.id}
-                            onClick={() => setSelectedOutcome(outcome.id)}
-                            className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer ${
-                              selectedOutcome === outcome.id
-                                ? "border-2 shadow-lg"
-                                : "border-2"
-                            }`}
-                            style={selectedOutcome === outcome.id ? {
-                              background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
-                              borderColor: outcome.color,
-                              boxShadow: `0 4px 12px -2px ${outcome.color}40`
-                            } : {
-                              backgroundColor: '#18181b',
-                              borderColor: '#3f3f46'
-                            }}
-                            onMouseEnter={(e) => {
-                              if (selectedOutcome !== outcome.id) {
-                                e.currentTarget.style.backgroundColor = '#27272a';
-                                e.currentTarget.style.borderColor = outcome.color || '#6B7280';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (selectedOutcome !== outcome.id) {
-                                e.currentTarget.style.backgroundColor = '#18181b';
-                                e.currentTarget.style.borderColor = '#3f3f46';
-                              }
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span
-                                className="font-semibold"
-                                style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
-                              >
-                                {outcome.label}
-                              </span>
-                              <div className="flex items-center gap-3">
-                                <span className="text-xs text-white">
-                                  {Math.round((outcome.pool / market.totalPool) * 100)}%
-                                </span>
-                                <span className="text-sm font-bold text-white">
-                                  {outcome.odds.toFixed(2)}x
-                                </span>
-                              </div>
-                            </div>
-                          </button>
-                        ))}
+                        {market.isMultipleChoice && market.outcomes ? (
+                          // Multiple choice - show outcomes where user has shares
+                          market.outcomes
+                            .filter(outcome => positionsWithShares.some(p => p.outcomeId === outcome.id))
+                            .map((outcome) => {
+                              const details = getPositionDetails(outcome.id);
+                              if (!details) return null;
+                              return (
+                                <button
+                                  key={outcome.id}
+                                  onClick={() => setSelectedOutcome(outcome.id)}
+                                  className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer border-2 ${
+                                    selectedOutcome === outcome.id ? "shadow-lg" : ""
+                                  }`}
+                                  style={selectedOutcome === outcome.id ? {
+                                    background: `linear-gradient(to right, ${outcome.color}20, ${outcome.color}10)`,
+                                    borderColor: outcome.color,
+                                    boxShadow: `0 4px 12px -2px ${outcome.color}40`
+                                  } : {
+                                    backgroundColor: '#18181b',
+                                    borderColor: '#3f3f46'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (selectedOutcome !== outcome.id) {
+                                      e.currentTarget.style.backgroundColor = '#27272a';
+                                      e.currentTarget.style.borderColor = outcome.color || '#6B7280';
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (selectedOutcome !== outcome.id) {
+                                      e.currentTarget.style.backgroundColor = '#18181b';
+                                      e.currentTarget.style.borderColor = '#3f3f46';
+                                    }
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span
+                                      className="font-semibold"
+                                      style={{ color: selectedOutcome === outcome.id ? outcome.color : '#a1a1aa' }}
+                                    >
+                                      {outcome.label}
+                                    </span>
+                                    <span className="text-sm font-bold text-white">
+                                      {details.shares} shares
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className="text-zinc-500">
+                                      Avg ${details.avgCostBasis.toFixed(2)} → ${details.currentPrice.toFixed(2)}
+                                    </span>
+                                    <span className={details.profitLossPercent >= 0 ? "text-emerald-400" : "text-red-400"}>
+                                      {details.profitLossPercent >= 0 ? '+' : ''}{details.profitLossPercent.toFixed(0)}%
+                                    </span>
+                                  </div>
+                                </button>
+                              );
+                            })
+                        ) : (
+                          // Binary - show YES/NO positions where user has shares
+                          <>
+                            {positionsWithShares.some(p => p.outcomeId === 'yes') && (() => {
+                              const details = getPositionDetails('yes');
+                              if (!details) return null;
+                              return (
+                                <button
+                                  onClick={() => setCastPosition("yes")}
+                                  className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer border-2 ${
+                                    castPosition === "yes" ? "shadow-lg" : ""
+                                  }`}
+                                  style={castPosition === "yes" ? {
+                                    background: 'linear-gradient(to right, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.1))',
+                                    borderColor: 'rgba(34, 211, 238, 0.6)',
+                                    boxShadow: '0 4px 12px -2px rgba(34, 211, 238, 0.4)'
+                                  } : {
+                                    backgroundColor: '#18181b',
+                                    borderColor: '#3f3f46'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (castPosition !== "yes") {
+                                      e.currentTarget.style.backgroundColor = '#27272a';
+                                      e.currentTarget.style.borderColor = 'rgba(34, 211, 238, 0.6)';
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (castPosition !== "yes") {
+                                      e.currentTarget.style.backgroundColor = '#18181b';
+                                      e.currentTarget.style.borderColor = '#3f3f46';
+                                    }
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className={`font-semibold ${castPosition === "yes" ? "text-cyan-400" : "text-zinc-400"}`}>
+                                      TRUE
+                                    </span>
+                                    <span className="text-sm font-bold text-white">
+                                      {details.shares} shares
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className="text-zinc-500">
+                                      Avg ${details.avgCostBasis.toFixed(2)} → ${details.currentPrice.toFixed(2)}
+                                    </span>
+                                    <span className={details.profitLossPercent >= 0 ? "text-emerald-400" : "text-red-400"}>
+                                      {details.profitLossPercent >= 0 ? '+' : ''}{details.profitLossPercent.toFixed(0)}%
+                                    </span>
+                                  </div>
+                                </button>
+                              );
+                            })()}
+                            {positionsWithShares.some(p => p.outcomeId === 'no') && (() => {
+                              const details = getPositionDetails('no');
+                              if (!details) return null;
+                              return (
+                                <button
+                                  onClick={() => setCastPosition("no")}
+                                  className={`w-full py-3 px-4 rounded-xl text-left transition-all duration-200 cursor-pointer border-2 ${
+                                    castPosition === "no" ? "shadow-lg" : ""
+                                  }`}
+                                  style={castPosition === "no" ? {
+                                    background: 'linear-gradient(to right, rgba(192, 132, 252, 0.2), rgba(192, 132, 252, 0.1))',
+                                    borderColor: 'rgba(192, 132, 252, 0.6)',
+                                    boxShadow: '0 4px 12px -2px rgba(192, 132, 252, 0.4)'
+                                  } : {
+                                    backgroundColor: '#18181b',
+                                    borderColor: '#3f3f46'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (castPosition !== "no") {
+                                      e.currentTarget.style.backgroundColor = '#27272a';
+                                      e.currentTarget.style.borderColor = 'rgba(192, 132, 252, 0.6)';
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (castPosition !== "no") {
+                                      e.currentTarget.style.backgroundColor = '#18181b';
+                                      e.currentTarget.style.borderColor = '#3f3f46';
+                                    }
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className={`font-semibold ${castPosition === "no" ? "text-purple-400" : "text-zinc-400"}`}>
+                                      FALSE
+                                    </span>
+                                    <span className="text-sm font-bold text-white">
+                                      {details.shares} shares
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className="text-zinc-500">
+                                      Avg ${details.avgCostBasis.toFixed(2)} → ${details.currentPrice.toFixed(2)}
+                                    </span>
+                                    <span className={details.profitLossPercent >= 0 ? "text-emerald-400" : "text-red-400"}>
+                                      {details.profitLossPercent >= 0 ? '+' : ''}{details.profitLossPercent.toFixed(0)}%
+                                    </span>
+                                  </div>
+                                </button>
+                              );
+                            })()}
+                          </>
+                        )}
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="py-8 text-center">
+                        <p className="text-zinc-500 text-sm">You don't have any positions to sell</p>
                         <button
-                          onClick={() => handlePositionChange("yes")}
-                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                            castPosition === "yes"
-                              ? "border-2 shadow-lg"
-                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                          }`}
-                          style={castPosition === "yes" ? {
-                            background: 'linear-gradient(to bottom right, rgba(34, 211, 238, 0.2), rgba(37, 99, 235, 0.1))',
-                            borderColor: 'rgba(34, 211, 238, 0.6)',
-                            color: '#22d3ee',
-                            boxShadow: '0 10px 15px -3px rgba(34, 211, 238, 0.25)'
-                          } : {}}
+                          onClick={() => setCastInterface("buy")}
+                          className="mt-3 text-sm text-cyan-400 hover:text-cyan-300"
                         >
-                          TRUE
-                        </button>
-                        <button
-                          onClick={() => handlePositionChange("no")}
-                          className={`py-3 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
-                            castPosition === "no"
-                              ? "border-2 shadow-lg"
-                              : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
-                          }`}
-                          style={castPosition === "no" ? {
-                            background: 'linear-gradient(to bottom right, rgba(192, 132, 252, 0.2), rgba(168, 85, 247, 0.1))',
-                            borderColor: 'rgba(192, 132, 252, 0.6)',
-                            color: '#7c3aed',
-                            boxShadow: '0 10px 15px -3px rgba(192, 132, 252, 0.25)'
-                          } : {}}
-                        >
-                          FALSE
+                          Buy shares instead →
                         </button>
                       </div>
                     )}
