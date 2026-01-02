@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,13 +26,15 @@ import {
   Search,
   CheckCircle,
   XCircle,
-  Eye,
   Clock,
   TrendingUp,
   Gavel,
   Flag,
   AlertTriangle,
-  ArrowUpDown
+  ArrowUpDown,
+  Download,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -86,6 +89,8 @@ const MarketsDashboard: React.FC = () => {
   const [confirmAction, setConfirmAction] = useState<{ type: 'approve' | 'reject'; markets: string[] } | null>(null);
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const marketsPerPage = 10;
 
   // Mock data - all markets in one place
   const allMarkets: Market[] = [
@@ -264,6 +269,172 @@ const MarketsDashboard: React.FC = () => {
       disputeStatus: 'resolved',
       disputeCount: 2,
     },
+    // Additional markets for pagination testing
+    {
+      id: 'a3',
+      claim: 'Will SpaceX land humans on Mars by 2030?',
+      description: 'Resolves YES if SpaceX successfully lands humans on Mars before December 31, 2030.',
+      category: 'Technology',
+      creator: '0x4d5e...6f7g',
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2030-12-31'),
+      status: 'active',
+      marketType: 'binary',
+      totalVolume: 35000,
+      participants: 412,
+      yesPool: 21000,
+      noPool: 14000,
+    },
+    {
+      id: 'a4',
+      claim: 'Will gold price exceed $3000/oz in 2025?',
+      description: 'Resolves YES if gold spot price reaches $3000 per ounce at any point in 2025.',
+      category: 'Finance',
+      creator: '0x8h9i...0j1k',
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2025-12-31'),
+      status: 'active',
+      marketType: 'binary',
+      totalVolume: 18700,
+      participants: 203,
+      yesPool: 11200,
+      noPool: 7500,
+    },
+    {
+      id: 'p3',
+      claim: 'Will OpenAI release GPT-5 in 2025?',
+      description: 'Resolves YES if OpenAI publicly releases GPT-5 before December 31, 2025.',
+      category: 'Technology',
+      creator: '0x2l3m...4n5o',
+      createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      expiresAt: new Date('2025-12-31'),
+      status: 'pending',
+      marketType: 'binary',
+      totalVolume: 0,
+      participants: 0,
+      yesPool: 1000,
+      noPool: 1000,
+    },
+    {
+      id: 'r3',
+      claim: 'Will Argentina win Copa America 2024?',
+      description: 'Resolves YES if Argentina national team wins Copa America 2024.',
+      category: 'Sports',
+      creator: '0x6p7q...8r9s',
+      createdAt: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2024-07-15'),
+      status: 'resolved',
+      marketType: 'binary',
+      totalVolume: 28000,
+      participants: 345,
+      yesPool: 19600,
+      noPool: 8400,
+      resolution: 'YES',
+      resolvedAt: new Date('2024-07-14'),
+      resolvedBy: '0x7f3a...d4e5',
+      disputeStatus: 'none',
+      disputeCount: 0,
+    },
+    {
+      id: 'a5',
+      claim: 'Will Apple stock split in 2025?',
+      description: 'Resolves YES if Apple announces and executes a stock split in 2025.',
+      category: 'Finance',
+      creator: '0x0t1u...2v3w',
+      createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2025-12-31'),
+      status: 'active',
+      marketType: 'binary',
+      totalVolume: 9800,
+      participants: 134,
+      yesPool: 3920,
+      noPool: 5880,
+    },
+    {
+      id: 'e3',
+      claim: 'Will Twitter/X reach 1B daily users by 2024?',
+      description: 'Resolves YES if X (formerly Twitter) reports 1 billion daily active users by end of 2024.',
+      category: 'Technology',
+      creator: '0x4x5y...6z7a',
+      createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2024-12-31'),
+      status: 'expired',
+      marketType: 'binary',
+      totalVolume: 5200,
+      participants: 89,
+      yesPool: 1040,
+      noPool: 4160,
+    },
+    {
+      id: 'd3',
+      claim: 'Will Nvidia stock reach $200 by end of 2024?',
+      description: 'Resolves YES if NVDA stock price reaches $200 at any point before December 31, 2024.',
+      category: 'Finance',
+      creator: '0x8b9c...0d1e',
+      createdAt: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2024-12-31'),
+      status: 'disputable',
+      marketType: 'binary',
+      totalVolume: 42000,
+      participants: 523,
+      yesPool: 29400,
+      noPool: 12600,
+      resolution: 'YES',
+      resolvedAt: new Date(Date.now() - 18 * 60 * 60 * 1000),
+      resolvedBy: '0x7f3a...d4e5',
+      disputeStatus: 'none',
+      disputeCount: 0,
+    },
+    {
+      id: 'r4',
+      claim: 'Will there be a major earthquake in California in 2024?',
+      description: 'Resolves YES if a magnitude 7.0+ earthquake occurs in California in 2024.',
+      category: 'Science',
+      creator: '0x2f3g...4h5i',
+      createdAt: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2024-12-31'),
+      status: 'resolved',
+      marketType: 'binary',
+      totalVolume: 15500,
+      participants: 198,
+      yesPool: 3100,
+      noPool: 12400,
+      resolution: 'NO',
+      resolvedAt: new Date('2025-01-01'),
+      resolvedBy: '0x8a4b...e7f8',
+      disputeStatus: 'none',
+      disputeCount: 0,
+    },
+    {
+      id: 'p4',
+      claim: 'Will Disney+ surpass Netflix subscribers in 2025?',
+      description: 'Resolves YES if Disney+ total subscribers exceed Netflix at any point in 2025.',
+      category: 'Entertainment',
+      creator: '0x6j7k...8l9m',
+      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+      expiresAt: new Date('2025-12-31'),
+      status: 'pending',
+      marketType: 'binary',
+      totalVolume: 0,
+      participants: 0,
+      yesPool: 500,
+      noPool: 500,
+    },
+    {
+      id: 'a6',
+      claim: 'Will quantum supremacy be achieved for practical problems by 2026?',
+      description: 'Resolves YES if a quantum computer solves a commercially relevant problem faster than classical computers.',
+      category: 'Technology',
+      creator: '0x0n1o...2p3q',
+      createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2026-12-31'),
+      status: 'active',
+      marketType: 'binary',
+      totalVolume: 7300,
+      participants: 95,
+      yesPool: 2920,
+      noPool: 4380,
+    },
   ];
 
   const filteredMarkets = allMarkets.filter(market => {
@@ -297,6 +468,18 @@ const MarketsDashboard: React.FC = () => {
     return sortDirection === 'asc' ? comparison : -comparison;
   });
 
+  // Pagination calculations
+  const totalPages = Math.ceil(sortedMarkets.length / marketsPerPage);
+  const startIndex = (currentPage - 1) * marketsPerPage;
+  const endIndex = startIndex + marketsPerPage;
+  const paginatedMarkets = sortedMarkets.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  const handleFilterChange = (status: MarketStatus | 'all') => {
+    setStatusFilter(status);
+    setCurrentPage(1);
+  };
+
   const handleSort = (column: SortColumn) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -304,6 +487,45 @@ const MarketsDashboard: React.FC = () => {
       setSortColumn(column);
       setSortDirection('desc');
     }
+  };
+
+  const exportToExcel = () => {
+    const exportData = sortedMarkets.map(market => {
+      const poolTotal = market.yesPool + market.noPool;
+      const yesPercent = poolTotal > 0 ? Math.round((market.yesPool / poolTotal) * 100) : 50;
+      const noPercent = poolTotal > 0 ? Math.round((market.noPool / poolTotal) * 100) : 50;
+      return {
+        'Status': statusConfig[market.status].label,
+        'Market': market.claim,
+        'Description': market.description,
+        'Category': market.category,
+        'Creator': market.creator,
+        'Total Volume ($)': market.totalVolume,
+        'Participants': market.participants,
+        'YES Pool ($)': market.yesPool,
+        'NO Pool ($)': market.noPool,
+        'Pool Total ($)': poolTotal,
+        'YES %': yesPercent,
+        'NO %': noPercent,
+        'Expires': formatDate(market.expiresAt),
+        'Resolution': market.resolution || '-',
+        'Resolved At': market.resolvedAt ? formatDate(market.resolvedAt) : '-',
+        'Disputes': market.disputeCount || 0,
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Markets');
+
+    // Auto-size columns
+    const colWidths = Object.keys(exportData[0] || {}).map(key => ({
+      wch: Math.max(key.length, 15)
+    }));
+    worksheet['!cols'] = colWidths;
+
+    XLSX.writeFile(workbook, `markets_export_${new Date().toISOString().split('T')[0]}.xlsx`);
+    toast.success('Markets exported to Excel');
   };
 
   const statusCounts = {
@@ -385,10 +607,10 @@ const MarketsDashboard: React.FC = () => {
     switch (market.status) {
       case 'pending':
         return (
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             <Button
               size="sm"
-              className="h-7 px-4 cursor-pointer font-medium"
+              className="h-6 px-2 cursor-pointer font-medium text-xs"
               style={{ backgroundColor: '#16a34a', color: 'white' }}
               onClick={() => setConfirmAction({ type: 'approve', markets: [market.id] })}
             >
@@ -397,7 +619,7 @@ const MarketsDashboard: React.FC = () => {
             <Button
               size="sm"
               variant="destructive"
-              className="h-7 px-4 cursor-pointer font-medium"
+              className="h-6 px-2 cursor-pointer font-medium text-xs"
               onClick={() => setConfirmAction({ type: 'reject', markets: [market.id] })}
             >
               Reject
@@ -408,26 +630,23 @@ const MarketsDashboard: React.FC = () => {
         return (
           <Button
             size="sm"
-            className="bg-orange-500 hover:bg-orange-600 h-7"
+            className="bg-orange-500 hover:bg-orange-600 h-6 px-2 text-xs"
             onClick={() => setResolveMarket(market)}
           >
-            <Gavel className="h-3 w-3 mr-1" />
             Resolve
           </Button>
         );
       case 'disputable':
         return market.disputeStatus === 'pending' ? (
-          <Button size="sm" variant="outline" className="h-7 text-yellow-500 border-yellow-500/30">
-            <AlertTriangle className="h-3 w-3 mr-1" />
+          <Button size="sm" variant="outline" className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30">
             Review
           </Button>
         ) : (
           <Button
             size="sm"
-            className="bg-purple-500 hover:bg-purple-600 h-7"
+            className="bg-purple-500 hover:bg-purple-600 h-6 px-2 text-xs"
             onClick={() => setDisputeMarket(market)}
           >
-            <Flag className="h-3 w-3 mr-1" />
             Dispute
           </Button>
         );
@@ -435,24 +654,19 @@ const MarketsDashboard: React.FC = () => {
         return market.disputeStatus !== 'pending' ? (
           <Button
             size="sm"
-            variant="ghost"
-            className="h-7"
+            className="bg-purple-500 hover:bg-purple-600 h-6 px-2 text-xs"
             onClick={() => setDisputeMarket(market)}
           >
-            <Flag className="h-3 w-3" />
+            Dispute
           </Button>
         ) : (
-          <Button size="sm" variant="outline" className="h-7 text-yellow-500 border-yellow-500/30">
-            <AlertTriangle className="h-3 w-3 mr-1" />
+          <Button size="sm" variant="outline" className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30">
             Review
           </Button>
         );
+      case 'active':
       default:
-        return (
-          <Button size="sm" variant="ghost" className="h-7" onClick={() => setViewMarket(market)}>
-            <Eye className="h-3 w-3" />
-          </Button>
-        );
+        return null;
     }
   };
 
@@ -469,7 +683,7 @@ const MarketsDashboard: React.FC = () => {
               {(['all', 'pending', 'active', 'expired', 'disputable', 'resolved'] as const).map((status) => (
                 <button
                   key={status}
-                  onClick={() => setStatusFilter(status)}
+                  onClick={() => handleFilterChange(status)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                     statusFilter === status
                       ? 'bg-[#06f6ff]/10 text-[#06f6ff] border border-[#06f6ff]/30'
@@ -519,6 +733,15 @@ const MarketsDashboard: React.FC = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-2"
+                onClick={exportToExcel}
+              >
+                <Download className="h-4 w-4" />
+                Export Excel
+              </Button>
               {selectedMarkets.length > 0 && (
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">{selectedMarkets.length} selected</Badge>
@@ -536,8 +759,7 @@ const MarketsDashboard: React.FC = () => {
         <CardContent>
           {/* Mobile Card View */}
           <div className="lg:hidden space-y-3">
-            {sortedMarkets.map((market) => {
-              const StatusIcon = statusConfig[market.status].icon;
+            {paginatedMarkets.map((market) => {
               return (
                 <div key={market.id} className="border rounded-lg p-4 space-y-3">
                   <div className="flex items-start gap-3">
@@ -552,7 +774,6 @@ const MarketsDashboard: React.FC = () => {
                       <p className="font-medium text-sm">{market.claim}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         <Badge className={statusConfig[market.status].color}>
-                          <StatusIcon className="h-3 w-3 mr-1" />
                           {statusConfig[market.status].label}
                         </Badge>
                         <Badge variant="outline">{market.category}</Badge>
@@ -592,11 +813,11 @@ const MarketsDashboard: React.FC = () => {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden lg:block overflow-x-auto">
-            <Table>
+          <div className="hidden lg:block overflow-hidden">
+            <Table className="table-fixed w-full">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-10">
+                  <TableHead className="w-8">
                     {statusFilter === 'pending' && (
                       <Checkbox
                         checked={selectedMarkets.length === sortedMarkets.filter(m => m.status === 'pending').length && selectedMarkets.length > 0}
@@ -604,13 +825,13 @@ const MarketsDashboard: React.FC = () => {
                       />
                     )}
                   </TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="min-w-[300px]">Market</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>
+                  <TableHead className="w-[105px]">Status</TableHead>
+                  <TableHead>Market</TableHead>
+                  <TableHead className="w-[85px]">Category</TableHead>
+                  <TableHead className="w-[75px] text-center">
                     <button
                       onClick={() => handleSort('volume')}
-                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'volume' ? 'text-[#06f6ff]' : ''}`}
+                      className={`flex items-center justify-center gap-1 w-full transition-colors hover:text-[#06f6ff] ${sortColumn === 'volume' ? 'text-[#06f6ff]' : ''}`}
                     >
                       Volume
                       <span className={sortColumn === 'volume' ? 'text-[#06f6ff]' : 'opacity-50'}>
@@ -618,19 +839,19 @@ const MarketsDashboard: React.FC = () => {
                       </span>
                     </button>
                   </TableHead>
-                  <TableHead>
+                  <TableHead className="w-[55px] text-center">
                     <button
                       onClick={() => handleSort('participants')}
-                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'participants' ? 'text-[#06f6ff]' : ''}`}
+                      className={`flex items-center justify-center gap-1 w-full transition-colors hover:text-[#06f6ff] ${sortColumn === 'participants' ? 'text-[#06f6ff]' : ''}`}
                     >
-                      Participants
+                      Users
                       <span className={sortColumn === 'participants' ? 'text-[#06f6ff]' : 'opacity-50'}>
                         {sortColumn === 'participants' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
                       </span>
                     </button>
                   </TableHead>
-                  <TableHead>YES/NO</TableHead>
-                  <TableHead>
+                  <TableHead className="w-[80px]">YES/NO</TableHead>
+                  <TableHead className="w-[80px]">
                     <button
                       onClick={() => handleSort('expires')}
                       className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'expires' ? 'text-[#06f6ff]' : ''}`}
@@ -641,13 +862,12 @@ const MarketsDashboard: React.FC = () => {
                       </span>
                     </button>
                   </TableHead>
-                  <TableHead>Resolution</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[70px] text-center">Resolution</TableHead>
+                  <TableHead className="w-[185px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedMarkets.map((market) => {
-                  const StatusIcon = statusConfig[market.status].icon;
+                {paginatedMarkets.map((market) => {
                   const yesPercent = market.totalVolume > 0
                     ? Math.round((market.yesPool / (market.yesPool + market.noPool)) * 100)
                     : 50;
@@ -663,27 +883,26 @@ const MarketsDashboard: React.FC = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Badge className={statusConfig[market.status].color}>
-                          <StatusIcon className="h-3 w-3 mr-1" />
+                        <Badge className={`${statusConfig[market.status].color} text-xs px-1.5 py-0.5`}>
                           {statusConfig[market.status].label}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <div className="max-w-md">
+                      <TableCell className="overflow-hidden">
+                        <div className="overflow-hidden">
                           <p className="font-medium text-sm truncate">{market.claim}</p>
                           <p className="text-xs text-muted-foreground truncate">{market.description}</p>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{market.category}</Badge>
+                        <Badge variant="outline" className="text-xs px-1.5 py-0.5">{market.category}</Badge>
                       </TableCell>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium text-center text-xs">
                         ${market.totalVolume.toLocaleString()}
                       </TableCell>
-                      <TableCell>{market.participants}</TableCell>
+                      <TableCell className="text-center text-xs">{market.participants}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="flex items-center gap-1">
+                          <div className="w-10 h-2 bg-muted rounded-full overflow-hidden flex-shrink-0">
                             <div
                               className="h-full bg-green-500"
                               style={{ width: `${yesPercent}%` }}
@@ -693,34 +912,38 @@ const MarketsDashboard: React.FC = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm">{formatDate(market.expiresAt)}</span>
+                        <span className="text-xs">{formatDate(market.expiresAt)}</span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
                         {market.resolution ? (
-                          <div className="flex flex-col gap-1">
-                            <Badge className={market.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
+                          <div className="flex flex-col gap-0.5 items-center">
+                            <Badge className={`${market.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'} text-xs px-1.5 py-0`}>
                               {market.resolution}
                             </Badge>
                             {market.disputeStatus === 'pending' && (
-                              <Badge className="bg-yellow-500 text-black text-xs">
-                                {market.disputeCount} dispute(s)
-                              </Badge>
+                              <span className="text-[10px] text-yellow-500">
+                                {market.disputeCount} dispute
+                              </span>
                             )}
                             {market.resolvedAt && (
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-[10px] text-muted-foreground">
                                 {formatTimeAgo(market.resolvedAt)}
                               </span>
                             )}
                           </div>
                         ) : (
-                          <span className="text-muted-foreground text-sm">-</span>
+                          <span className="text-muted-foreground text-xs">-</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => setViewMarket(market)}>
-                            <Eye className="h-3 w-3" />
-                          </Button>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Badge
+                            variant="outline"
+                            className="cursor-pointer hover:bg-muted h-6 flex items-center px-2 text-xs"
+                            onClick={() => setViewMarket(market)}
+                          >
+                            View
+                          </Badge>
                           {getActionButton(market)}
                         </div>
                       </TableCell>
@@ -736,6 +959,50 @@ const MarketsDashboard: React.FC = () => {
               <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No markets found</p>
               <p className="text-sm mt-1">Try adjusting your search or filters</p>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {sortedMarkets.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
+              <p className="text-sm text-muted-foreground">
+                Showing {startIndex + 1}-{Math.min(endIndex, sortedMarkets.length)} of {sortedMarkets.length} markets
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="h-8"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-8 w-8 p-0 ${currentPage === page ? 'bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90' : ''}`}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="h-8"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
