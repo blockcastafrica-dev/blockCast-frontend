@@ -181,17 +181,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
 
       </div>
 
-      {/* Mobile Navigation - Full Screen Overlay */}
+      {/* Mobile Navigation - Slide-in Sidebar */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-40">
           {/* Backdrop - click to close */}
           <div
-            className="absolute inset-0"
-            style={{ backgroundColor: '#0a0a0b' }}
+            className="absolute inset-0 bg-black/50"
             onClick={() => setMobileMenuOpen(false)}
           />
-          {/* Navigation Content */}
-          <div className="relative pt-20 px-4 h-full overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          {/* Sidebar Navigation */}
+          <div
+            className="absolute top-0 left-0 w-72 h-full pt-20 px-4 overflow-y-auto"
+            style={{ backgroundColor: '#0a0a0b' }}
+          >
             <nav className="space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
