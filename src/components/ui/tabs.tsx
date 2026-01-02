@@ -26,7 +26,7 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "bg-muted text-muted-foreground inline-flex h-auto w-fit items-center justify-center rounded-xl p-2",
+        "inline-flex h-auto w-full items-center justify-start gap-1 border-b border-zinc-800 pb-0",
         className
       )}
       {...props}
@@ -36,40 +36,45 @@ function TabsList({
 
 function TabsTrigger({
   className,
+  children,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
-  const ref = React.useRef<HTMLElement | null>(null);
-
-  React.useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const applyColor = () => {
-      if (el.getAttribute("data-state") === "active") {
-        (el as HTMLElement).style.color = "#06f6ff";
-      } else {
-        (el as HTMLElement).style.color = "";
-      }
-    };
-
-    applyColor();
-
-    const mo = new MutationObserver(() => applyColor());
-    mo.observe(el, { attributes: true, attributeFilter: ["data-state"] });
-
-    return () => mo.disconnect();
-  }, []);
+  const [isHovered, setIsHovered] = React.useState(false);
+  const [isActive, setIsActive] = React.useState(false);
 
   return (
     <TabsPrimitive.Trigger
-      ref={ref}
       data-slot="tabs-trigger"
       className={cn(
-        "cursor-pointer data-[state=active]:bg-card data-[state=active]:!text-[#06f6ff] dark:data-[state=active]:!text-[#06f6ff] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-xl border border-transparent px-2 py-2 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "cursor-pointer px-4 py-3 text-sm font-medium text-muted-foreground transition-all inline-flex items-center justify-center gap-2 whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      ref={(el) => {
+        if (el) {
+          const updateActive = () => {
+            setIsActive(el.getAttribute('data-state') === 'active');
+          };
+          updateActive();
+          const observer = new MutationObserver(updateActive);
+          observer.observe(el, { attributes: true, attributeFilter: ['data-state'] });
+        }
+      }}
+      style={{
+        color: isActive ? '#06f6ff' : (isHovered ? '#ffffff' : '#a1a1aa')
+      }}
       {...props}
-    />
+    >
+      <span
+        className="flex items-center gap-2 pb-1"
+        style={{
+          borderBottom: isActive ? '2px solid #06f6ff' : (isHovered ? '2px solid rgba(6, 246, 255, 0.5)' : 'none')
+        }}
+      >
+        {children}
+      </span>
+    </TabsPrimitive.Trigger>
   );
 }
 

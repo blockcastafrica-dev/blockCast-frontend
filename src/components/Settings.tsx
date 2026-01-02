@@ -146,7 +146,7 @@ export default function Settings({ isDarkMode, onToggleDarkMode, userBalance = 0
 
       {/* Settings Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 w-full lg:flex lg:flex-wrap lg:items-center lg:justify-center">
+        <TabsList className="grid grid-cols-3 w-full lg:flex lg:flex-wrap lg:items-center lg:justify-start">
           <TabsTrigger value="profile" className="gap-2">
             <User className="h-4 w-4" />
             Profile
