@@ -1439,8 +1439,8 @@ export default function MarketPage({
             style={{ bottom: '70px' }}
           >
             <div
-              className="mx-3 rounded-2xl p-4"
-              style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937' }}
+              className="p-4"
+              style={{ backgroundColor: '#0f1419', borderTop: '1px solid #1f2937' }}
             >
               {market.isMultipleChoice && market.outcomes ? (
                 <>
