@@ -58,6 +58,7 @@ import ConnectWalletModal from "./ConnectWalletModal";
 import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
 import geminiLogo from "@/assets/gemini-logo-2025.svg";
+import { TokenUSDT } from '@web3icons/react';
 
 interface TopNavigationProps {
   isDarkMode: boolean;
@@ -236,9 +237,14 @@ export default function TopNavigation({
 
             {/* Balance (Desktop) - Only show when logged in */}
             {isLoggedIn && (
-              <div className="hidden lg:flex items-center gap-1.5 md:gap-2 lg:gap-2 bg-muted/50 px-3 md:px-4 lg:px-4 py-1.5 md:py-2 lg:py-2 rounded-md">
-                <Wallet className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4 text-primary" />
-                <span className="text-xs md:text-sm lg:text-sm font-semibold text-foreground">
+              <div
+                className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-full cursor-pointer transition-all"
+                style={{ border: '2px solid transparent' }}
+                onMouseEnter={(e) => e.currentTarget.style.border = '2px solid #22d3ee'}
+                onMouseLeave={(e) => e.currentTarget.style.border = '2px solid transparent'}
+              >
+                <TokenUSDT variant="mono" size={20} color="#FFFFFF" />
+                <span className="text-sm font-semibold text-foreground">
                   {userBalance.toFixed(3)}
                 </span>
               </div>
@@ -250,7 +256,10 @@ export default function TopNavigation({
                 onClick={() => setIsVisible(true)}
                 size="sm"
                 variant="outline"
-                className="hidden lg:flex gap-1.5 md:gap-2 lg:gap-2 px-4 md:px-5 lg:px-6 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer rounded-full border-2 border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                className="hidden lg:flex gap-1.5 md:gap-2 lg:gap-2 px-4 md:px-5 lg:px-6 py-1.5 md:py-2 lg:py-2 h-9 md:h-10 lg:h-10 text-xs md:text-sm lg:text-sm cursor-pointer rounded-full text-white hover:text-white hover:bg-transparent"
+                style={{ border: '2px solid transparent' }}
+                onMouseEnter={(e) => e.currentTarget.style.border = '2px solid #22d3ee'}
+                onMouseLeave={(e) => e.currentTarget.style.border = '2px solid transparent'}
               >
                 <span className="font-medium">+ Deposit</span>
               </Button>
