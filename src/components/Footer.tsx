@@ -2,7 +2,7 @@ import { BsTwitterX } from "react-icons/bs";
 import { FaDiscord, FaTiktok, FaTelegramPlane } from "react-icons/fa";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-import geminiLogo from "@/assets/gemini-logo.svg";
+import geminiLogo from "@/assets/gemini-logo-2025.svg";
 
 interface FooterProps {
   onNavigate?: (page: string) => void;
