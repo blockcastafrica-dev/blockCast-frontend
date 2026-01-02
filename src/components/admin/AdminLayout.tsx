@@ -39,8 +39,7 @@ interface AdminLayoutProps {
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'pending', label: 'Pending Markets', icon: Clock, countKey: 'markets' },
-  { id: 'resolved', label: 'Resolved', icon: CheckCircle },
+  { id: 'markets', label: 'Markets', icon: BarChart3, countKey: 'markets' },
   { id: 'evidence', label: 'Evidence', icon: FileText },
   { id: 'users', label: 'Users', icon: Users },
   { id: 'treasury', label: 'Treasury', icon: Wallet },

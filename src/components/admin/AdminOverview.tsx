@@ -90,7 +90,7 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
       urgency: 'high',
       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
       actionLabel: 'Resolve',
-      actionTab: 'pending'
+      actionTab: 'markets'
     },
     {
       id: '2',
@@ -110,7 +110,7 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
       urgency: 'medium',
       timestamp: new Date(Date.now() - 30 * 60 * 1000),
       actionLabel: 'Review',
-      actionTab: 'pending'
+      actionTab: 'markets'
     },
     {
       id: '4',
@@ -245,7 +245,7 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
             <Button
               variant="outline"
               className="w-full justify-between"
-              onClick={() => onNavigate('pending')}
+              onClick={() => onNavigate('markets')}
             >
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-[#06f6ff]" />
@@ -256,7 +256,7 @@ const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
             <Button
               variant="outline"
               className="w-full justify-between"
-              onClick={() => onNavigate('pending')}
+              onClick={() => onNavigate('markets')}
             >
               <div className="flex items-center gap-2">
                 <Gavel className="h-4 w-4 text-orange-500" />

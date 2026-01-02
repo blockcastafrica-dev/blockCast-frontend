@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Lock, AlertCircle, RefreshCw } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminOverview from '@/components/admin/AdminOverview';
-import MarketApproval from '@/components/admin/MarketApproval';
-import ResolvedMarkets from '@/components/admin/ResolvedMarkets';
+import MarketsDashboard from '@/components/admin/MarketsDashboard';
 import EvidenceDashboard from '@/components/admin/EvidenceDashboard';
 import UsersDashboard from '@/components/admin/UsersDashboard';
 import TreasuryDashboard from '@/components/admin/TreasuryDashboard';
@@ -147,10 +146,8 @@ const AdminPage: React.FC = () => {
     switch (activeTab) {
       case 'overview':
         return <AdminOverview onNavigate={handleTabChange} />;
-      case 'pending':
-        return <MarketApproval />;
-      case 'resolved':
-        return <ResolvedMarkets />;
+      case 'markets':
+        return <MarketsDashboard />;
       case 'evidence':
         return <EvidenceDashboard />;
       case 'users':
