@@ -246,7 +246,7 @@ export default function TopNavigation({
               >
                 <TokenUSDT variant="mono" size={20} color="#FFFFFF" />
                 <span className="text-sm font-semibold text-foreground">
-                  {userBalance.toFixed(3)}
+                  ${userBalance.toFixed(3)}
                 </span>
               </div>
             )}
@@ -438,11 +438,11 @@ export default function TopNavigation({
                       {/* Balance */}
                       <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-primary/10 to-secondary/10">
                         <div className="flex items-center gap-2">
-                          <Wallet className="h-5 w-5 text-primary" />
+                          <TokenUSDT variant="mono" size={20} color="#06f6ff" />
                           <span className="font-medium">Balance</span>
                         </div>
                         <span className="font-bold text-primary">
-                          {userBalance.toFixed(3)} USDT
+                          ${userBalance.toFixed(3)} USDT
                         </span>
                       </div>
 
