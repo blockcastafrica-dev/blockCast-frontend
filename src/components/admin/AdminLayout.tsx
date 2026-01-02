@@ -56,10 +56,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   const navigate = useNavigate();
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
 
   const handleNavClick = (tabId: string) => {
     onTabChange(tabId);
     setMobileMenuOpen(false);
+  };
+
+  const toggleDesktopSidebar = () => {
+    setDesktopSidebarOpen(!desktopSidebarOpen);
   };
 
   const handleExitAdmin = () => {
@@ -78,9 +83,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Desktop Sidebar - Always visible */}
+      {/* Desktop Sidebar Backdrop - click to close */}
+      {desktopSidebarOpen && (
+        <div
+          className="hidden lg:block fixed inset-0 z-30"
+          onClick={() => setDesktopSidebarOpen(false)}
+        />
+      )}
+
+      {/* Desktop Sidebar */}
       <aside
-        className="hidden lg:flex flex-col w-64 border-r border-border fixed h-full z-40"
+        className={`hidden lg:flex flex-col w-64 border-r border-border fixed h-full z-40 transition-transform duration-300 ${
+          desktopSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
         style={{ backgroundColor: '#0a0a0b' }}
       >
         {/* Admin Header */}
@@ -234,13 +249,23 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64">
+      <main className={`flex-1 transition-all duration-300 ${desktopSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
         {/* Status Bar Header */}
         <header
           className="hidden lg:flex items-center justify-between px-6 py-4 border-b border-border"
           style={{ backgroundColor: '#0a0a0b' }}
         >
           <div className="flex items-center gap-4">
+            {!desktopSidebarOpen && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleDesktopSidebar}
+                className="mr-2"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            )}
             <h1 className="text-lg font-semibold">
               {navItems.find(item => item.id === activeTab)?.label || 'Overview'}
             </h1>
