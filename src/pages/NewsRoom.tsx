@@ -900,6 +900,9 @@ export default function NewsRoom() {
 
   return (
     <div className="max-w-screen-2xl mx-auto" onClick={() => setExpandedArticle(null)}>
+      {/* Page Title */}
+      <h1 className="text-2xl font-bold text-white mb-4">Global News & Events</h1>
+
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column - Map */}
@@ -1090,6 +1093,11 @@ export default function NewsRoom() {
 
           {/* Separator Line */}
           <div className="border-t border-zinc-800"></div>
+
+          {/* Title */}
+          <div className="text-center pt-4">
+            <h2 className="text-lg font-semibold text-white">What's up in your region?</h2>
+          </div>
 
           {/* Region Selector Pills - Centered */}
           <div className="flex-1 flex items-center justify-center py-4 px-2 overflow-x-auto">
