@@ -79,7 +79,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   return (
     <div className="min-h-screen bg-background flex">
       {/* Desktop Sidebar - Always visible */}
-      <aside className="hidden lg:flex flex-col w-64 border-r border-border bg-[#0f1115] fixed h-full z-40">
+      <aside
+        className="hidden lg:flex flex-col w-64 border-r border-border fixed h-full z-40"
+        style={{ backgroundColor: '#0a0a0b' }}
+      >
         {/* Admin Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
@@ -141,7 +144,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
       </aside>
 
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0f1115] border-b border-border">
+      <div
+        className="lg:hidden fixed top-0 left-0 right-0 z-50 border-b border-border"
+        style={{ backgroundColor: '#0a0a0b' }}
+      >
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#06f6ff] to-[#0ea5e9] flex items-center justify-center">
@@ -177,7 +183,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
 
       {/* Mobile Navigation - Full Screen Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-[#0a0a0b]">
+        <div
+          className="lg:hidden fixed inset-0 z-40"
+          style={{ backgroundColor: '#0a0a0b' }}
+        >
           <div className="pt-20 px-4 h-full overflow-y-auto">
             <nav className="space-y-1">
               {navItems.map((item) => {
@@ -221,7 +230,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
       {/* Main Content */}
       <main className="flex-1 lg:ml-64">
         {/* Status Bar Header */}
-        <header className="hidden lg:flex items-center justify-between px-6 py-4 border-b border-border bg-[#0a0a0b]">
+        <header
+          className="hidden lg:flex items-center justify-between px-6 py-4 border-b border-border"
+          style={{ backgroundColor: '#0a0a0b' }}
+        >
           <div className="flex items-center gap-4">
             <h1 className="text-lg font-semibold">
               {navItems.find(item => item.id === activeTab)?.label || 'Overview'}
