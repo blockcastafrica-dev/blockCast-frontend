@@ -903,7 +903,12 @@ export default function NewsRoom() {
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column - Map */}
-        <div className="rounded-xl border border-zinc-800 p-4 flex flex-col justify-center" style={{ backgroundColor: '#0a0a0a' }}>
+        <div
+          className="rounded-xl border border-zinc-800 p-4 flex flex-col justify-center cursor-pointer transition-all"
+          style={{ backgroundColor: '#0a0a0a' }}
+          onMouseEnter={(e) => e.currentTarget.style.borderColor = '#06f6ff'}
+          onMouseLeave={(e) => e.currentTarget.style.borderColor = '#27272a'}
+        >
           {/* Interactive Map - World or Zoomed Continent */}
           <div className="w-full h-[240px] flex items-center justify-center relative overflow-hidden">
             <ComposableMap
@@ -1222,7 +1227,12 @@ export default function NewsRoom() {
         {/* Right Column - Calendar + News stacked */}
         <div className="flex flex-col gap-4">
           {/* Calendar Section */}
-          <div className="rounded-xl border border-zinc-800 p-4" style={{ backgroundColor: '#141414' }}>
+          <div
+            className="rounded-xl border border-zinc-800 p-4 cursor-pointer transition-all"
+            style={{ backgroundColor: '#141414' }}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#06f6ff'}
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = '#27272a'}
+          >
             <div className="flex items-center justify-between mb-3">
               <span className="text-base font-semibold text-white">Calendar</span>
               <span className="text-xs text-zinc-400">Upcoming Events</span>
@@ -1254,7 +1264,12 @@ export default function NewsRoom() {
           </div>
 
           {/* News Section */}
-          <div className="rounded-xl border border-zinc-800 p-4 flex-1 overflow-hidden" style={{ backgroundColor: '#141414' }}>
+          <div
+            className="rounded-xl border border-zinc-800 p-4 flex-1 overflow-hidden cursor-pointer transition-all"
+            style={{ backgroundColor: '#141414' }}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#06f6ff'}
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = '#27272a'}
+          >
             {/* Header with region tabs */}
             <div className="mb-3 flex gap-2 flex-wrap">
               {[
