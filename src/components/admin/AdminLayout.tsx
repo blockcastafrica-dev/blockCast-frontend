@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Clock,
@@ -13,11 +13,12 @@ import {
   Bell,
   Menu,
   X,
-  ChevronRight
+  PanelLeftClose,
+  PanelLeft
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 interface AdminLayoutProps {
@@ -56,15 +57,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   const navigate = useNavigate();
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleNavClick = (tabId: string) => {
     onTabChange(tabId);
     setMobileMenuOpen(false);
-  };
-
-  const toggleDesktopSidebar = () => {
-    setDesktopSidebarOpen(!desktopSidebarOpen);
   };
 
   const handleExitAdmin = () => {
@@ -82,42 +79,58 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Desktop Sidebar Backdrop - click to close */}
-      {desktopSidebarOpen && (
-        <div
-          className="hidden lg:block fixed inset-0 z-30 bg-black/30 cursor-pointer"
-          onClick={() => setDesktopSidebarOpen(false)}
-        />
-      )}
-
+    <div className="min-h-screen bg-background lg:flex">
       {/* Desktop Sidebar */}
-      <aside
-        className={`hidden lg:flex flex-col w-64 border-r border-border fixed h-full z-40 transition-transform duration-300 ${
-          desktopSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      <div
+        className={`hidden lg:block fixed top-0 left-0 h-full border-r border-border z-40 transition-all duration-300 ${
+          sidebarCollapsed ? 'w-16' : 'w-64'
         }`}
         style={{ backgroundColor: '#0a0a0b' }}
       >
-        {/* Admin Header */}
+        {/* Header */}
         <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#06f6ff] to-[#0ea5e9] flex items-center justify-center">
-              <Shield className="h-5 w-5 text-black" />
+          {sidebarCollapsed ? (
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#06f6ff] to-[#0ea5e9] flex items-center justify-center">
+                <Shield className="h-5 w-5 text-black" />
+              </div>
+              <button
+                onClick={() => setSidebarCollapsed(false)}
+                className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <PanelLeft className="h-4 w-4" />
+              </button>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm truncate">Admin Dashboard</p>
-              <p className="text-xs text-muted-foreground truncate">{formatAddress(adminProfile.walletAddress)}</p>
-            </div>
-          </div>
-          <Badge
-            className={`mt-2 ${adminProfile.role === 'super_admin' ? 'bg-purple-600' : 'bg-[#06f6ff] text-black'}`}
-          >
-            {adminProfile.role === 'super_admin' ? 'Super Admin' : 'Admin'}
-          </Badge>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#06f6ff] to-[#0ea5e9] flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-black" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Admin Dashboard</p>
+                    <p className="text-xs text-muted-foreground">{formatAddress(adminProfile.walletAddress)}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSidebarCollapsed(true)}
+                  className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <PanelLeftClose className="h-4 w-4" />
+                </button>
+              </div>
+              <Badge
+                className={`mt-3 ${adminProfile.role === 'super_admin' ? 'bg-purple-600' : 'bg-[#06f6ff] text-black'}`}
+              >
+                {adminProfile.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+              </Badge>
+            </>
+          )}
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="p-2 space-y-1 overflow-y-auto" style={{ height: 'calc(100% - 180px)' }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const count = item.countKey ? pendingCounts[item.countKey as keyof typeof pendingCounts] : 0;
@@ -131,14 +144,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
                   isActive
                     ? 'bg-[#06f6ff]/10 text-[#06f6ff] border border-[#06f6ff]/30'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
+                } ${sidebarCollapsed ? 'justify-center' : ''}`}
+                title={sidebarCollapsed ? item.label : undefined}
               >
                 <Icon className="h-4 w-4 flex-shrink-0" />
-                <span className="flex-1 text-left">{item.label}</span>
-                {count > 0 && (
-                  <Badge className="bg-red-500 text-white text-xs px-1.5 py-0.5 min-w-[20px] flex items-center justify-center">
-                    {count}
-                  </Badge>
+                {!sidebarCollapsed && (
+                  <>
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {count > 0 && (
+                      <Badge className="bg-red-500 text-white text-xs px-1.5 py-0.5 min-w-[20px] flex items-center justify-center">
+                        {count}
+                      </Badge>
+                    )}
+                  </>
+                )}
+                {sidebarCollapsed && count > 0 && (
+                  <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
                 )}
               </button>
             );
@@ -146,17 +167,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         </nav>
 
         {/* Exit Button */}
-        <div className="p-4 border-t border-border">
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
+          <button
             onClick={handleExitAdmin}
+            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors ${
+              sidebarCollapsed ? 'justify-center' : ''
+            }`}
+            title={sidebarCollapsed ? 'Exit Admin Panel' : undefined}
           >
             <LogOut className="h-4 w-4" />
-            Exit Admin Panel
-          </Button>
+            {!sidebarCollapsed && <span>Exit Admin Panel</span>}
+          </button>
         </div>
-      </aside>
+      </div>
 
       {/* Mobile Header */}
       <div
@@ -176,40 +199,36 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
             </Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="relative">
+            <button className="relative p-2 rounded-md hover:bg-muted">
               <Bell className="h-5 w-5" />
               {(pendingCounts.markets + pendingCounts.reports) > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">
+                <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">
                   {pendingCounts.markets + pendingCounts.reports}
                 </span>
               )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
+            </button>
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-md hover:bg-muted"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+            </button>
           </div>
         </div>
-
       </div>
 
-      {/* Mobile Navigation - Slide-in Sidebar */}
+      {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40">
-          {/* Backdrop - click to close */}
+        <>
           <div
-            className="absolute inset-0 bg-black/50"
+            className="lg:hidden fixed inset-0 bg-black/60 z-40"
             onClick={() => setMobileMenuOpen(false)}
           />
-          {/* Sidebar Navigation */}
           <div
-            className="absolute top-0 left-0 w-72 h-full pt-20 px-4 overflow-y-auto"
+            className="lg:hidden fixed top-[65px] left-0 w-72 bottom-0 z-50 border-r border-border overflow-y-auto"
             style={{ backgroundColor: '#0a0a0b' }}
           >
-            <nav className="space-y-1">
+            <nav className="p-4 space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const count = item.countKey ? pendingCounts[item.countKey as keyof typeof pendingCounts] : 0;
@@ -219,7 +238,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-4 rounded-lg text-base font-medium transition-all ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all ${
                       isActive
                         ? 'bg-[#06f6ff]/10 text-[#06f6ff] border border-[#06f6ff]/30'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -236,52 +255,43 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
                 );
               })}
             </nav>
-            <hr className="my-4 border-border" />
-            <button
-              onClick={handleExitAdmin}
-              className="w-full flex items-center gap-3 px-4 py-4 rounded-lg text-base font-medium text-muted-foreground hover:bg-muted"
-            >
-              <LogOut className="h-5 w-5" />
-              Exit Admin Panel
-            </button>
+            <div className="p-4 border-t border-border">
+              <button
+                onClick={handleExitAdmin}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-muted-foreground hover:bg-muted"
+              >
+                <LogOut className="h-5 w-5" />
+                Exit Admin Panel
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
-      {/* Main Content */}
-      <main className={`flex-1 transition-all duration-300 ${desktopSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
-        {/* Status Bar Header */}
+      {/* Main Content - offset by sidebar width on desktop */}
+      <div
+        className="hidden lg:block transition-all duration-300"
+        style={{ width: sidebarCollapsed ? '64px' : '256px', flexShrink: 0 }}
+      />
+      <main className="flex-1 min-h-screen">
+        {/* Desktop Header */}
         <header
           className="hidden lg:flex items-center justify-between px-6 py-4 border-b border-border"
           style={{ backgroundColor: '#0a0a0b' }}
         >
+          <h1 className="text-lg font-semibold">
+            {navItems.find(item => item.id === activeTab)?.label || 'Overview'}
+          </h1>
           <div className="flex items-center gap-4">
-            {!desktopSidebarOpen && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleDesktopSidebar}
-                className="mr-2"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-            )}
-            <h1 className="text-lg font-semibold">
-              {navItems.find(item => item.id === activeTab)?.label || 'Overview'}
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Last login: Just now</span>
-            </div>
-            <Button variant="ghost" size="icon" className="relative">
+            <span className="text-sm text-muted-foreground">Last login: Just now</span>
+            <button className="relative p-2 rounded-md hover:bg-muted">
               <Bell className="h-5 w-5" />
               {(pendingCounts.markets + pendingCounts.reports) > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">
+                <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">
                   {pendingCounts.markets + pendingCounts.reports}
                 </span>
               )}
-            </Button>
+            </button>
           </div>
         </header>
 
