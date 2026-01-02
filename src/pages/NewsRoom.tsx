@@ -145,15 +145,54 @@ const countryIdToISO: Record<string, string> = {
   "858": "URY", "URY": "URY",
   "862": "VEN", "VEN": "VEN",
   "84": "BLZ", "084": "BLZ", "BLZ": "BLZ",
-  // Other common countries
-  "4": "AFG", "004": "AFG",
-  "36": "AUS", "036": "AUS",
-  "156": "CHN",
-  "356": "IND",
-  "392": "JPN",
-  "682": "SAU",
-  "792": "TUR",
-  "784": "ARE",
+  // Middle East
+  "784": "ARE", "ARE": "ARE",
+  "48": "BHR", "048": "BHR", "BHR": "BHR",
+  "364": "IRN", "IRN": "IRN",
+  "368": "IRQ", "IRQ": "IRQ",
+  "376": "ISR", "ISR": "ISR",
+  "400": "JOR", "JOR": "JOR",
+  "414": "KWT", "KWT": "KWT",
+  "422": "LBN", "LBN": "LBN",
+  "512": "OMN", "OMN": "OMN",
+  "275": "PSE", "PSE": "PSE",
+  "634": "QAT", "QAT": "QAT",
+  "682": "SAU", "SAU": "SAU",
+  "760": "SYR", "SYR": "SYR",
+  "792": "TUR", "TUR": "TUR",
+  "887": "YEM", "YEM": "YEM",
+  // Asia
+  "4": "AFG", "004": "AFG", "AFG": "AFG",
+  "50": "BGD", "050": "BGD", "BGD": "BGD",
+  "64": "BTN", "064": "BTN", "BTN": "BTN",
+  "96": "BRN", "096": "BRN", "BRN": "BRN",
+  "116": "KHM", "KHM": "KHM",
+  "156": "CHN", "CHN": "CHN",
+  "356": "IND", "IND": "IND",
+  "360": "IDN", "IDN": "IDN",
+  "392": "JPN", "JPN": "JPN",
+  "398": "KAZ", "KAZ": "KAZ",
+  "410": "KOR", "KOR": "KOR",
+  "417": "KGZ", "KGZ": "KGZ",
+  "418": "LAO", "LAO": "LAO",
+  "458": "MYS", "MYS": "MYS",
+  "462": "MDV", "MDV": "MDV",
+  "496": "MNG", "MNG": "MNG",
+  "104": "MMR", "MMR": "MMR",
+  "524": "NPL", "NPL": "NPL",
+  "408": "PRK", "PRK": "PRK",
+  "586": "PAK", "PAK": "PAK",
+  "608": "PHL", "PHL": "PHL",
+  "702": "SGP", "SGP": "SGP",
+  "144": "LKA", "LKA": "LKA",
+  "158": "TWN", "TWN": "TWN",
+  "762": "TJK", "TJK": "TJK",
+  "764": "THA", "THA": "THA",
+  "626": "TLS", "TLS": "TLS",
+  "795": "TKM", "TKM": "TKM",
+  "860": "UZB", "UZB": "UZB",
+  "704": "VNM", "VNM": "VNM",
+  "36": "AUS", "036": "AUS", "AUS": "AUS",
 };
 
 // Country codes by region (using ISO_A3)
@@ -196,12 +235,39 @@ const europeSubRegions: Record<string, string[]> = {
   "south-eu": ["ALB", "AND", "BIH", "HRV", "CYP", "GRC", "ITA", "XKX", "MKD", "MLT", "MNE", "PRT", "SMR", "SRB", "SVN", "ESP", "VAT"],
 };
 
+// Middle East countries
+const middleEastCountries = [
+  "ARE", "BHR", "IRN", "IRQ", "ISR", "JOR", "KWT", "LBN", "OMN", "PSE", "QAT", "SAU", "SYR", "TUR", "YEM"
+];
+
+// Middle East sub-regions
+const middleEastSubRegions: Record<string, string[]> = {
+  "gulf": ["ARE", "BHR", "KWT", "OMN", "QAT", "SAU"],
+  "levant": ["ISR", "JOR", "LBN", "PSE", "SYR"],
+  "other-me": ["IRN", "IRQ", "TUR", "YEM"],
+};
+
+// Asia countries
+const asiaCountries = [
+  "AFG", "BGD", "BTN", "BRN", "KHM", "CHN", "IND", "IDN", "JPN", "KAZ", "KOR", "KGZ", "LAO", "MYS", "MDV", "MNG", "MMR", "NPL", "PRK", "PAK", "PHL", "SGP", "LKA", "TWN", "TJK", "THA", "TLS", "TKM", "UZB", "VNM"
+];
+
+// Asia sub-regions
+const asiaSubRegions: Record<string, string[]> = {
+  "east-asia": ["CHN", "JPN", "KOR", "PRK", "MNG", "TWN"],
+  "south-asia": ["IND", "PAK", "BGD", "LKA", "NPL", "BTN", "MDV", "AFG"],
+  "southeast-asia": ["IDN", "MYS", "PHL", "SGP", "THA", "VNM", "MMR", "KHM", "LAO", "BRN", "TLS"],
+  "central-asia": ["KAZ", "KGZ", "TJK", "TKM", "UZB"],
+};
+
 // Map center and zoom for each continent
 const mapConfig: Record<string, { center: [number, number]; zoom: number }> = {
   world: { center: [0, 20], zoom: 1 },
   africa: { center: [20, 5], zoom: 2.5 },
   america: { center: [-80, 10], zoom: 1.5 },
   europe: { center: [15, 54], zoom: 3.5 },
+  middleeast: { center: [45, 28], zoom: 3 },
+  asia: { center: [100, 30], zoom: 2 },
 };
 
 // Upcoming Events Data
@@ -557,6 +623,132 @@ const newsArticlesByRegion: Record<string, NewsArticle[]> = {
       ],
     },
   ],
+  middleeast: [
+    {
+      id: "me-1",
+      title: "Saudi Arabia's Vision 2030 Attracts $50B in Foreign Investment...",
+      source: "Reuters.com",
+      timestamp: "1 hour ago",
+      imageUrl: "https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "sa-vision-1", claim: "Will Saudi Arabia's non-oil GDP exceed 50% by 2030?", category: "Finance", yesOdds: 1.8, noOdds: 2.1, totalPool: 345000, expiresAt: new Date("2030-12-31"), country: "Saudi Arabia" },
+        { id: "sa-tourism-1", claim: "Will Saudi Arabia welcome 100M tourists by 2030?", category: "Business", yesOdds: 2.2, noOdds: 1.7, totalPool: 234000, expiresAt: new Date("2030-12-31"), country: "Saudi Arabia" },
+      ],
+    },
+    {
+      id: "me-2",
+      title: "UAE Launches New Digital Dirham CBDC Pilot Program...",
+      source: "Bloomberg.com",
+      timestamp: "3 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "ae-cbdc-1", claim: "Will UAE fully launch Digital Dirham by 2026?", category: "Technology", yesOdds: 1.6, noOdds: 2.4, totalPool: 189000, expiresAt: new Date("2026-12-31"), country: "UAE" },
+      ],
+    },
+    {
+      id: "me-3",
+      title: "Qatar's LNG Exports Hit Record High Amid Global Energy Shift...",
+      source: "FT.com",
+      timestamp: "5 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "qa-lng-1", claim: "Will Qatar remain world's top LNG exporter through 2025?", category: "Finance", yesOdds: 1.4, noOdds: 3.0, totalPool: 267000, expiresAt: new Date("2025-12-31"), country: "Qatar" },
+      ],
+    },
+    {
+      id: "me-4",
+      title: "Israel's Tech Sector Raises $15B Despite Regional Tensions...",
+      source: "TechCrunch.com",
+      timestamp: "7 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "il-tech-1", claim: "Will Israel tech investments exceed $20B in 2025?", category: "Technology", yesOdds: 2.1, noOdds: 1.8, totalPool: 198000, expiresAt: new Date("2025-12-31"), country: "Israel" },
+      ],
+    },
+    {
+      id: "me-5",
+      title: "Turkey's Central Bank Holds Rates at 45% to Combat Inflation...",
+      source: "Reuters.com",
+      timestamp: "9 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "tr-inflation-1", claim: "Will Turkey's inflation drop below 30% by end of 2025?", category: "Finance", yesOdds: 2.5, noOdds: 1.6, totalPool: 156000, expiresAt: new Date("2025-12-31"), country: "Turkey" },
+      ],
+    },
+  ],
+  asia: [
+    {
+      id: "as-1",
+      title: "China's EV Exports Surge 70% as Global Demand Grows...",
+      source: "Bloomberg.com",
+      timestamp: "1 hour ago",
+      imageUrl: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "cn-ev-1", claim: "Will China export 5M EVs in 2025?", category: "Business", yesOdds: 1.5, noOdds: 2.7, totalPool: 456000, expiresAt: new Date("2025-12-31"), country: "China" },
+        { id: "cn-byd-1", claim: "Will BYD outsell Tesla globally in 2025?", category: "Business", yesOdds: 1.8, noOdds: 2.1, totalPool: 378000, expiresAt: new Date("2025-12-31"), country: "China" },
+      ],
+    },
+    {
+      id: "as-2",
+      title: "India's GDP Growth Exceeds 7% for Third Consecutive Quarter...",
+      source: "Reuters.com",
+      timestamp: "3 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "in-gdp-1", claim: "Will India's GDP growth exceed 7.5% in 2025?", category: "Finance", yesOdds: 1.7, noOdds: 2.2, totalPool: 312000, expiresAt: new Date("2025-12-31"), country: "India" },
+      ],
+    },
+    {
+      id: "as-3",
+      title: "Japan's Semiconductor Industry Revival Attracts $40B Investment...",
+      source: "Nikkei.com",
+      timestamp: "5 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "jp-chips-1", claim: "Will Japan become top 3 chip producer by 2027?", category: "Technology", yesOdds: 2.0, noOdds: 1.9, totalPool: 234000, expiresAt: new Date("2027-12-31"), country: "Japan" },
+      ],
+    },
+    {
+      id: "as-4",
+      title: "South Korea's K-Content Exports Hit $13B Record...",
+      source: "KoreaHerald.com",
+      timestamp: "7 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "kr-content-1", claim: "Will K-pop/K-drama exports exceed $15B in 2025?", category: "Entertainment", yesOdds: 1.6, noOdds: 2.4, totalPool: 189000, expiresAt: new Date("2025-12-31"), country: "South Korea" },
+      ],
+    },
+    {
+      id: "as-5",
+      title: "Singapore Becomes Asia's Top Crypto Hub After New Regulations...",
+      source: "CoinDesk.com",
+      timestamp: "9 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "sg-crypto-1", claim: "Will Singapore approve 10 more crypto exchanges in 2025?", category: "Technology", yesOdds: 2.3, noOdds: 1.7, totalPool: 145000, expiresAt: new Date("2025-12-31"), country: "Singapore" },
+      ],
+    },
+    {
+      id: "as-6",
+      title: "Vietnam's Manufacturing Boom Continues with $20B FDI...",
+      source: "Reuters.com",
+      timestamp: "11 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "vn-fdi-1", claim: "Will Vietnam FDI exceed $25B in 2025?", category: "Finance", yesOdds: 1.9, noOdds: 2.0, totalPool: 123000, expiresAt: new Date("2025-12-31"), country: "Vietnam" },
+      ],
+    },
+    {
+      id: "as-7",
+      title: "Indonesia's Nickel Dominance Shapes Global EV Battery Market...",
+      source: "Bloomberg.com",
+      timestamp: "13 hours ago",
+      imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=100&fit=crop",
+      relatedMarkets: [
+        { id: "id-nickel-1", claim: "Will Indonesia control 60% of global nickel by 2026?", category: "Business", yesOdds: 1.5, noOdds: 2.7, totalPool: 198000, expiresAt: new Date("2026-12-31"), country: "Indonesia" },
+      ],
+    },
+  ],
 };
 
 export default function NewsRoom() {
@@ -572,9 +764,12 @@ export default function NewsRoom() {
       africa: 0,
       america: 0,
       europe: 0,
+      middleeast: 0,
+      asia: 0,
     };
 
     Object.entries(newsArticlesByRegion).forEach(([region, articles]) => {
+      counts[region] = 0;
       articles.forEach(article => {
         counts[region] += article.relatedMarkets.length;
       });
@@ -595,6 +790,15 @@ export default function NewsRoom() {
     // Europe
     "EU": "west-eu", "Germany": "west-eu", "France": "west-eu", "UK": "west-eu", "Spain": "south-eu",
     "Italy": "south-eu", "Poland": "east-eu", "Netherlands": "west-eu", "Sweden": "north-eu",
+    // Middle East
+    "Saudi Arabia": "gulf", "UAE": "gulf", "Qatar": "gulf", "Kuwait": "gulf", "Bahrain": "gulf", "Oman": "gulf",
+    "Israel": "levant", "Jordan": "levant", "Lebanon": "levant", "Syria": "levant",
+    "Turkey": "other-me", "Iran": "other-me", "Iraq": "other-me",
+    // Asia
+    "China": "east-asia", "Japan": "east-asia", "South Korea": "east-asia", "Taiwan": "east-asia", "Mongolia": "east-asia",
+    "India": "south-asia", "Pakistan": "south-asia", "Bangladesh": "south-asia", "Sri Lanka": "south-asia", "Nepal": "south-asia",
+    "Indonesia": "southeast-asia", "Malaysia": "southeast-asia", "Singapore": "southeast-asia", "Thailand": "southeast-asia", "Vietnam": "southeast-asia", "Philippines": "southeast-asia",
+    "Kazakhstan": "central-asia", "Uzbekistan": "central-asia",
   };
 
   // Calculate market counts per sub-region
@@ -622,6 +826,8 @@ export default function NewsRoom() {
     { name: "Africa", coordinates: [20, 0] as [number, number], region: "africa" },
     { name: "America", coordinates: [-90, 20] as [number, number], region: "america" },
     { name: "Europe", coordinates: [15, 52] as [number, number], region: "europe" },
+    { name: "Middle East", coordinates: [45, 28] as [number, number], region: "middleeast" },
+    { name: "Asia", coordinates: [100, 30] as [number, number], region: "asia" },
   ];
 
   // Sub-region marker positions
@@ -643,6 +849,17 @@ export default function NewsRoom() {
       { name: "West", coordinates: [2, 48] as [number, number], subRegion: "west-eu" },
       { name: "East", coordinates: [30, 52] as [number, number], subRegion: "east-eu" },
       { name: "South", coordinates: [14, 42] as [number, number], subRegion: "south-eu" },
+    ],
+    middleeast: [
+      { name: "Gulf", coordinates: [50, 25] as [number, number], subRegion: "gulf" },
+      { name: "Levant", coordinates: [36, 33] as [number, number], subRegion: "levant" },
+      { name: "Other", coordinates: [45, 38] as [number, number], subRegion: "other-me" },
+    ],
+    asia: [
+      { name: "East", coordinates: [115, 35] as [number, number], subRegion: "east-asia" },
+      { name: "South", coordinates: [78, 22] as [number, number], subRegion: "south-asia" },
+      { name: "Southeast", coordinates: [110, 5] as [number, number], subRegion: "southeast-asia" },
+      { name: "Central", coordinates: [65, 42] as [number, number], subRegion: "central-asia" },
     ],
   };
 
@@ -693,7 +910,7 @@ export default function NewsRoom() {
               projection="geoMercator"
               projectionConfig={{
                 center: mapConfig[selectedContinent || 'world'].center,
-                scale: selectedContinent ? (selectedContinent === 'america' ? 150 : selectedContinent === 'europe' ? 350 : 300) : 100,
+                scale: selectedContinent ? (selectedContinent === 'america' ? 150 : selectedContinent === 'europe' ? 350 : selectedContinent === 'middleeast' ? 400 : selectedContinent === 'asia' ? 200 : 300) : 100,
               }}
               style={{ width: '100%', height: '100%' }}
             >
@@ -710,12 +927,16 @@ export default function NewsRoom() {
                     let fillColor = 'rgba(50, 50, 50, 0.5)';
 
                     if (!selectedContinent) {
-                      // World view - highlight all three regions
+                      // World view - highlight all regions
                       if (africaCountries.includes(countryCode)) {
                         fillColor = 'rgba(6, 246, 255, 0.3)';
                       } else if (americaCountries.includes(countryCode)) {
                         fillColor = 'rgba(6, 246, 255, 0.3)';
                       } else if (europeCountries.includes(countryCode)) {
+                        fillColor = 'rgba(6, 246, 255, 0.3)';
+                      } else if (middleEastCountries.includes(countryCode)) {
+                        fillColor = 'rgba(6, 246, 255, 0.3)';
+                      } else if (asiaCountries.includes(countryCode)) {
                         fillColor = 'rgba(6, 246, 255, 0.3)';
                       }
                     } else if (selectedContinent === 'africa') {
@@ -753,6 +974,36 @@ export default function NewsRoom() {
 
                       if (selectedSubRegion && europeSubRegions[selectedSubRegion]) {
                         isInSelectedSubRegion = europeSubRegions[selectedSubRegion].includes(countryCode);
+                        if (isInSelectedSubRegion) {
+                          fillColor = 'rgba(6, 246, 255, 0.7)';
+                        } else if (isInSelectedContinent) {
+                          fillColor = 'rgba(6, 246, 255, 0.2)';
+                        } else {
+                          fillColor = 'rgba(30, 30, 30, 0.3)';
+                        }
+                      } else {
+                        fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+                      }
+                    } else if (selectedContinent === 'middleeast') {
+                      isInSelectedContinent = middleEastCountries.includes(countryCode);
+
+                      if (selectedSubRegion && middleEastSubRegions[selectedSubRegion]) {
+                        isInSelectedSubRegion = middleEastSubRegions[selectedSubRegion].includes(countryCode);
+                        if (isInSelectedSubRegion) {
+                          fillColor = 'rgba(6, 246, 255, 0.7)';
+                        } else if (isInSelectedContinent) {
+                          fillColor = 'rgba(6, 246, 255, 0.2)';
+                        } else {
+                          fillColor = 'rgba(30, 30, 30, 0.3)';
+                        }
+                      } else {
+                        fillColor = isInSelectedContinent ? 'rgba(6, 246, 255, 0.4)' : 'rgba(30, 30, 30, 0.3)';
+                      }
+                    } else if (selectedContinent === 'asia') {
+                      isInSelectedContinent = asiaCountries.includes(countryCode);
+
+                      if (selectedSubRegion && asiaSubRegions[selectedSubRegion]) {
+                        isInSelectedSubRegion = asiaSubRegions[selectedSubRegion].includes(countryCode);
                         if (isInSelectedSubRegion) {
                           fillColor = 'rgba(6, 246, 255, 0.7)';
                         } else if (isInSelectedContinent) {
@@ -849,19 +1100,25 @@ export default function NewsRoom() {
             )}
 
             {/* Continent pills */}
-            {!selectedContinent && ["Africa", "America", "Europe"].map((region) => (
+            {!selectedContinent && [
+              { name: "Africa", key: "africa" },
+              { name: "America", key: "america" },
+              { name: "Europe", key: "europe" },
+              { name: "Middle East", key: "middleeast" },
+              { name: "Asia", key: "asia" },
+            ].map((region) => (
               <button
-                key={region}
+                key={region.key}
                 onClick={() => {
-                  setSelectedContinent(region.toLowerCase());
+                  setSelectedContinent(region.key);
                   setSelectedSubRegion(null);
                 }}
-                onMouseEnter={() => setHoveredButton(region)}
+                onMouseEnter={() => setHoveredButton(region.key)}
                 onMouseLeave={() => setHoveredButton(null)}
                 className="px-3 py-1.5 md:px-5 md:py-2 text-xs md:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
-                style={{ color: hoveredButton === region ? '#06f6ff' : '#fff' }}
+                style={{ color: hoveredButton === region.key ? '#06f6ff' : '#fff' }}
               >
-                {region}
+                {region.name}
               </button>
             ))}
 
@@ -915,6 +1172,49 @@ export default function NewsRoom() {
                 {region}
               </button>
             ))}
+
+            {/* Middle East sub-regions */}
+            {selectedContinent === 'middleeast' && [
+              { name: "Gulf", key: "gulf" },
+              { name: "Levant", key: "levant" },
+              { name: "Other", key: "other-me" },
+            ].map((region) => (
+              <button
+                key={region.key}
+                onClick={() => setSelectedSubRegion(region.key)}
+                onMouseEnter={() => setHoveredButton(`middleeast-${region.key}`)}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
+                style={{
+                  backgroundColor: selectedSubRegion === region.key ? '#06f6ff' : 'transparent',
+                  color: selectedSubRegion === region.key ? '#000' : (hoveredButton === `middleeast-${region.key}` ? '#06f6ff' : '#fff'),
+                }}
+              >
+                {region.name}
+              </button>
+            ))}
+
+            {/* Asia sub-regions */}
+            {selectedContinent === 'asia' && [
+              { name: "East", key: "east-asia" },
+              { name: "South", key: "south-asia" },
+              { name: "Southeast", key: "southeast-asia" },
+              { name: "Central", key: "central-asia" },
+            ].map((region) => (
+              <button
+                key={region.key}
+                onClick={() => setSelectedSubRegion(region.key)}
+                onMouseEnter={() => setHoveredButton(`asia-${region.key}`)}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer"
+                style={{
+                  backgroundColor: selectedSubRegion === region.key ? '#06f6ff' : 'transparent',
+                  color: selectedSubRegion === region.key ? '#000' : (hoveredButton === `asia-${region.key}` ? '#06f6ff' : '#fff'),
+                }}
+              >
+                {region.name}
+              </button>
+            ))}
             </div>
           </div>
         </div>
@@ -956,20 +1256,26 @@ export default function NewsRoom() {
           {/* News Section */}
           <div className="rounded-xl border border-zinc-800 p-4 flex-1 overflow-hidden" style={{ backgroundColor: '#141414' }}>
             {/* Header with region tabs */}
-            <div className="mb-3 flex gap-2">
-              {["Africa", "America", "Europe"].map((region) => (
+            <div className="mb-3 flex gap-2 flex-wrap">
+              {[
+                { name: "Africa", key: "africa" },
+                { name: "America", key: "america" },
+                { name: "Europe", key: "europe" },
+                { name: "Middle East", key: "middleeast" },
+                { name: "Asia", key: "asia" },
+              ].map((region) => (
                 <button
-                  key={region}
-                  onClick={() => { setSelectedNewsRegion(region.toLowerCase()); setExpandedArticle(null); }}
-                  onMouseEnter={() => setHoveredButton(`news-${region}`)}
+                  key={region.key}
+                  onClick={() => { setSelectedNewsRegion(region.key); setExpandedArticle(null); }}
+                  onMouseEnter={() => setHoveredButton(`news-${region.key}`)}
                   onMouseLeave={() => setHoveredButton(null)}
                   className="text-sm font-medium px-3 py-1 rounded transition-colors duration-200 cursor-pointer"
                   style={{
-                    backgroundColor: selectedNewsRegion === region.toLowerCase() ? '#06f6ff' : 'transparent',
-                    color: selectedNewsRegion === region.toLowerCase() ? '#000' : (hoveredButton === `news-${region}` ? '#06f6ff' : '#fff'),
+                    backgroundColor: selectedNewsRegion === region.key ? '#06f6ff' : 'transparent',
+                    color: selectedNewsRegion === region.key ? '#000' : (hoveredButton === `news-${region.key}` ? '#06f6ff' : '#fff'),
                   }}
                 >
-                  {region}
+                  {region.name}
                 </button>
               ))}
             </div>
