@@ -242,6 +242,7 @@ export default function TopNavigation({
                 style={{ border: '2px solid transparent' }}
                 onMouseEnter={(e) => e.currentTarget.style.border = '2px solid #22d3ee'}
                 onMouseLeave={(e) => e.currentTarget.style.border = '2px solid transparent'}
+                onClick={() => handleNavClick("/settings", "wallet")}
               >
                 <TokenUSDT variant="mono" size={20} color="#FFFFFF" />
                 <span className="text-sm font-semibold text-foreground">
