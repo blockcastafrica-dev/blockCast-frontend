@@ -173,10 +173,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </div>
 
-        {/* Mobile Navigation Dropdown */}
-        {mobileMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-[#0f1115] border-b border-border shadow-lg">
-            <nav className="p-4 space-y-1">
+      </div>
+
+      {/* Mobile Navigation - Full Screen Overlay */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 bg-[#0a0a0b]">
+          <div className="pt-20 px-4 h-full overflow-y-auto">
+            <nav className="space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const count = item.countKey ? pendingCounts[item.countKey as keyof typeof pendingCounts] : 0;
@@ -186,35 +189,34 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all ${
+                    className={`w-full flex items-center gap-3 px-4 py-4 rounded-lg text-base font-medium transition-all ${
                       isActive
-                        ? 'bg-[#06f6ff]/10 text-[#06f6ff]'
-                        : 'text-muted-foreground hover:bg-muted'
+                        ? 'bg-[#06f6ff]/10 text-[#06f6ff] border border-[#06f6ff]/30'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" />
                     <span className="flex-1 text-left">{item.label}</span>
                     {count > 0 && (
-                      <Badge className="bg-red-500 text-white text-xs">
+                      <Badge className="bg-red-500 text-white text-xs px-2">
                         {count}
                       </Badge>
                     )}
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </button>
                 );
               })}
-              <hr className="my-2 border-border" />
-              <button
-                onClick={handleExitAdmin}
-                className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
-              >
-                <LogOut className="h-4 w-4" />
-                Exit Admin Panel
-              </button>
             </nav>
+            <hr className="my-4 border-border" />
+            <button
+              onClick={handleExitAdmin}
+              className="w-full flex items-center gap-3 px-4 py-4 rounded-lg text-base font-medium text-muted-foreground hover:bg-muted"
+            >
+              <LogOut className="h-5 w-5" />
+              Exit Admin Panel
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64">
