@@ -228,34 +228,34 @@ export default function ProbabilityChart({
   return (
     <div className="space-y-3 md:space-y-4 lg:space-y-4">
       {/* Current Prediction Header */}
-      <div className="flex items-start justify-between gap-2 md:gap-3 lg:gap-4">
+      <div className="flex items-start justify-between gap-3 md:gap-4 lg:gap-5">
         <div className="flex-shrink-0">
-          <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2">
-            <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+          <div className="flex items-center gap-2 md:gap-3 lg:gap-3">
+            <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
               {leadingOutcome}
             </span>
-            <div className="flex items-center gap-0.5 md:gap-1 lg:gap-1 text-emerald-400 text-xs md:text-sm lg:text-sm">
-              {isPositive ? <ArrowUp className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" /> : <ArrowDown className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />}
+            <div className="flex items-center gap-1 md:gap-1.5 lg:gap-1.5 text-emerald-400 text-sm md:text-base lg:text-lg">
+              {isPositive ? <ArrowUp className="h-5 w-5 md:h-6 md:w-6 lg:h-6 lg:w-6" /> : <ArrowDown className="h-5 w-5 md:h-6 md:w-6 lg:h-6 lg:w-6" />}
               <span>{trendPercentage}%</span>
             </div>
           </div>
-          <div className="text-slate-400 text-xs md:text-sm lg:text-sm mt-0.5 md:mt-1 lg:mt-1">
+          <div className="text-slate-400 text-sm md:text-base lg:text-lg mt-1 md:mt-2 lg:mt-2">
             {leadingPercentage.toFixed(1)}% chance
           </div>
         </div>
 
         {/* Legend & Actions */}
-        <div className="flex flex-col items-end gap-1.5 md:gap-2 lg:gap-2">
-          <div className="flex items-center flex-wrap justify-end gap-2 md:gap-3 lg:gap-4 text-xs md:text-sm lg:text-sm">
+        <div className="flex flex-col items-end gap-2 md:gap-3 lg:gap-3">
+          <div className="flex items-center flex-wrap justify-end gap-4 md:gap-5 lg:gap-6 text-sm md:text-base lg:text-base">
             {isMultipleChoice && outcomes && outcomes.length > 0 && totalPool ? (
               // Multiple choice outcomes legend
               outcomes.slice(0, 4).map((outcome) => (
-                <div key={outcome.id} className="flex items-center gap-1.5">
+                <div key={outcome.id} className="flex items-center gap-2">
                   <div
-                    className="w-2 h-2 rounded-full"
+                    className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: outcome.color || '#6B7280' }}
                   ></div>
-                  <span className="text-slate-300">
+                  <span className="text-white font-medium">
                     {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
                   </span>
                 </div>
@@ -263,28 +263,28 @@ export default function ProbabilityChart({
             ) : (
               // Binary market legend
               <>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#22d3ee' }}></div>
-                  <span className="text-slate-300">True {yesPercentage.toFixed(1)}%</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#22d3ee' }}></div>
+                  <span className="text-white font-medium">True {yesPercentage.toFixed(1)}%</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#7c3aed' }}></div>
-                  <span className="text-slate-300">False {noPercentage.toFixed(1)}%</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#7c3aed' }}></div>
+                  <span className="text-white font-medium">False {noPercentage.toFixed(1)}%</span>
                 </div>
               </>
             )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-0.5 md:gap-1 lg:gap-1">
+          <div className="flex items-center gap-1 md:gap-2 lg:gap-2">
             {onLikeToggle && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onLikeToggle}
-                className={`text-slate-400 hover:text-white h-7 md:h-8 lg:h-8 px-2 md:px-3 lg:px-3 text-xs md:text-sm lg:text-sm ${isLiked ? 'text-red-500' : ''}`}
+                className={`text-white hover:text-white h-9 md:h-10 lg:h-10 px-3 md:px-4 lg:px-4 text-sm md:text-base lg:text-base ${isLiked ? 'text-red-500' : ''}`}
               >
-                <Heart className={`h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4 mr-1 md:mr-1.5 lg:mr-1.5 ${isLiked ? 'fill-current' : ''}`} />
+                <Heart className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`} />
                 {likeCount}
               </Button>
             )}
@@ -294,9 +294,9 @@ export default function ProbabilityChart({
                 variant="ghost"
                 size="sm"
                 onClick={onBookmarkToggle}
-                className="text-slate-400 hover:text-white h-7 md:h-8 lg:h-8 px-1.5 md:px-2 lg:px-2"
+                className="text-white hover:text-white h-9 md:h-10 lg:h-10 px-2 md:px-3 lg:px-3"
               >
-                <Bookmark className={`h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4 ${isBookmarked ? 'fill-current' : ''}`} />
+                <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
               </Button>
             )}
 
@@ -305,9 +305,9 @@ export default function ProbabilityChart({
                 variant="ghost"
                 size="sm"
                 onClick={onShare}
-                className="text-slate-400 hover:text-white h-7 md:h-8 lg:h-8 px-2 md:px-3 lg:px-3 text-xs md:text-sm lg:text-sm"
+                className="text-white hover:text-white h-9 md:h-10 lg:h-10 px-3 md:px-4 lg:px-4 text-sm md:text-base lg:text-base"
               >
-                <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4 mr-1 md:mr-1.5 lg:mr-1.5" />
+                <Share2 className="h-5 w-5 mr-2" />
                 Share
               </Button>
             )}
@@ -350,7 +350,7 @@ export default function ProbabilityChart({
 
       {/* Chart */}
       <div className="w-full bg-black/30 rounded-lg p-3 md:p-4 lg:p-4 relative">
-        <div className="h-48 md:h-56 lg:h-72 w-full">
+        <div style={{ height: '300px' }} className="w-full">
         {filteredData && filteredData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart

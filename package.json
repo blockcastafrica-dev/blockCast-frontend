@@ -51,7 +51,8 @@
     "sonner": "^2.0.3",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "*",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
