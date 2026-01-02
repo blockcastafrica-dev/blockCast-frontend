@@ -151,6 +151,7 @@ export default function MarketPage({
   );
   const [sellCalculation, setSellCalculation] = useState<SellCalculation | null>(null);
   const [sellAmount, setSellAmount] = useState<string>("");
+  const [selectedSellPercent, setSelectedSellPercent] = useState<number | null>(null);
 
   // Mock user positions - in a real app, this would come from user's portfolio
   const userPositions: UserPosition[] = market.isMultipleChoice && market.outcomes
@@ -425,14 +426,24 @@ export default function MarketPage({
   };
 
   // Handle sell amount change (in shares)
-  const handleSellAmountChange = (value: string) => {
+  const handleSellAmountChange = (value: string, clearPercent: boolean = true) => {
     setSellAmount(value);
+    if (clearPercent) {
+      setSelectedSellPercent(null);
+    }
     const shares = parseFloat(value);
     if (!isNaN(shares) && shares > 0) {
       setSellCalculation(calculateSellProceeds(shares));
     } else {
       setSellCalculation(null);
     }
+  };
+
+  // Handle percentage button click for sell
+  const handleSellPercentClick = (percent: number, shares: number) => {
+    const amount = percent === 100 ? shares : Math.floor(shares * (percent / 100));
+    setSelectedSellPercent(percent);
+    handleSellAmountChange(amount.toString(), false);
   };
 
   const handlePositionChange = (position: "yes" | "no") => {
@@ -2118,26 +2129,42 @@ export default function MarketPage({
                       {userPosition && userPosition.shares > 0 && (
                         <div className="flex gap-2">
                           <button
-                            onClick={() => handleSellAmountChange(Math.floor(userPosition.shares * 0.25).toString())}
-                            className="flex-1 py-1.5 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                            onClick={() => handleSellPercentClick(25, userPosition.shares)}
+                            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                              selectedSellPercent === 25
+                                ? "bg-red-500/20 text-white border border-red-500/50"
+                                : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                            }`}
                           >
                             25%
                           </button>
                           <button
-                            onClick={() => handleSellAmountChange(Math.floor(userPosition.shares * 0.5).toString())}
-                            className="flex-1 py-1.5 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                            onClick={() => handleSellPercentClick(50, userPosition.shares)}
+                            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                              selectedSellPercent === 50
+                                ? "bg-red-500/20 text-white border border-red-500/50"
+                                : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                            }`}
                           >
                             50%
                           </button>
                           <button
-                            onClick={() => handleSellAmountChange(Math.floor(userPosition.shares * 0.75).toString())}
-                            className="flex-1 py-1.5 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                            onClick={() => handleSellPercentClick(75, userPosition.shares)}
+                            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                              selectedSellPercent === 75
+                                ? "bg-red-500/20 text-white border border-red-500/50"
+                                : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                            }`}
                           >
                             75%
                           </button>
                           <button
-                            onClick={() => handleSellAmountChange(userPosition.shares.toString())}
-                            className="flex-1 py-1.5 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                            onClick={() => handleSellPercentClick(100, userPosition.shares)}
+                            className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                              selectedSellPercent === 100
+                                ? "bg-red-500/20 text-white border border-red-500/50"
+                                : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                            }`}
                           >
                             Max
                           </button>
@@ -2952,26 +2979,42 @@ export default function MarketPage({
                     {userPosition && userPosition.shares > 0 && (
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleSellAmountChange(Math.floor(userPosition.shares * 0.25).toString())}
-                          className="flex-1 py-2 text-sm font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+                          onClick={() => handleSellPercentClick(25, userPosition.shares)}
+                          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+                            selectedSellPercent === 25
+                              ? "bg-red-500/20 text-white border border-red-500/50"
+                              : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                          }`}
                         >
                           25%
                         </button>
                         <button
-                          onClick={() => handleSellAmountChange(Math.floor(userPosition.shares * 0.5).toString())}
-                          className="flex-1 py-2 text-sm font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+                          onClick={() => handleSellPercentClick(50, userPosition.shares)}
+                          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+                            selectedSellPercent === 50
+                              ? "bg-red-500/20 text-white border border-red-500/50"
+                              : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                          }`}
                         >
                           50%
                         </button>
                         <button
-                          onClick={() => handleSellAmountChange(Math.floor(userPosition.shares * 0.75).toString())}
-                          className="flex-1 py-2 text-sm font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+                          onClick={() => handleSellPercentClick(75, userPosition.shares)}
+                          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+                            selectedSellPercent === 75
+                              ? "bg-red-500/20 text-white border border-red-500/50"
+                              : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                          }`}
                         >
                           75%
                         </button>
                         <button
-                          onClick={() => handleSellAmountChange(userPosition.shares.toString())}
-                          className="flex-1 py-2 text-sm font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+                          onClick={() => handleSellPercentClick(100, userPosition.shares)}
+                          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+                            selectedSellPercent === 100
+                              ? "bg-red-500/20 text-white border border-red-500/50"
+                              : "bg-zinc-800 text-zinc-300 border border-transparent hover:bg-zinc-700 hover:text-white hover:border-red-500/30"
+                          }`}
                         >
                           Max
                         </button>
