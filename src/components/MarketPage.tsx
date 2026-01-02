@@ -561,77 +561,57 @@ export default function MarketPage({
       <div className="flex flex-col lg:flex-row lg:items-start gap-6">
         {/* Left Column - All Content */}
         <div className="flex-1 min-w-0 space-y-3 md:space-y-4">
-          {/* Market Header Card */}
+          {/* Market Header Card - Modern Compact Design */}
           <div className="overflow-hidden border border-border rounded-xl bg-transparent">
-        {market.imageUrl && (
-          <div className="relative h-48 overflow-hidden">
-            <img
-              src={market.imageUrl}
-              alt={getTranslatedText(market.claim, market.claimTranslations)}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
-
-            {/* {market.trending && (
-              <div className="absolute top-4 left-4">
-                <Badge
-                  variant="secondary"
-                  className="bg-primary/20 text-primary border-primary/30"
-                >
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  {t("trending")}
-                </Badge>
-              </div>
-            )} */}
-
-            <div className="absolute bottom-3 md:bottom-4 lg:bottom-4 left-3 md:left-4 lg:left-4 right-3 md:right-4 lg:right-4">
-              <Badge
-                variant="outline"
-                className="text-[10px] md:text-xs lg:text-xs mb-1.5 md:mb-2 lg:mb-2 bg-background/80"
-              >
-                {market.category}
-              </Badge>
-              <h1 className="text-base md:text-lg lg:text-xl font-bold text-white mb-1.5 md:mb-2 lg:mb-2">
-                {getTranslatedText(market.claim, market.claimTranslations)}
-              </h1>
-            </div>
-          </div>
-        )}
-
         <CardContent className="p-4 md:p-5 lg:p-6">
-          <div className="space-y-4 md:space-y-5 lg:space-y-6">
-            {/* Market Info */}
-            <div className="space-y-4">
-              <p className="text-muted-foreground">
-                {getTranslatedText(
-                  market.description,
-                  market.descriptionTranslations
-                )}
-              </p>
+          <div className="space-y-4">
+            {/* Compact Header with Image Thumbnail */}
+            <div className="flex gap-4">
+              {market.imageUrl && (
+                <img
+                  src={market.imageUrl}
+                  alt={getTranslatedText(market.claim, market.claimTranslations)}
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover flex-shrink-0"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] md:text-xs mb-2 bg-background/80"
+                >
+                  {market.category}
+                </Badge>
+                <h1 className="text-base md:text-lg lg:text-xl font-bold text-white leading-tight">
+                  {getTranslatedText(market.claim, market.claimTranslations)}
+                </h1>
+              </div>
+            </div>
 
-              {/* Location & Source */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  <span>{market.country || market.region}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  <span>{market.source}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>
-                    {t("expiresIn")} {getTimeRemaining(market.expiresAt)}
-                  </span>
-                </div>
-                {/* Pool Volume */}
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  <span>
-                    ${(market.totalPool / 1000).toFixed(1)}k Pool
-                  </span>
-                </div>
+            {/* Description */}
+            <p className="text-sm text-muted-foreground">
+              {getTranslatedText(
+                market.description,
+                market.descriptionTranslations
+              )}
+            </p>
+
+            {/* Meta Info - Single Row */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5" />
+                <span>{market.country || market.region}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Shield className="h-3.5 w-3.5" />
+                <span>{market.source}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" />
+                <span>{getTimeRemaining(market.expiresAt)}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="h-3.5 w-3.5" />
+                <span>${(market.totalPool / 1000).toFixed(1)}k Pool</span>
               </div>
             </div>
 
