@@ -248,32 +248,63 @@ export default function ProbabilityChart({
         <div className="flex flex-col items-end gap-2 md:gap-3 lg:gap-3">
           <div className="text-sm md:text-base lg:text-base">
             {isMultipleChoice && outcomes && outcomes.length > 0 && totalPool ? (
-              // Multiple choice outcomes legend - 2 per row
-              <div className="grid grid-cols-2 gap-x-12 gap-y-3">
-                {outcomes.slice(0, 4).map((outcome) => (
-                  <div key={outcome.id} className="flex items-center gap-2.5 whitespace-nowrap">
-                    <span
-                      className="inline-block w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: outcome.color || '#6B7280', minWidth: '12px', minHeight: '12px' }}
-                    />
-                    <span className="text-white font-medium">
-                      {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
+              // Multiple choice outcomes legend
+              <>
+                {/* Mobile: vertical list with dots on right */}
+                <div className="flex flex-col items-end gap-2 lg:hidden">
+                  {outcomes.slice(0, 4).map((outcome) => (
+                    <div key={outcome.id} className="flex items-center gap-2.5 whitespace-nowrap">
+                      <span className="text-white font-medium">
+                        {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
+                      </span>
+                      <span
+                        className="inline-block w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: outcome.color || '#6B7280', minWidth: '12px', minHeight: '12px' }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                {/* Desktop: horizontal row with dots on left */}
+                <div className="hidden lg:flex items-center gap-6">
+                  {outcomes.slice(0, 4).map((outcome) => (
+                    <div key={outcome.id} className="flex items-center gap-2.5 whitespace-nowrap">
+                      <span
+                        className="inline-block w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: outcome.color || '#6B7280', minWidth: '12px', minHeight: '12px' }}
+                      />
+                      <span className="text-white font-medium">
+                        {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : (
               // Binary market legend
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2.5">
-                  <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#22d3ee', minWidth: '12px', minHeight: '12px' }} />
-                  <span className="text-white font-medium">True {yesPercentage.toFixed(1)}%</span>
+              <>
+                {/* Mobile: vertical list with dots on right */}
+                <div className="flex flex-col items-end gap-2 lg:hidden">
+                  <div className="flex items-center gap-2.5 whitespace-nowrap">
+                    <span className="text-white font-medium">True {yesPercentage.toFixed(1)}%</span>
+                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#22d3ee', minWidth: '12px', minHeight: '12px' }} />
+                  </div>
+                  <div className="flex items-center gap-2.5 whitespace-nowrap">
+                    <span className="text-white font-medium">False {noPercentage.toFixed(1)}%</span>
+                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#7c3aed', minWidth: '12px', minHeight: '12px' }} />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5">
-                  <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#7c3aed', minWidth: '12px', minHeight: '12px' }} />
-                  <span className="text-white font-medium">False {noPercentage.toFixed(1)}%</span>
+                {/* Desktop: horizontal row with dots on left */}
+                <div className="hidden lg:flex items-center gap-6">
+                  <div className="flex items-center gap-2.5 whitespace-nowrap">
+                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#22d3ee', minWidth: '12px', minHeight: '12px' }} />
+                    <span className="text-white font-medium">True {yesPercentage.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 whitespace-nowrap">
+                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#7c3aed', minWidth: '12px', minHeight: '12px' }} />
+                    <span className="text-white font-medium">False {noPercentage.toFixed(1)}%</span>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
 
