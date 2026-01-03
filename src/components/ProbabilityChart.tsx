@@ -229,7 +229,7 @@ export default function ProbabilityChart({
     <div className="space-y-3 md:space-y-4 lg:space-y-4">
       {/* Current Prediction Header */}
       <div className="flex items-start justify-between gap-3 md:gap-4 lg:gap-5">
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 mt-8 md:mt-10 lg:mt-12">
           <div className="flex items-center gap-2 md:gap-3 lg:gap-3">
             <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
               {leadingOutcome}
