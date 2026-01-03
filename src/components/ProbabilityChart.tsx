@@ -227,126 +227,6 @@ export default function ProbabilityChart({
 
   return (
     <div className="space-y-3 md:space-y-4 lg:space-y-4">
-      {/* Current Prediction Header - Mobile/Tablet only */}
-      <div className="flex items-start justify-between gap-3 md:gap-4 lg:hidden">
-        <div className="flex-shrink-0 mt-8 md:mt-10">
-          <div className="flex items-center gap-2 md:gap-3 lg:gap-3">
-            <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
-              {leadingOutcome}
-            </span>
-            <div className="flex items-center gap-1 md:gap-1.5 lg:gap-1.5 text-emerald-400 text-sm md:text-base lg:text-lg">
-              {isPositive ? <ArrowUp className="h-5 w-5 md:h-6 md:w-6 lg:h-6 lg:w-6" /> : <ArrowDown className="h-5 w-5 md:h-6 md:w-6 lg:h-6 lg:w-6" />}
-              <span>{trendPercentage}%</span>
-            </div>
-          </div>
-          <div className="text-slate-400 text-sm md:text-base lg:text-lg mt-1 md:mt-2 lg:mt-2">
-            {leadingPercentage.toFixed(1)}% chance
-          </div>
-        </div>
-
-        {/* Legend & Actions */}
-        <div className="flex flex-col items-end gap-2 md:gap-3 lg:gap-3">
-          <div className="text-sm md:text-base lg:text-base">
-            {isMultipleChoice && outcomes && outcomes.length > 0 && totalPool ? (
-              // Multiple choice outcomes legend
-              <>
-                {/* Mobile: vertical list with dots on right */}
-                <div className="flex flex-col items-end gap-2 lg:hidden">
-                  {outcomes.slice(0, 4).map((outcome) => (
-                    <div key={outcome.id} className="flex items-center gap-2.5 whitespace-nowrap">
-                      <span className="text-white font-medium">
-                        {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
-                      </span>
-                      <span
-                        className="inline-block w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: outcome.color || '#6B7280', minWidth: '12px', minHeight: '12px' }}
-                      />
-                    </div>
-                  ))}
-                </div>
-                {/* Desktop: horizontal row with dots on left */}
-                <div className="hidden lg:flex items-center gap-6">
-                  {outcomes.slice(0, 4).map((outcome) => (
-                    <div key={outcome.id} className="flex items-center gap-2.5 whitespace-nowrap">
-                      <span
-                        className="inline-block w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: outcome.color || '#6B7280', minWidth: '12px', minHeight: '12px' }}
-                      />
-                      <span className="text-white font-medium">
-                        {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              // Binary market legend
-              <>
-                {/* Mobile: vertical list with dots on right */}
-                <div className="flex flex-col items-end gap-2 lg:hidden">
-                  <div className="flex items-center gap-2.5 whitespace-nowrap">
-                    <span className="text-white font-medium">True {yesPercentage.toFixed(1)}%</span>
-                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#22d3ee', minWidth: '12px', minHeight: '12px' }} />
-                  </div>
-                  <div className="flex items-center gap-2.5 whitespace-nowrap">
-                    <span className="text-white font-medium">False {noPercentage.toFixed(1)}%</span>
-                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#7c3aed', minWidth: '12px', minHeight: '12px' }} />
-                  </div>
-                </div>
-                {/* Desktop: horizontal row with dots on left */}
-                <div className="hidden lg:flex items-center gap-6">
-                  <div className="flex items-center gap-2.5 whitespace-nowrap">
-                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#22d3ee', minWidth: '12px', minHeight: '12px' }} />
-                    <span className="text-white font-medium">True {yesPercentage.toFixed(1)}%</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 whitespace-nowrap">
-                    <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: '#7c3aed', minWidth: '12px', minHeight: '12px' }} />
-                    <span className="text-white font-medium">False {noPercentage.toFixed(1)}%</span>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-1 md:gap-2 lg:gap-2">
-            {onLikeToggle && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onLikeToggle}
-                className={`text-white hover:text-white h-9 md:h-10 lg:h-10 px-3 md:px-4 lg:px-4 text-sm md:text-base lg:text-base ${isLiked ? 'text-red-500' : ''}`}
-              >
-                <Heart className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-                {likeCount}
-              </Button>
-            )}
-
-            {onBookmarkToggle && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onBookmarkToggle}
-                className="text-white hover:text-white h-9 md:h-10 lg:h-10 px-2 md:px-3 lg:px-3"
-              >
-                <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
-              </Button>
-            )}
-
-            {onShare && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onShare}
-                className="text-white hover:text-white h-9 md:h-10 lg:h-10 px-3 md:px-4 lg:px-4 text-sm md:text-base lg:text-base"
-              >
-                <Share2 className="h-5 w-5 mr-2" />
-                Share
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Desktop only: Trend Info (left) + Legend (right) - same row */}
       <div className="hidden lg:flex items-end justify-between gap-4">
@@ -396,10 +276,58 @@ export default function ProbabilityChart({
         </div>
       </div>
 
+      {/* Mobile/Tablet: Trend Info (left) + Legend (right) - just before separator */}
+      <div className="flex items-end justify-between gap-3 lg:hidden">
+        {/* Trend Info */}
+        <div>
+          <div className="flex items-center gap-2 md:gap-3">
+            <span className="text-3xl sm:text-4xl md:text-5xl font-bold">
+              {leadingOutcome}
+            </span>
+            <div className="flex items-center gap-1 md:gap-1.5 text-emerald-400 text-sm md:text-base">
+              {isPositive ? <ArrowUp className="h-5 w-5 md:h-6 md:w-6" /> : <ArrowDown className="h-5 w-5 md:h-6 md:w-6" />}
+              <span>{trendPercentage}%</span>
+            </div>
+          </div>
+          <div className="text-slate-400 text-sm md:text-base mt-1 md:mt-2">
+            {leadingPercentage.toFixed(1)}% chance
+          </div>
+        </div>
+        {/* Legend */}
+        <div className="text-sm md:text-base">
+          {isMultipleChoice && outcomes && outcomes.length > 0 && totalPool ? (
+            <div className="flex flex-col items-end gap-1">
+              {outcomes.slice(0, 4).map((outcome) => (
+                <div key={outcome.id} className="flex items-center gap-2 whitespace-nowrap">
+                  <span className="text-white font-medium">
+                    {outcome.label} {((outcome.pool / totalPool) * 100).toFixed(1)}%
+                  </span>
+                  <span
+                    className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: outcome.color || '#6B7280' }}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <span className="text-white font-medium">True {yesPercentage.toFixed(1)}%</span>
+                <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#22d3ee' }} />
+              </div>
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <span className="text-white font-medium">False {noPercentage.toFixed(1)}%</span>
+                <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#7c3aed' }} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Separator */}
       <Separator className="my-3 md:my-4 lg:my-4" />
 
-      {/* Time range selector with Logo */}
+      {/* Time range selector with Logo + Action Buttons */}
       <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-4">
         <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2 overflow-x-auto">
           {timeRanges.map((range) => (
@@ -423,6 +351,41 @@ export default function ProbabilityChart({
           ))}
         </div>
 
+        {/* Action Buttons - Mobile/Tablet only */}
+        <div className="flex items-center gap-1 md:gap-2 lg:hidden">
+          {onLikeToggle && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onLikeToggle}
+              className={`text-white hover:text-white h-9 md:h-10 px-3 md:px-4 text-sm md:text-base ${isLiked ? 'text-red-500' : ''}`}
+            >
+              <Heart className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`} />
+              {likeCount}
+            </Button>
+          )}
+          {onBookmarkToggle && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onBookmarkToggle}
+              className="text-white hover:text-white h-9 md:h-10 px-2 md:px-3"
+            >
+              <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
+            </Button>
+          )}
+          {onShare && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onShare}
+              className="text-white hover:text-white h-9 md:h-10 px-3 md:px-4 text-sm md:text-base"
+            >
+              <Share2 className="h-5 w-5 mr-2" />
+              Share
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Chart */}
