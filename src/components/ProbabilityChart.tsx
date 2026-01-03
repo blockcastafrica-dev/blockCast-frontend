@@ -375,15 +375,20 @@ export default function ProbabilityChart({
           ))}
         </div>
 
-        {/* BlockCast Logo - Watermark Style */}
-        <div className="flex-shrink-0 opacity-15 grayscale">
-          <img src={blockcastLogo} alt="BlockCast" className="h-5 md:h-6 lg:h-6 w-auto" />
-        </div>
       </div>
 
       {/* Chart */}
-      <div className="w-full bg-black/30 rounded-lg p-3 md:p-4 lg:p-4 relative">
-        <div style={{ height: '300px' }} className="w-full">
+      <div className="w-full bg-black/30 rounded-lg p-3 md:p-4 lg:p-4">
+        <div style={{ height: '300px' }} className="w-full relative">
+          {/* BlockCast Logo - Centered Watermark */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <img
+              src={blockcastLogo}
+              alt="BlockCast"
+              className="h-32 md:h-40 lg:h-48 w-auto"
+              style={{ opacity: 0.08, filter: 'grayscale(100%) brightness(0.5)' }}
+            />
+          </div>
         {filteredData && filteredData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
