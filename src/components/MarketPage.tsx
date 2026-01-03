@@ -575,9 +575,40 @@ export default function MarketPage({
                 />
               )}
               <div className="flex-1 min-w-0">
-                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
-                  {getTranslatedText(market.claim, market.claimTranslations)}
-                </h1>
+                <div className="flex items-start justify-between gap-4">
+                  <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
+                    {getTranslatedText(market.claim, market.claimTranslations)}
+                  </h1>
+                  {/* Action Buttons - Desktop only */}
+                  <div className="hidden lg:flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsLiked(!isLiked)}
+                      className={`text-white hover:text-white h-9 px-3 ${isLiked ? 'text-red-500' : ''}`}
+                    >
+                      <Heart className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`} />
+                      {formatNumber(Math.floor(Math.random() * 500) + 100)}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsBookmarked(!isBookmarked)}
+                      className="text-white hover:text-white h-9 px-2"
+                    >
+                      <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowShareModal(true)}
+                      className="text-white hover:text-white h-9 px-3"
+                    >
+                      <Share2 className="h-5 w-5 mr-2" />
+                      Share
+                    </Button>
+                  </div>
+                </div>
                 {/* Meta Info - Inline with title */}
                 <div className="flex flex-wrap items-center gap-6 text-base text-white mt-2">
                   <div className="flex items-center">
