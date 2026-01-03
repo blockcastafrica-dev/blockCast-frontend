@@ -281,15 +281,15 @@ export default function ProbabilityChart({
         {/* Trend Info */}
         <div>
           <div className="flex items-center gap-2 md:gap-3">
-            <span className="text-3xl sm:text-4xl md:text-5xl font-bold">
+            <span className="text-4xl sm:text-5xl md:text-6xl font-bold">
               {leadingOutcome}
             </span>
-            <div className="flex items-center gap-1 md:gap-1.5 text-emerald-400 text-sm md:text-base">
+            <div className="flex items-center gap-1 md:gap-1.5 text-emerald-400 text-base md:text-lg">
               {isPositive ? <ArrowUp className="h-5 w-5 md:h-6 md:w-6" /> : <ArrowDown className="h-5 w-5 md:h-6 md:w-6" />}
               <span>{trendPercentage}%</span>
             </div>
           </div>
-          <div className="text-slate-400 text-sm md:text-base mt-1 md:mt-2">
+          <div className="text-slate-400 text-base md:text-lg mt-1 md:mt-2">
             {leadingPercentage.toFixed(1)}% chance
           </div>
         </div>
