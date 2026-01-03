@@ -233,15 +233,15 @@ export default function ProbabilityChart({
         {/* Trend Info */}
         <div>
           <div className="flex items-center gap-3">
-            <span className="text-5xl lg:text-6xl font-bold">
+            <span className="text-6xl lg:text-7xl font-bold">
               {leadingOutcome}
             </span>
-            <div className="flex items-center gap-1.5 text-emerald-400 text-lg">
-              {isPositive ? <ArrowUp className="h-6 w-6" /> : <ArrowDown className="h-6 w-6" />}
+            <div className="flex items-center gap-1.5 text-emerald-400 text-xl">
+              {isPositive ? <ArrowUp className="h-7 w-7" /> : <ArrowDown className="h-7 w-7" />}
               <span>{trendPercentage}%</span>
             </div>
           </div>
-          <div className="text-slate-400 text-lg mt-2">
+          <div className="text-slate-400 text-xl mt-2">
             {leadingPercentage.toFixed(1)}% chance
           </div>
         </div>
@@ -281,7 +281,7 @@ export default function ProbabilityChart({
         {/* Trend Info */}
         <div>
           <div className="flex items-center gap-2 md:gap-3">
-            <span className="text-4xl sm:text-5xl md:text-6xl font-bold">
+            <span className="text-5xl sm:text-6xl md:text-7xl font-bold">
               {leadingOutcome}
             </span>
             <div className="flex items-center gap-1 md:gap-1.5 text-emerald-400 text-base md:text-lg">
@@ -329,7 +329,7 @@ export default function ProbabilityChart({
 
       {/* Time range selector with Logo + Action Buttons */}
       <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-4">
-        <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2 overflow-x-auto">
+        <div className="flex items-center gap-1.5 md:gap-2 lg:gap-2 overflow-x-auto scrollbar-hide">
           {timeRanges.map((range) => (
             <Button
               key={range}
