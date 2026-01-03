@@ -66,6 +66,7 @@ import TextCounter from "./TextCounter";
 import Thumbnail from "./Thumbnail";
 import ShareModal from "./ShareModal";
 import ProbabilityChart from "./ProbabilityChart";
+import { TokenUSDT } from '@web3icons/react';
 // import dispute from "../assets/dispute.svg";
 
 interface MarketPageProps {
@@ -610,13 +611,25 @@ export default function MarketPage({
                   </div>
                 </div>
                 {/* Meta Info - Inline with title */}
-                <div className="flex items-center gap-3 md:gap-6 text-sm md:text-base text-white mt-2">
+                {/* Mobile version */}
+                <div className="flex md:hidden items-center gap-3 text-sm text-white mt-2">
                   <div className="flex items-center">
-                    <Clock className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0 mr-1.5 md:mr-2" />
+                    <Clock className="h-4 w-4 flex-shrink-0 mr-2" />
+                    <span>{getTimeRemaining(market.expiresAt)}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <TokenUSDT variant="mono" size={16} color="#FFFFFF" className="flex-shrink-0 mr-2" />
+                    <span>${Math.round(market.totalPool / 1000)}k</span>
+                  </div>
+                </div>
+                {/* Desktop version */}
+                <div className="hidden md:flex items-center gap-6 text-base text-white mt-2">
+                  <div className="flex items-center">
+                    <Clock className="h-5 w-5 flex-shrink-0 mr-2" />
                     <span>Expires in {getTimeRemaining(market.expiresAt)}</span>
                   </div>
                   <div className="flex items-center">
-                    <TrendingUp className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0 mr-1.5 md:mr-2" />
+                    <TrendingUp className="h-5 w-5 flex-shrink-0 mr-2" />
                     <span>${(market.totalPool / 1000).toFixed(1)}k Pool</span>
                   </div>
                 </div>
