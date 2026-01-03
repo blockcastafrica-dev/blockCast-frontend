@@ -232,16 +232,16 @@ export default function ProbabilityChart({
       <div className="hidden lg:flex items-end justify-between gap-4">
         {/* Trend Info */}
         <div>
-          <div className="flex items-center gap-3">
-            <span className="text-6xl lg:text-7xl font-bold">
+          <div className="flex items-baseline gap-3">
+            <span className="text-4xl font-bold">
               {leadingOutcome}
             </span>
-            <div className="flex items-center gap-1.5 text-emerald-400 text-xl">
-              {isPositive ? <ArrowUp className="h-7 w-7" /> : <ArrowDown className="h-7 w-7" />}
+            <div className="flex items-center gap-1 text-emerald-400 text-sm">
+              {isPositive ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
               <span>{trendPercentage}%</span>
             </div>
           </div>
-          <div className="text-slate-400 text-xl mt-2">
+          <div className="text-slate-400 text-base mt-1">
             {leadingPercentage.toFixed(1)}% chance
           </div>
         </div>
