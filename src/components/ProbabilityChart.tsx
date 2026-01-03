@@ -397,7 +397,7 @@ export default function ProbabilityChart({
               src={blockcastLogo}
               alt="BlockCast"
               className="h-32 md:h-40 lg:h-48 w-auto"
-              style={{ opacity: 0.08, filter: 'grayscale(100%) brightness(0.5)' }}
+              style={{ opacity: 0.25, filter: 'grayscale(100%) brightness(0.5)' }}
             />
           </div>
         {filteredData && filteredData.length > 0 ? (
