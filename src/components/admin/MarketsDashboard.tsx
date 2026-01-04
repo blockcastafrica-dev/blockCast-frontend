@@ -62,6 +62,7 @@ import { toast } from 'sonner';
 
 type MarketStatus = 'pending' | 'active' | 'expired' | 'disputable' | 'resolved';
 type DisputeCategory = 'incorrect_resolution' | 'market_manipulation' | 'invalid_market' | 'other';
+type RejectionCategory = 'violates_guidelines' | 'duplicate_market' | 'unclear_criteria' | 'spam' | 'other';
 
 interface Dispute {
   id: string;
@@ -106,6 +107,14 @@ const disputeCategoryLabels: Record<DisputeCategory, string> = {
   other: 'Other',
 };
 
+const rejectionCategoryLabels: Record<RejectionCategory, string> = {
+  violates_guidelines: 'Violates Guidelines',
+  duplicate_market: 'Duplicate Market',
+  unclear_criteria: 'Unclear Resolution Criteria',
+  spam: 'Spam / Low Quality',
+  other: 'Other',
+};
+
 const statusConfig: Record<MarketStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: 'Approval Pending', color: 'bg-yellow-500 text-black', icon: Clock },
   active: { label: 'Active', color: 'bg-green-500 text-white', icon: TrendingUp },
@@ -132,6 +141,10 @@ const MarketsDashboard: React.FC = () => {
   const [reviewAction, setReviewAction] = useState<'uphold' | 'request_evidence' | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [confirmAction, setConfirmAction] = useState<{ type: 'approve' | 'reject'; markets: string[] } | null>(null);
+  const [approvalNotes, setApprovalNotes] = useState('');
+  const [rejectionCategory, setRejectionCategory] = useState<RejectionCategory>('violates_guidelines');
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [allowResubmit, setAllowResubmit] = useState(true);
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -642,9 +655,33 @@ const MarketsDashboard: React.FC = () => {
 
   const executeAction = () => {
     if (!confirmAction) return;
-    toast.success(`${confirmAction.type === 'approve' ? 'Approved' : 'Rejected'} ${confirmAction.markets.length} market(s)`);
+
+    if (confirmAction.type === 'reject' && !rejectionReason.trim()) {
+      toast.error('Please provide a rejection reason');
+      return;
+    }
+
+    const count = confirmAction.markets.length;
+    if (confirmAction.type === 'approve') {
+      toast.success(`Approved ${count} market(s)${approvalNotes ? ' with notes' : ''}`);
+    } else {
+      toast.success(`Rejected ${count} market(s) - ${rejectionCategoryLabels[rejectionCategory]}${allowResubmit ? ' (resubmission allowed)' : ''}`);
+    }
+
     setSelectedMarkets([]);
     setConfirmAction(null);
+    setApprovalNotes('');
+    setRejectionCategory('violates_guidelines');
+    setRejectionReason('');
+    setAllowResubmit(true);
+  };
+
+  const closeConfirmDialog = () => {
+    setConfirmAction(null);
+    setApprovalNotes('');
+    setRejectionCategory('violates_guidelines');
+    setRejectionReason('');
+    setAllowResubmit(true);
   };
 
   const executeResolution = (outcome: 'YES' | 'NO') => {
@@ -1800,27 +1837,201 @@ const MarketsDashboard: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Batch Action Confirmation */}
-      <Dialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
-        <DialogContent>
+      {/* Enhanced Approve Dialog */}
+      <Dialog open={confirmAction?.type === 'approve'} onOpenChange={closeConfirmDialog}>
+        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              {confirmAction?.type === 'approve' ? 'Approve' : 'Reject'} {confirmAction?.markets.length} Markets?
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              Approve {confirmAction?.markets.length === 1 ? 'Market' : `${confirmAction?.markets.length} Markets`}
             </DialogTitle>
             <DialogDescription>
-              {confirmAction?.type === 'approve'
-                ? 'These markets will be deployed and available for trading immediately.'
-                : 'These markets will be rejected and creators notified.'}
+              {confirmAction?.markets.length === 1
+                ? 'This market will be deployed and available for trading immediately.'
+                : 'These markets will be deployed and available for trading immediately.'}
             </DialogDescription>
           </DialogHeader>
+
+          {/* Market Preview - Show for single market */}
+          {confirmAction?.markets.length === 1 && (() => {
+            const market = allMarkets.find(m => m.id === confirmAction.markets[0]);
+            return market ? (
+              <div className="p-4 bg-muted rounded-lg space-y-3">
+                <div>
+                  <p className="text-sm font-medium">{market.claim}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{market.description}</p>
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs">
+                  <div className="flex items-center gap-1">
+                    <Tag className="h-3 w-3 text-muted-foreground" />
+                    <span>{market.category}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <User className="h-3 w-3 text-muted-foreground" />
+                    <span>{market.creator}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3 text-muted-foreground" />
+                    <span>Expires {market.expiresAt.toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+            ) : null;
+          })()}
+
+          {/* Multiple Markets Summary */}
+          {confirmAction && confirmAction.markets.length > 1 && (
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                Selected markets:
+              </p>
+              <ul className="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                {confirmAction.markets.map(id => {
+                  const market = allMarkets.find(m => m.id === id);
+                  return market ? (
+                    <li key={id} className="text-sm truncate">• {market.claim}</li>
+                  ) : null;
+                })}
+              </ul>
+            </div>
+          )}
+
+          {/* Admin Notes (optional) */}
+          <div>
+            <label className="text-sm font-medium">Admin Notes (optional)</label>
+            <Textarea
+              className="mt-2"
+              placeholder="Add any internal notes for this approval..."
+              value={approvalNotes}
+              onChange={(e) => setApprovalNotes(e.target.value)}
+              rows={2}
+            />
+          </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmAction(null)}>Cancel</Button>
+            <Button variant="outline" onClick={closeConfirmDialog}>Cancel</Button>
             <Button
-              className={confirmAction?.type === 'approve' ? 'bg-green-600 hover:bg-green-700' : ''}
-              variant={confirmAction?.type === 'reject' ? 'destructive' : 'default'}
+              className="bg-green-600 hover:bg-green-700"
               onClick={executeAction}
             >
-              Confirm {confirmAction?.type === 'approve' ? 'Approval' : 'Rejection'}
+              <CheckCircle className="h-4 w-4 mr-1" />
+              Confirm Approval
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Reject Dialog */}
+      <Dialog open={confirmAction?.type === 'reject'} onOpenChange={closeConfirmDialog}>
+        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <XCircle className="h-5 w-5 text-red-500" />
+              Reject {confirmAction?.markets.length === 1 ? 'Market' : `${confirmAction?.markets.length} Markets`}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmAction?.markets.length === 1
+                ? 'This market will be rejected and the creator will be notified.'
+                : 'These markets will be rejected and creators will be notified.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Market Preview - Show for single market */}
+          {confirmAction?.markets.length === 1 && (() => {
+            const market = allMarkets.find(m => m.id === confirmAction.markets[0]);
+            return market ? (
+              <div className="p-4 bg-muted rounded-lg space-y-3">
+                <div>
+                  <p className="text-sm font-medium">{market.claim}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{market.description}</p>
+                </div>
+                <div className="flex flex-wrap gap-3 text-xs">
+                  <div className="flex items-center gap-1">
+                    <Tag className="h-3 w-3 text-muted-foreground" />
+                    <span>{market.category}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <User className="h-3 w-3 text-muted-foreground" />
+                    <span>{market.creator}</span>
+                  </div>
+                </div>
+              </div>
+            ) : null;
+          })()}
+
+          {/* Multiple Markets Summary */}
+          {confirmAction && confirmAction.markets.length > 1 && (
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                Selected markets:
+              </p>
+              <ul className="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                {confirmAction.markets.map(id => {
+                  const market = allMarkets.find(m => m.id === id);
+                  return market ? (
+                    <li key={id} className="text-sm truncate">• {market.claim}</li>
+                  ) : null;
+                })}
+              </ul>
+            </div>
+          )}
+
+          {/* Rejection Category */}
+          <div>
+            <label className="text-sm font-medium">Rejection Category *</label>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full mt-2 justify-between">
+                  {rejectionCategoryLabels[rejectionCategory]}
+                  <ArrowUpDown className="h-4 w-4 ml-2 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full">
+                {(Object.keys(rejectionCategoryLabels) as RejectionCategory[]).map((cat) => (
+                  <DropdownMenuItem
+                    key={cat}
+                    onClick={() => setRejectionCategory(cat)}
+                    className={rejectionCategory === cat ? 'bg-accent' : ''}
+                  >
+                    {rejectionCategoryLabels[cat]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Rejection Reason */}
+          <div>
+            <label className="text-sm font-medium">Rejection Reason *</label>
+            <Textarea
+              className="mt-2"
+              placeholder="Explain why this market is being rejected..."
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              rows={3}
+            />
+          </div>
+
+          {/* Allow Resubmit */}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="allow-resubmit"
+              checked={allowResubmit}
+              onCheckedChange={(checked) => setAllowResubmit(checked as boolean)}
+            />
+            <label htmlFor="allow-resubmit" className="text-sm cursor-pointer">
+              Allow creator to re-submit with edits
+            </label>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={closeConfirmDialog}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={executeAction}
+            >
+              <XCircle className="h-4 w-4 mr-1" />
+              Confirm Rejection
             </Button>
           </DialogFooter>
         </DialogContent>
