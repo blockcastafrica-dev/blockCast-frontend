@@ -1374,12 +1374,6 @@ const MarketsDashboard: React.FC = () => {
               <Gavel className="h-5 w-5 text-orange-500" />
               Resolve Market
             </DialogTitle>
-            {resolveMarket && resolveMarket.totalVolume > 1000 && (
-              <DialogDescription className="text-yellow-500">
-                <AlertTriangle className="h-4 w-4 inline mr-1" />
-                High-volume market (&gt;$1,000). Additional verification required.
-              </DialogDescription>
-            )}
           </DialogHeader>
           {resolveMarket && (
             <div className="space-y-4">
@@ -1409,14 +1403,6 @@ const MarketsDashboard: React.FC = () => {
                   rows={3}
                 />
               </div>
-
-              {resolveMarket.totalVolume > 1000 && (
-                <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                  <p className="text-sm text-yellow-500">
-                    This action will distribute ${resolveMarket.totalVolume.toLocaleString()} to {resolveMarket.participants} participants.
-                  </p>
-                </div>
-              )}
             </div>
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
