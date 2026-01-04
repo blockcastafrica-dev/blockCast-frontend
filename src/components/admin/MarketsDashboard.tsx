@@ -1317,22 +1317,22 @@ const MarketsDashboard: React.FC = () => {
 
               {/* Info Grid */}
               <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                <div className="flex justify-between">
+                <div>
                   <span className="text-muted-foreground">Created</span>
-                  <span>{formatDate(viewMarket.createdAt)}</span>
+                  <p>{formatDate(viewMarket.createdAt)}</p>
                 </div>
-                <div className="flex justify-between">
+                <div>
                   <span className="text-muted-foreground">Expires</span>
-                  <span className={new Date() > viewMarket.expiresAt ? 'text-red-500' : ''}>{formatDate(viewMarket.expiresAt)}</span>
+                  <p className={new Date() > viewMarket.expiresAt ? 'text-red-500' : ''}>{formatDate(viewMarket.expiresAt)}</p>
                 </div>
-                <div className="flex justify-between">
+                <div>
                   <span className="text-muted-foreground">Creator</span>
-                  <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.creator}</code>
+                  <p><code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.creator}</code></p>
                 </div>
                 {viewMarket.resolvedBy && (
-                  <div className="flex justify-between">
+                  <div>
                     <span className="text-muted-foreground">Resolver</span>
-                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.resolvedBy}</code>
+                    <p><code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.resolvedBy}</code></p>
                   </div>
                 )}
               </div>
