@@ -1358,7 +1358,7 @@ const MarketsDashboard: React.FC = () => {
                   <Button className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={() => { setViewMarket(null); setResolveMarket(viewMarket); }}>Resolve</Button>
                 )}
                 {viewMarket.status === 'disputable' && viewMarket.disputeStatus === 'pending' && (
-                  <Button className="flex-1 bg-yellow-500 text-black hover:bg-yellow-600" onClick={() => { setViewMarket(null); setReviewMarket(viewMarket); }}>Review Dispute</Button>
+                  <Button style={{ backgroundColor: '#eab308', color: 'black' }} className="flex-1 hover:opacity-90 font-semibold" onClick={() => { setViewMarket(null); setReviewMarket(viewMarket); }}>Review Dispute</Button>
                 )}
               </div>
             </div>
@@ -1833,7 +1833,8 @@ const MarketsDashboard: React.FC = () => {
           <DialogFooter>
             <Button variant="outline" onClick={closeConfirmDialog}>Cancel</Button>
             <Button
-              className="bg-green-600 hover:bg-green-700"
+              style={{ backgroundColor: '#16a34a', color: 'white' }}
+              className="hover:opacity-90 font-semibold"
               onClick={executeAction}
             >
               <CheckCircle className="h-4 w-4 mr-1" />
