@@ -146,6 +146,7 @@ const MarketsDashboard: React.FC = () => {
   const [rejectionCategory, setRejectionCategory] = useState<RejectionCategory>('violates_guidelines');
   const [rejectionReason, setRejectionReason] = useState('');
   const [allowResubmit, setAllowResubmit] = useState(true);
+  const [resolutionEvidence, setResolutionEvidence] = useState('');
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -1261,61 +1262,61 @@ const MarketsDashboard: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* View Market Dialog - Compact */}
+      {/* View Market Dialog */}
       <Dialog open={!!viewMarket} onOpenChange={() => setViewMarket(null)}>
         <DialogContent className="max-w-md">
           {viewMarket && (
-            <>
+            <div className="space-y-4">
               {/* Header with badges */}
-              <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                <Badge className={`${statusConfig[viewMarket.status].color} text-xs px-1.5 py-0.5`}>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge className={statusConfig[viewMarket.status].color}>
                   {statusConfig[viewMarket.status].label}
                 </Badge>
-                <Badge variant="outline" className="text-xs px-1.5 py-0.5">{viewMarket.category}</Badge>
+                <Badge variant="outline">{viewMarket.category}</Badge>
                 {viewMarket.resolution && (
-                  <Badge className={`text-xs px-1.5 py-0.5 ${viewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+                  <Badge className={viewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                     {viewMarket.resolution}
                   </Badge>
                 )}
               </div>
 
               {/* Title */}
-              <p className="font-semibold text-sm leading-tight">{viewMarket.claim}</p>
+              <p className="font-semibold">{viewMarket.claim}</p>
 
               {/* Pool Bar */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-green-500">YES ${viewMarket.yesPool.toLocaleString()}</span>
-                  <span className="text-red-500">NO ${viewMarket.noPool.toLocaleString()}</span>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-500 font-medium">YES ${viewMarket.yesPool.toLocaleString()}</span>
+                  <span className="text-red-500 font-medium">NO ${viewMarket.noPool.toLocaleString()}</span>
                 </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+                <div className="h-3 bg-muted rounded-full overflow-hidden flex">
                   <div className="bg-green-500 h-full" style={{ width: `${(viewMarket.yesPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }} />
                   <div className="bg-red-500 h-full" style={{ width: `${(viewMarket.noPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }} />
                 </div>
               </div>
 
               {/* Stats Row */}
-              <div className="grid grid-cols-4 gap-2 text-center text-xs">
-                <div className="bg-muted/50 rounded p-2">
-                  <p className="text-muted-foreground">Volume</p>
-                  <p className="font-bold">${viewMarket.totalVolume.toLocaleString()}</p>
+              <div className="grid grid-cols-4 gap-3 text-center">
+                <div className="bg-muted/50 rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Volume</p>
+                  <p className="font-bold text-sm">${viewMarket.totalVolume.toLocaleString()}</p>
                 </div>
-                <div className="bg-muted/50 rounded p-2">
-                  <p className="text-muted-foreground">Users</p>
-                  <p className="font-bold">{viewMarket.participants}</p>
+                <div className="bg-muted/50 rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Users</p>
+                  <p className="font-bold text-sm">{viewMarket.participants}</p>
                 </div>
-                <div className="bg-muted/50 rounded p-2">
-                  <p className="text-muted-foreground">Disputes</p>
-                  <p className="font-bold">{viewMarket.disputeCount || 0}</p>
+                <div className="bg-muted/50 rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Disputes</p>
+                  <p className="font-bold text-sm">{viewMarket.disputeCount || 0}</p>
                 </div>
-                <div className="bg-muted/50 rounded p-2">
-                  <p className="text-muted-foreground">Avg</p>
-                  <p className="font-bold">${viewMarket.participants > 0 ? Math.round(viewMarket.totalVolume / viewMarket.participants) : 0}</p>
+                <div className="bg-muted/50 rounded-lg p-3">
+                  <p className="text-xs text-muted-foreground">Avg</p>
+                  <p className="font-bold text-sm">${viewMarket.participants > 0 ? Math.round(viewMarket.totalVolume / viewMarket.participants) : 0}</p>
                 </div>
               </div>
 
               {/* Info Grid */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Created</span>
                   <span>{formatDate(viewMarket.createdAt)}</span>
@@ -1326,47 +1327,47 @@ const MarketsDashboard: React.FC = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Creator</span>
-                  <code className="bg-muted px-1 rounded">{viewMarket.creator}</code>
+                  <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.creator}</code>
                 </div>
                 {viewMarket.resolvedBy && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Resolver</span>
-                    <code className="bg-muted px-1 rounded">{viewMarket.resolvedBy}</code>
+                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.resolvedBy}</code>
                   </div>
                 )}
               </div>
 
               {/* Dispute Info (if any) */}
               {viewMarket.disputes && viewMarket.disputes.length > 0 && (
-                <div className="border-t border-yellow-500/30 pt-2">
-                  <p className="text-xs text-yellow-500 font-medium mb-1">Dispute: {disputeCategoryLabels[viewMarket.disputes[0].category]}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{viewMarket.disputes[0].reason}</p>
+                <div className="border-t border-yellow-500/30 pt-3">
+                  <p className="text-sm text-yellow-500 font-medium mb-2">Dispute: {disputeCategoryLabels[viewMarket.disputes[0].category]}</p>
+                  <p className="text-sm text-muted-foreground">{viewMarket.disputes[0].reason}</p>
                 </div>
               )}
 
               {/* Actions */}
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1" onClick={() => setViewMarket(null)}>Close</Button>
+                <Button variant="outline" className="flex-1" onClick={() => setViewMarket(null)}>Close</Button>
                 {viewMarket.status === 'pending' && (
                   <>
-                    <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setConfirmAction({ type: 'approve', markets: [viewMarket.id] })}>Approve</Button>
-                    <Button size="sm" variant="destructive" className="flex-1" onClick={() => setConfirmAction({ type: 'reject', markets: [viewMarket.id] })}>Reject</Button>
+                    <Button className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setConfirmAction({ type: 'approve', markets: [viewMarket.id] })}>Approve</Button>
+                    <Button variant="destructive" className="flex-1" onClick={() => setConfirmAction({ type: 'reject', markets: [viewMarket.id] })}>Reject</Button>
                   </>
                 )}
                 {viewMarket.status === 'expired' && (
-                  <Button size="sm" className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={() => { setViewMarket(null); setResolveMarket(viewMarket); }}>Resolve</Button>
+                  <Button className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={() => { setViewMarket(null); setResolveMarket(viewMarket); }}>Resolve</Button>
                 )}
                 {viewMarket.status === 'disputable' && viewMarket.disputeStatus === 'pending' && (
-                  <Button size="sm" className="flex-1 bg-yellow-500 text-black hover:bg-yellow-600" onClick={() => { setViewMarket(null); setReviewMarket(viewMarket); }}>Review Dispute</Button>
+                  <Button className="flex-1 bg-yellow-500 text-black hover:bg-yellow-600" onClick={() => { setViewMarket(null); setReviewMarket(viewMarket); }}>Review Dispute</Button>
                 )}
               </div>
-            </>
+            </div>
           )}
         </DialogContent>
       </Dialog>
 
       {/* Resolve Market Dialog */}
-      <Dialog open={!!resolveMarket} onOpenChange={() => setResolveMarket(null)}>
+      <Dialog open={!!resolveMarket} onOpenChange={() => { setResolveMarket(null); setResolutionEvidence(''); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -1396,6 +1397,19 @@ const MarketsDashboard: React.FC = () => {
                   <p className="text-xl font-bold text-red-500">${resolveMarket.noPool.toLocaleString()}</p>
                 </div>
               </div>
+
+              {/* Evidence Field */}
+              <div>
+                <label className="text-sm font-medium">Evidence / Source *</label>
+                <Textarea
+                  className="mt-2"
+                  placeholder="Provide evidence or source for this resolution (e.g., official announcement, news article URL, data source)..."
+                  value={resolutionEvidence}
+                  onChange={(e) => setResolutionEvidence(e.target.value)}
+                  rows={3}
+                />
+              </div>
+
               {resolveMarket.totalVolume > 1000 && (
                 <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                   <p className="text-sm text-yellow-500">
@@ -1406,13 +1420,33 @@ const MarketsDashboard: React.FC = () => {
             </div>
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setResolveMarket(null)}>Cancel</Button>
-            <Button className="bg-green-600 hover:bg-green-700" onClick={() => executeResolution('YES')}>
-              <CheckCircle className="h-4 w-4 mr-1" />
+            <Button variant="outline" onClick={() => { setResolveMarket(null); setResolutionEvidence(''); }}>Cancel</Button>
+            <Button
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold"
+              onClick={() => {
+                if (!resolutionEvidence.trim()) {
+                  toast.error('Please provide evidence for the resolution');
+                  return;
+                }
+                executeResolution('YES');
+                setResolutionEvidence('');
+              }}
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
               Resolve YES
             </Button>
-            <Button variant="destructive" onClick={() => executeResolution('NO')}>
-              <XCircle className="h-4 w-4 mr-1" />
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (!resolutionEvidence.trim()) {
+                  toast.error('Please provide evidence for the resolution');
+                  return;
+                }
+                executeResolution('NO');
+                setResolutionEvidence('');
+              }}
+            >
+              <XCircle className="h-4 w-4 mr-2" />
               Resolve NO
             </Button>
           </DialogFooter>
@@ -1724,9 +1758,15 @@ const MarketsDashboard: React.FC = () => {
                   Void
                 </Button>
               </div>
-              <Button variant="outline" size="sm" className="w-full" onClick={closeReviewDialog}>
-                Cancel
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="flex-1" onClick={() => { const market = reviewMarket; closeReviewDialog(); setViewMarket(market); }}>
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back to Details
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1" onClick={closeReviewDialog}>
+                  Cancel
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
