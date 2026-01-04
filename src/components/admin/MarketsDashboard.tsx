@@ -1286,7 +1286,7 @@ const MarketsDashboard: React.FC = () => {
                   {viewMarket.id}
                 </Badge>
                 {viewMarket.resolution && (
-                  <Badge className={viewMarket.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'}>
+                  <Badge className={viewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                     Resolved: {viewMarket.resolution}
                   </Badge>
                 )}
@@ -1322,7 +1322,7 @@ const MarketsDashboard: React.FC = () => {
               </div>
 
               {/* Key Metrics */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-muted/50 rounded-lg text-center">
                   <DollarSign className="h-5 w-5 mx-auto mb-1 text-[#06f6ff]" />
                   <p className="text-xs text-muted-foreground">Total Volume</p>
@@ -1354,30 +1354,30 @@ const MarketsDashboard: React.FC = () => {
                   Timeline
                 </p>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-blue-500" />
                       <span className="text-muted-foreground">Created</span>
                     </div>
-                    <span>{formatDate(viewMarket.createdAt)} ({formatTimeAgo(viewMarket.createdAt)})</span>
+                    <span className="ml-4 sm:ml-0">{formatDate(viewMarket.createdAt)} ({formatTimeAgo(viewMarket.createdAt)})</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${new Date() > viewMarket.expiresAt ? 'bg-red-500' : 'bg-orange-500'}`} />
                       <span className="text-muted-foreground">Expires</span>
                     </div>
-                    <span className={new Date() > viewMarket.expiresAt ? 'text-red-500' : ''}>
+                    <span className={`ml-4 sm:ml-0 ${new Date() > viewMarket.expiresAt ? 'text-red-500' : ''}`}>
                       {formatDate(viewMarket.expiresAt)}
                       {new Date() > viewMarket.expiresAt ? ' (Expired)' : ''}
                     </span>
                   </div>
                   {viewMarket.resolvedAt && (
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-green-500" />
                         <span className="text-muted-foreground">Resolved</span>
                       </div>
-                      <span>{formatDate(viewMarket.resolvedAt)} ({formatTimeAgo(viewMarket.resolvedAt)})</span>
+                      <span className="ml-4 sm:ml-0">{formatDate(viewMarket.resolvedAt)} ({formatTimeAgo(viewMarket.resolvedAt)})</span>
                     </div>
                   )}
                 </div>
