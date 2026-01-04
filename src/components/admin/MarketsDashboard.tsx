@@ -1422,7 +1422,8 @@ const MarketsDashboard: React.FC = () => {
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => { setResolveMarket(null); setResolutionEvidence(''); }}>Cancel</Button>
             <Button
-              className="!bg-green-600 hover:!bg-green-700 !text-white font-semibold"
+              style={{ backgroundColor: '#16a34a', color: 'white' }}
+              className="hover:opacity-90 font-semibold"
               onClick={() => {
                 if (!resolutionEvidence.trim()) {
                   toast.error('Please provide evidence for the resolution');
