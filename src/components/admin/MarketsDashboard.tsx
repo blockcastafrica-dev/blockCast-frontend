@@ -59,12 +59,6 @@ import {
   FileQuestion,
   Tag
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 
 type MarketStatus = 'pending' | 'active' | 'expired' | 'disputable' | 'resolved';
@@ -617,6 +611,9 @@ const MarketsDashboard: React.FC = () => {
         'Description': market.description,
         'Category': market.category,
         'Creator': market.creator,
+        'Resolution Source': market.resolutionSource || '-',
+        'Created': formatDate(market.createdAt),
+        'Expires': formatDate(market.expiresAt),
         'Total Volume ($)': market.totalVolume,
         'Participants': market.participants,
         'YES Pool ($)': market.yesPool,
@@ -624,7 +621,6 @@ const MarketsDashboard: React.FC = () => {
         'Pool Total ($)': poolTotal,
         'YES %': yesPercent,
         'NO %': noPercent,
-        'Expires': formatDate(market.expiresAt),
         'Resolution': market.resolution || '-',
         'Resolved At': market.resolvedAt ? formatDate(market.resolvedAt) : '-',
         'Disputes': market.disputeCount || 0,
@@ -1949,7 +1945,7 @@ const MarketsDashboard: React.FC = () => {
                   <ArrowUpDown className="h-4 w-4 ml-2 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full">
+              <DropdownMenuContent align="start" className="w-[calc(100%-2rem)]">
                 {(Object.keys(rejectionCategoryLabels) as RejectionCategory[]).map((cat) => (
                   <DropdownMenuItem
                     key={cat}
