@@ -1130,7 +1130,7 @@ const MarketsDashboard: React.FC = () => {
                   </TableHead>
                   <TableHead className="w-[100px]">Status</TableHead>
                   <TableHead>Market</TableHead>
-                  <TableHead className="w-[130px]">
+                  <TableHead className="w-[90px]">
                     <button
                       onClick={() => handleSort('volume')}
                       className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'volume' ? 'text-[#06f6ff]' : ''}`}
@@ -1141,6 +1141,9 @@ const MarketsDashboard: React.FC = () => {
                       </span>
                     </button>
                   </TableHead>
+                  <TableHead className="w-[60px] text-center">Users</TableHead>
+                  <TableHead className="w-[60px] text-center">Avg</TableHead>
+                  <TableHead className="w-[80px] text-center">YES/NO</TableHead>
                   <TableHead className="w-[110px]">
                     <button
                       onClick={() => handleSort('expires')}
@@ -1192,15 +1195,19 @@ const MarketsDashboard: React.FC = () => {
                         </div>
                       </TableCell>
                       <TableCell className="py-4">
-                        <div className="space-y-1">
-                          <p className="font-semibold text-sm">${market.totalVolume.toLocaleString()}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>{market.participants} users</span>
-                            <span className="text-border">•</span>
-                            <span className="text-green-500">{yesPercent}%</span>
-                            <span className="text-muted-foreground">/</span>
-                            <span className="text-red-500">{100 - yesPercent}%</span>
-                          </div>
+                        <p className="font-semibold text-sm">${market.totalVolume.toLocaleString()}</p>
+                      </TableCell>
+                      <TableCell className="py-4 text-center">
+                        <span className="text-sm">{market.participants}</span>
+                      </TableCell>
+                      <TableCell className="py-4 text-center">
+                        <span className="text-sm">${market.participants > 0 ? Math.round(market.totalVolume / market.participants).toLocaleString() : 0}</span>
+                      </TableCell>
+                      <TableCell className="py-4 text-center">
+                        <div className="text-xs">
+                          <span className="text-green-500">{yesPercent}%</span>
+                          <span className="text-muted-foreground">/</span>
+                          <span className="text-red-500">{100 - yesPercent}%</span>
                         </div>
                       </TableCell>
                       <TableCell className="py-4">
