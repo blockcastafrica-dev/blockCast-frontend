@@ -96,6 +96,7 @@ interface Market {
   resolution?: 'YES' | 'NO';
   resolvedAt?: Date;
   resolvedBy?: string;
+  resolutionSource?: string;
   disputeStatus?: 'none' | 'pending' | 'resolved';
   disputeCount?: number;
   disputes?: Dispute[];
@@ -797,8 +798,8 @@ const MarketsDashboard: React.FC = () => {
           <Button
             type="button"
             size="sm"
-            variant="outline"
-            className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/10"
+            style={{ backgroundColor: '#eab308', color: 'black' }}
+            className="h-6 px-2 text-xs font-semibold hover:opacity-90"
             onClick={(e) => {
               e.stopPropagation();
               setReviewMarket(market);
@@ -828,8 +829,8 @@ const MarketsDashboard: React.FC = () => {
           <Button
             type="button"
             size="sm"
-            variant="outline"
-            className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/10"
+            style={{ backgroundColor: '#eab308', color: 'black' }}
+            className="h-6 px-2 text-xs font-semibold hover:opacity-90"
             onClick={(e) => {
               e.stopPropagation();
               setReviewMarket(market);
@@ -1081,8 +1082,21 @@ const MarketsDashboard: React.FC = () => {
                   </TableHead>
                   <TableHead className="w-[105px]">Status</TableHead>
                   <TableHead>Market</TableHead>
-                  <TableHead className="w-[85px]">Category</TableHead>
-                  <TableHead className="w-[75px] text-center">
+                  <TableHead className="w-[75px]">Category</TableHead>
+                  <TableHead className="w-[85px]">Creator</TableHead>
+                  <TableHead className="w-[70px]">Created</TableHead>
+                  <TableHead className="w-[70px]">
+                    <button
+                      onClick={() => handleSort('expires')}
+                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'expires' ? 'text-[#06f6ff]' : ''}`}
+                    >
+                      Expires
+                      <span className={sortColumn === 'expires' ? 'text-[#06f6ff]' : 'opacity-50'}>
+                        {sortColumn === 'expires' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </TableHead>
+                  <TableHead className="w-[65px] text-center">
                     <button
                       onClick={() => handleSort('volume')}
                       className={`flex items-center justify-center gap-1 w-full transition-colors hover:text-[#06f6ff] ${sortColumn === 'volume' ? 'text-[#06f6ff]' : ''}`}
@@ -1093,6 +1107,7 @@ const MarketsDashboard: React.FC = () => {
                       </span>
                     </button>
                   </TableHead>
+                  <TableHead className="w-[55px] text-center">Avg</TableHead>
                   <TableHead className="w-[55px] text-center">
                     <button
                       onClick={() => handleSort('participants')}
@@ -1104,20 +1119,10 @@ const MarketsDashboard: React.FC = () => {
                       </span>
                     </button>
                   </TableHead>
-                  <TableHead className="w-[80px]">YES/NO</TableHead>
-                  <TableHead className="w-[80px]">
-                    <button
-                      onClick={() => handleSort('expires')}
-                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'expires' ? 'text-[#06f6ff]' : ''}`}
-                    >
-                      Expires
-                      <span className={sortColumn === 'expires' ? 'text-[#06f6ff]' : 'opacity-50'}>
-                        {sortColumn === 'expires' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
-                      </span>
-                    </button>
-                  </TableHead>
-                  <TableHead className="w-[70px] text-center">Resolution</TableHead>
-                  <TableHead className="w-[185px]">Actions</TableHead>
+                  <TableHead className="w-[90px]">YES/NO Pool</TableHead>
+                  <TableHead className="w-[60px] text-center">Result</TableHead>
+                  <TableHead className="w-[80px]">Source</TableHead>
+                  <TableHead className="w-[150px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1150,41 +1155,43 @@ const MarketsDashboard: React.FC = () => {
                       <TableCell>
                         <Badge variant="outline" className="text-xs px-1.5 py-0.5">{market.category}</Badge>
                       </TableCell>
-                      <TableCell className="font-medium text-center text-xs">
-                        ${market.totalVolume.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-center text-xs">{market.participants}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1">
-                          <div className="w-10 h-2 bg-muted rounded-full overflow-hidden flex-shrink-0">
-                            <div
-                              className="h-full bg-green-500"
-                              style={{ width: `${yesPercent}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-muted-foreground">{yesPercent}%</span>
-                        </div>
+                        <code className="text-xs bg-muted px-1 py-0.5 rounded">{market.creator}</code>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs">{formatDate(market.createdAt)}</span>
                       </TableCell>
                       <TableCell>
                         <span className="text-xs">{formatDate(market.expiresAt)}</span>
                       </TableCell>
+                      <TableCell className="font-medium text-center text-xs">
+                        ${market.totalVolume.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="text-center text-xs">
+                        ${market.participants > 0 ? Math.round(market.totalVolume / market.participants) : 0}
+                      </TableCell>
+                      <TableCell className="text-center text-xs">{market.participants}</TableCell>
+                      <TableCell>
+                        <div className="text-xs">
+                          <span className="text-green-500">${market.yesPool.toLocaleString()}</span>
+                          <span className="text-muted-foreground">/</span>
+                          <span className="text-red-500">${market.noPool.toLocaleString()}</span>
+                        </div>
+                      </TableCell>
                       <TableCell className="text-center">
                         {market.resolution ? (
-                          <div className="flex flex-col gap-0.5 items-center">
-                            <Badge className={`${market.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'} text-xs px-1.5 py-0`}>
-                              {market.resolution}
-                            </Badge>
-                            {market.disputeStatus === 'pending' && (
-                              <span className="text-[10px] text-yellow-500">
-                                {market.disputeCount} dispute
-                              </span>
-                            )}
-                            {market.resolvedAt && (
-                              <span className="text-[10px] text-muted-foreground">
-                                {formatTimeAgo(market.resolvedAt)}
-                              </span>
-                            )}
-                          </div>
+                          <Badge className={`${market.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'} text-xs px-1.5 py-0`}>
+                            {market.resolution}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {market.resolutionSource ? (
+                          <span className="text-xs truncate max-w-[70px] block" title={market.resolutionSource}>
+                            {market.resolutionSource.length > 10 ? market.resolutionSource.slice(0, 10) + '...' : market.resolutionSource}
+                          </span>
                         ) : (
                           <span className="text-muted-foreground text-xs">-</span>
                         )}
