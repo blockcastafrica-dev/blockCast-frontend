@@ -50,7 +50,8 @@ import {
   Activity,
   Info,
   MessageSquare,
-  FileQuestion
+  FileQuestion,
+  Tag
 } from 'lucide-react';
 import {
   DropdownMenu,
