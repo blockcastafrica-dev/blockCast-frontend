@@ -1263,7 +1263,7 @@ const MarketsDashboard: React.FC = () => {
 
       {/* View Market Dialog - Enhanced */}
       <Dialog open={!!viewMarket} onOpenChange={() => setViewMarket(null)}>
-        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Info className="h-5 w-5 text-[#06f6ff]" />
