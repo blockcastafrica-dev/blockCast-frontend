@@ -1505,7 +1505,7 @@ const MarketsDashboard: React.FC = () => {
                 <p className="text-sm font-medium">{disputeMarket.claim}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-sm text-muted-foreground">Current Resolution:</span>
-                  <Badge className={disputeMarket.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'}>
+                  <Badge className={disputeMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                     {disputeMarket.resolution}
                   </Badge>
                 </div>
@@ -1596,7 +1596,7 @@ const MarketsDashboard: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-4 mt-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Current Resolution:</span>
-                    <Badge className={reviewMarket.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'}>
+                    <Badge className={reviewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                       {reviewMarket.resolution}
                     </Badge>
                   </div>
