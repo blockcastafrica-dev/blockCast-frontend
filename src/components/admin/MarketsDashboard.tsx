@@ -34,7 +34,16 @@ import {
   ArrowUpDown,
   Download,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  DollarSign,
+  Users,
+  AlertCircle,
+  Filter,
+  Link,
+  Scale,
+  RotateCcw,
+  Ban,
+  ExternalLink
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -45,6 +54,20 @@ import {
 import { toast } from 'sonner';
 
 type MarketStatus = 'pending' | 'active' | 'expired' | 'disputable' | 'resolved';
+type DisputeCategory = 'incorrect_resolution' | 'market_manipulation' | 'invalid_market' | 'other';
+
+interface Dispute {
+  id: string;
+  filedBy: string;
+  filedAt: Date;
+  category: DisputeCategory;
+  reason: string;
+  evidence: string[];
+  status: 'pending' | 'resolved';
+  resolvedAt?: Date;
+  resolvedBy?: string;
+  resolution?: 'upheld' | 'overturned' | 'voided';
+}
 
 interface Market {
   id: string;
@@ -65,7 +88,15 @@ interface Market {
   resolvedBy?: string;
   disputeStatus?: 'none' | 'pending' | 'resolved';
   disputeCount?: number;
+  disputes?: Dispute[];
 }
+
+const disputeCategoryLabels: Record<DisputeCategory, string> = {
+  incorrect_resolution: 'Incorrect Resolution',
+  market_manipulation: 'Market Manipulation',
+  invalid_market: 'Invalid Market',
+  other: 'Other',
+};
 
 const statusConfig: Record<MarketStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: 'Approval Pending', color: 'bg-yellow-500 text-black', icon: Clock },
@@ -81,11 +112,15 @@ type SortDirection = 'asc' | 'desc';
 const MarketsDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<MarketStatus | 'all'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>([]);
   const [viewMarket, setViewMarket] = useState<Market | null>(null);
   const [resolveMarket, setResolveMarket] = useState<Market | null>(null);
   const [disputeMarket, setDisputeMarket] = useState<Market | null>(null);
   const [disputeReason, setDisputeReason] = useState('');
+  const [disputeCategory, setDisputeCategory] = useState<DisputeCategory>('incorrect_resolution');
+  const [disputeEvidence, setDisputeEvidence] = useState('');
+  const [reviewMarket, setReviewMarket] = useState<Market | null>(null);
   const [confirmAction, setConfirmAction] = useState<{ type: 'approve' | 'reject'; markets: string[] } | null>(null);
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -227,6 +262,20 @@ const MarketsDashboard: React.FC = () => {
       resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'pending',
       disputeCount: 1,
+      disputes: [
+        {
+          id: 'disp1',
+          filedBy: '0x9c5d...a8b9',
+          filedAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+          category: 'incorrect_resolution',
+          reason: 'Netflix stock never reached $800 in Q4 2024. The highest price was $785.50 on December 15th. The resolution should be NO, not YES.',
+          evidence: [
+            'https://finance.yahoo.com/quote/NFLX/history',
+            'https://www.tradingview.com/chart/?symbol=NASDAQ:NFLX'
+          ],
+          status: 'pending',
+        }
+      ],
     },
     // Resolved markets
     {
@@ -437,11 +486,23 @@ const MarketsDashboard: React.FC = () => {
     },
   ];
 
+  // Get unique categories from all markets
+  const categories = Array.from(new Set(allMarkets.map(m => m.category))).sort();
+
+  // Calculate summary stats
+  const summaryStats = {
+    totalVolume: allMarkets.reduce((sum, m) => sum + m.totalVolume, 0),
+    totalUsers: allMarkets.reduce((sum, m) => sum + m.participants, 0),
+    needsAction: allMarkets.filter(m => m.status === 'pending' || m.status === 'expired').length,
+    pendingDisputes: allMarkets.filter(m => m.disputeStatus === 'pending').length,
+  };
+
   const filteredMarkets = allMarkets.filter(market => {
     const matchesSearch = market.claim.toLowerCase().includes(searchQuery.toLowerCase()) ||
       market.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || market.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesCategory = categoryFilter === 'all' || market.category === categoryFilter;
+    return matchesSearch && matchesStatus && matchesCategory;
   });
 
   // Sort markets
@@ -477,6 +538,11 @@ const MarketsDashboard: React.FC = () => {
   // Reset to page 1 when filters change
   const handleFilterChange = (status: MarketStatus | 'all') => {
     setStatusFilter(status);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setCategoryFilter(category);
     setCurrentPage(1);
   };
 
@@ -585,6 +651,19 @@ const MarketsDashboard: React.FC = () => {
     toast.success('Dispute filed successfully');
     setDisputeMarket(null);
     setDisputeReason('');
+    setDisputeCategory('incorrect_resolution');
+    setDisputeEvidence('');
+  };
+
+  const handleResolveDispute = (resolution: 'upheld' | 'overturned' | 'voided') => {
+    if (!reviewMarket) return;
+    const messages = {
+      upheld: 'Original resolution upheld. Dispute rejected.',
+      overturned: 'Resolution overturned. Payouts will be recalculated.',
+      voided: 'Market voided. All participants will be refunded.',
+    };
+    toast.success(messages[resolution]);
+    setReviewMarket(null);
   };
 
   const formatTimeAgo = (date: Date) => {
@@ -638,7 +717,16 @@ const MarketsDashboard: React.FC = () => {
         );
       case 'disputable':
         return market.disputeStatus === 'pending' ? (
-          <Button size="sm" variant="outline" className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/10"
+            onClick={(e) => {
+              e.stopPropagation();
+              setReviewMarket(market);
+            }}
+          >
             Review
           </Button>
         ) : (
@@ -660,7 +748,16 @@ const MarketsDashboard: React.FC = () => {
             Dispute
           </Button>
         ) : (
-          <Button size="sm" variant="outline" className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-6 px-2 text-xs text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/10"
+            onClick={(e) => {
+              e.stopPropagation();
+              setReviewMarket(market);
+            }}
+          >
             Review
           </Button>
         );
@@ -672,6 +769,67 @@ const MarketsDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Summary Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-gradient-to-br from-[#06f6ff]/10 to-transparent border-[#06f6ff]/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Volume</p>
+                <p className="text-2xl font-bold text-[#06f6ff]">${summaryStats.totalVolume.toLocaleString()}</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-[#06f6ff]/20 flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-[#06f6ff]" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-green-500/10 to-transparent border-green-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Users</p>
+                <p className="text-2xl font-bold text-green-500">{summaryStats.totalUsers.toLocaleString()}</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                <Users className="h-5 w-5 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-orange-500/10 to-transparent border-orange-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Needs Action</p>
+                <p className="text-2xl font-bold text-orange-500">{summaryStats.needsAction}</p>
+                <p className="text-xs text-muted-foreground">Pending + Expired</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-orange-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-yellow-500/10 to-transparent border-yellow-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Pending Disputes</p>
+                <p className="text-2xl font-bold text-yellow-500">{summaryStats.pendingDisputes}</p>
+                <p className="text-xs text-muted-foreground">Awaiting review</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                <Flag className="h-5 w-5 text-yellow-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Header with filters */}
       <Card>
         <CardHeader className="pb-4">
@@ -707,6 +865,25 @@ const MarketsDashboard: React.FC = () => {
                   className="pl-9"
                 />
               </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className={`h-9 gap-2 ${categoryFilter !== 'all' ? 'border-[#06f6ff]/50 text-[#06f6ff]' : ''}`}>
+                    <Filter className="h-4 w-4" />
+                    {categoryFilter === 'all' ? 'All Categories' : categoryFilter}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleCategoryChange('all')}>
+                    All Categories
+                  </DropdownMenuItem>
+                  {categories.map((category) => (
+                    <DropdownMenuItem key={category} onClick={() => handleCategoryChange(category)}>
+                      {category}
+                      {categoryFilter === category && <span className="ml-2 text-[#06f6ff]">✓</span>}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="h-9 gap-2">
@@ -1143,9 +1320,9 @@ const MarketsDashboard: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dispute Dialog */}
-      <Dialog open={!!disputeMarket} onOpenChange={() => { setDisputeMarket(null); setDisputeReason(''); }}>
-        <DialogContent>
+      {/* Enhanced Dispute Dialog */}
+      <Dialog open={!!disputeMarket} onOpenChange={() => { setDisputeMarket(null); setDisputeReason(''); setDisputeCategory('incorrect_resolution'); setDisputeEvidence(''); }}>
+        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Flag className="h-5 w-5 text-yellow-500" />
@@ -1166,23 +1343,201 @@ const MarketsDashboard: React.FC = () => {
                   </Badge>
                 </div>
               </div>
+
+              {/* Dispute Category */}
+              <div>
+                <label className="text-sm font-medium">Dispute Category</label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full mt-2 justify-between">
+                      {disputeCategoryLabels[disputeCategory]}
+                      <ArrowUpDown className="h-4 w-4 ml-2 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full">
+                    {(Object.keys(disputeCategoryLabels) as DisputeCategory[]).map((cat) => (
+                      <DropdownMenuItem key={cat} onClick={() => setDisputeCategory(cat)}>
+                        {disputeCategoryLabels[cat]}
+                        {disputeCategory === cat && <span className="ml-auto text-[#06f6ff]">✓</span>}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Reason */}
               <div>
                 <label className="text-sm font-medium">Reason for Dispute</label>
                 <Textarea
-                  placeholder="Provide detailed reasoning..."
+                  placeholder="Provide detailed reasoning for why this resolution is incorrect..."
                   value={disputeReason}
                   onChange={(e) => setDisputeReason(e.target.value)}
                   className="mt-2"
                   rows={4}
                 />
               </div>
+
+              {/* Evidence Links */}
+              <div>
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Link className="h-4 w-4" />
+                  Evidence Links
+                </label>
+                <Textarea
+                  placeholder="Paste links to supporting evidence (one per line)&#10;e.g., https://finance.yahoo.com/quote/NFLX"
+                  value={disputeEvidence}
+                  onChange={(e) => setDisputeEvidence(e.target.value)}
+                  className="mt-2 font-mono text-xs"
+                  rows={3}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Add links to price charts, news articles, or other verifiable sources
+                </p>
+              </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setDisputeMarket(null); setDisputeReason(''); }}>Cancel</Button>
+            <Button variant="outline" onClick={() => { setDisputeMarket(null); setDisputeReason(''); setDisputeCategory('incorrect_resolution'); setDisputeEvidence(''); }}>
+              Cancel
+            </Button>
             <Button className="bg-yellow-500 text-black hover:bg-yellow-600" onClick={handleInitiateDispute}>
               <Flag className="h-4 w-4 mr-1" />
               Submit Dispute
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Review Dispute Dialog */}
+      <Dialog open={!!reviewMarket} onOpenChange={() => setReviewMarket(null)}>
+        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Scale className="h-5 w-5 text-yellow-500" />
+              Review Dispute
+            </DialogTitle>
+            <DialogDescription>
+              Review the dispute details and decide on the resolution.
+            </DialogDescription>
+          </DialogHeader>
+          {reviewMarket && (
+            <div className="space-y-4">
+              {/* Market Info */}
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="font-medium">{reviewMarket.claim}</p>
+                <p className="text-sm text-muted-foreground mt-1">{reviewMarket.description}</p>
+                <div className="flex flex-wrap items-center gap-4 mt-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Current Resolution:</span>
+                    <Badge className={reviewMarket.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'}>
+                      {reviewMarket.resolution}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Volume:</span>
+                    <span className="font-semibold">${reviewMarket.totalVolume.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dispute Details */}
+              {reviewMarket.disputes && reviewMarket.disputes.length > 0 ? (
+                <div className="border border-yellow-500/30 rounded-lg overflow-hidden">
+                  <div className="bg-yellow-500/10 px-4 py-2 border-b border-yellow-500/30">
+                    <p className="font-medium text-yellow-500 flex items-center gap-2">
+                      <Flag className="h-4 w-4" />
+                      Dispute #{reviewMarket.disputes.length}
+                    </p>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Filed by:</span>
+                        <code className="bg-muted px-2 py-0.5 rounded text-xs">{reviewMarket.disputes[0].filedBy}</code>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Filed:</span>
+                        <span>{formatTimeAgo(reviewMarket.disputes[0].filedAt)}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <Badge variant="outline" className="text-yellow-500 border-yellow-500/30">
+                        {disputeCategoryLabels[reviewMarket.disputes[0].category]}
+                      </Badge>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium mb-1">Reason:</p>
+                      <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+                        {reviewMarket.disputes[0].reason}
+                      </p>
+                    </div>
+                    {reviewMarket.disputes[0].evidence && reviewMarket.disputes[0].evidence.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                          <Link className="h-4 w-4" />
+                          Evidence ({reviewMarket.disputes[0].evidence.length})
+                        </p>
+                        <div className="space-y-1">
+                          {reviewMarket.disputes[0].evidence.map((url, idx) => (
+                            <a
+                              key={idx}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-sm text-[#06f6ff] hover:underline"
+                            >
+                              <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">{url}</span>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 bg-muted/50 rounded-lg text-center">
+                  <p className="text-sm text-muted-foreground">No dispute details available</p>
+                </div>
+              )}
+
+              {/* Resolution Warning */}
+              {reviewMarket.totalVolume > 5000 && (
+                <div className="p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+                  <p className="text-sm text-orange-500 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    High-volume market. Resolution will affect {reviewMarket.participants} participants.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2 mt-4">
+            <Button variant="outline" onClick={() => setReviewMarket(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="outline"
+              className="border-green-500/50 text-green-500 hover:bg-green-500/10"
+              onClick={() => handleResolveDispute('upheld')}
+            >
+              <CheckCircle className="h-4 w-4 mr-1" />
+              Uphold Original
+            </Button>
+            <Button
+              variant="outline"
+              className="border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10"
+              onClick={() => handleResolveDispute('overturned')}
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Overturn
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleResolveDispute('voided')}
+            >
+              <Ban className="h-4 w-4 mr-1" />
+              Void Market
             </Button>
           </DialogFooter>
         </DialogContent>
