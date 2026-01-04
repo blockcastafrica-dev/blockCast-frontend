@@ -43,7 +43,14 @@ import {
   Scale,
   RotateCcw,
   Ban,
-  ExternalLink
+  ExternalLink,
+  Calendar,
+  User,
+  Hash,
+  Activity,
+  Info,
+  MessageSquare,
+  FileQuestion
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -63,7 +70,8 @@ interface Dispute {
   category: DisputeCategory;
   reason: string;
   evidence: string[];
-  status: 'pending' | 'resolved';
+  status: 'pending' | 'needs_evidence' | 'resolved';
+  adminNotes?: string;
   resolvedAt?: Date;
   resolvedBy?: string;
   resolution?: 'upheld' | 'overturned' | 'voided';
@@ -121,6 +129,8 @@ const MarketsDashboard: React.FC = () => {
   const [disputeCategory, setDisputeCategory] = useState<DisputeCategory>('incorrect_resolution');
   const [disputeEvidence, setDisputeEvidence] = useState('');
   const [reviewMarket, setReviewMarket] = useState<Market | null>(null);
+  const [reviewAction, setReviewAction] = useState<'uphold' | 'request_evidence' | null>(null);
+  const [adminNotes, setAdminNotes] = useState('');
   const [confirmAction, setConfirmAction] = useState<{ type: 'approve' | 'reject'; markets: string[] } | null>(null);
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -657,13 +667,41 @@ const MarketsDashboard: React.FC = () => {
 
   const handleResolveDispute = (resolution: 'upheld' | 'overturned' | 'voided') => {
     if (!reviewMarket) return;
+
+    if (resolution === 'upheld' && !adminNotes.trim()) {
+      toast.error('Please provide a reason for rejecting the dispute');
+      return;
+    }
+
     const messages = {
-      upheld: 'Original resolution upheld. Dispute rejected.',
+      upheld: 'Original resolution upheld. Dispute rejected with reason provided.',
       overturned: 'Resolution overturned. Payouts will be recalculated.',
       voided: 'Market voided. All participants will be refunded.',
     };
     toast.success(messages[resolution]);
     setReviewMarket(null);
+    setReviewAction(null);
+    setAdminNotes('');
+  };
+
+  const handleRequestMoreEvidence = () => {
+    if (!reviewMarket) return;
+
+    if (!adminNotes.trim()) {
+      toast.error('Please specify what additional evidence is needed');
+      return;
+    }
+
+    toast.success('Request for additional evidence sent to disputer');
+    setReviewMarket(null);
+    setReviewAction(null);
+    setAdminNotes('');
+  };
+
+  const closeReviewDialog = () => {
+    setReviewMarket(null);
+    setReviewAction(null);
+    setAdminNotes('');
   };
 
   const formatTimeAgo = (date: Date) => {
@@ -1185,72 +1223,192 @@ const MarketsDashboard: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* View Market Dialog */}
+      {/* View Market Dialog - Enhanced */}
       <Dialog open={!!viewMarket} onOpenChange={() => setViewMarket(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Market Details</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Info className="h-5 w-5 text-[#06f6ff]" />
+              Market Details
+            </DialogTitle>
+            <DialogDescription>
+              Complete information about this prediction market.
+            </DialogDescription>
           </DialogHeader>
           {viewMarket && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
+            <div className="space-y-6">
+              {/* Status & Category Row */}
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge className={statusConfig[viewMarket.status].color}>
                   {statusConfig[viewMarket.status].label}
                 </Badge>
                 <Badge variant="outline">{viewMarket.category}</Badge>
+                <Badge variant="outline" className="font-mono text-xs">
+                  <Hash className="h-3 w-3 mr-1" />
+                  {viewMarket.id}
+                </Badge>
                 {viewMarket.resolution && (
                   <Badge className={viewMarket.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'}>
                     Resolved: {viewMarket.resolution}
                   </Badge>
                 )}
               </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Claim</label>
-                <p className="mt-1 font-medium">{viewMarket.claim}</p>
+
+              {/* Claim & Description */}
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="font-semibold text-lg">{viewMarket.claim}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{viewMarket.description}</p>
               </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Description</label>
-                <p className="mt-1 text-sm">{viewMarket.description}</p>
+
+              {/* Pool Visualization */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-green-500 font-semibold">YES ${viewMarket.yesPool.toLocaleString()}</span>
+                  <span className="text-muted-foreground">Pool Distribution</span>
+                  <span className="text-red-500 font-semibold">NO ${viewMarket.noPool.toLocaleString()}</span>
+                </div>
+                <div className="h-4 bg-muted rounded-full overflow-hidden flex">
+                  <div
+                    className="bg-green-500 h-full transition-all"
+                    style={{ width: `${(viewMarket.yesPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }}
+                  />
+                  <div
+                    className="bg-red-500 h-full transition-all"
+                    style={{ width: `${(viewMarket.noPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{Math.round((viewMarket.yesPool / (viewMarket.yesPool + viewMarket.noPool)) * 100)}%</span>
+                  <span>{Math.round((viewMarket.noPool / (viewMarket.yesPool + viewMarket.noPool)) * 100)}%</span>
+                </div>
               </div>
+
+              {/* Key Metrics */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Volume</label>
-                  <p className="mt-1 font-semibold">${viewMarket.totalVolume.toLocaleString()}</p>
+                <div className="p-3 bg-muted/50 rounded-lg text-center">
+                  <DollarSign className="h-5 w-5 mx-auto mb-1 text-[#06f6ff]" />
+                  <p className="text-xs text-muted-foreground">Total Volume</p>
+                  <p className="font-bold">${viewMarket.totalVolume.toLocaleString()}</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Participants</label>
-                  <p className="mt-1 font-semibold">{viewMarket.participants}</p>
+                <div className="p-3 bg-muted/50 rounded-lg text-center">
+                  <Users className="h-5 w-5 mx-auto mb-1 text-green-500" />
+                  <p className="text-xs text-muted-foreground">Participants</p>
+                  <p className="font-bold">{viewMarket.participants}</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">YES Pool</label>
-                  <p className="mt-1 font-semibold text-green-500">${viewMarket.yesPool.toLocaleString()}</p>
+                <div className="p-3 bg-muted/50 rounded-lg text-center">
+                  <Activity className="h-5 w-5 mx-auto mb-1 text-yellow-500" />
+                  <p className="text-xs text-muted-foreground">Disputes</p>
+                  <p className="font-bold">{viewMarket.disputeCount || 0}</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">NO Pool</label>
-                  <p className="mt-1 font-semibold text-red-500">${viewMarket.noPool.toLocaleString()}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Creator</label>
-                  <p className="mt-1 font-mono text-sm">{viewMarket.creator}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Expires</label>
-                  <p className="mt-1">{formatDate(viewMarket.expiresAt)}</p>
+                <div className="p-3 bg-muted/50 rounded-lg text-center">
+                  <TrendingUp className="h-5 w-5 mx-auto mb-1 text-purple-500" />
+                  <p className="text-xs text-muted-foreground">Avg Trade</p>
+                  <p className="font-bold">
+                    ${viewMarket.participants > 0 ? Math.round(viewMarket.totalVolume / viewMarket.participants).toLocaleString() : 0}
+                  </p>
                 </div>
               </div>
+
+              {/* Timeline */}
+              <div className="border border-border rounded-lg p-4">
+                <p className="text-sm font-semibold mb-3 flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Timeline
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-blue-500" />
+                      <span className="text-muted-foreground">Created</span>
+                    </div>
+                    <span>{formatDate(viewMarket.createdAt)} ({formatTimeAgo(viewMarket.createdAt)})</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${new Date() > viewMarket.expiresAt ? 'bg-red-500' : 'bg-orange-500'}`} />
+                      <span className="text-muted-foreground">Expires</span>
+                    </div>
+                    <span className={new Date() > viewMarket.expiresAt ? 'text-red-500' : ''}>
+                      {formatDate(viewMarket.expiresAt)}
+                      {new Date() > viewMarket.expiresAt ? ' (Expired)' : ''}
+                    </span>
+                  </div>
+                  {viewMarket.resolvedAt && (
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <span className="text-muted-foreground">Resolved</span>
+                      </div>
+                      <span>{formatDate(viewMarket.resolvedAt)} ({formatTimeAgo(viewMarket.resolvedAt)})</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Creator & Resolution Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="border border-border rounded-lg p-4">
+                  <p className="text-sm font-semibold mb-2 flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Creator
+                  </p>
+                  <code className="text-xs bg-muted px-2 py-1 rounded">{viewMarket.creator}</code>
+                </div>
+                {viewMarket.resolvedBy && (
+                  <div className="border border-border rounded-lg p-4">
+                    <p className="text-sm font-semibold mb-2 flex items-center gap-2">
+                      <Gavel className="h-4 w-4" />
+                      Resolved By
+                    </p>
+                    <code className="text-xs bg-muted px-2 py-1 rounded">{viewMarket.resolvedBy}</code>
+                  </div>
+                )}
+              </div>
+
+              {/* Dispute History */}
+              {viewMarket.disputes && viewMarket.disputes.length > 0 && (
+                <div className="border border-yellow-500/30 rounded-lg p-4">
+                  <p className="text-sm font-semibold mb-3 flex items-center gap-2 text-yellow-500">
+                    <Flag className="h-4 w-4" />
+                    Dispute History ({viewMarket.disputes.length})
+                  </p>
+                  <div className="space-y-2">
+                    {viewMarket.disputes.map((dispute, idx) => (
+                      <div key={dispute.id} className="p-3 bg-muted/50 rounded text-sm">
+                        <div className="flex items-center justify-between mb-1">
+                          <Badge variant="outline" className="text-xs">
+                            {disputeCategoryLabels[dispute.category]}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">{formatTimeAgo(dispute.filedAt)}</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs truncate">{dispute.reason}</p>
+                        {dispute.resolution && (
+                          <Badge className={`mt-1 text-xs ${dispute.resolution === 'upheld' ? 'bg-green-600' : dispute.resolution === 'overturned' ? 'bg-yellow-600' : 'bg-red-600'}`}>
+                            {dispute.resolution.charAt(0).toUpperCase() + dispute.resolution.slice(1)}
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="flex-col sm:flex-row gap-2 mt-4">
             <Button variant="outline" onClick={() => setViewMarket(null)}>Close</Button>
             {viewMarket?.status === 'pending' && (
               <>
-                <Button className="bg-green-600 hover:bg-green-700">
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => setConfirmAction({ type: 'approve', markets: [viewMarket.id] })}
+                >
                   <CheckCircle className="h-4 w-4 mr-1" />
                   Approve
                 </Button>
-                <Button variant="destructive">
+                <Button
+                  variant="destructive"
+                  onClick={() => setConfirmAction({ type: 'reject', markets: [viewMarket.id] })}
+                >
                   <XCircle className="h-4 w-4 mr-1" />
                   Reject
                 </Button>
@@ -1260,6 +1418,15 @@ const MarketsDashboard: React.FC = () => {
               <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => { setViewMarket(null); setResolveMarket(viewMarket); }}>
                 <Gavel className="h-4 w-4 mr-1" />
                 Resolve Market
+              </Button>
+            )}
+            {viewMarket?.status === 'disputable' && viewMarket?.disputeStatus === 'pending' && (
+              <Button
+                className="bg-yellow-500 text-black hover:bg-yellow-600"
+                onClick={() => { setViewMarket(null); setReviewMarket(viewMarket); }}
+              >
+                <Scale className="h-4 w-4 mr-1" />
+                Review Dispute
               </Button>
             )}
           </DialogFooter>
@@ -1409,7 +1576,7 @@ const MarketsDashboard: React.FC = () => {
       </Dialog>
 
       {/* Review Dispute Dialog */}
-      <Dialog open={!!reviewMarket} onOpenChange={() => setReviewMarket(null)}>
+      <Dialog open={!!reviewMarket} onOpenChange={closeReviewDialog}>
         <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -1502,7 +1669,7 @@ const MarketsDashboard: React.FC = () => {
               )}
 
               {/* Resolution Warning */}
-              {reviewMarket.totalVolume > 5000 && (
+              {reviewMarket.totalVolume > 5000 && !reviewAction && (
                 <div className="p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
                   <p className="text-sm text-orange-500 flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
@@ -1510,36 +1677,126 @@ const MarketsDashboard: React.FC = () => {
                   </p>
                 </div>
               )}
+
+              {/* Action Panel - Uphold with Reason */}
+              {reviewAction === 'uphold' && (
+                <div className="border border-green-500/30 rounded-lg p-4 space-y-3">
+                  <div className="flex items-center gap-2 text-green-500">
+                    <CheckCircle className="h-5 w-5" />
+                    <p className="font-medium">Uphold Original Resolution</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Explain why the dispute is being rejected. This will be visible to the disputer.
+                  </p>
+                  <div>
+                    <label className="text-sm font-medium">Rejection Reason *</label>
+                    <Textarea
+                      placeholder="e.g., The evidence provided does not support the claim. The price data shows..."
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      className="mt-2"
+                      rows={3}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => { setReviewAction(null); setAdminNotes(''); }}>
+                      Back
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => handleResolveDispute('upheld')}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                      Confirm & Reject Dispute
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Panel - Request More Evidence */}
+              {reviewAction === 'request_evidence' && (
+                <div className="border border-blue-500/30 rounded-lg p-4 space-y-3">
+                  <div className="flex items-center gap-2 text-blue-500">
+                    <FileQuestion className="h-5 w-5" />
+                    <p className="font-medium">Request More Evidence</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Specify what additional evidence is needed from the disputer.
+                  </p>
+                  <div>
+                    <label className="text-sm font-medium">Evidence Request *</label>
+                    <Textarea
+                      placeholder="e.g., Please provide official price data from a verified source showing the exact timestamp when the price was reached..."
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      className="mt-2"
+                      rows={3}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => { setReviewAction(null); setAdminNotes(''); }}>
+                      Back
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={handleRequestMoreEvidence}
+                    >
+                      <FileQuestion className="h-4 w-4 mr-1" />
+                      Send Request
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2 mt-4">
-            <Button variant="outline" onClick={() => setReviewMarket(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="outline"
-              className="border-green-500/50 text-green-500 hover:bg-green-500/10"
-              onClick={() => handleResolveDispute('upheld')}
-            >
-              <CheckCircle className="h-4 w-4 mr-1" />
-              Uphold Original
-            </Button>
-            <Button
-              variant="outline"
-              className="border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10"
-              onClick={() => handleResolveDispute('overturned')}
-            >
-              <RotateCcw className="h-4 w-4 mr-1" />
-              Overturn
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => handleResolveDispute('voided')}
-            >
-              <Ban className="h-4 w-4 mr-1" />
-              Void Market
-            </Button>
-          </DialogFooter>
+
+          {/* Footer Actions - Only show when no action selected */}
+          {!reviewAction && (
+            <div className="mt-4 space-y-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-500/50 text-blue-500 hover:bg-blue-500/10"
+                  onClick={() => setReviewAction('request_evidence')}
+                >
+                  <FileQuestion className="h-4 w-4 mr-1" />
+                  Request Info
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-green-500/50 text-green-500 hover:bg-green-500/10"
+                  onClick={() => setReviewAction('uphold')}
+                >
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  Uphold
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10"
+                  onClick={() => handleResolveDispute('overturned')}
+                >
+                  <RotateCcw className="h-4 w-4 mr-1" />
+                  Overturn
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleResolveDispute('voided')}
+                >
+                  <Ban className="h-4 w-4 mr-1" />
+                  Void
+                </Button>
+              </div>
+              <Button variant="outline" size="sm" className="w-full" onClick={closeReviewDialog}>
+                Cancel
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
