@@ -1261,213 +1261,107 @@ const MarketsDashboard: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* View Market Dialog - Enhanced */}
+      {/* View Market Dialog - Compact */}
       <Dialog open={!!viewMarket} onOpenChange={() => setViewMarket(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Info className="h-5 w-5 text-[#06f6ff]" />
-              Market Details
-            </DialogTitle>
-            <DialogDescription>
-              Complete information about this prediction market.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="max-w-md">
           {viewMarket && (
-            <div className="space-y-6">
-              {/* Status & Category Row */}
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge className={statusConfig[viewMarket.status].color}>
+            <>
+              {/* Header with badges */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                <Badge className={`${statusConfig[viewMarket.status].color} text-xs px-1.5 py-0.5`}>
                   {statusConfig[viewMarket.status].label}
                 </Badge>
-                <Badge variant="outline">{viewMarket.category}</Badge>
-                <Badge variant="outline" className="font-mono text-xs">
-                  <Hash className="h-3 w-3 mr-1" />
-                  {viewMarket.id}
-                </Badge>
+                <Badge variant="outline" className="text-xs px-1.5 py-0.5">{viewMarket.category}</Badge>
                 {viewMarket.resolution && (
-                  <Badge className={viewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
-                    Resolved: {viewMarket.resolution}
+                  <Badge className={`text-xs px-1.5 py-0.5 ${viewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+                    {viewMarket.resolution}
                   </Badge>
                 )}
               </div>
 
-              {/* Claim & Description */}
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="font-semibold text-lg">{viewMarket.claim}</p>
-                <p className="mt-2 text-sm text-muted-foreground">{viewMarket.description}</p>
-              </div>
+              {/* Title */}
+              <p className="font-semibold text-sm leading-tight">{viewMarket.claim}</p>
 
-              {/* Pool Visualization */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-green-500 font-semibold">YES ${viewMarket.yesPool.toLocaleString()}</span>
-                  <span className="text-muted-foreground">Pool Distribution</span>
-                  <span className="text-red-500 font-semibold">NO ${viewMarket.noPool.toLocaleString()}</span>
+              {/* Pool Bar */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-green-500">YES ${viewMarket.yesPool.toLocaleString()}</span>
+                  <span className="text-red-500">NO ${viewMarket.noPool.toLocaleString()}</span>
                 </div>
-                <div className="h-4 bg-muted rounded-full overflow-hidden flex">
-                  <div
-                    className="bg-green-500 h-full transition-all"
-                    style={{ width: `${(viewMarket.yesPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }}
-                  />
-                  <div
-                    className="bg-red-500 h-full transition-all"
-                    style={{ width: `${(viewMarket.noPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }}
-                  />
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{Math.round((viewMarket.yesPool / (viewMarket.yesPool + viewMarket.noPool)) * 100)}%</span>
-                  <span>{Math.round((viewMarket.noPool / (viewMarket.yesPool + viewMarket.noPool)) * 100)}%</span>
+                <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+                  <div className="bg-green-500 h-full" style={{ width: `${(viewMarket.yesPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }} />
+                  <div className="bg-red-500 h-full" style={{ width: `${(viewMarket.noPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }} />
                 </div>
               </div>
 
-              {/* Key Metrics */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-muted/50 rounded-lg text-center">
-                  <DollarSign className="h-5 w-5 mx-auto mb-1 text-[#06f6ff]" />
-                  <p className="text-xs text-muted-foreground">Total Volume</p>
+              {/* Stats Row */}
+              <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                <div className="bg-muted/50 rounded p-2">
+                  <p className="text-muted-foreground">Volume</p>
                   <p className="font-bold">${viewMarket.totalVolume.toLocaleString()}</p>
                 </div>
-                <div className="p-3 bg-muted/50 rounded-lg text-center">
-                  <Users className="h-5 w-5 mx-auto mb-1 text-green-500" />
-                  <p className="text-xs text-muted-foreground">Participants</p>
+                <div className="bg-muted/50 rounded p-2">
+                  <p className="text-muted-foreground">Users</p>
                   <p className="font-bold">{viewMarket.participants}</p>
                 </div>
-                <div className="p-3 bg-muted/50 rounded-lg text-center">
-                  <Activity className="h-5 w-5 mx-auto mb-1 text-yellow-500" />
-                  <p className="text-xs text-muted-foreground">Disputes</p>
+                <div className="bg-muted/50 rounded p-2">
+                  <p className="text-muted-foreground">Disputes</p>
                   <p className="font-bold">{viewMarket.disputeCount || 0}</p>
                 </div>
-                <div className="p-3 bg-muted/50 rounded-lg text-center">
-                  <TrendingUp className="h-5 w-5 mx-auto mb-1 text-purple-500" />
-                  <p className="text-xs text-muted-foreground">Avg Trade</p>
-                  <p className="font-bold">
-                    ${viewMarket.participants > 0 ? Math.round(viewMarket.totalVolume / viewMarket.participants).toLocaleString() : 0}
-                  </p>
+                <div className="bg-muted/50 rounded p-2">
+                  <p className="text-muted-foreground">Avg</p>
+                  <p className="font-bold">${viewMarket.participants > 0 ? Math.round(viewMarket.totalVolume / viewMarket.participants) : 0}</p>
                 </div>
               </div>
 
-              {/* Timeline */}
-              <div className="border border-border rounded-lg p-4">
-                <p className="text-sm font-semibold mb-3 flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Timeline
-                </p>
-                <div className="space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-blue-500" />
-                      <span className="text-muted-foreground">Created</span>
-                    </div>
-                    <span className="ml-4 sm:ml-0">{formatDate(viewMarket.createdAt)} ({formatTimeAgo(viewMarket.createdAt)})</span>
-                  </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${new Date() > viewMarket.expiresAt ? 'bg-red-500' : 'bg-orange-500'}`} />
-                      <span className="text-muted-foreground">Expires</span>
-                    </div>
-                    <span className={`ml-4 sm:ml-0 ${new Date() > viewMarket.expiresAt ? 'text-red-500' : ''}`}>
-                      {formatDate(viewMarket.expiresAt)}
-                      {new Date() > viewMarket.expiresAt ? ' (Expired)' : ''}
-                    </span>
-                  </div>
-                  {viewMarket.resolvedAt && (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500" />
-                        <span className="text-muted-foreground">Resolved</span>
-                      </div>
-                      <span className="ml-4 sm:ml-0">{formatDate(viewMarket.resolvedAt)} ({formatTimeAgo(viewMarket.resolvedAt)})</span>
-                    </div>
-                  )}
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Created</span>
+                  <span>{formatDate(viewMarket.createdAt)}</span>
                 </div>
-              </div>
-
-              {/* Creator & Resolution Info */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="border border-border rounded-lg p-4">
-                  <p className="text-sm font-semibold mb-2 flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    Creator
-                  </p>
-                  <code className="text-xs bg-muted px-2 py-1 rounded">{viewMarket.creator}</code>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Expires</span>
+                  <span className={new Date() > viewMarket.expiresAt ? 'text-red-500' : ''}>{formatDate(viewMarket.expiresAt)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Creator</span>
+                  <code className="bg-muted px-1 rounded">{viewMarket.creator}</code>
                 </div>
                 {viewMarket.resolvedBy && (
-                  <div className="border border-border rounded-lg p-4">
-                    <p className="text-sm font-semibold mb-2 flex items-center gap-2">
-                      <Gavel className="h-4 w-4" />
-                      Resolved By
-                    </p>
-                    <code className="text-xs bg-muted px-2 py-1 rounded">{viewMarket.resolvedBy}</code>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Resolver</span>
+                    <code className="bg-muted px-1 rounded">{viewMarket.resolvedBy}</code>
                   </div>
                 )}
               </div>
 
-              {/* Dispute History */}
+              {/* Dispute Info (if any) */}
               {viewMarket.disputes && viewMarket.disputes.length > 0 && (
-                <div className="border border-yellow-500/30 rounded-lg p-4">
-                  <p className="text-sm font-semibold mb-3 flex items-center gap-2 text-yellow-500">
-                    <Flag className="h-4 w-4" />
-                    Dispute History ({viewMarket.disputes.length})
-                  </p>
-                  <div className="space-y-2">
-                    {viewMarket.disputes.map((dispute, idx) => (
-                      <div key={dispute.id} className="p-3 bg-muted/50 rounded text-sm">
-                        <div className="flex items-center justify-between mb-1">
-                          <Badge variant="outline" className="text-xs">
-                            {disputeCategoryLabels[dispute.category]}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">{formatTimeAgo(dispute.filedAt)}</span>
-                        </div>
-                        <p className="text-muted-foreground text-xs truncate">{dispute.reason}</p>
-                        {dispute.resolution && (
-                          <Badge className={`mt-1 text-xs ${dispute.resolution === 'upheld' ? 'bg-green-600' : dispute.resolution === 'overturned' ? 'bg-yellow-600' : 'bg-red-600'}`}>
-                            {dispute.resolution.charAt(0).toUpperCase() + dispute.resolution.slice(1)}
-                          </Badge>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                <div className="border-t border-yellow-500/30 pt-2">
+                  <p className="text-xs text-yellow-500 font-medium mb-1">Dispute: {disputeCategoryLabels[viewMarket.disputes[0].category]}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{viewMarket.disputes[0].reason}</p>
                 </div>
               )}
-            </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" size="sm" className="flex-1" onClick={() => setViewMarket(null)}>Close</Button>
+                {viewMarket.status === 'pending' && (
+                  <>
+                    <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700" onClick={() => setConfirmAction({ type: 'approve', markets: [viewMarket.id] })}>Approve</Button>
+                    <Button size="sm" variant="destructive" className="flex-1" onClick={() => setConfirmAction({ type: 'reject', markets: [viewMarket.id] })}>Reject</Button>
+                  </>
+                )}
+                {viewMarket.status === 'expired' && (
+                  <Button size="sm" className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={() => { setViewMarket(null); setResolveMarket(viewMarket); }}>Resolve</Button>
+                )}
+                {viewMarket.status === 'disputable' && viewMarket.disputeStatus === 'pending' && (
+                  <Button size="sm" className="flex-1 bg-yellow-500 text-black hover:bg-yellow-600" onClick={() => { setViewMarket(null); setReviewMarket(viewMarket); }}>Review Dispute</Button>
+                )}
+              </div>
+            </>
           )}
-          <DialogFooter className="flex-col sm:flex-row gap-2 mt-4">
-            <Button variant="outline" onClick={() => setViewMarket(null)}>Close</Button>
-            {viewMarket?.status === 'pending' && (
-              <>
-                <Button
-                  className="bg-green-600 hover:bg-green-700"
-                  onClick={() => setConfirmAction({ type: 'approve', markets: [viewMarket.id] })}
-                >
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  Approve
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => setConfirmAction({ type: 'reject', markets: [viewMarket.id] })}
-                >
-                  <XCircle className="h-4 w-4 mr-1" />
-                  Reject
-                </Button>
-              </>
-            )}
-            {viewMarket?.status === 'expired' && (
-              <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => { setViewMarket(null); setResolveMarket(viewMarket); }}>
-                <Gavel className="h-4 w-4 mr-1" />
-                Resolve Market
-              </Button>
-            )}
-            {viewMarket?.status === 'disputable' && viewMarket?.disputeStatus === 'pending' && (
-              <Button
-                className="bg-yellow-500 text-black hover:bg-yellow-600"
-                onClick={() => { setViewMarket(null); setReviewMarket(viewMarket); }}
-              >
-                <Scale className="h-4 w-4 mr-1" />
-                Review Dispute
-              </Button>
-            )}
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 
