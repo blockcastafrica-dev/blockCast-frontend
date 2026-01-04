@@ -23,6 +23,12 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Search,
   CheckCircle,
   XCircle,
@@ -170,6 +176,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 0,
       yesPool: 500,
       noPool: 500,
+      resolutionSource: 'AI Research Papers',
     },
     {
       id: 'p2',
@@ -185,6 +192,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 0,
       yesPool: 250,
       noPool: 250,
+      resolutionSource: 'Yahoo Finance',
     },
     // Active markets
     {
@@ -201,6 +209,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 89,
       yesPool: 7500,
       noPool: 5000,
+      resolutionSource: 'CoinGecko',
     },
     {
       id: 'a2',
@@ -216,6 +225,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 156,
       yesPool: 6500,
       noPool: 1700,
+      resolutionSource: 'Apple Official',
     },
     // Expired markets (awaiting resolution)
     {
@@ -232,6 +242,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 234,
       yesPool: 9000,
       noPool: 6000,
+      resolutionSource: 'CoinMarketCap',
     },
     {
       id: 'e2',
@@ -247,6 +258,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 45,
       yesPool: 500,
       noPool: 300,
+      resolutionSource: 'Federal Reserve',
     },
     // Disputable markets (recently resolved, within dispute window)
     {
@@ -264,6 +276,7 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 8500,
       noPool: 10000,
       resolution: 'NO',
+      resolutionSource: 'CoinGecko',
       resolvedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
       resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
@@ -284,6 +297,7 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 6200,
       noPool: 3000,
       resolution: 'YES',
+      resolutionSource: 'Yahoo Finance',
       resolvedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
       resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'pending',
@@ -319,6 +333,7 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 28000,
       noPool: 17000,
       resolution: 'YES',
+      resolutionSource: 'AP News',
       resolvedAt: new Date('2024-11-06'),
       resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
@@ -339,6 +354,7 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 18000,
       noPool: 4000,
       resolution: 'YES',
+      resolutionSource: 'Apple.com',
       resolvedAt: new Date('2024-02-02'),
       resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'resolved',
@@ -359,6 +375,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 412,
       yesPool: 21000,
       noPool: 14000,
+      resolutionSource: 'SpaceX Official',
     },
     {
       id: 'a4',
@@ -374,6 +391,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 203,
       yesPool: 11200,
       noPool: 7500,
+      resolutionSource: 'Kitco',
     },
     {
       id: 'p3',
@@ -389,6 +407,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 0,
       yesPool: 1000,
       noPool: 1000,
+      resolutionSource: 'OpenAI Blog',
     },
     {
       id: 'r3',
@@ -405,6 +424,7 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 19600,
       noPool: 8400,
       resolution: 'YES',
+      resolutionSource: 'FIFA Official',
       resolvedAt: new Date('2024-07-14'),
       resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
@@ -424,6 +444,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 134,
       yesPool: 3920,
       noPool: 5880,
+      resolutionSource: 'SEC Filings',
     },
     {
       id: 'e3',
@@ -439,6 +460,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 89,
       yesPool: 1040,
       noPool: 4160,
+      resolutionSource: 'X Official',
     },
     {
       id: 'd3',
@@ -455,6 +477,7 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 29400,
       noPool: 12600,
       resolution: 'YES',
+      resolutionSource: 'NASDAQ',
       resolvedAt: new Date(Date.now() - 18 * 60 * 60 * 1000),
       resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
@@ -475,6 +498,7 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 3100,
       noPool: 12400,
       resolution: 'NO',
+      resolutionSource: 'USGS',
       resolvedAt: new Date('2025-01-01'),
       resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'none',
@@ -490,6 +514,7 @@ const MarketsDashboard: React.FC = () => {
       expiresAt: new Date('2025-12-31'),
       status: 'pending',
       marketType: 'binary',
+      resolutionSource: 'Company Reports',
       totalVolume: 0,
       participants: 0,
       yesPool: 500,
@@ -764,20 +789,30 @@ const MarketsDashboard: React.FC = () => {
     switch (market.status) {
       case 'pending':
         return (
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <Button
+              type="button"
               size="sm"
-              className="h-6 px-2 cursor-pointer font-medium text-xs"
+              className="h-8 px-3 cursor-pointer font-medium text-xs"
               style={{ backgroundColor: '#16a34a', color: 'white' }}
-              onClick={() => setConfirmAction({ type: 'approve', markets: [market.id] })}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setConfirmAction({ type: 'approve', markets: [market.id] });
+              }}
             >
               Approve
             </Button>
             <Button
+              type="button"
               size="sm"
               variant="destructive"
-              className="h-6 px-2 cursor-pointer font-medium text-xs"
-              onClick={() => setConfirmAction({ type: 'reject', markets: [market.id] })}
+              className="h-8 px-3 cursor-pointer font-medium text-xs"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setConfirmAction({ type: 'reject', markets: [market.id] });
+              }}
             >
               Reject
             </Button>
@@ -786,9 +821,14 @@ const MarketsDashboard: React.FC = () => {
       case 'expired':
         return (
           <Button
+            type="button"
             size="sm"
-            className="bg-orange-500 hover:bg-orange-600 h-6 px-2 text-xs"
-            onClick={() => setResolveMarket(market)}
+            className="bg-orange-500 hover:bg-orange-600 h-8 px-3 text-xs font-medium"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setResolveMarket(market);
+            }}
           >
             Resolve
           </Button>
@@ -799,8 +839,9 @@ const MarketsDashboard: React.FC = () => {
             type="button"
             size="sm"
             style={{ backgroundColor: '#eab308', color: 'black' }}
-            className="h-6 px-2 text-xs font-semibold hover:opacity-90"
+            className="h-8 px-3 text-xs font-semibold hover:opacity-90"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               setReviewMarket(market);
             }}
@@ -809,9 +850,14 @@ const MarketsDashboard: React.FC = () => {
           </Button>
         ) : (
           <Button
+            type="button"
             size="sm"
-            className="bg-purple-500 hover:bg-purple-600 h-6 px-2 text-xs"
-            onClick={() => setDisputeMarket(market)}
+            className="bg-purple-500 hover:bg-purple-600 h-8 px-3 text-xs font-medium"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setDisputeMarket(market);
+            }}
           >
             Dispute
           </Button>
@@ -819,9 +865,14 @@ const MarketsDashboard: React.FC = () => {
       case 'resolved':
         return market.disputeStatus !== 'pending' ? (
           <Button
+            type="button"
             size="sm"
-            className="bg-purple-500 hover:bg-purple-600 h-6 px-2 text-xs"
-            onClick={() => setDisputeMarket(market)}
+            className="bg-purple-500 hover:bg-purple-600 h-8 px-3 text-xs font-medium"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setDisputeMarket(market);
+            }}
           >
             Dispute
           </Button>
@@ -830,8 +881,9 @@ const MarketsDashboard: React.FC = () => {
             type="button"
             size="sm"
             style={{ backgroundColor: '#eab308', color: 'black' }}
-            className="h-6 px-2 text-xs font-semibold hover:opacity-90"
+            className="h-8 px-3 text-xs font-semibold hover:opacity-90"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               setReviewMarket(market);
             }}
@@ -1067,12 +1119,12 @@ const MarketsDashboard: React.FC = () => {
             })}
           </div>
 
-          {/* Desktop Table View */}
-          <div className="hidden lg:block overflow-hidden">
-            <Table className="table-fixed w-full">
+          {/* Desktop Table View - Clean Modern Design */}
+          <div className="hidden lg:block">
+            <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-8">
+                <TableRow className="border-b border-border/50 hover:bg-transparent">
+                  <TableHead className="w-10">
                     {statusFilter === 'pending' && (
                       <Checkbox
                         checked={selectedMarkets.length === sortedMarkets.filter(m => m.status === 'pending').length && selectedMarkets.length > 0}
@@ -1080,26 +1132,12 @@ const MarketsDashboard: React.FC = () => {
                       />
                     )}
                   </TableHead>
-                  <TableHead className="w-[105px]">Status</TableHead>
+                  <TableHead className="w-[100px]">Status</TableHead>
                   <TableHead>Market</TableHead>
-                  <TableHead className="w-[75px]">Category</TableHead>
-                  <TableHead className="w-[85px]">Creator</TableHead>
-                  <TableHead className="w-[70px]">Created</TableHead>
-                  <TableHead className="w-[70px]">
-                    <button
-                      onClick={() => handleSort('expires')}
-                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'expires' ? 'text-[#06f6ff]' : ''}`}
-                    >
-                      Expires
-                      <span className={sortColumn === 'expires' ? 'text-[#06f6ff]' : 'opacity-50'}>
-                        {sortColumn === 'expires' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
-                      </span>
-                    </button>
-                  </TableHead>
-                  <TableHead className="w-[65px] text-center">
+                  <TableHead className="w-[130px]">
                     <button
                       onClick={() => handleSort('volume')}
-                      className={`flex items-center justify-center gap-1 w-full transition-colors hover:text-[#06f6ff] ${sortColumn === 'volume' ? 'text-[#06f6ff]' : ''}`}
+                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'volume' ? 'text-[#06f6ff]' : ''}`}
                     >
                       Volume
                       <span className={sortColumn === 'volume' ? 'text-[#06f6ff]' : 'opacity-50'}>
@@ -1107,22 +1145,19 @@ const MarketsDashboard: React.FC = () => {
                       </span>
                     </button>
                   </TableHead>
-                  <TableHead className="w-[55px] text-center">Avg</TableHead>
-                  <TableHead className="w-[55px] text-center">
+                  <TableHead className="w-[110px]">
                     <button
-                      onClick={() => handleSort('participants')}
-                      className={`flex items-center justify-center gap-1 w-full transition-colors hover:text-[#06f6ff] ${sortColumn === 'participants' ? 'text-[#06f6ff]' : ''}`}
+                      onClick={() => handleSort('expires')}
+                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'expires' ? 'text-[#06f6ff]' : ''}`}
                     >
-                      Users
-                      <span className={sortColumn === 'participants' ? 'text-[#06f6ff]' : 'opacity-50'}>
-                        {sortColumn === 'participants' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      Timeline
+                      <span className={sortColumn === 'expires' ? 'text-[#06f6ff]' : 'opacity-50'}>
+                        {sortColumn === 'expires' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
                       </span>
                     </button>
                   </TableHead>
-                  <TableHead className="w-[90px]">YES/NO Pool</TableHead>
-                  <TableHead className="w-[60px] text-center">Result</TableHead>
-                  <TableHead className="w-[80px]">Source</TableHead>
-                  <TableHead className="w-[150px]">Actions</TableHead>
+                  <TableHead className="w-[80px] text-center">Result</TableHead>
+                  <TableHead className="w-[180px] text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1132,8 +1167,8 @@ const MarketsDashboard: React.FC = () => {
                     : 50;
 
                   return (
-                    <TableRow key={market.id}>
-                      <TableCell>
+                    <TableRow key={market.id} className="border-b border-border/30 hover:bg-muted/30">
+                      <TableCell className="py-4">
                         {market.status === 'pending' && (
                           <Checkbox
                             checked={selectedMarkets.includes(market.id)}
@@ -1141,70 +1176,68 @@ const MarketsDashboard: React.FC = () => {
                           />
                         )}
                       </TableCell>
-                      <TableCell>
-                        <Badge className={`${statusConfig[market.status].color} text-xs px-1.5 py-0.5`}>
+                      <TableCell className="py-4">
+                        <Badge className={`${statusConfig[market.status].color} text-xs`}>
                           {statusConfig[market.status].label}
                         </Badge>
                       </TableCell>
-                      <TableCell className="overflow-hidden">
-                        <div className="overflow-hidden">
-                          <p className="font-medium text-sm truncate">{market.claim}</p>
-                          <p className="text-xs text-muted-foreground truncate">{market.description}</p>
+                      <TableCell className="py-4">
+                        <div className="space-y-1">
+                          <p className="font-medium text-sm leading-tight">{market.claim}</p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge variant="outline" className="text-xs px-1.5 py-0">{market.category}</Badge>
+                            <span className="text-xs text-muted-foreground">by {market.creator}</span>
+                            {market.resolutionSource ? (
+                              <span className="text-xs text-[#06f6ff]">• {market.resolutionSource}</span>
+                            ) : (
+                              <span className="text-xs text-yellow-500">• No source</span>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-xs px-1.5 py-0.5">{market.category}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <code className="text-xs bg-muted px-1 py-0.5 rounded">{market.creator}</code>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{formatDate(market.createdAt)}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs">{formatDate(market.expiresAt)}</span>
-                      </TableCell>
-                      <TableCell className="font-medium text-center text-xs">
-                        ${market.totalVolume.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-center text-xs">
-                        ${market.participants > 0 ? Math.round(market.totalVolume / market.participants) : 0}
-                      </TableCell>
-                      <TableCell className="text-center text-xs">{market.participants}</TableCell>
-                      <TableCell>
-                        <div className="text-xs">
-                          <span className="text-green-500">${market.yesPool.toLocaleString()}</span>
-                          <span className="text-muted-foreground">/</span>
-                          <span className="text-red-500">${market.noPool.toLocaleString()}</span>
+                      <TableCell className="py-4">
+                        <div className="space-y-1">
+                          <p className="font-semibold text-sm">${market.totalVolume.toLocaleString()}</p>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>{market.participants} users</span>
+                            <span className="text-border">•</span>
+                            <span className="text-green-500">{yesPercent}%</span>
+                            <span className="text-muted-foreground">/</span>
+                            <span className="text-red-500">{100 - yesPercent}%</span>
+                          </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="py-4">
+                        <div className="text-xs space-y-1">
+                          <div>
+                            <span className="text-muted-foreground">Created: </span>
+                            <span className="font-medium">{formatDate(market.createdAt)}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Expires: </span>
+                            <span className="font-medium">{formatDate(market.expiresAt)}</span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4 text-center">
                         {market.resolution ? (
-                          <Badge className={`${market.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'} text-xs px-1.5 py-0`}>
+                          <Badge className={`${market.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'} text-white text-xs`}>
                             {market.resolution}
                           </Badge>
                         ) : (
                           <span className="text-muted-foreground text-xs">-</span>
                         )}
                       </TableCell>
-                      <TableCell>
-                        {market.resolutionSource ? (
-                          <span className="text-xs truncate max-w-[70px] block" title={market.resolutionSource}>
-                            {market.resolutionSource.length > 10 ? market.resolutionSource.slice(0, 10) + '...' : market.resolutionSource}
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground text-xs">-</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Badge
+                      <TableCell className="py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
                             variant="outline"
-                            className="cursor-pointer hover:bg-muted h-6 flex items-center px-2 text-xs"
+                            size="sm"
+                            className="h-8 px-3 text-xs"
                             onClick={() => setViewMarket(market)}
                           >
                             View
-                          </Badge>
+                          </Button>
                           {getActionButton(market)}
                         </div>
                       </TableCell>
