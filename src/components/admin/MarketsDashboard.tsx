@@ -1263,7 +1263,7 @@ const MarketsDashboard: React.FC = () => {
 
       {/* View Market Dialog - Enhanced */}
       <Dialog open={!!viewMarket} onOpenChange={() => setViewMarket(null)}>
-        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Info className="h-5 w-5 text-[#06f6ff]" />
@@ -1527,7 +1527,7 @@ const MarketsDashboard: React.FC = () => {
 
       {/* Enhanced Dispute Dialog */}
       <Dialog open={!!disputeMarket} onOpenChange={() => { setDisputeMarket(null); setDisputeReason(''); setDisputeCategory('incorrect_resolution'); setDisputeEvidence(''); }}>
-        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Flag className="h-5 w-5 text-yellow-500" />
@@ -1615,7 +1615,7 @@ const MarketsDashboard: React.FC = () => {
 
       {/* Review Dispute Dialog */}
       <Dialog open={!!reviewMarket} onOpenChange={closeReviewDialog}>
-        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Scale className="h-5 w-5 text-yellow-500" />
@@ -1840,7 +1840,7 @@ const MarketsDashboard: React.FC = () => {
 
       {/* Enhanced Approve Dialog */}
       <Dialog open={confirmAction?.type === 'approve'} onOpenChange={closeConfirmDialog}>
-        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-lg">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-500" />
@@ -1924,7 +1924,7 @@ const MarketsDashboard: React.FC = () => {
 
       {/* Enhanced Reject Dialog */}
       <Dialog open={confirmAction?.type === 'reject'} onOpenChange={closeConfirmDialog}>
-        <DialogContent className="top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 max-w-lg">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <XCircle className="h-5 w-5 text-red-500" />
