@@ -1,7 +1,66 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
+import {
+  treasuryService,
+  marketPoolService,
+  payoutService,
+  multiSigService,
+  treasuryTestHelper,
+  getTreasuryStats,
+  getTransactions,
+  getFeeConfig,
+  updateFeeConfig,
+  getPendingPayouts,
+  processPayout,
+  processAllPendingPayouts,
+  cancelPayout,
+  getPoolStats,
+  getMultiSigConfig,
+  getPendingWithdrawalRequests,
+  createWithdrawalRequest,
+  approveWithdrawalRequest,
+  rejectWithdrawalRequest,
+  cancelWithdrawalRequest,
+  getMultiSigStats,
+  Transaction as TreasuryTransaction,
+  TreasuryStats,
+  FeeConfig,
+  WithdrawalRequest,
+  MultiSigConfig,
+} from '@/services/treasury';
+
+// Make test helper available in browser console
+if (typeof window !== 'undefined') {
+  (window as any).treasuryTest = treasuryTestHelper;
+  (window as any).multiSigService = multiSigService;
+}
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Wallet,
   DollarSign,
@@ -9,13 +68,41 @@ import {
   TrendingDown,
   ArrowUpRight,
   ArrowDownRight,
-  Calendar,
   RefreshCw,
   Download,
   BarChart3,
   PieChart,
-  Activity
+  Activity,
+  Search,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  Send,
+  CheckCircle,
+  Clock,
+  AlertTriangle,
+  Percent,
+  ArrowUpDown,
+  ExternalLink,
+  Banknote,
+  CreditCard,
+  Eye,
+  XCircle,
+  FileText,
+  Calendar,
+  Settings,
+  Play,
+  MoreVertical,
+  Copy,
+  Check,
+  Shield,
+  Users,
+  ThumbsUp,
+  ThumbsDown,
+  UserCheck,
+  Timer
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Transaction {
   id: string;
@@ -26,22 +113,111 @@ interface Transaction {
   timestamp: Date;
   marketId?: string;
   marketClaim?: string;
-  status: 'completed' | 'pending';
+  status: 'completed' | 'pending' | 'processing';
+  txHash?: string;
 }
+
+type TransactionFilter = 'all' | 'fee' | 'payout' | 'deposit' | 'withdrawal';
+type SortColumn = 'amount' | 'timestamp' | null;
+type SortDirection = 'asc' | 'desc';
 
 const TreasuryDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [transactionFilter, setTransactionFilter] = useState<TransactionFilter>('all');
+  const [sortColumn, setSortColumn] = useState<SortColumn>('timestamp');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [withdrawDialog, setWithdrawDialog] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [processPayoutsDialog, setProcessPayoutsDialog] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [processSinglePayout, setProcessSinglePayout] = useState<Transaction | null>(null);
+  const [cancelPayoutDialog, setCancelPayoutDialog] = useState<Transaction | null>(null);
+  const [reportDialog, setReportDialog] = useState(false);
+  const [reportType, setReportType] = useState<'summary' | 'detailed' | 'tax'>('summary');
+  const [reportDateRange, setReportDateRange] = useState<'7d' | '30d' | '90d' | 'year' | 'all'>('30d');
+  const [adjustFeeDialog, setAdjustFeeDialog] = useState(false);
+  const [newFeeRate, setNewFeeRate] = useState('2.5');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const transactionsPerPage = 10;
 
-  // Mock data
+  // Multi-sig state
+  const [withdrawReason, setWithdrawReason] = useState('');
+  const [pendingWithdrawals, setPendingWithdrawals] = useState<WithdrawalRequest[]>([]);
+  const [multiSigConfig, setMultiSigConfig] = useState<MultiSigConfig | null>(null);
+  const [selectedWithdrawal, setSelectedWithdrawal] = useState<WithdrawalRequest | null>(null);
+  const [approveDialog, setApproveDialog] = useState<WithdrawalRequest | null>(null);
+  const [rejectDialog, setRejectDialog] = useState<WithdrawalRequest | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [currentSignerId, setCurrentSignerId] = useState('signer-1'); // In real app, get from auth
+
+  // Get real data from treasury services
+  const [treasuryStats, setTreasuryStats] = useState<TreasuryStats | null>(null);
+  const [feeConfig, setFeeConfig] = useState<FeeConfig | null>(null);
+  const [allTransactions, setAllTransactions] = useState<TreasuryTransaction[]>([]);
+
+  // Load data on mount and when refreshKey changes
+  useEffect(() => {
+    const stats = getTreasuryStats();
+    const config = getFeeConfig();
+    const txs = getTransactions();
+    const msConfig = getMultiSigConfig();
+    const pendingWRs = getPendingWithdrawalRequests();
+
+    setTreasuryStats(stats);
+    setFeeConfig(config);
+    setAllTransactions(txs);
+    setMultiSigConfig(msConfig);
+    setPendingWithdrawals(pendingWRs);
+    setNewFeeRate((config.platformFeeRate * 100).toFixed(1));
+  }, [refreshKey]);
+
+  // Calculate treasury data from real services
+  const poolStats = getPoolStats();
+
+  // Calculate fees today and yesterday for comparison
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterdayStart = new Date(todayStart.getTime() - 24 * 60 * 60 * 1000);
+
+  const feesToday = allTransactions
+    .filter(tx => tx.type === 'fee' && new Date(tx.createdAt) >= todayStart)
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const feesYesterday = allTransactions
+    .filter(tx => {
+      const txDate = new Date(tx.createdAt);
+      return tx.type === 'fee' && txDate >= yesterdayStart && txDate < todayStart;
+    })
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const feesChangePercent = feesYesterday > 0
+    ? ((feesToday - feesYesterday) / feesYesterday) * 100
+    : feesToday > 0 ? 100 : 0;
+
   const treasuryData = {
-    totalBalance: 125000,
-    platformFees: 12500,
-    pendingPayouts: 5000,
-    monthlyRevenue: 8500,
-    weeklyVolume: 45000,
-    avgDailyVolume: 6500,
-    totalUsers: 2847,
-    activeMarkets: 89
+    totalBalance: treasuryStats?.totalBalance || 0,
+    feesToday,
+    feesYesterday,
+    feesChangePercent,
+    pendingPayouts: treasuryStats?.pendingPayouts || 0,
+    pendingPayoutsCount: treasuryStats?.pendingPayoutsCount || 0,
+    monthlyRevenue: treasuryStats?.last24hFees ? treasuryStats.last24hFees * 30 : 0,
+    weeklyVolume: treasuryStats?.last24hVolume ? treasuryStats.last24hVolume * 7 : 0,
+    avgDailyVolume: treasuryStats?.last24hVolume || 0,
+    totalUsers: JSON.parse(localStorage.getItem('blockcast_users') || '[]').length,
+    activeMarkets: poolStats.activePools,
+    feeRate: feeConfig ? feeConfig.platformFeeRate * 100 : 2.5,
+    profitMargin: treasuryStats?.totalVolume && treasuryStats.totalVolume > 0
+      ? (treasuryStats.totalFeesCollected / treasuryStats.totalVolume) * 100
+      : 0,
+    avgTransactionSize: allTransactions.length > 0
+      ? allTransactions.reduce((sum, t) => sum + t.amount, 0) / allTransactions.length
+      : 0,
+    totalTransactions: treasuryStats?.totalTransactions || 0,
+    totalMarketPoolValue: poolStats.totalValueLocked,
   };
 
   const revenueData = [
@@ -53,60 +229,141 @@ const TreasuryDashboard: React.FC = () => {
     { month: 'Dec', revenue: 8500, volume: 58000 },
   ];
 
-  const transactions: Transaction[] = [
-    {
-      id: '1',
-      type: 'fee',
-      amount: 125,
-      from: '0x7f3a...d4e5',
-      timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000),
-      marketId: 'm1',
-      marketClaim: 'Bitcoin $100K Market',
-      status: 'completed'
-    },
-    {
-      id: '2',
-      type: 'payout',
-      amount: 2500,
-      to: '0x8a4b...e7f8',
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
-      marketId: 'm2',
-      marketClaim: 'Fed Rate Decision',
-      status: 'completed'
-    },
-    {
-      id: '3',
-      type: 'fee',
-      amount: 89,
-      from: '0x9c5d...a8b9',
-      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
-      marketId: 'm3',
-      marketClaim: 'SpaceX Launch Market',
-      status: 'completed'
-    },
-    {
-      id: '4',
-      type: 'payout',
-      amount: 1200,
-      to: '0xdef0...3456',
-      timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
-      status: 'pending'
-    }
+  // Convert treasury transactions to display format
+  const transactions: Transaction[] = allTransactions.map(tx => ({
+    id: tx.id,
+    type: tx.type as Transaction['type'],
+    amount: tx.amount,
+    from: tx.from || undefined,
+    to: tx.to || undefined,
+    timestamp: new Date(tx.createdAt),
+    marketId: tx.marketId || undefined,
+    marketClaim: tx.description || undefined,
+    status: tx.status as Transaction['status'],
+    txHash: tx.txHash || undefined,
+  }));
+
+  // Calculate category breakdown from market pools
+  const marketPools = marketPoolService.getMarketPools();
+  const markets = JSON.parse(localStorage.getItem('blockcast_markets') || '[]');
+
+  const categoryVolumes: Record<string, number> = {};
+  marketPools.forEach(pool => {
+    const market = markets.find((m: any) => m.id === pool.marketId);
+    const category = market?.category || 'Other';
+    categoryVolumes[category] = (categoryVolumes[category] || 0) + pool.totalPool;
+  });
+
+  const totalCategoryVolume = Object.values(categoryVolumes).reduce((sum, v) => sum + v, 0);
+  const categoryColors: Record<string, string> = {
+    'Crypto': 'bg-[#06f6ff]',
+    'Finance': 'bg-blue-500',
+    'Politics': 'bg-purple-500',
+    'Sports': 'bg-green-500',
+    'Technology': 'bg-yellow-500',
+    'Other': 'bg-gray-500',
+  };
+
+  const categoryBreakdown = Object.entries(categoryVolumes)
+    .map(([category, volume]) => ({
+      category,
+      volume,
+      percentage: totalCategoryVolume > 0 ? Math.round((volume / totalCategoryVolume) * 100) : 0,
+      color: categoryColors[category] || 'bg-gray-500',
+    }))
+    .sort((a, b) => b.volume - a.volume)
+    .slice(0, 5);
+
+  // If no data, show default categories
+  const displayCategoryBreakdown = categoryBreakdown.length > 0 ? categoryBreakdown : [
+    { category: 'Crypto', volume: 0, percentage: 0, color: 'bg-[#06f6ff]' },
+    { category: 'Finance', volume: 0, percentage: 0, color: 'bg-blue-500' },
+    { category: 'Politics', volume: 0, percentage: 0, color: 'bg-purple-500' },
+    { category: 'Sports', volume: 0, percentage: 0, color: 'bg-green-500' },
+    { category: 'Other', volume: 0, percentage: 0, color: 'bg-gray-500' }
   ];
 
-  const categoryBreakdown = [
-    { category: 'Crypto', volume: 45000, percentage: 35 },
-    { category: 'Finance', volume: 32000, percentage: 25 },
-    { category: 'Politics', volume: 25000, percentage: 19 },
-    { category: 'Sports', volume: 15000, percentage: 12 },
-    { category: 'Other', volume: 11500, percentage: 9 }
-  ];
+  // Get pending payouts from service
+  const pendingPayoutTxs = getPendingPayouts();
+  const pendingPayouts: Transaction[] = pendingPayoutTxs.map(tx => ({
+    id: tx.id,
+    type: 'payout' as const,
+    amount: tx.amount,
+    to: tx.to || undefined,
+    timestamp: new Date(tx.createdAt),
+    marketId: tx.marketId || undefined,
+    marketClaim: tx.description,
+    status: 'pending' as const,
+  }));
+
+  // Get recent fee collections
+  const recentFeeTransactions = allTransactions
+    .filter(tx => tx.type === 'fee')
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5);
+
+  // Filter and sort transactions
+  const filteredTransactions = transactions.filter(tx => {
+    const matchesSearch =
+      tx.marketClaim?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.from?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.to?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.txHash?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = transactionFilter === 'all' || tx.type === transactionFilter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
+    if (!sortColumn) return 0;
+    let comparison = 0;
+    switch (sortColumn) {
+      case 'amount':
+        comparison = a.amount - b.amount;
+        break;
+      case 'timestamp':
+        comparison = a.timestamp.getTime() - b.timestamp.getTime();
+        break;
+    }
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  // Pagination
+  const totalPages = Math.ceil(sortedTransactions.length / transactionsPerPage);
+  const startIndex = (currentPage - 1) * transactionsPerPage;
+  const paginatedTransactions = sortedTransactions.slice(startIndex, startIndex + transactionsPerPage);
+
+  const transactionCounts = {
+    all: transactions.length,
+    fee: transactions.filter(t => t.type === 'fee').length,
+    payout: transactions.filter(t => t.type === 'payout').length,
+    deposit: transactions.filter(t => t.type === 'deposit').length,
+    withdrawal: transactions.filter(t => t.type === 'withdrawal').length,
+  };
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('desc');
+    }
+  };
 
   const formatTimeAgo = (date: Date) => {
     const hours = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60));
     if (hours < 1) return 'Just now';
     if (hours < 24) return `${hours}h ago`;
-    return `${Math.floor(hours / 24)}d ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
   const getTransactionIcon = (type: string) => {
@@ -119,72 +376,257 @@ const TreasuryDashboard: React.FC = () => {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'completed': return <Badge className="bg-green-600 text-white text-xs">Completed</Badge>;
+      case 'pending': return <Badge className="bg-yellow-500 text-black text-xs">Pending</Badge>;
+      case 'processing': return <Badge className="bg-blue-500 text-white text-xs">Processing</Badge>;
+      default: return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const exportToExcel = () => {
+    const exportData = sortedTransactions.map(tx => ({
+      'ID': tx.id,
+      'Type': tx.type.charAt(0).toUpperCase() + tx.type.slice(1),
+      'Amount ($)': tx.amount,
+      'Status': tx.status.charAt(0).toUpperCase() + tx.status.slice(1),
+      'From': tx.from || '-',
+      'To': tx.to || '-',
+      'Market': tx.marketClaim || '-',
+      'TX Hash': tx.txHash || '-',
+      'Date': formatDate(tx.timestamp),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Transactions');
+
+    const colWidths = Object.keys(exportData[0] || {}).map(key => ({
+      wch: Math.max(key.length, 15)
+    }));
+    worksheet['!cols'] = colWidths;
+
+    XLSX.writeFile(workbook, `treasury_transactions_${new Date().toISOString().split('T')[0]}.xlsx`);
+    toast.success('Transactions exported to Excel');
+  };
+
+  const handleWithdraw = () => {
+    if (!withdrawAmount || !withdrawAddress || !withdrawReason) {
+      toast.error('Please fill in all fields including reason');
+      return;
+    }
+
+    const result = createWithdrawalRequest(
+      parseFloat(withdrawAmount),
+      withdrawAddress,
+      withdrawReason,
+      currentSignerId
+    );
+
+    if ('error' in result) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success(`Withdrawal request created. Requires ${multiSigConfig?.threshold || 2} approvals.`);
+    setWithdrawDialog(false);
+    setWithdrawAmount('');
+    setWithdrawAddress('');
+    setWithdrawReason('');
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleApproveWithdrawal = (request: WithdrawalRequest) => {
+    const result = approveWithdrawalRequest(request.id, currentSignerId);
+
+    if ('error' in result) {
+      toast.error(result.error);
+      return;
+    }
+
+    if (result.status === 'executed') {
+      toast.success(`Withdrawal of $${request.amount.toLocaleString()} executed successfully!`);
+    } else {
+      toast.success(`Approval recorded. ${result.approvals.length}/${multiSigConfig?.threshold || 2} approvals.`);
+    }
+
+    setApproveDialog(null);
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleRejectWithdrawal = (request: WithdrawalRequest) => {
+    if (!rejectReason.trim()) {
+      toast.error('Please provide a reason for rejection');
+      return;
+    }
+
+    const result = rejectWithdrawalRequest(request.id, currentSignerId, rejectReason);
+
+    if ('error' in result) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success('Withdrawal request rejected');
+    setRejectDialog(null);
+    setRejectReason('');
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleCancelWithdrawal = (request: WithdrawalRequest) => {
+    const result = cancelWithdrawalRequest(request.id, currentSignerId);
+
+    if ('error' in result) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success('Withdrawal request cancelled');
+    setSelectedWithdrawal(null);
+    setRefreshKey(k => k + 1);
+  };
+
+  const getSignerName = (signerId: string) => {
+    return multiSigConfig?.signers.find(s => s.id === signerId)?.name || signerId;
+  };
+
+  const hasCurrentSignerVoted = (request: WithdrawalRequest) => {
+    return request.approvals.some(a => a.signerId === currentSignerId) ||
+           request.rejections.some(r => r.signerId === currentSignerId);
+  };
+
+  const handleProcessPayouts = () => {
+    const result = processAllPendingPayouts();
+
+    if (result.successful.length > 0) {
+      toast.success(`Processed ${result.successful.length} payouts totaling $${result.totalAmount.toLocaleString()}`);
+    }
+
+    if (result.failed.length > 0) {
+      toast.error(`${result.failed.length} payouts failed to process`);
+    }
+
+    setProcessPayoutsDialog(false);
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleProcessSinglePayout = (tx: Transaction) => {
+    const result = processPayout(tx.id);
+
+    if ('error' in result) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success(`Payout of $${tx.amount.toLocaleString()} processed successfully`);
+    setProcessSinglePayout(null);
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleCancelPayout = (tx: Transaction) => {
+    const result = cancelPayout(tx.id, 'Cancelled by admin');
+
+    if ('error' in result) {
+      toast.error(result.error);
+      return;
+    }
+
+    toast.success(`Payout of $${tx.amount.toLocaleString()} cancelled`);
+    setCancelPayoutDialog(null);
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleUpdateFeeRate = () => {
+    const newRate = parseFloat(newFeeRate) / 100;
+
+    if (isNaN(newRate) || newRate < 0 || newRate > 0.1) {
+      toast.error('Fee rate must be between 0% and 10%');
+      return;
+    }
+
+    updateFeeConfig({ platformFeeRate: newRate });
+    toast.success(`Fee rate updated to ${newFeeRate}%`);
+    setAdjustFeeDialog(false);
+    setRefreshKey(k => k + 1);
+  };
+
   const maxVolume = Math.max(...revenueData.map(d => d.volume));
 
   return (
     <div className="space-y-6">
-      {/* Main Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
+      {/* Summary Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-gradient-to-br from-green-500/10 to-transparent border-green-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Balance</p>
                 <p className="text-2xl font-bold text-green-500">${treasuryData.totalBalance.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground mt-1">Platform treasury</p>
+                <p className="text-xs text-muted-foreground">Platform treasury</p>
               </div>
-              <div className="p-3 rounded-lg bg-green-500/10">
+              <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
                 <Wallet className="h-5 w-5 text-green-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
+        <Card className="bg-gradient-to-br from-[#06f6ff]/10 to-transparent border-[#06f6ff]/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Platform Fees</p>
-                <p className="text-2xl font-bold">${treasuryData.platformFees.toLocaleString()}</p>
-                <div className="flex items-center gap-1 mt-1 text-xs text-green-500">
-                  <TrendingUp className="h-3 w-3" />
-                  <span>+12% this month</span>
-                </div>
+                <p className="text-sm text-muted-foreground">Fees Today</p>
+                <p className="text-2xl font-bold text-[#06f6ff]">${treasuryData.feesToday.toFixed(2)}</p>
+                {treasuryData.feesYesterday > 0 || treasuryData.feesToday > 0 ? (
+                  <div className={`flex items-center gap-1 text-xs ${treasuryData.feesChangePercent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {treasuryData.feesChangePercent >= 0 ? (
+                      <TrendingUp className="h-3 w-3" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3" />
+                    )}
+                    <span>
+                      {treasuryData.feesChangePercent >= 0 ? '+' : ''}{treasuryData.feesChangePercent.toFixed(0)}% vs yesterday
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Yesterday: ${treasuryData.feesYesterday.toFixed(2)}</p>
+                )}
               </div>
-              <div className="p-3 rounded-lg bg-[#06f6ff]/10">
+              <div className="h-10 w-10 rounded-full bg-[#06f6ff]/20 flex items-center justify-center">
                 <DollarSign className="h-5 w-5 text-[#06f6ff]" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
+        <Card className="bg-gradient-to-br from-yellow-500/10 to-transparent border-yellow-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Pending Payouts</p>
                 <p className="text-2xl font-bold text-yellow-500">${treasuryData.pendingPayouts.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground mt-1">Awaiting processing</p>
+                <p className="text-xs text-muted-foreground">{treasuryData.pendingPayoutsCount} awaiting</p>
               </div>
-              <div className="p-3 rounded-lg bg-yellow-500/10">
-                <RefreshCw className="h-5 w-5 text-yellow-500" />
+              <div className="h-10 w-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-yellow-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
+        <Card className="bg-gradient-to-br from-purple-500/10 to-transparent border-purple-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Weekly Volume</p>
-                <p className="text-2xl font-bold">${treasuryData.weeklyVolume.toLocaleString()}</p>
-                <div className="flex items-center gap-1 mt-1 text-xs text-green-500">
+                <p className="text-2xl font-bold text-purple-500">${treasuryData.weeklyVolume.toLocaleString()}</p>
+                <div className="flex items-center gap-1 text-xs text-green-500">
                   <TrendingUp className="h-3 w-3" />
                   <span>+8% vs last week</span>
                 </div>
               </div>
-              <div className="p-3 rounded-lg bg-purple-500/10">
+              <div className="h-10 w-10 rounded-full bg-purple-500/20 flex items-center justify-center">
                 <BarChart3 className="h-5 w-5 text-purple-500" />
               </div>
             </div>
@@ -192,91 +634,322 @@ const TreasuryDashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Revenue Chart */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-[#06f6ff]" />
-                  Revenue & Volume
-                </CardTitle>
-                <CardDescription>Monthly platform performance</CardDescription>
+      {/* Secondary Stats Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card
+          className="cursor-pointer hover:border-[#06f6ff]/50 transition-colors"
+          onClick={() => setAdjustFeeDialog(true)}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                <Percent className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div className="flex gap-1">
-                {(['7d', '30d', '90d', 'all'] as const).map((range) => (
-                  <Button
-                    key={range}
-                    size="sm"
-                    variant={dateRange === range ? 'default' : 'ghost'}
-                    className={dateRange === range ? 'bg-[#06f6ff] text-black' : ''}
-                    onClick={() => setDateRange(range)}
-                  >
-                    {range === 'all' ? 'All' : range}
-                  </Button>
-                ))}
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground">Fee Rate</p>
+                <p className="text-lg font-bold">{treasuryData.feeRate}%</p>
+              </div>
+              <Settings className="h-4 w-4 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Profit Margin</p>
+                <p className="text-lg font-bold text-green-500">{treasuryData.profitMargin}%</p>
               </div>
             </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                <Banknote className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Avg Transaction</p>
+                <p className="text-lg font-bold">${treasuryData.avgTransactionSize}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+                <Activity className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Total Transactions</p>
+                <p className="text-lg font-bold">{treasuryData.totalTransactions.toLocaleString()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions & Pending Payouts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+        {/* Recent Fee Collections Card */}
+        <Card className="border-green-500/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-green-500" />
+              Recent Fee Collections
+              {recentFeeTransactions.length > 0 && (
+                <span className="ml-auto text-xs font-normal text-muted-foreground">
+                  Today: <span className="text-green-500 font-semibold">${treasuryData.feesToday.toFixed(2)}</span>
+                </span>
+              )}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Simple Bar Chart */}
-            <div className="space-y-4">
-              {revenueData.map((data, idx) => (
-                <div key={idx} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground w-12">{data.month}</span>
-                    <div className="flex-1 mx-4">
-                      <div className="h-6 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-[#06f6ff] to-[#0ea5e9] rounded-full transition-all duration-500"
-                          style={{ width: `${(data.volume / maxVolume) * 100}%` }}
-                        />
+            {recentFeeTransactions.length > 0 ? (
+              <div className="space-y-2">
+                {recentFeeTransactions.map((fee) => (
+                  <div
+                    key={fee.id}
+                    className="flex items-center justify-between p-2 bg-green-500/5 border border-green-500/20 rounded-lg animate-in fade-in slide-in-from-top-1 duration-300"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="h-6 w-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <ArrowDownRight className="h-3 w-3 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground truncate max-w-[120px]">
+                          {fee.description?.replace('Platform fee from winning payout (bet ', '').replace(')', '') || 'Fee'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{formatTimeAgo(new Date(fee.createdAt))}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className="font-medium">${data.volume.toLocaleString()}</span>
-                      <span className="text-muted-foreground text-xs ml-2">(${data.revenue} fees)</span>
+                    <p className="font-semibold text-green-500 text-sm">+${fee.amount.toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-muted-foreground">
+                <DollarSign className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                <p className="text-sm">No fees collected yet</p>
+                <p className="text-xs mt-1">Fees are collected when winners are paid</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Pending Payouts Card */}
+        <Card className="border-yellow-500/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Clock className="h-4 w-4 text-yellow-500" />
+              Pending Payouts
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {pendingPayouts.length > 0 ? (
+              <div className="space-y-3">
+                {pendingPayouts.slice(0, 3).map((payout) => (
+                  <div key={payout.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg group">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{payout.marketClaim || 'Payout'}</p>
+                      <p className="text-xs text-muted-foreground">{payout.to && formatAddress(payout.to)}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-red-500">-${payout.amount.toLocaleString()}</p>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <MoreVertical className="h-3 w-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="z-[100]">
+                          <DropdownMenuItem onClick={() => setProcessSinglePayout(payout)}>
+                            <Play className="h-4 w-4 mr-2 text-green-500" />
+                            Process Now
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setSelectedTransaction(payout)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setCancelPayoutDialog(payout)} className="text-red-500">
+                            <XCircle className="h-4 w-4 mr-2" />
+                            Cancel Payout
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+                {pendingPayouts.length > 3 && (
+                  <p className="text-xs text-muted-foreground text-center">+{pendingPayouts.length - 3} more pending</p>
+                )}
+                <Button
+                  className="w-full bg-yellow-500 text-black hover:bg-yellow-600 font-semibold"
+                  onClick={() => setProcessPayoutsDialog(true)}
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Process All ({pendingPayouts.length})
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center py-4 text-muted-foreground">
+                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                <p className="text-sm">All payouts processed</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Pending Withdrawal Approvals Card */}
+        <Card className="border-orange-500/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Shield className="h-4 w-4 text-orange-500" />
+              Pending Approvals
+              {multiSigConfig && (
+                <span className="ml-auto text-xs font-normal text-muted-foreground">
+                  {multiSigConfig.threshold}/{multiSigConfig.totalSigners} required
+                </span>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {pendingWithdrawals.length > 0 ? (
+              <div className="space-y-3">
+                {pendingWithdrawals.slice(0, 3).map((request) => (
+                  <div key={request.id} className="p-3 bg-orange-500/5 border border-orange-500/20 rounded-lg">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="font-semibold text-orange-500">${request.amount.toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-[150px]">
+                          To: {formatAddress(request.destinationAddress)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Badge variant="outline" className="text-xs">
+                          {request.approvals.length}/{multiSigConfig?.threshold || 2}
+                        </Badge>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2 truncate">{request.reason}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                      {request.approvals.map((a, i) => (
+                        <div key={i} className="flex items-center gap-1 text-xs text-green-500">
+                          <UserCheck className="h-3 w-3" />
+                          <span>{a.signerName.split(' ')[0]}</span>
+                        </div>
+                      ))}
+                      {request.rejections.map((r, i) => (
+                        <div key={i} className="flex items-center gap-1 text-xs text-red-500">
+                          <XCircle className="h-3 w-3" />
+                          <span>{r.signerName.split(' ')[0]}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {!hasCurrentSignerVoted(request) ? (
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          className="flex-1 h-7 bg-green-600 hover:bg-green-700 text-xs"
+                          onClick={() => setApproveDialog(request)}
+                        >
+                          <ThumbsUp className="h-3 w-3 mr-1" />
+                          Approve
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1 h-7 text-red-500 border-red-500/30 text-xs"
+                          onClick={() => setRejectDialog(request)}
+                        >
+                          <ThumbsDown className="h-3 w-3 mr-1" />
+                          Reject
+                        </Button>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-center text-muted-foreground">You have voted on this request</p>
+                    )}
+                  </div>
+                ))}
+                {pendingWithdrawals.length > 3 && (
+                  <p className="text-xs text-muted-foreground text-center">
+                    +{pendingWithdrawals.length - 3} more pending
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-4 text-muted-foreground">
+                <Shield className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                <p className="text-sm">No pending approvals</p>
+                <p className="text-xs mt-1">Withdrawal requests will appear here</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions Card */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-[#06f6ff]" />
+              Quick Actions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setWithdrawDialog(true)}
+            >
+              <ArrowUpRight className="h-4 w-4 mr-2 text-orange-500" />
+              Manual Withdrawal
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setReportDialog(true)}
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Generate Report
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setAdjustFeeDialog(true)}
+            >
+              <Percent className="h-4 w-4 mr-2" />
+              Adjust Fee Rate
+            </Button>
           </CardContent>
         </Card>
 
         {/* Category Breakdown */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-[#06f6ff]" />
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <PieChart className="h-4 w-4 text-[#06f6ff]" />
               Volume by Category
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {categoryBreakdown.map((category, idx) => (
-                <div key={idx} className="space-y-2">
+                <div key={idx} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span>{category.category}</span>
-                    <span className="font-medium">{category.percentage}%</span>
+                    <span className="font-medium">${category.volume.toLocaleString()}</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        idx === 0 ? 'bg-[#06f6ff]' :
-                        idx === 1 ? 'bg-blue-500' :
-                        idx === 2 ? 'bg-purple-500' :
-                        idx === 3 ? 'bg-green-500' :
-                        'bg-gray-500'
-                      }`}
+                      className={`h-full rounded-full transition-all duration-500 ${category.color}`}
                       style={{ width: `${category.percentage}%` }}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    ${category.volume.toLocaleString()}
-                  </p>
                 </div>
               ))}
             </div>
@@ -284,65 +957,956 @@ const TreasuryDashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* Recent Transactions */}
+      {/* Revenue Chart */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-[#06f6ff]" />
-                Recent Transactions
-              </CardTitle>
-              <CardDescription>Platform fee collection and payouts</CardDescription>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-[#06f6ff]" />
+              Revenue & Volume
+            </CardTitle>
+            <div className="flex gap-1">
+              {(['7d', '30d', '90d', 'all'] as const).map((range) => (
+                <Button
+                  key={range}
+                  size="sm"
+                  variant={dateRange === range ? 'default' : 'ghost'}
+                  className={dateRange === range ? 'bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90' : ''}
+                  onClick={() => setDateRange(range)}
+                >
+                  {range === 'all' ? 'All' : range}
+                </Button>
+              ))}
             </div>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {transactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="flex items-center gap-4 p-4 rounded-lg border border-border hover:border-[#06f6ff]/30 transition-colors"
-              >
-                <div className={`p-2 rounded-full ${
-                  tx.type === 'fee' ? 'bg-green-500/10' :
-                  tx.type === 'payout' ? 'bg-red-500/10' :
-                  'bg-muted'
-                }`}>
-                  {getTransactionIcon(tx.type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium capitalize">{tx.type}</span>
-                    {tx.status === 'pending' && (
-                      <Badge className="bg-yellow-500 text-black text-xs">Pending</Badge>
-                    )}
+            {revenueData.map((data, idx) => (
+              <div key={idx} className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground w-12">{data.month}</span>
+                  <div className="flex-1 mx-4">
+                    <div className="h-6 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-[#06f6ff] to-[#0ea5e9] rounded-full transition-all duration-500"
+                        style={{ width: `${(data.volume / maxVolume) * 100}%` }}
+                      />
+                    </div>
                   </div>
-                  {tx.marketClaim && (
-                    <p className="text-sm text-muted-foreground truncate">{tx.marketClaim}</p>
-                  )}
-                  <p className="text-xs text-muted-foreground">
-                    {tx.from && `From: ${tx.from}`}
-                    {tx.to && `To: ${tx.to}`}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className={`font-semibold ${
-                    tx.type === 'fee' || tx.type === 'deposit' ? 'text-green-500' : 'text-red-500'
-                  }`}>
-                    {tx.type === 'fee' || tx.type === 'deposit' ? '+' : '-'}${tx.amount.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{formatTimeAgo(tx.timestamp)}</p>
+                  <div className="text-right w-40">
+                    <span className="font-medium">${data.volume.toLocaleString()}</span>
+                    <span className="text-green-500 text-xs ml-2">(+${data.revenue})</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
+
+      {/* Transactions Table */}
+      <Card>
+        <CardHeader className="pb-4">
+          <div className="flex flex-col gap-4">
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-[#06f6ff]" />
+              Transactions
+            </CardTitle>
+
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap gap-2">
+              {(['all', 'fee', 'payout', 'deposit', 'withdrawal'] as const).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => { setTransactionFilter(filter); setCurrentPage(1); }}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    transactionFilter === filter
+                      ? filter === 'fee' ? 'bg-green-500/10 text-green-500 border border-green-500/30'
+                      : filter === 'payout' ? 'bg-red-500/10 text-red-500 border border-red-500/30'
+                      : filter === 'deposit' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/30'
+                      : filter === 'withdrawal' ? 'bg-orange-500/10 text-orange-500 border border-orange-500/30'
+                      : 'bg-[#06f6ff]/10 text-[#06f6ff] border border-[#06f6ff]/30'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  {filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                  <span className="ml-2 text-xs opacity-70">({transactionCounts[filter]})</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Search and Actions */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search transactions..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-9 gap-2">
+                    <ArrowUpDown className="h-4 w-4" />
+                    Sort: {sortColumn ? sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1) : 'Default'}
+                    {sortColumn && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleSort('timestamp')}>
+                    Date {sortColumn === 'timestamp' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('amount')}>
+                    Amount {sortColumn === 'amount' && (sortDirection === 'asc' ? '↑' : '↓')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button variant="outline" size="sm" className="h-9 gap-2" onClick={exportToExcel}>
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {/* Mobile Card View */}
+          <div className="lg:hidden space-y-3">
+            {paginatedTransactions.map((tx) => (
+              <div key={tx.id} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full ${
+                      tx.type === 'fee' ? 'bg-green-500/10' :
+                      tx.type === 'payout' ? 'bg-red-500/10' :
+                      tx.type === 'deposit' ? 'bg-blue-500/10' :
+                      'bg-orange-500/10'
+                    }`}>
+                      {getTransactionIcon(tx.type)}
+                    </div>
+                    <div>
+                      <p className="font-medium capitalize">{tx.type}</p>
+                      {tx.marketClaim && <p className="text-xs text-muted-foreground">{tx.marketClaim}</p>}
+                    </div>
+                  </div>
+                  {getStatusBadge(tx.status)}
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">{formatTimeAgo(tx.timestamp)}</p>
+                  <p className={`font-semibold ${
+                    tx.type === 'fee' || tx.type === 'deposit' ? 'text-green-500' : 'text-red-500'
+                  }`}>
+                    {tx.type === 'fee' || tx.type === 'deposit' ? '+' : '-'}${tx.amount.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-border/50 hover:bg-transparent">
+                  <TableHead className="w-[100px]">Type</TableHead>
+                  <TableHead>Details</TableHead>
+                  <TableHead className="w-[120px]">
+                    <button
+                      onClick={() => handleSort('amount')}
+                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'amount' ? 'text-[#06f6ff]' : ''}`}
+                    >
+                      Amount
+                      <span className={sortColumn === 'amount' ? 'text-[#06f6ff]' : 'opacity-50'}>
+                        {sortColumn === 'amount' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </TableHead>
+                  <TableHead className="w-[100px]">Status</TableHead>
+                  <TableHead className="w-[140px]">
+                    <button
+                      onClick={() => handleSort('timestamp')}
+                      className={`flex items-center gap-1 transition-colors hover:text-[#06f6ff] ${sortColumn === 'timestamp' ? 'text-[#06f6ff]' : ''}`}
+                    >
+                      Date
+                      <span className={sortColumn === 'timestamp' ? 'text-[#06f6ff]' : 'opacity-50'}>
+                        {sortColumn === 'timestamp' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </TableHead>
+                  <TableHead className="w-[100px]">TX Hash</TableHead>
+                  <TableHead className="w-[80px] text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedTransactions.map((tx) => (
+                  <TableRow key={tx.id} className="border-b border-border/30 hover:bg-muted/30">
+                    <TableCell className="py-4">
+                      <div className="flex items-center gap-2">
+                        <div className={`p-1.5 rounded-full ${
+                          tx.type === 'fee' ? 'bg-green-500/10' :
+                          tx.type === 'payout' ? 'bg-red-500/10' :
+                          tx.type === 'deposit' ? 'bg-blue-500/10' :
+                          'bg-orange-500/10'
+                        }`}>
+                          {getTransactionIcon(tx.type)}
+                        </div>
+                        <span className="font-medium capitalize text-sm">{tx.type}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div>
+                        {tx.marketClaim && <p className="text-sm font-medium">{tx.marketClaim}</p>}
+                        <p className="text-xs text-muted-foreground">
+                          {tx.from && `From: ${formatAddress(tx.from)}`}
+                          {tx.to && `To: ${formatAddress(tx.to)}`}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <span className={`font-semibold ${
+                        tx.type === 'fee' || tx.type === 'deposit' ? 'text-green-500' : 'text-red-500'
+                      }`}>
+                        {tx.type === 'fee' || tx.type === 'deposit' ? '+' : '-'}${tx.amount.toLocaleString()}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      {getStatusBadge(tx.status)}
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <span className="text-sm text-muted-foreground">{formatTimeAgo(tx.timestamp)}</span>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      {tx.txHash ? (
+                        <a href="#" className="text-xs text-[#06f6ff] hover:underline flex items-center gap-1">
+                          {tx.txHash}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => setSelectedTransaction(tx)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {tx.status === 'pending' && tx.type === 'payout' && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="z-[100]">
+                              <DropdownMenuItem onClick={() => setProcessSinglePayout(tx)}>
+                                <Play className="h-4 w-4 mr-2 text-green-500" />
+                                Process Now
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setCancelPayoutDialog(tx)} className="text-red-500">
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Cancel
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {sortedTransactions.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground">
+              <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No transactions found</p>
+              <p className="text-sm mt-1">Try adjusting your search or filters</p>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {sortedTransactions.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
+              <p className="text-sm text-muted-foreground">
+                Showing {startIndex + 1}-{Math.min(startIndex + transactionsPerPage, sortedTransactions.length)} of {sortedTransactions.length} transactions
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="h-8"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-8 w-8 p-0 ${currentPage === page ? 'bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90' : ''}`}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="h-8"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Withdraw Dialog */}
+      <Dialog open={withdrawDialog} onOpenChange={setWithdrawDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-orange-500" />
+              Request Withdrawal
+            </DialogTitle>
+            <DialogDescription>
+              Create a withdrawal request that requires multi-sig approval.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-muted rounded-lg flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Available Balance</p>
+                <p className="text-2xl font-bold text-green-500">${treasuryData.totalBalance.toLocaleString()}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">Approval Required</p>
+                <p className="text-lg font-semibold">{multiSigConfig?.threshold || 2} of {multiSigConfig?.totalSigners || 3}</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Amount ($)</label>
+              <Input
+                type="number"
+                placeholder="Enter amount..."
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Destination Address</label>
+              <Input
+                placeholder="0x..."
+                value={withdrawAddress}
+                onChange={(e) => setWithdrawAddress(e.target.value)}
+                className="mt-2 font-mono"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Reason for Withdrawal</label>
+              <Textarea
+                placeholder="e.g., Operational expenses, Team payments..."
+                value={withdrawReason}
+                onChange={(e) => setWithdrawReason(e.target.value)}
+                className="mt-2"
+                rows={2}
+              />
+            </div>
+            <div className="p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+              <div className="flex items-start gap-2">
+                <Shield className="h-4 w-4 text-orange-500 mt-0.5" />
+                <div className="text-sm text-orange-500">
+                  <p className="font-medium">Multi-Sig Required</p>
+                  <p className="text-xs opacity-80">
+                    This request will need {multiSigConfig?.threshold || 2} approvals from authorized signers before execution.
+                    Request expires in {multiSigConfig?.expirationHours || 48} hours.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setWithdrawDialog(false)}>Cancel</Button>
+            <Button className="bg-orange-500 hover:bg-orange-600" onClick={handleWithdraw}>
+              <Send className="h-4 w-4 mr-2" />
+              Submit Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Approve Withdrawal Dialog */}
+      <Dialog open={!!approveDialog} onOpenChange={() => setApproveDialog(null)}>
+        <DialogContent>
+          {approveDialog && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <ThumbsUp className="h-5 w-5 text-green-500" />
+                  Approve Withdrawal
+                </DialogTitle>
+                <DialogDescription>
+                  Confirm your approval for this withdrawal request.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="p-4 bg-muted rounded-lg space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amount</span>
+                    <span className="font-semibold text-orange-500">${approveDialog.amount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Destination</span>
+                    <span className="font-mono text-sm">{formatAddress(approveDialog.destinationAddress)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Requested By</span>
+                    <span>{getSignerName(approveDialog.requestedBy)}</span>
+                  </div>
+                  <div className="pt-2 border-t">
+                    <span className="text-muted-foreground text-sm">Reason</span>
+                    <p className="text-sm mt-1">{approveDialog.reason}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <p className="text-sm text-muted-foreground mb-1">Current Approvals</p>
+                    <div className="flex items-center gap-2">
+                      {approveDialog.approvals.map((a, i) => (
+                        <Badge key={i} className="bg-green-500/20 text-green-500">
+                          <UserCheck className="h-3 w-3 mr-1" />
+                          {a.signerName.split(' ')[0]}
+                        </Badge>
+                      ))}
+                      {approveDialog.approvals.length === 0 && (
+                        <span className="text-sm text-muted-foreground">None yet</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Progress</p>
+                    <p className="font-semibold">{approveDialog.approvals.length}/{multiSigConfig?.threshold || 2}</p>
+                  </div>
+                </div>
+                {approveDialog.approvals.length + 1 >= (multiSigConfig?.threshold || 2) && (
+                  <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                    <p className="text-sm text-green-500 flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4" />
+                      Your approval will execute this withdrawal immediately.
+                    </p>
+                  </div>
+                )}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setApproveDialog(null)}>Cancel</Button>
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => handleApproveWithdrawal(approveDialog)}
+                >
+                  <ThumbsUp className="h-4 w-4 mr-2" />
+                  Confirm Approval
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Reject Withdrawal Dialog */}
+      <Dialog open={!!rejectDialog} onOpenChange={() => { setRejectDialog(null); setRejectReason(''); }}>
+        <DialogContent>
+          {rejectDialog && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <ThumbsDown className="h-5 w-5 text-red-500" />
+                  Reject Withdrawal
+                </DialogTitle>
+                <DialogDescription>
+                  Provide a reason for rejecting this withdrawal request.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="p-4 bg-muted rounded-lg space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amount</span>
+                    <span className="font-semibold">${rejectDialog.amount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Reason</span>
+                    <span className="text-sm">{rejectDialog.reason}</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Rejection Reason *</label>
+                  <Textarea
+                    placeholder="Why are you rejecting this request?"
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    className="mt-2"
+                    rows={3}
+                  />
+                </div>
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <p className="text-sm text-red-500 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    If enough signers reject, this request will be permanently declined.
+                  </p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => { setRejectDialog(null); setRejectReason(''); }}>Cancel</Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleRejectWithdrawal(rejectDialog)}
+                >
+                  <ThumbsDown className="h-4 w-4 mr-2" />
+                  Confirm Rejection
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Process Payouts Dialog */}
+      <Dialog open={processPayoutsDialog} onOpenChange={setProcessPayoutsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="h-5 w-5 text-yellow-500" />
+              Process Pending Payouts
+            </DialogTitle>
+            <DialogDescription>
+              Process all pending winner payouts in a batch transaction.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-muted rounded-lg space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Total Payouts</span>
+                <span className="font-semibold">{pendingPayouts.length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Total Amount</span>
+                <span className="font-semibold text-red-500">
+                  -${pendingPayouts.reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
+                </span>
+              </div>
+            </div>
+            <div className="max-h-48 overflow-y-auto space-y-2">
+              {pendingPayouts.map((payout) => (
+                <div key={payout.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg text-sm">
+                  <div>
+                    <p className="font-medium">{payout.marketClaim || 'Payout'}</p>
+                    <p className="text-xs text-muted-foreground">{payout.to && formatAddress(payout.to)}</p>
+                  </div>
+                  <span className="font-semibold">-${payout.amount.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProcessPayoutsDialog(false)}>Cancel</Button>
+            <Button className="bg-yellow-500 text-black hover:bg-yellow-600 font-semibold" onClick={handleProcessPayouts}>
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Process All Payouts
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Transaction Details Dialog */}
+      <Dialog open={!!selectedTransaction} onOpenChange={() => setSelectedTransaction(null)}>
+        <DialogContent>
+          {selectedTransaction && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  {getTransactionIcon(selectedTransaction.type)}
+                  <span className="capitalize">{selectedTransaction.type} Details</span>
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                  <span className="text-muted-foreground">Amount</span>
+                  <span className={`text-2xl font-bold ${
+                    selectedTransaction.type === 'fee' || selectedTransaction.type === 'deposit' ? 'text-green-500' : 'text-red-500'
+                  }`}>
+                    {selectedTransaction.type === 'fee' || selectedTransaction.type === 'deposit' ? '+' : '-'}${selectedTransaction.amount.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Status</p>
+                    <div className="mt-1">{getStatusBadge(selectedTransaction.status)}</div>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Date</p>
+                    <p className="font-medium">{formatDate(selectedTransaction.timestamp)}</p>
+                  </div>
+                  {selectedTransaction.from && (
+                    <div className="col-span-2">
+                      <p className="text-muted-foreground">From</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-mono text-sm">{selectedTransaction.from}</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => {
+                            navigator.clipboard.writeText(selectedTransaction.from!);
+                            toast.success('Address copied');
+                          }}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  {selectedTransaction.to && (
+                    <div className="col-span-2">
+                      <p className="text-muted-foreground">To</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-mono text-sm">{selectedTransaction.to}</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => {
+                            navigator.clipboard.writeText(selectedTransaction.to!);
+                            toast.success('Address copied');
+                          }}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  {selectedTransaction.marketClaim && (
+                    <div className="col-span-2">
+                      <p className="text-muted-foreground">Market</p>
+                      <p className="font-medium">{selectedTransaction.marketClaim}</p>
+                    </div>
+                  )}
+                  {selectedTransaction.txHash && (
+                    <div className="col-span-2">
+                      <p className="text-muted-foreground">Transaction Hash</p>
+                      <a href="#" className="text-[#06f6ff] hover:underline flex items-center gap-1 text-sm">
+                        {selectedTransaction.txHash}
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setSelectedTransaction(null)}>Close</Button>
+                {selectedTransaction.status === 'pending' && selectedTransaction.type === 'payout' && (
+                  <>
+                    <Button
+                      variant="outline"
+                      className="text-red-500 border-red-500/30"
+                      onClick={() => {
+                        setSelectedTransaction(null);
+                        setCancelPayoutDialog(selectedTransaction);
+                      }}
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                    <Button
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => {
+                        setSelectedTransaction(null);
+                        setProcessSinglePayout(selectedTransaction);
+                      }}
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      Process Now
+                    </Button>
+                  </>
+                )}
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Process Single Payout Dialog */}
+      <Dialog open={!!processSinglePayout} onOpenChange={() => setProcessSinglePayout(null)}>
+        <DialogContent>
+          {processSinglePayout && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Send className="h-5 w-5 text-green-500" />
+                  Process Payout
+                </DialogTitle>
+                <DialogDescription>
+                  Confirm processing this payout to the winner.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="p-4 bg-muted rounded-lg space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Market</span>
+                    <span className="font-medium">{processSinglePayout.marketClaim || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amount</span>
+                    <span className="font-semibold text-red-500">-${processSinglePayout.amount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Recipient</span>
+                    <span className="font-mono text-sm">{processSinglePayout.to && formatAddress(processSinglePayout.to)}</span>
+                  </div>
+                </div>
+                <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                  <p className="text-sm text-green-500 flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" />
+                    Funds will be sent immediately upon confirmation.
+                  </p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setProcessSinglePayout(null)}>Cancel</Button>
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => handleProcessSinglePayout(processSinglePayout)}
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Confirm & Process
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Payout Dialog */}
+      <Dialog open={!!cancelPayoutDialog} onOpenChange={() => setCancelPayoutDialog(null)}>
+        <DialogContent>
+          {cancelPayoutDialog && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <XCircle className="h-5 w-5 text-red-500" />
+                  Cancel Payout
+                </DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to cancel this payout? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="p-4 bg-muted rounded-lg space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Market</span>
+                    <span className="font-medium">{cancelPayoutDialog.marketClaim || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Amount</span>
+                    <span className="font-semibold">${cancelPayoutDialog.amount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Recipient</span>
+                    <span className="font-mono text-sm">{cancelPayoutDialog.to && formatAddress(cancelPayoutDialog.to)}</span>
+                  </div>
+                </div>
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <p className="text-sm text-red-500 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    The recipient will need to be manually compensated if this is cancelled in error.
+                  </p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setCancelPayoutDialog(null)}>Keep Payout</Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleCancelPayout(cancelPayoutDialog)}
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Cancel Payout
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Generate Report Dialog */}
+      <Dialog open={reportDialog} onOpenChange={setReportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-[#06f6ff]" />
+              Generate Report
+            </DialogTitle>
+            <DialogDescription>
+              Generate a treasury report for your records.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Report Type</label>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {(['summary', 'detailed', 'tax'] as const).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setReportType(type)}
+                    className={`p-3 rounded-lg border text-center transition-all ${
+                      reportType === type
+                        ? 'border-[#06f6ff] bg-[#06f6ff]/10 text-[#06f6ff]'
+                        : 'border-border hover:border-muted-foreground'
+                    }`}
+                  >
+                    <p className="font-medium capitalize">{type}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {type === 'summary' && 'Overview'}
+                      {type === 'detailed' && 'All transactions'}
+                      {type === 'tax' && 'Tax-ready'}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Date Range</label>
+              <div className="grid grid-cols-5 gap-2 mt-2">
+                {(['7d', '30d', '90d', 'year', 'all'] as const).map((range) => (
+                  <button
+                    key={range}
+                    onClick={() => setReportDateRange(range)}
+                    className={`py-2 px-3 rounded-lg border text-sm transition-all ${
+                      reportDateRange === range
+                        ? 'border-[#06f6ff] bg-[#06f6ff]/10 text-[#06f6ff]'
+                        : 'border-border hover:border-muted-foreground'
+                    }`}
+                  >
+                    {range === 'year' ? '1 Year' : range === 'all' ? 'All Time' : range}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-3 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                Report will include: {reportType === 'summary' ? 'Revenue summary, volume breakdown, and key metrics' : reportType === 'detailed' ? 'All transactions with full details' : 'Tax-ready format with categorized income and expenses'}
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReportDialog(false)}>Cancel</Button>
+            <Button
+              className="bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90"
+              onClick={() => {
+                toast.success(`Generating ${reportType} report for ${reportDateRange === 'year' ? '1 year' : reportDateRange}...`);
+                setReportDialog(false);
+              }}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Generate Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Adjust Fee Rate Dialog */}
+      <Dialog open={adjustFeeDialog} onOpenChange={setAdjustFeeDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Percent className="h-5 w-5 text-[#06f6ff]" />
+              Adjust Platform Fee Rate
+            </DialogTitle>
+            <DialogDescription>
+              Change the fee percentage charged on all market transactions.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-muted rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Current Fee Rate</span>
+                <span className="text-2xl font-bold">{treasuryData.feeRate}%</span>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium">New Fee Rate (%)</label>
+              <Input
+                type="number"
+                step="0.1"
+                min="0"
+                max="10"
+                placeholder="Enter new fee rate..."
+                value={newFeeRate}
+                onChange={(e) => setNewFeeRate(e.target.value)}
+                className="mt-2"
+              />
+              <p className="text-xs text-muted-foreground mt-2">Recommended range: 1% - 5%</p>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {['1.0', '2.0', '2.5', '3.0'].map((rate) => (
+                <Button
+                  key={rate}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setNewFeeRate(rate)}
+                  className={newFeeRate === rate ? 'border-[#06f6ff] text-[#06f6ff]' : ''}
+                >
+                  {rate}%
+                </Button>
+              ))}
+            </div>
+            {parseFloat(newFeeRate) !== treasuryData.feeRate && (
+              <div className={`p-3 rounded-lg ${parseFloat(newFeeRate) > treasuryData.feeRate ? 'bg-green-500/10 border border-green-500/30' : 'bg-yellow-500/10 border border-yellow-500/30'}`}>
+                <p className={`text-sm flex items-center gap-2 ${parseFloat(newFeeRate) > treasuryData.feeRate ? 'text-green-500' : 'text-yellow-500'}`}>
+                  {parseFloat(newFeeRate) > treasuryData.feeRate ? (
+                    <>
+                      <TrendingUp className="h-4 w-4" />
+                      Fee increase of {(parseFloat(newFeeRate) - treasuryData.feeRate).toFixed(1)}%
+                    </>
+                  ) : (
+                    <>
+                      <TrendingDown className="h-4 w-4" />
+                      Fee decrease of {(treasuryData.feeRate - parseFloat(newFeeRate)).toFixed(1)}%
+                    </>
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAdjustFeeDialog(false)}>Cancel</Button>
+            <Button
+              className="bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90"
+              onClick={handleUpdateFeeRate}
+              disabled={!newFeeRate || parseFloat(newFeeRate) === treasuryData.feeRate}
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Update Fee Rate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
