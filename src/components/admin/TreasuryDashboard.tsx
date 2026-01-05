@@ -555,139 +555,127 @@ const TreasuryDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Summary Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Summary Stats Cards - All in one row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
+        {/* Total Balance */}
         <Card className="bg-gradient-to-br from-green-500/10 to-transparent border-green-500/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Balance</p>
-                <p className="text-2xl font-bold text-green-500">${treasuryData.totalBalance.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Platform treasury</p>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                <Wallet className="h-4 w-4 text-green-500" />
               </div>
-              <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                <Wallet className="h-5 w-5 text-green-500" />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Total Balance</p>
+                <p className="text-lg font-bold text-green-500 truncate">${treasuryData.totalBalance.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
+        {/* Fees Today */}
         <Card className="bg-gradient-to-br from-[#06f6ff]/10 to-transparent border-[#06f6ff]/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Fees Today</p>
-                <p className="text-2xl font-bold text-[#06f6ff]">${treasuryData.feesToday.toFixed(2)}</p>
-                {treasuryData.feesYesterday > 0 || treasuryData.feesToday > 0 ? (
-                  <div className={`flex items-center gap-1 text-xs ${treasuryData.feesChangePercent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {treasuryData.feesChangePercent >= 0 ? (
-                      <TrendingUp className="h-3 w-3" />
-                    ) : (
-                      <TrendingDown className="h-3 w-3" />
-                    )}
-                    <span>
-                      {treasuryData.feesChangePercent >= 0 ? '+' : ''}{treasuryData.feesChangePercent.toFixed(0)}% vs yesterday
-                    </span>
-                  </div>
-                ) : (
-                  <p className="text-xs text-muted-foreground">Yesterday: ${treasuryData.feesYesterday.toFixed(2)}</p>
-                )}
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-[#06f6ff]/20 flex items-center justify-center shrink-0">
+                <DollarSign className="h-4 w-4 text-[#06f6ff]" />
               </div>
-              <div className="h-10 w-10 rounded-full bg-[#06f6ff]/20 flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-[#06f6ff]" />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Fees Today</p>
+                <p className="text-lg font-bold text-[#06f6ff] truncate">${treasuryData.feesToday.toFixed(2)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
+        {/* Pending Payouts */}
         <Card className="bg-gradient-to-br from-yellow-500/10 to-transparent border-yellow-500/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Pending Payouts</p>
-                <p className="text-2xl font-bold text-yellow-500">${treasuryData.pendingPayouts.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">{treasuryData.pendingPayoutsCount} awaiting</p>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
+                <Clock className="h-4 w-4 text-yellow-500" />
               </div>
-              <div className="h-10 w-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-yellow-500" />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Pending Payouts</p>
+                <p className="text-lg font-bold text-yellow-500 truncate">${treasuryData.pendingPayouts.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
+        {/* Weekly Volume */}
         <Card className="bg-gradient-to-br from-purple-500/10 to-transparent border-purple-500/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Weekly Volume</p>
-                <p className="text-2xl font-bold text-purple-500">${treasuryData.weeklyVolume.toLocaleString()}</p>
-                <div className="flex items-center gap-1 text-xs text-green-500">
-                  <TrendingUp className="h-3 w-3" />
-                  <span>+8% vs last week</span>
-                </div>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-purple-500/20 flex items-center justify-center shrink-0">
+                <BarChart3 className="h-4 w-4 text-purple-500" />
               </div>
-              <div className="h-10 w-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-purple-500" />
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Weekly Volume</p>
+                <p className="text-lg font-bold text-purple-500 truncate">${treasuryData.weeklyVolume.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Secondary Stats Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {/* Fee Rate */}
         <Card
           className="cursor-pointer hover:border-[#06f6ff]/50 transition-colors"
           onClick={() => setAdjustFeeDialog(true)}
         >
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
                 <Percent className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <p className="text-xs text-muted-foreground">Fee Rate</p>
-                <p className="text-lg font-bold">{treasuryData.feeRate}%</p>
+                <p className="text-lg font-bold truncate">{treasuryData.feeRate}%</p>
               </div>
-              <Settings className="h-4 w-4 text-muted-foreground" />
+              <Settings className="h-3 w-3 text-muted-foreground shrink-0" />
             </div>
           </CardContent>
         </Card>
+
+        {/* Profit Margin */}
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
                 <TrendingUp className="h-4 w-4 text-green-500" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs text-muted-foreground">Profit Margin</p>
-                <p className="text-lg font-bold text-green-500">{treasuryData.profitMargin}%</p>
+                <p className="text-lg font-bold text-green-500 truncate">{treasuryData.profitMargin.toFixed(1)}%</p>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Avg Transaction */}
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
                 <Banknote className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs text-muted-foreground">Avg Transaction</p>
-                <p className="text-lg font-bold">${treasuryData.avgTransactionSize}</p>
+                <p className="text-lg font-bold truncate">${treasuryData.avgTransactionSize.toFixed(2)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Total Transactions */}
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Total Transactions</p>
-                <p className="text-lg font-bold">{treasuryData.totalTransactions.toLocaleString()}</p>
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Total Txns</p>
+                <p className="text-lg font-bold truncate">{treasuryData.totalTransactions.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
