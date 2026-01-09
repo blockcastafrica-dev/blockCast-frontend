@@ -57,9 +57,11 @@ import {
   Info,
   MessageSquare,
   FileQuestion,
-  Tag
+  Tag,
+  Plus
 } from 'lucide-react';
 import { toast } from 'sonner';
+import CreateMarketModal from '@/components/CreateMarketModal';
 
 type MarketStatus = 'pending' | 'active' | 'expired' | 'disputable' | 'resolved';
 type DisputeCategory = 'incorrect_resolution' | 'market_manipulation' | 'invalid_market' | 'other';
@@ -150,6 +152,7 @@ const MarketsDashboard: React.FC = () => {
   const [resolutionEvidence, setResolutionEvidence] = useState('');
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [createMarketOpen, setCreateMarketOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const marketsPerPage = 10;
 
@@ -963,7 +966,7 @@ const MarketsDashboard: React.FC = () => {
             <CardTitle>All Markets</CardTitle>
 
             {/* Status filter tabs */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {(['all', 'pending', 'active', 'expired', 'disputable', 'resolved'] as const).map((status) => (
                 <button
                   key={status}
@@ -978,6 +981,13 @@ const MarketsDashboard: React.FC = () => {
                   <span className="ml-2 text-xs opacity-70">({statusCounts[status]})</span>
                 </button>
               ))}
+              <Button
+                onClick={() => setCreateMarketOpen(true)}
+                className="bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90 ml-2"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Market
+              </Button>
             </div>
 
             {/* Search, sort, and batch actions */}
@@ -2002,6 +2012,17 @@ const MarketsDashboard: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Create Market Modal */}
+      <CreateMarketModal
+        isOpen={createMarketOpen}
+        onClose={() => setCreateMarketOpen(false)}
+        onCreateMarket={(marketData) => {
+          console.log('New market:', marketData);
+          toast.success('Market created successfully');
+          setCreateMarketOpen(false);
+        }}
+      />
     </div>
   );
 };
