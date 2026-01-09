@@ -1616,7 +1616,7 @@ export default function MarketPage({
           <>
             {/* Backdrop - click to close */}
             <div
-              className="lg:hidden fixed inset-0 z-[99] bg-black/50"
+              className="lg:hidden fixed inset-0 z-[99] bg-black"
               onClick={() => setShowMobileBetModal(false)}
             />
             <div className="lg:hidden fixed left-0 right-0 z-[100] flex flex-col overflow-hidden" style={{ backgroundColor: '#0f1419', border: '1px solid #1f2937', top: '80px', bottom: '70px', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>

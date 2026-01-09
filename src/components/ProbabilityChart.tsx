@@ -392,7 +392,7 @@ export default function ProbabilityChart({
       <div className="w-full bg-black/30 rounded-lg p-3 md:p-4 lg:p-4">
         <div style={{ height: '300px' }} className="w-full relative">
           {/* BlockCast Logo - Centered Watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 1 }}>
             <img
               src={blockcastLogo}
               alt="BlockCast"

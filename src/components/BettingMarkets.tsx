@@ -1380,7 +1380,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
               <CardHeader className="pb-2">
                 {/* 1. Market Title - Well Aligned */}
                 <div className="relative mb-3 flex items-start gap-2">
-                  <CardTitle className="text-xs sm:text-sm md:text-base lg:text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors text-left flex-1">
+                  <CardTitle className="text-base sm:text-lg md:text-xl lg:text-xl leading-tight line-clamp-2 group-hover:text-primary transition-colors text-left flex-1">
                     {getClaimText(market)}
                   </CardTitle>
                   {/* Share Button - Aligned with Title */}
@@ -1585,16 +1585,16 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0"
             style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              backdropFilter: 'blur(4px)',
+              backgroundColor: '#000000',
+              zIndex: 9999,
             }}
             onClick={() => setShowBetDialog(false)}
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:p-6">
+          <div className="fixed inset-0 flex items-center justify-center px-4 py-6 sm:p-6" style={{ zIndex: 10000 }}>
             <div className="w-full max-w-[calc(100%-2rem)] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl md:rounded-3xl border border-zinc-800/50 shadow-2xl" style={{ backgroundColor: '#0f1419' }}>
               {/* Header */}
               <div className="flex items-center justify-between p-3 sm:p-4 border-b border-zinc-800/30">
