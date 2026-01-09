@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowUp, ArrowDown, Share2, Heart, Bookmark } from 'lucide-react';
+import { ArrowUp, ArrowDown, Share2 } from 'lucide-react';
 import blockcastLogo from '@/assets/blockcast logo dark BG.svg';
 
 interface MarketOutcome {
@@ -20,11 +20,6 @@ interface ProbabilityChartProps {
   yesPool?: number;
   noPool?: number;
   onShare?: () => void;
-  isLiked?: boolean;
-  onLikeToggle?: () => void;
-  likeCount?: number;
-  isBookmarked?: boolean;
-  onBookmarkToggle?: () => void;
   isMultipleChoice?: boolean;
   outcomes?: MarketOutcome[];
 }
@@ -148,11 +143,6 @@ export default function ProbabilityChart({
   yesPool,
   noPool,
   onShare,
-  isLiked,
-  onLikeToggle,
-  likeCount,
-  isBookmarked,
-  onBookmarkToggle,
   isMultipleChoice,
   outcomes
 }: ProbabilityChartProps) {
@@ -353,35 +343,14 @@ export default function ProbabilityChart({
 
         {/* Action Buttons - Mobile/Tablet only */}
         <div className="flex items-center gap-1 md:gap-2 lg:hidden">
-          {onLikeToggle && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onLikeToggle}
-              className={`text-white hover:text-white h-9 md:h-10 px-3 md:px-4 text-sm md:text-base ${isLiked ? 'text-red-500' : ''}`}
-            >
-              <Heart className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-              {likeCount}
-            </Button>
-          )}
-          {onBookmarkToggle && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBookmarkToggle}
-              className="text-white hover:text-white h-9 md:h-10 px-2 md:px-3"
-            >
-              <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
-            </Button>
-          )}
           {onShare && (
             <Button
               variant="ghost"
-              size="sm"
+              size="default"
               onClick={onShare}
-              className="text-white hover:text-white h-9 md:h-10 px-3 md:px-4 text-sm md:text-base"
+              className="text-white hover:text-white h-10 md:h-11 px-4 md:px-5 text-base"
             >
-              <Share2 className="h-5 w-5 mr-2" />
+              <Share2 className="h-6 w-6 mr-2" />
               Share
             </Button>
           )}

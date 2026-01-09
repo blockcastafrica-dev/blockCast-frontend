@@ -32,8 +32,6 @@ import {
   MessageCircle,
   ArrowLeft,
   Share2,
-  Heart,
-  Bookmark,
   Zap,
   Globe,
   Shield,
@@ -132,8 +130,6 @@ export default function MarketPage({
   const [comments] = useState<MarketComment[]>(generateMockComments(market.id));
   const [rules] = useState<MarketRule[]>(getMarketRules(market.id));
   const [likedComments, setLikedComments] = useState<Set<string>>(new Set());
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [showMobileBetModal, setShowMobileBetModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<
@@ -583,28 +579,11 @@ export default function MarketPage({
                   <div className="hidden lg:flex items-center gap-1">
                     <Button
                       variant="ghost"
-                      size="sm"
-                      onClick={() => setIsLiked(!isLiked)}
-                      className={`text-white hover:text-white h-9 px-3 ${isLiked ? 'text-red-500' : ''}`}
-                    >
-                      <Heart className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-                      {formatNumber(Math.floor(Math.random() * 500) + 100)}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsBookmarked(!isBookmarked)}
-                      className="text-white hover:text-white h-9 px-2"
-                    >
-                      <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
+                      size="default"
                       onClick={() => setShowShareModal(true)}
-                      className="text-white hover:text-white h-9 px-3"
+                      className="text-white hover:text-white h-10 px-4 text-base"
                     >
-                      <Share2 className="h-5 w-5 mr-2" />
+                      <Share2 className="h-6 w-6 mr-2" />
                       Share
                     </Button>
                   </div>
@@ -631,11 +610,6 @@ export default function MarketPage({
                 yesPool={market.yesPool}
                 noPool={market.noPool}
                 onShare={() => setShowShareModal(true)}
-                isLiked={isLiked}
-                onLikeToggle={() => setIsLiked(!isLiked)}
-                likeCount={formatNumber(Math.floor(Math.random() * 500) + 100)}
-                isBookmarked={isBookmarked}
-                onBookmarkToggle={() => setIsBookmarked(!isBookmarked)}
                 isMultipleChoice={market.isMultipleChoice}
                 outcomes={market.outcomes}
               />
