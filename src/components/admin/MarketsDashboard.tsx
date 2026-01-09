@@ -58,7 +58,8 @@ import {
   MessageSquare,
   FileQuestion,
   Tag,
-  Plus
+  Plus,
+  FilePlus2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import CreateMarketModal from '@/components/CreateMarketModal';
@@ -983,9 +984,10 @@ const MarketsDashboard: React.FC = () => {
               ))}
               <Button
                 onClick={() => setCreateMarketOpen(true)}
-                className="bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90 ml-2"
+                variant="outline"
+                className="border-gray-600 text-white hover:bg-gray-800 hover:border-gray-500 ml-2"
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <FilePlus2 className="h-4 w-4 mr-2" />
                 Create Market
               </Button>
             </div>
