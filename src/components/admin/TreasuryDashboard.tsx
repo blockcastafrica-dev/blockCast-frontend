@@ -69,6 +69,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   Wallet,
   DollarSign,
   TrendingUp,
@@ -153,6 +158,10 @@ const TreasuryDashboard: React.FC = () => {
   // Multi-sig state
   const [withdrawReason, setWithdrawReason] = useState('');
   const [withdrawDescription, setWithdrawDescription] = useState('');
+  const [categoryDateRange, setCategoryDateRange] = useState<'7d' | '30d' | '90d' | 'all' | 'custom'>('all');
+  const [categoryCustomDateFrom, setCategoryCustomDateFrom] = useState<Date | undefined>(undefined);
+  const [categoryCustomDateTo, setCategoryCustomDateTo] = useState<Date | undefined>(undefined);
+  const [categoryDatePopoverOpen, setCategoryDatePopoverOpen] = useState(false);
   const [pendingWithdrawals, setPendingWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [multiSigConfig, setMultiSigConfig] = useState<MultiSigConfig | null>(null);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<WithdrawalRequest | null>(null);
@@ -251,45 +260,93 @@ const TreasuryDashboard: React.FC = () => {
     txHash: tx.txHash || undefined,
   }));
 
-  // Calculate category breakdown from market pools
-  const marketPools = marketPoolService.getMarketPools();
+  // Calculate category breakdown from markets and pools
   const markets = JSON.parse(localStorage.getItem('blockcast_markets') || '[]');
+  const marketPools = marketPoolService.getMarketPools();
+  const allBets = marketPoolService.getAllBets();
 
-  const categoryVolumes: Record<string, number> = {};
-  marketPools.forEach(pool => {
-    const market = markets.find((m: any) => m.id === pool.marketId);
-    const category = market?.category || 'Other';
-    categoryVolumes[category] = (categoryVolumes[category] || 0) + pool.totalPool;
-  });
-
-  const totalCategoryVolume = Object.values(categoryVolumes).reduce((sum, v) => sum + v, 0);
-  const categoryColors: Record<string, string> = {
-    'Crypto': 'bg-[#06f6ff]',
-    'Finance': 'bg-blue-500',
-    'Politics': 'bg-purple-500',
-    'Sports': 'bg-green-500',
-    'Technology': 'bg-yellow-500',
-    'Other': 'bg-gray-500',
+  // Calculate date filter based on selected range
+  const getCategoryDateFilter = () => {
+    const now = new Date();
+    switch (categoryDateRange) {
+      case '7d':
+        return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      case '30d':
+        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case '90d':
+        return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      case 'custom':
+        return categoryCustomDateFrom || new Date(0);
+      default:
+        return new Date(0); // 'all' - no filter
+    }
   };
 
-  const categoryBreakdown = Object.entries(categoryVolumes)
-    .map(([category, volume]) => ({
+  const getCategoryDateEnd = () => {
+    if (categoryDateRange === 'custom' && categoryCustomDateTo) {
+      return categoryCustomDateTo;
+    }
+    return new Date();
+  };
+
+  const categoryStartDate = getCategoryDateFilter();
+  const categoryEndDate = getCategoryDateEnd();
+
+  // Calculate stats per category from actual market data
+  const categoryStats: Record<string, { volume: number; markets: number; bets: number; users: Set<string> }> = {};
+
+  markets.forEach((market: any) => {
+    const category = market.category || 'Other';
+    if (!categoryStats[category]) {
+      categoryStats[category] = { volume: 0, markets: 0, bets: 0, users: new Set() };
+    }
+
+    // Get pool and bets for this market
+    const pool = marketPools.find(p => p.marketId === market.id);
+
+    // Filter bets by date range
+    const marketBets = allBets.filter((bet: any) => {
+      if (bet.marketId !== market.id) return false;
+      const betDate = new Date(bet.placedAt);
+      return betDate >= categoryStartDate && betDate <= categoryEndDate;
+    });
+
+    // Only count if there are bets in the date range, or if showing 'all'
+    if (categoryDateRange === 'all' || marketBets.length > 0) {
+      // Count markets that have activity in the period
+      if (categoryDateRange === 'all') {
+        categoryStats[category].markets += 1;
+        const volume = pool?.totalPool || market.totalPool || market.total_pool || 0;
+        categoryStats[category].volume += volume;
+      } else if (marketBets.length > 0) {
+        categoryStats[category].markets += 1;
+        // Calculate volume from bets in the period
+        const periodVolume = marketBets.reduce((sum: number, bet: any) => sum + (bet.amount || 0), 0);
+        categoryStats[category].volume += periodVolume;
+      }
+
+      // Count bets and unique users
+      categoryStats[category].bets += marketBets.length;
+      marketBets.forEach((bet: any) => {
+        if (bet.userId) categoryStats[category].users.add(bet.userId);
+      });
+    }
+  });
+
+  const totalCategoryVolume = Object.values(categoryStats).reduce((sum, s) => sum + s.volume, 0);
+
+  const categoryBreakdown = Object.entries(categoryStats)
+    .filter(([_, stats]) => stats.markets > 0 || stats.bets > 0 || stats.volume > 0)
+    .map(([category, stats]) => ({
       category,
-      volume,
-      percentage: totalCategoryVolume > 0 ? Math.round((volume / totalCategoryVolume) * 100) : 0,
-      color: categoryColors[category] || 'bg-gray-500',
+      volume: stats.volume,
+      markets: stats.markets,
+      bets: stats.bets,
+      users: stats.users.size,
+      percentage: totalCategoryVolume > 0 ? Math.round((stats.volume / totalCategoryVolume) * 100) : 0,
     }))
     .sort((a, b) => b.volume - a.volume)
-    .slice(0, 5);
-
-  // If no data, show default categories
-  const displayCategoryBreakdown = categoryBreakdown.length > 0 ? categoryBreakdown : [
-    { category: 'Crypto', volume: 0, percentage: 0, color: 'bg-[#06f6ff]' },
-    { category: 'Finance', volume: 0, percentage: 0, color: 'bg-blue-500' },
-    { category: 'Politics', volume: 0, percentage: 0, color: 'bg-purple-500' },
-    { category: 'Sports', volume: 0, percentage: 0, color: 'bg-green-500' },
-    { category: 'Other', volume: 0, percentage: 0, color: 'bg-gray-500' }
-  ];
+    .slice(0, 6);
 
   // Get pending payouts from service
   const pendingPayoutTxs = getPendingPayouts();
@@ -929,31 +986,138 @@ const TreasuryDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Category Breakdown */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <PieChart className="h-4 w-4 text-[#06f6ff]" />
-              Volume by Category
-            </CardTitle>
+        {/* Category Breakdown - Table Style */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <CardTitle className="flex items-center gap-2">
+                <PieChart className="h-5 w-5 text-[#06f6ff]" />
+                Market Categories
+              </CardTitle>
+              <div className="flex gap-1 items-center">
+                {(['7d', '30d', '90d', 'all'] as const).map((range) => (
+                  <Button
+                    key={range}
+                    size="sm"
+                    variant={categoryDateRange === range ? 'default' : 'ghost'}
+                    className={categoryDateRange === range ? 'bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90' : ''}
+                    onClick={() => setCategoryDateRange(range)}
+                  >
+                    {range === 'all' ? 'All' : range}
+                  </Button>
+                ))}
+                <Popover open={categoryDatePopoverOpen} onOpenChange={setCategoryDatePopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant={categoryDateRange === 'custom' ? 'default' : 'ghost'}
+                      className={categoryDateRange === 'custom' ? 'bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90' : ''}
+                    >
+                      {categoryDateRange === 'custom' && categoryCustomDateFrom && categoryCustomDateTo
+                        ? `${categoryCustomDateFrom.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${categoryCustomDateTo.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                        : 'Custom'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-4 z-[10100]" align="end">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">From</label>
+                        <Input
+                          type="date"
+                          value={categoryCustomDateFrom ? categoryCustomDateFrom.toISOString().split('T')[0] : ''}
+                          onChange={(e) => setCategoryCustomDateFrom(e.target.value ? new Date(e.target.value) : undefined)}
+                          className="w-full"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">To</label>
+                        <Input
+                          type="date"
+                          value={categoryCustomDateTo ? categoryCustomDateTo.toISOString().split('T')[0] : ''}
+                          onChange={(e) => setCategoryCustomDateTo(e.target.value ? new Date(e.target.value) : undefined)}
+                          className="w-full"
+                        />
+                      </div>
+                      <Button
+                        className="w-full bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90"
+                        onClick={() => {
+                          if (categoryCustomDateFrom && categoryCustomDateTo) {
+                            setCategoryDateRange('custom');
+                            setCategoryDatePopoverOpen(false);
+                          }
+                        }}
+                        disabled={!categoryCustomDateFrom || !categoryCustomDateTo}
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {categoryBreakdown.map((category, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>{category.category}</span>
-                    <span className="font-medium">${category.volume.toLocaleString()}</span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ${category.color}`}
-                      style={{ width: `${category.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            {categoryBreakdown.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        <div>Category</div>
+                        <div className="text-xs font-normal text-muted-foreground">Market type</div>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <div>Volume</div>
+                        <div className="text-xs font-normal text-muted-foreground">Total USD</div>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <div>Markets</div>
+                        <div className="text-xs font-normal text-muted-foreground">Active count</div>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <div>Bets</div>
+                        <div className="text-xs font-normal text-muted-foreground">Placed count</div>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <div>Users</div>
+                        <div className="text-xs font-normal text-muted-foreground">Unique bettors</div>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <div>Share</div>
+                        <div className="text-xs font-normal text-muted-foreground">% of total</div>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {categoryBreakdown.map((category, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">{category.category}</TableCell>
+                        <TableCell className="text-center font-semibold">${category.volume.toLocaleString()}</TableCell>
+                        <TableCell className="text-center">{category.markets}</TableCell>
+                        <TableCell className="text-center">{category.bets}</TableCell>
+                        <TableCell className="text-center">{category.users}</TableCell>
+                        <TableCell className="text-center text-muted-foreground">{category.percentage}%</TableCell>
+                      </TableRow>
+                    ))}
+                    {/* Total Row */}
+                    <TableRow className="border-t-2 font-semibold bg-muted/30">
+                      <TableCell>Total</TableCell>
+                      <TableCell className="text-center text-[#06f6ff]">${totalCategoryVolume.toLocaleString()}</TableCell>
+                      <TableCell className="text-center">{categoryBreakdown.reduce((sum, c) => sum + c.markets, 0)}</TableCell>
+                      <TableCell className="text-center">{categoryBreakdown.reduce((sum, c) => sum + c.bets, 0)}</TableCell>
+                      <TableCell className="text-center">{categoryBreakdown.reduce((sum, c) => sum + c.users, 0)}</TableCell>
+                      <TableCell className="text-center">100%</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <PieChart className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p className="font-medium">No category data yet</p>
+                <p className="text-sm mt-1">Categories will appear when markets have activity</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
