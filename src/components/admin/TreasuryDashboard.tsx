@@ -56,6 +56,13 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -145,6 +152,7 @@ const TreasuryDashboard: React.FC = () => {
 
   // Multi-sig state
   const [withdrawReason, setWithdrawReason] = useState('');
+  const [withdrawDescription, setWithdrawDescription] = useState('');
   const [pendingWithdrawals, setPendingWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [multiSigConfig, setMultiSigConfig] = useState<MultiSigConfig | null>(null);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<WithdrawalRequest | null>(null);
@@ -417,10 +425,14 @@ const TreasuryDashboard: React.FC = () => {
       return;
     }
 
+    const fullReason = withdrawDescription
+      ? `${withdrawReason}: ${withdrawDescription}`
+      : withdrawReason;
+
     const result = createWithdrawalRequest(
       parseFloat(withdrawAmount),
       withdrawAddress,
-      withdrawReason,
+      fullReason,
       currentSignerId
     );
 
@@ -434,6 +446,7 @@ const TreasuryDashboard: React.FC = () => {
     setWithdrawAmount('');
     setWithdrawAddress('');
     setWithdrawReason('');
+    setWithdrawDescription('');
     setRefreshKey(k => k + 1);
   };
 
@@ -1310,10 +1323,28 @@ const TreasuryDashboard: React.FC = () => {
             </div>
             <div>
               <label className="text-sm font-medium">Reason for Withdrawal</label>
+              <Select value={withdrawReason} onValueChange={setWithdrawReason}>
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Select a reason..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Operational expenses">Operational expenses</SelectItem>
+                  <SelectItem value="Team payments">Team payments</SelectItem>
+                  <SelectItem value="Marketing budget">Marketing budget</SelectItem>
+                  <SelectItem value="Infrastructure costs">Infrastructure costs</SelectItem>
+                  <SelectItem value="Legal/Compliance">Legal/Compliance</SelectItem>
+                  <SelectItem value="Emergency fund">Emergency fund</SelectItem>
+                  <SelectItem value="Partner payout">Partner payout</SelectItem>
+                  <SelectItem value="Investor distribution">Investor distribution</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Description (Optional)</label>
               <Textarea
-                placeholder="e.g., Operational expenses, Team payments..."
-                value={withdrawReason}
-                onChange={(e) => setWithdrawReason(e.target.value)}
+                placeholder="Add any additional details..."
+                value={withdrawDescription}
+                onChange={(e) => setWithdrawDescription(e.target.value)}
                 className="mt-2"
                 rows={2}
               />
