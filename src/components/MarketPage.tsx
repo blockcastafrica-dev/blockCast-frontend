@@ -66,7 +66,6 @@ import TextCounter from "./TextCounter";
 import Thumbnail from "./Thumbnail";
 import ShareModal from "./ShareModal";
 import ProbabilityChart from "./ProbabilityChart";
-import { TokenUSDT } from '@web3icons/react';
 // import dispute from "../assets/dispute.svg";
 
 interface MarketPageProps {
@@ -617,8 +616,7 @@ export default function MarketPage({
                     <span>{getTimeRemaining(market.expiresAt)}</span>
                   </div>
                   <div className="flex items-center">
-                    <TokenUSDT variant="mono" size={18} color="#FFFFFF" className="flex-shrink-0 mr-2" />
-                    <span>${Math.round(market.totalPool / 1000)}k</span>
+                    <span>Vol. ${Math.round(market.totalPool / 1000)}k</span>
                   </div>
                 </div>
               </div>
