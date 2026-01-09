@@ -982,14 +982,13 @@ const MarketsDashboard: React.FC = () => {
                   <span className="ml-2 text-xs opacity-70">({statusCounts[status]})</span>
                 </button>
               ))}
-              <Button
+              <button
                 onClick={() => setCreateMarketOpen(true)}
-                variant="outline"
-                className="border-gray-600 text-white hover:bg-gray-800 hover:border-gray-500 ml-2"
+                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-muted text-muted-foreground hover:bg-muted/80 flex items-center gap-2"
               >
-                <FilePlus2 className="h-4 w-4 mr-2" />
+                <FilePlus2 className="h-4 w-4" />
                 Create Market
-              </Button>
+              </button>
             </div>
 
             {/* Search, sort, and batch actions */}
