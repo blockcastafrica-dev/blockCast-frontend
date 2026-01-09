@@ -19,11 +19,14 @@ export interface NewMarket {
   category: string;
   subcategory: string;
   description: string;
+  verificationRules: string;
   source: string;
+  aiVerificationProcess: string;
   expiresAt: Date;
+  resolutionPeriod: string;
   country: string;
   region: string;
-  marketType: 'present' | 'future';
+  marketType: 'past' | 'future';
   imageFile: File;
   imagePreview: string;
   isMultipleChoice: boolean;
@@ -66,12 +69,15 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [claim, setClaim] = useState("");
   const [description, setDescription] = useState("");
+  const [verificationRules, setVerificationRules] = useState("");
   const [source, setSource] = useState("");
+  const [aiVerificationProcess, setAiVerificationProcess] = useState("");
+  const [resolutionPeriod, setResolutionPeriod] = useState("24-48 hours after market closes");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
-  const [marketType, setMarketType] = useState<'present' | 'future'>('future');
+  const [marketType, setMarketType] = useState<'past' | 'future'>('future');
   const [expiryDate, setExpiryDate] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
@@ -126,7 +132,10 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
     setStep(1);
     setClaim("");
     setDescription("");
+    setVerificationRules("");
     setSource("");
+    setAiVerificationProcess("");
+    setResolutionPeriod("24-48 hours after market closes");
     setSelectedCategory("");
     setSelectedSubcategory("");
     setSelectedRegion("");
@@ -164,8 +173,11 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
       category: categories.find(c => c.id === selectedCategory)?.name || selectedCategory,
       subcategory: selectedSubcategory,
       description,
+      verificationRules,
       source,
+      aiVerificationProcess,
       expiresAt: new Date(expiryDate),
+      resolutionPeriod,
       country: selectedCountry,
       region: regions.find(r => r.id === selectedRegion)?.name || selectedRegion,
       marketType,
@@ -181,8 +193,8 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
   };
 
   const hasValidOutcomes = !isMultipleChoice || outcomes.filter(o => o.label.trim().length > 0).length >= 2;
-  const isStep1Valid = claim.length >= 10 && description.length >= 10 && source.length >= 3 && hasValidOutcomes;
-  const isStep2Valid = selectedCategory && selectedSubcategory;
+  const isStep1Valid = claim.length >= 10 && description.length >= 5 && source.length >= 2 && hasValidOutcomes;
+  const isStep2Valid = selectedCategory;
   const isStep3Valid = expiryDate && selectedRegion && selectedCountry && imageFile;
 
   const currentCategory = categories.find(c => c.id === selectedCategory);
@@ -298,7 +310,7 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                   value={claim}
                   onChange={(e) => setClaim(e.target.value)}
                   placeholder="e.g., Will Nigeria win AFCON 2025?"
-                  rows={3}
+                  rows={2}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -318,13 +330,13 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
 
               <div>
                 <label className="text-gray-300 text-sm mb-2 block">
-                  Description <span className="text-red-400">*</span>
+                  Market Description <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Provide context and details about this market..."
-                  rows={4}
+                  placeholder="Predict which national team will win the tournament..."
+                  rows={2}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -337,20 +349,17 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                     resize: 'none',
                   }}
                 />
-                <p className="text-gray-500 text-xs mt-1">
-                  {description.length}/500 characters (min 10)
-                </p>
               </div>
 
               <div>
                 <label className="text-gray-300 text-sm mb-2 block">
-                  Source <span className="text-red-400">*</span>
+                  Outcome Verification Rules
                 </label>
-                <input
-                  type="text"
-                  value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                  placeholder="e.g., Official government announcement, News outlet"
+                <textarea
+                  value={verificationRules}
+                  onChange={(e) => setVerificationRules(e.target.value)}
+                  placeholder="Define the rules for how the outcome will be verified..."
+                  rows={2}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -360,6 +369,52 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                     color: 'white',
                     fontSize: '14px',
                     outline: 'none',
+                    resize: 'none',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="text-gray-300 text-sm mb-2 block">
+                  Source of Verification <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={source}
+                  onChange={(e) => setSource(e.target.value)}
+                  placeholder="e.g., CAF, Official government announcement"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: '#1a1f26',
+                    border: '1px solid #374151',
+                    borderRadius: '12px',
+                    color: 'white',
+                    fontSize: '14px',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="text-gray-300 text-sm mb-2 block">
+                  AI Verification Process
+                </label>
+                <textarea
+                  value={aiVerificationProcess}
+                  onChange={(e) => setAiVerificationProcess(e.target.value)}
+                  placeholder="Describe how AI will verify the outcome (optional)..."
+                  rows={2}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: '#1a1f26',
+                    border: '1px solid #374151',
+                    borderRadius: '12px',
+                    color: 'white',
+                    fontSize: '14px',
+                    outline: 'none',
+                    resize: 'none',
                   }}
                 />
               </div>
@@ -476,7 +531,17 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
 
           {/* Step 2: Category Selection */}
           {step === 2 && (
-            <div className="space-y-4">
+            <div
+              className="space-y-4"
+              onClick={(e) => {
+                const target = e.target as HTMLElement;
+                // Only deselect if clicking on the container, not on buttons or labels
+                if (!target.closest('button') && !target.closest('label')) {
+                  setSelectedCategory("");
+                  setSelectedSubcategory("");
+                }
+              }}
+            >
               <div>
                 <label className="text-gray-300 text-sm mb-2 flex items-center gap-2">
                   <Tag className="w-4 h-4" />
@@ -490,14 +555,22 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                         setSelectedCategory(cat.id);
                         setSelectedSubcategory("");
                       }}
-                      className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
-                        selectedCategory !== cat.id ? 'hover:border-[#06f6ff]' : ''
-                      }`}
+                      className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
                       style={{
                         backgroundColor: selectedCategory === cat.id ? '#06f6ff' : 'transparent',
                         color: selectedCategory === cat.id ? '#000000' : '#ffffff',
                         borderColor: selectedCategory === cat.id ? '#06f6ff' : '#444',
                         boxShadow: selectedCategory === cat.id ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (selectedCategory !== cat.id) {
+                          e.currentTarget.style.borderColor = '#06f6ff';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (selectedCategory !== cat.id) {
+                          e.currentTarget.style.borderColor = '#444';
+                        }
                       }}
                     >
                       {cat.name}
@@ -509,21 +582,29 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
               {currentCategory && (
                 <div>
                   <label className="text-gray-300 text-sm mb-2 block">
-                    Subcategory <span className="text-red-400">*</span>
+                    Subcategory
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {currentCategory.subcategories.map((sub) => (
                       <button
                         key={sub}
                         onClick={() => setSelectedSubcategory(sub)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
-                          selectedSubcategory !== sub ? 'hover:border-[#06f6ff]' : ''
-                        }`}
+                        className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
                         style={{
                           backgroundColor: selectedSubcategory === sub ? '#06f6ff' : 'transparent',
                           color: selectedSubcategory === sub ? '#000000' : '#ffffff',
                           borderColor: selectedSubcategory === sub ? '#06f6ff' : '#444',
                           boxShadow: selectedSubcategory === sub ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (selectedSubcategory !== sub) {
+                            e.currentTarget.style.borderColor = '#06f6ff';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (selectedSubcategory !== sub) {
+                            e.currentTarget.style.borderColor = '#444';
+                          }
                         }}
                       >
                         {sub}
@@ -537,29 +618,45 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                 <label className="text-gray-300 text-sm mb-2 block">Market Type</label>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setMarketType('present')}
-                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
-                      marketType !== 'present' ? 'hover:border-[#06f6ff]' : ''
-                    }`}
+                    onClick={() => setMarketType('past')}
+                    className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
                     style={{
-                      backgroundColor: marketType === 'present' ? '#06f6ff' : 'transparent',
-                      color: marketType === 'present' ? '#000000' : '#ffffff',
-                      borderColor: marketType === 'present' ? '#06f6ff' : '#444',
-                      boxShadow: marketType === 'present' ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+                      backgroundColor: marketType === 'past' ? '#06f6ff' : 'transparent',
+                      color: marketType === 'past' ? '#000000' : '#ffffff',
+                      borderColor: marketType === 'past' ? '#06f6ff' : '#444',
+                      boxShadow: marketType === 'past' ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (marketType !== 'past') {
+                        e.currentTarget.style.borderColor = '#06f6ff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (marketType !== 'past') {
+                        e.currentTarget.style.borderColor = '#444';
+                      }
                     }}
                   >
-                    Present
+                    Past
                   </button>
                   <button
                     onClick={() => setMarketType('future')}
-                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border ${
-                      marketType !== 'future' ? 'hover:border-[#06f6ff]' : ''
-                    }`}
+                    className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border"
                     style={{
                       backgroundColor: marketType === 'future' ? '#06f6ff' : 'transparent',
                       color: marketType === 'future' ? '#000000' : '#ffffff',
                       borderColor: marketType === 'future' ? '#06f6ff' : '#444',
                       boxShadow: marketType === 'future' ? '0 4px 6px -1px rgba(6, 246, 255, 0.3)' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (marketType !== 'future') {
+                        e.currentTarget.style.borderColor = '#06f6ff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (marketType !== 'future') {
+                        e.currentTarget.style.borderColor = '#444';
+                      }
                     }}
                   >
                     Future
@@ -588,27 +685,54 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
           {/* Step 3: Location & Expiry */}
           {step === 3 && (
             <div className="space-y-4">
+              {/* Resolution Timeline */}
               <div>
-                <label className="text-gray-300 text-sm mb-2 flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Expiry Date <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={expiryDate}
-                  onChange={(e) => setExpiryDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    backgroundColor: '#1a1f26',
-                    border: '1px solid #374151',
-                    borderRadius: '12px',
-                    color: 'white',
-                    fontSize: '14px',
-                    outline: 'none',
-                  }}
-                />
+                <label className="text-gray-300 text-sm mb-2 block font-medium">Resolution Timeline</label>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-gray-400 text-xs mb-1 flex items-center gap-2">
+                      <Calendar className="w-3 h-3" />
+                      Market Closes <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={expiryDate}
+                      onChange={(e) => setExpiryDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        backgroundColor: '#1a1f26',
+                        border: '1px solid #374151',
+                        borderRadius: '12px',
+                        color: 'white',
+                        fontSize: '14px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-gray-400 text-xs mb-1 block">
+                      Resolution Period
+                    </label>
+                    <input
+                      type="text"
+                      value={resolutionPeriod}
+                      onChange={(e) => setResolutionPeriod(e.target.value)}
+                      placeholder="e.g., 24-48 hours after market closes"
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        backgroundColor: '#1a1f26',
+                        border: '1px solid #374151',
+                        borderRadius: '12px',
+                        color: 'white',
+                        fontSize: '14px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -740,10 +864,14 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Category</span>
-                  <span className="text-white">{currentCategory?.name} / {selectedSubcategory}</span>
+                  <span className="text-white">{currentCategory?.name}{selectedSubcategory ? ` / ${selectedSubcategory}` : ''}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Type</span>
+                  <span className="text-gray-400">Source</span>
+                  <span className="text-white">{source}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Market Type</span>
                   <span className="text-white capitalize">{marketType}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -771,8 +899,12 @@ export default function CreateMarketModal({ isOpen, onClose, onCreateMarket }: C
                   <span className="text-white">{selectedCountry}, {currentRegion?.name}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Expires</span>
+                  <span className="text-gray-400">Market Closes</span>
                   <span className="text-white">{expiryDate}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Resolution Period</span>
+                  <span className="text-white">{resolutionPeriod}</span>
                 </div>
               </div>
 
