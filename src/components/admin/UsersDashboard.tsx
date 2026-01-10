@@ -275,7 +275,7 @@ const UsersDashboard: React.FC = () => {
 
   const getRoleBadge = (role: string) => {
     switch (role) {
-      case 'admin': return <Badge className="bg-[#06f6ff] text-black font-semibold">Admin</Badge>;
+      case 'admin': return <Badge className="bg-[#06f6ff] font-semibold" style={{ color: '#000000' }}>Admin</Badge>;
       case 'user': return <span className="text-muted-foreground text-sm">User</span>;
       default: return <span className="text-muted-foreground text-sm">User</span>;
     }
