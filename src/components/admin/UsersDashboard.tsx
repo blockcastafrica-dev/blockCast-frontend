@@ -59,7 +59,7 @@ interface User {
   winRate: number;
   balance: number;
   status: 'active' | 'flagged' | 'banned';
-  role: 'user' | 'creator' | 'admin' | 'super_admin';
+  role: 'user' | 'admin';
   flags: string[];
 }
 
@@ -72,7 +72,7 @@ const UsersDashboard: React.FC = () => {
   const [actionDialog, setActionDialog] = useState<{ type: 'flag' | 'ban' | 'role'; user: User } | null>(null);
   const [actionReason, setActionReason] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'flagged' | 'banned'>('all');
-  const [filterRole, setFilterRole] = useState<'all' | 'user' | 'creator' | 'admin' | 'super_admin'>('all');
+  const [filterRole, setFilterRole] = useState<'all' | 'user' | 'admin'>('all');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [sortColumn, setSortColumn] = useState<SortColumn>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -92,7 +92,7 @@ const UsersDashboard: React.FC = () => {
       winRate: 62,
       balance: 12500,
       status: 'active',
-      role: 'creator',
+      role: 'user',
       flags: []
     },
     {
@@ -275,10 +275,9 @@ const UsersDashboard: React.FC = () => {
 
   const getRoleBadge = (role: string) => {
     switch (role) {
-      case 'super_admin': return <Badge className="bg-purple-600">Super Admin</Badge>;
-      case 'admin': return <Badge className="bg-[#06f6ff] text-black">Admin</Badge>;
-      case 'creator': return <Badge variant="outline" className="text-blue-500 border-blue-500/30">Creator</Badge>;
-      default: return null;
+      case 'admin': return <Badge className="bg-[#06f6ff] text-black font-semibold">Admin</Badge>;
+      case 'user': return <span className="text-muted-foreground text-sm">User</span>;
+      default: return <span className="text-muted-foreground text-sm">User</span>;
     }
   };
 
@@ -413,9 +412,7 @@ const UsersDashboard: React.FC = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setFilterRole('all')}>All Roles</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilterRole('user')}>User</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterRole('creator')}>Creator</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilterRole('admin')}>Admin</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterRole('super_admin')}>Super Admin</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               <DropdownMenu>
@@ -955,9 +952,7 @@ const UsersDashboard: React.FC = () => {
                     defaultValue={actionDialog.user.role}
                   >
                     <option value="user">User</option>
-                    <option value="creator">Creator</option>
                     <option value="admin">Admin</option>
-                    <option value="super_admin">Super Admin</option>
                   </select>
                   <p className="text-xs text-muted-foreground mt-2">
                     Current role: {actionDialog.user.role.charAt(0).toUpperCase() + actionDialog.user.role.slice(1).replace('_', ' ')}
