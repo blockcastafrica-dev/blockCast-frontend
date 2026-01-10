@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -155,7 +156,23 @@ const MarketsDashboard: React.FC = () => {
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [createMarketOpen, setCreateMarketOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [marketVisibility, setMarketVisibility] = useState<Record<string, boolean>>({});
   const marketsPerPage = 10;
+
+  // Toggle market visibility (online/offline)
+  const toggleMarketVisibility = (marketId: string) => {
+    setMarketVisibility(prev => {
+      const currentVisibility = prev[marketId] ?? true; // Default to visible
+      const newVisibility = !currentVisibility;
+      toast.success(`Market is now ${newVisibility ? 'online' : 'offline'}`);
+      return { ...prev, [marketId]: newVisibility };
+    });
+  };
+
+  // Get market visibility (defaults to true/online)
+  const isMarketVisible = (marketId: string): boolean => {
+    return marketVisibility[marketId] ?? true;
+  };
 
   // Mock data - all markets in one place
   const allMarkets: Market[] = [
@@ -968,7 +985,7 @@ const MarketsDashboard: React.FC = () => {
 
             {/* Status filter tabs */}
             <div className="flex flex-wrap items-center gap-2">
-              {(['all', 'pending', 'active', 'expired', 'disputable', 'resolved'] as const).map((status) => (
+              {(['all', 'pending', 'active', 'disputable', 'resolved'] as const).map((status) => (
                 <button
                   key={status}
                   onClick={() => handleFilterChange(status)}
@@ -1116,9 +1133,16 @@ const MarketsDashboard: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-border">
-                    <span className="text-xs text-muted-foreground">
-                      {market.status === 'resolved' ? `Resolved ${formatTimeAgo(market.resolvedAt!)}` : `Created ${formatTimeAgo(market.createdAt)}`}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={isMarketVisible(market.id)}
+                        onCheckedChange={() => toggleMarketVisibility(market.id)}
+                        className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500 w-9 h-5"
+                      />
+                      <span className={`text-xs font-medium ${isMarketVisible(market.id) ? 'text-green-500' : 'text-red-500'}`}>
+                        {isMarketVisible(market.id) ? 'Online' : 'Offline'}
+                      </span>
+                    </div>
                     {getActionButton(market)}
                   </div>
                 </div>
@@ -1166,8 +1190,8 @@ const MarketsDashboard: React.FC = () => {
                       </span>
                     </button>
                   </TableHead>
-                  <TableHead className="w-[80px] text-center">Result</TableHead>
-                  <TableHead className="w-[180px] text-right">Actions</TableHead>
+                  <TableHead className="w-[100px] text-center">Result</TableHead>
+                  <TableHead className="w-[280px] text-left">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1244,10 +1268,21 @@ const MarketsDashboard: React.FC = () => {
                       </TableCell>
                       <TableCell className="py-4">
                         <div className="flex items-center justify-end gap-2">
+                          {/* Visibility Toggle */}
+                          <div className="flex items-center gap-1.5 shrink-0 mr-2">
+                            <Switch
+                              checked={isMarketVisible(market.id)}
+                              onCheckedChange={() => toggleMarketVisibility(market.id)}
+                              className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500 shrink-0 w-9 h-5 border border-white/20"
+                            />
+                            <span className={`text-xs font-medium ${isMarketVisible(market.id) ? 'text-green-500' : 'text-red-500'}`}>
+                              {isMarketVisible(market.id) ? 'Online' : 'Offline'}
+                            </span>
+                          </div>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-8 px-3 text-xs"
+                            className="h-8 px-3 text-xs shrink-0"
                             onClick={() => setViewMarket(market)}
                           >
                             View
