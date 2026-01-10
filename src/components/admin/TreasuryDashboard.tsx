@@ -478,13 +478,16 @@ const TreasuryDashboard: React.FC = () => {
 
   const handleWithdraw = () => {
     if (!withdrawAmount || !withdrawAddress || !withdrawReason) {
-      toast.error('Please fill in all fields including reason');
+      toast.error('Please fill in all required fields');
       return;
     }
 
-    const fullReason = withdrawDescription
-      ? `${withdrawReason}: ${withdrawDescription}`
-      : withdrawReason;
+    if (!withdrawDescription || !withdrawDescription.trim()) {
+      toast.error('Please provide a description for this withdrawal request');
+      return;
+    }
+
+    const fullReason = `${withdrawReason}: ${withdrawDescription}`;
 
     const result = createWithdrawalRequest(
       parseFloat(withdrawAmount),
@@ -1504,9 +1507,9 @@ const TreasuryDashboard: React.FC = () => {
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium">Description (Optional)</label>
+              <label className="text-sm font-medium">Description *</label>
               <Textarea
-                placeholder="Add any additional details..."
+                placeholder="Add description for this withdrawal request..."
                 value={withdrawDescription}
                 onChange={(e) => setWithdrawDescription(e.target.value)}
                 className="mt-2"

@@ -673,9 +673,7 @@ const MarketsDashboard: React.FC = () => {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      const selectableIds = sortedMarkets
-        .filter(m => m.status === 'pending')
-        .map(m => m.id);
+      const selectableIds = sortedMarkets.map(m => m.id);
       setSelectedMarkets(selectableIds);
     } else {
       setSelectedMarkets([]);
@@ -1094,13 +1092,11 @@ const MarketsDashboard: React.FC = () => {
               return (
                 <div key={market.id} className="border rounded-lg p-4 space-y-3">
                   <div className="flex items-start gap-3">
-                    {market.status === 'pending' && (
-                      <Checkbox
-                        checked={selectedMarkets.includes(market.id)}
-                        onCheckedChange={(checked) => handleSelectMarket(market.id, checked as boolean)}
-                        className="mt-1"
-                      />
-                    )}
+                    <Checkbox
+                      checked={selectedMarkets.includes(market.id)}
+                      onCheckedChange={(checked) => handleSelectMarket(market.id, checked as boolean)}
+                      className="mt-1"
+                    />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{market.claim}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
@@ -1156,12 +1152,10 @@ const MarketsDashboard: React.FC = () => {
               <TableHeader>
                 <TableRow className="border-b border-border/50 hover:bg-transparent">
                   <TableHead className="w-10">
-                    {statusFilter === 'pending' && (
-                      <Checkbox
-                        checked={selectedMarkets.length === sortedMarkets.filter(m => m.status === 'pending').length && selectedMarkets.length > 0}
-                        onCheckedChange={handleSelectAll}
-                      />
-                    )}
+                    <Checkbox
+                      checked={selectedMarkets.length === sortedMarkets.length && selectedMarkets.length > 0}
+                      onCheckedChange={handleSelectAll}
+                    />
                   </TableHead>
                   <TableHead className="w-[100px]">Status</TableHead>
                   <TableHead>Market</TableHead>
@@ -1203,12 +1197,10 @@ const MarketsDashboard: React.FC = () => {
                   return (
                     <TableRow key={market.id} className="border-b border-border/30 hover:bg-muted/30">
                       <TableCell className="py-4">
-                        {market.status === 'pending' && (
-                          <Checkbox
-                            checked={selectedMarkets.includes(market.id)}
-                            onCheckedChange={(checked) => handleSelectMarket(market.id, checked as boolean)}
-                          />
-                        )}
+                        <Checkbox
+                          checked={selectedMarkets.includes(market.id)}
+                          onCheckedChange={(checked) => handleSelectMarket(market.id, checked as boolean)}
+                        />
                       </TableCell>
                       <TableCell className="py-4">
                         <Badge className={`${statusConfig[market.status].color} text-xs`}>
