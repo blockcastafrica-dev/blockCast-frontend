@@ -112,7 +112,8 @@ import {
   ThumbsUp,
   ThumbsDown,
   UserCheck,
-  Timer
+  Timer,
+  Lock
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -153,6 +154,7 @@ const TreasuryDashboard: React.FC = () => {
   const [adjustFeeDialog, setAdjustFeeDialog] = useState(false);
   const [newFeeRate, setNewFeeRate] = useState('2.5');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [tvlPeriod, setTvlPeriod] = useState<'7d' | '30d' | '90d' | 'all' | 'custom'>('all');
   const transactionsPerPage = 10;
 
   // Multi-sig state
@@ -660,16 +662,16 @@ const TreasuryDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Pending Payouts */}
-        <Card className="bg-gradient-to-br from-yellow-500/10 to-transparent border-yellow-500/20">
+        {/* TVL - Total Value Locked */}
+        <Card className="bg-gradient-to-br from-blue-500/10 to-transparent border-blue-500/20">
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
-                <Clock className="h-4 w-4 text-yellow-500" />
+              <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                <Lock className="h-4 w-4 text-blue-500" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Pending Payouts</p>
-                <p className="text-lg font-bold text-yellow-500 truncate">${treasuryData.pendingPayouts.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">TVL</p>
+                <p className="text-lg font-bold text-blue-500 truncate">${treasuryData.pendingPayouts.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -803,66 +805,48 @@ const TreasuryDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Pending Payouts Card */}
-        <Card className="border-yellow-500/30">
+        {/* Total Value Locked Card */}
+        <Card className="border-blue-500/30">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Clock className="h-4 w-4 text-yellow-500" />
-              Pending Payouts
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Lock className="h-4 w-4 text-blue-500" />
+                Total Value Locked
+              </CardTitle>
+              <div className="flex items-center gap-1">
+                {(['7d', '30d', '90d', 'all', 'custom'] as const).map((period) => (
+                  <button
+                    key={period}
+                    onClick={() => setTvlPeriod(period)}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${
+                      tvlPeriod === period
+                        ? 'bg-blue-500 text-white'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    {period === 'all' ? 'All' : period === 'custom' ? 'Custom' : period.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            {pendingPayouts.length > 0 ? (
-              <div className="space-y-3">
-                {pendingPayouts.slice(0, 3).map((payout) => (
-                  <div key={payout.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg group">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{payout.marketClaim || 'Payout'}</p>
-                      <p className="text-xs text-muted-foreground">{payout.to && formatAddress(payout.to)}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-red-500">-${payout.amount.toLocaleString()}</p>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <MoreVertical className="h-3 w-3" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="z-[100]">
-                          <DropdownMenuItem onClick={() => setProcessSinglePayout(payout)}>
-                            <Play className="h-4 w-4 mr-2 text-green-500" />
-                            Process Now
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setSelectedTransaction(payout)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setCancelPayoutDialog(payout)} className="text-red-500">
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Cancel Payout
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                ))}
-                {pendingPayouts.length > 3 && (
-                  <p className="text-xs text-muted-foreground text-center">+{pendingPayouts.length - 3} more pending</p>
-                )}
-                <Button
-                  className="w-full bg-yellow-500 text-black hover:bg-yellow-600 font-semibold"
-                  onClick={() => setProcessPayoutsDialog(true)}
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  Process All ({pendingPayouts.length})
-                </Button>
+            <div className="text-center py-4">
+              <p className="text-3xl font-bold text-blue-500">${treasuryData.pendingPayouts.toLocaleString()}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {tvlPeriod === 'all' ? 'All time' : tvlPeriod === 'custom' ? 'Custom period' : `Last ${tvlPeriod}`}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-lg font-semibold text-green-500">+12.5%</p>
+                <p className="text-xs text-muted-foreground">vs previous period</p>
               </div>
-            ) : (
-              <div className="text-center py-4 text-muted-foreground">
-                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
-                <p className="text-sm">All payouts processed</p>
+              <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-lg font-semibold">{treasuryStats?.totalMarkets || 0}</p>
+                <p className="text-xs text-muted-foreground">Active markets</p>
               </div>
-            )}
+            </div>
           </CardContent>
         </Card>
 
