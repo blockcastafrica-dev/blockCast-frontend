@@ -49,6 +49,7 @@ import {
   Clock4,
   Activity,
   X,
+  Link2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/components/LanguageContext";
@@ -134,9 +135,10 @@ export default function MarketPage({
   const [showMobileBetModal, setShowMobileBetModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<
     "dispute" | "overview" | "comments" | "analysis" | "activity"
-  >(market.disputable ? "dispute" : "overview");
+  >("overview");
   const [claim, setClaim] = useState<string>("");
   const [isTrue, setIsTrue] = useState<string>("");
+  const [hoveredPill, setHoveredPill] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [evidenceLink, setEvidenceLink] = useState("");
   const [castInterface, setCastInterface] = useState<"buy" | "sell">("buy");
@@ -621,12 +623,12 @@ export default function MarketPage({
       {/* Tab Navigation */}
       <div className="flex flex-wrap items-center gap-1 md:gap-1 lg:gap-1 p-1.5 md:p-2 lg:p-2 bg-muted/50 rounded-lg">
         {[
+          { id: "overview", label: t("Overview"), icon: Target },
           market.disputable && {
             id: "dispute",
             label: t("Dispute"),
             icon: MessagesSquare,
           },
-          { id: "overview", label: t("Overview"), icon: Target },
           !market.disputable && {
             id: "activity",
             label: "Activity",
@@ -666,297 +668,130 @@ export default function MarketPage({
 
           {/* Tab Content */}
           <div className="space-y-4">
-          {/* Verify Truth Tab*/}
+          {/* Dispute Tab */}
           {activeTab === "dispute" && market.disputable && (
             <>
-              <div className="border border-border rounded-xl bg-transparent">
+              <div className="border border-border rounded-xl bg-transparent" onClick={() => setIsTrue("")}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-semibold">
                     <MessageCircle className="h-5 w-5" />
-                    Do you want to dispute this resolution?
+                    Submit Evidence
                   </CardTitle>
                   <CardDescription className="text-muted-foreground text-sm">
-                    {/* {market.claim} */}
                     If you have evidence that contradicts the AI resolution,
                     submit it here. Your evidence will be reviewed by our
                     dispute resolution system.
                   </CardDescription>
                 </CardHeader>
 
-                <CardContent>
-                  <div className="p-4 bg-text-muted-foreground/10 rounded-lg border border-input">
-                    <span className="flex items-center gap-2 mb-2">
-                      <Target className="h-4 w-4" />
-                      <p className="text-md">
-                        Evidence Submission Fee and Rewards
-                      </p>
-                    </span>
-
-                    <ul className="list-disc mb-4 text-sm">
-                      <li>
-                        Submission Fee:{" "}
-                        <span className="text-muted-foreground text-xs">
-                          0.1 HBAR (paid from wallet)
-                        </span>
-                      </li>
-                      <li>
-                        Your Balance:{" "}
-                        <span className="text-muted-foreground text-xs">
-                          0.0000 HBAR
-                        </span>
-                      </li>
-                      <li>
-                        Reward if Accepted:{" "}
-                        <span className="text-muted-foreground text-xs">
-                          Up to 1.0 HBAR + Quality bonus
-                        </span>
-                      </li>
-                      <li>
-                        Partial Refund:{" "}
-                        <span className="text-muted-foreground text-xs">
-                          50% fee refunded for good-faith attempts
-                        </span>
-                      </li>
-                    </ul>
-
-                    <span className="text-red-500 text-sm">
-                      ⚠️ Insufficient balance. You need at least 0.1 HBAR to
-                      submit evidence
-                    </span>
+                <CardContent className="space-y-6 pt-4 mt-2">
+                  <div className="space-y-3">
+                    <Label htmlFor="claim">
+                      Describe your evidence
+                    </Label>
+                    <Textarea
+                      id="claim"
+                      placeholder="Explain why you think the AI resolution is incorrect. Be specific and cite your sources..."
+                      value={claim}
+                      onChange={(e) => setClaim(e.target.value)}
+                      rows={3}
+                      className="resize-none"
+                    />
+                    <TextCounter text={claim} />
                   </div>
-                </CardContent>
 
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="claim">
-                        Describe your evidence (maximum 200 characters)
-                      </Label>
-                      <Textarea
-                        id="claim"
-                        placeholder="Explain why you think the AI resolution is incorrect. Be specific and cite your sources..."
-                        value={claim}
-                        onChange={(e) => setClaim(e.target.value)}
-                        rows={2}
-                        className="resize-none mt-4"
-                      />
-                      <TextCounter text={claim} />
-                    </div>
+                  <div className="space-y-3">
+                    <Label htmlFor="evidence" className="flex items-center gap-2">
+                      <Link2 className="h-4 w-4" />
+                      Evidence Links
+                    </Label>
+                    <Textarea
+                      id="evidence"
+                      placeholder={"Paste links to supporting evidence (one per line)\ne.g., https://finance.yahoo.com/quote/NFLX"}
+                      value={evidenceLink}
+                      onChange={(e) => setEvidenceLink(e.target.value)}
+                      rows={3}
+                      className="resize-none font-mono text-sm"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      Add links to price charts, news articles, or other verifiable sources
+                    </span>
+                    <Thumbnail url={evidenceLink} />
+                  </div>
 
-                    {/* ***********************************Evidence links ************************************/}
-                    <div className="space-y-2">
-                      <Label htmlFor="claim">Supporting links (Optional)</Label>
-                      <Textarea
-                        id="evidence"
-                        placeholder="https://example.com/evidence1;https://example.com/evidence2"
-                        value={evidenceLink}
-                        onChange={(e) => setEvidenceLink(e.target.value)}
-                        rows={2}
-                        className="resize-none mt-4"
-                      />
-                      {evidenceLink && (
-                        <span className="text-sm font-semiBold text-red-500">
-                          Multiple links must be separated by a semi column(;),
-                          or a comma(,)
-                        </span>
-                      )}
-
-                      <Thumbnail url={evidenceLink} />
-
-                      {/* <iframe src="https://lucide.dev" frameborder="0"></iframe> */}
-                    </div>
-
-                    <Select value={isTrue} onValueChange={handleVerifyClaim}>
-                      <SelectTrigger
-                        className="w-40 md:w-32 flex-1 h-11 bg-background/50 border-primary/30 text-sm"
-                        {...({} as any)}
+                  <div className="space-y-3">
+                    <Label>What should the correct outcome be?</Label>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                        style={{
+                          backgroundColor: isTrue === "True" ? "#06f6ff" : "transparent",
+                          color: isTrue === "True" ? "black" : (hoveredPill === "True" ? "#06f6ff" : "#ffffff"),
+                          borderColor: isTrue === "True" ? "#06f6ff" : (hoveredPill === "True" ? "#06f6ff" : "#444"),
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVerifyClaim("True");
+                        }}
+                        onMouseEnter={() => setHoveredPill("True")}
+                        onMouseLeave={() => setHoveredPill(null)}
                       >
-                        <SelectValue placeholder="Yes/No" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="True">True</SelectItem>
-                        <SelectItem value="False">False</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      onClick={async () => {
-                        setIsVerifying(true);
-                        try {
-                          // Placeholder verification logic
-                          await new Promise((res) => setTimeout(res, 1000));
-                          toast.success("Verification submitted");
-                          setClaim("");
-                        } catch (e) {
-                          console.error(e);
-                          toast.error("Verification failed");
-                        } finally {
-                          setIsVerifying(false);
-                        }
-                      }}
-                      disabled={isVerifying || !claim.trim() || isTrue === ""}
-                      className="w-full"
-                    >
-                      {isVerifying ? "Verifying..." : "Verify Truth"}
-                    </Button>
+                        True
+                      </button>
+                      <button
+                        type="button"
+                        className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                        style={{
+                          backgroundColor: isTrue === "False" ? "#A855F7" : "transparent",
+                          color: isTrue === "False" ? "white" : (hoveredPill === "False" ? "#A855F7" : "#ffffff"),
+                          borderColor: isTrue === "False" ? "#A855F7" : (hoveredPill === "False" ? "#A855F7" : "#444"),
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVerifyClaim("False");
+                        }}
+                        onMouseEnter={() => setHoveredPill("False")}
+                        onMouseLeave={() => setHoveredPill(null)}
+                      >
+                        False
+                      </button>
+                    </div>
                   </div>
+
+                  <div className="p-4 bg-muted/50 rounded-lg text-sm space-y-2 mt-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Submission Fee:</span>
+                      <span>0.1 USDT</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Potential Reward:</span>
+                      <span>Up to 1.0 USDT</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={async () => {
+                      setIsVerifying(true);
+                      try {
+                        await new Promise((res) => setTimeout(res, 1000));
+                        toast.success("Evidence submitted successfully");
+                        setClaim("");
+                      } catch (e) {
+                        console.error(e);
+                        toast.error("Submission failed");
+                      } finally {
+                        setIsVerifying(false);
+                      }
+                    }}
+                    disabled={isVerifying || !claim.trim() || isTrue === ""}
+                    className="w-full"
+                  >
+                    {isVerifying ? "Submitting..." : "Submit Evidence"}
+                  </Button>
                 </CardContent>
               </div>
 
-              {/************************** Market Activity Timeline **************************/}
-              <div className="mt-8 border border-border rounded-xl bg-transparent">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-semibold">
-                    <Clock4 className="h-4 w-4" />
-                    Market Activity Timeline
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground text-sm">
-                    Complete history of market events, evidence submissions, and
-                    blockchain transactions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="p-4 bg-text-muted-foreground/10 rounded-lg border border-input flex gap-4">
-                    <div className="mt-2">
-                      <Target className="h-4 w-4" />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                      <div className="flex items-center gap-2">
-                        <p className="text-md">Market Created</p>
-                        <span className="text-xs border border-input p-1 rounded-lg">
-                          Genesis Event
-                        </span>
-                      </div>
-                      <div className="text-muted-foreground text-xs">
-                        <p> Prediction market created by cccc</p>
-                        <p>9/24/2025</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-
-                {/* Prediction market closed/opened */}
-
-                <CardContent>
-                  <div className="flex flex-col gap-2 w-full p-4 bg-foreground rounded-lg border border-input">
-                    <div className="flex items-center gap-2">
-                      <p
-                        style={{ color: "#ffa200" }}
-                        className="text-md font-semibold"
-                      >
-                        Prediction Market Closed
-                      </p>
-                      <span
-                        style={{ backgroundColor: "#ffa200" }}
-                        className="text-sm font-bold py-1 px-6 rounded-lg bg-yellow-600"
-                      >
-                        Evidence Submission | {10} days Left
-                      </span>
-                    </div>
-                    <div className="text-muted-foreground text-sm">
-                      <p>
-                        Prediction period ended, market entered resolution phase
-                      </p>
-                      <p>10/2/2025 at 10:00:00 PM</p>
-                    </div>
-                  </div>
-                </CardContent>
-
-                <CardContent>
-                  <div className="p-4 bg-text-muted-foreground/10 rounded-lg border border-input flex gap-4">
-                    <div className="mt-2">
-                      <FileText className="h-4 w-4" />
-                    </div>
-                    <div className="flex flex-col gap-2 w-full">
-                      <div className="flex items-center gap-2">
-                        <p className="text-md">Evidence Submitted</p>
-                        <span
-                          style={{ backgroundColor: "#fff" }}
-                          className="text-xs border border-input rounded-lg"
-                        >
-                          Genesis Event
-                        </span>
-                      </div>
-                      <div className="text-muted-foreground text-xs">
-                        <p>Submitted by 0x1234...5678</p>
-                        <p className="text-white">
-                          "I don't agree with this resolution"{" "}
-                          <a className="text-blue-500" href="">
-                            [Link]
-                          </a>
-                        </p>
-                        <p>9/24/2025 TX: 0xea5696...fa70d7 Fee:0.1 HBAR 0</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </div>
-
-              {/************************** Market Description**************************/}
-              <div className="mt-8 border border-border rounded-xl bg-transparent">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-semibold">
-                    <Target className="h-4 w-4" />
-                    <h3>Market Overview</h3>
-                  </CardTitle>
-                  <CardTitle className="flex items-center gap-2 font-semibold mt-6">
-                    <h3>Market Description</h3>
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground text-sm mb-4">
-                    Deployed directly for test
-                  </CardDescription>
-
-                  <Separator />
-                </CardHeader>
-                <CardContent>
-                  <div className="py-1 mb-4 bg-text-muted-foreground/10 flex flex-col gap-4">
-                    <h3 className="text-md">Verification Methodology</h3>
-                    <p className="text-muted-foreground">
-                      This market uses Ai-Powered truth verification combined
-                      with community consensus. Our system analyzes multiple
-                      credible sources, corss-references data, and incorporates
-                      expert anlysis to determine the most accurate outcome.
-                    </p>
-                  </div>
-                  <Separator />
-                </CardContent>
-
-                {/* Resolution Status */}
-
-                <CardContent>
-                  <div className="p-4 rounded-lg border border-input">
-                    <div className="mb-6 bg-text-muted-foreground/10 flex justify-between">
-                      <div>
-                        <span className="flex items-center gap-2 font-semibold text-sm mb-1">
-                          <Target className="h-3 w-3" />
-                          <h3>Resolution Status</h3>
-                        </span>
-                        <p className="text-muted-foreground text-sm">
-                          Status unknown
-                        </p>
-                      </div>
-                      <h5 className="text-xs font-bold">Unknown</h5>
-                    </div>
-                    <span className="flex flex-col gap-4">
-                      <Separator />
-                      <Separator />
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold">Market Status</h3>
-                    <div className="flex gap-3 mt-4 items-center">
-                      <span className="rounded-lg bg-secondary py-1 px-2 text-sm font-bold">
-                        DISPUTABLE
-                      </span>
-                      <span className="border border-input py-1 px-2 text-xs rounded-lg font-bold">
-                        {crypto.randomUUID()}
-                      </span>
-                      <span className="text-muted-foreground text-sm">
-                        Expires in {"Expired"}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </div>
             </>
           )}
 
