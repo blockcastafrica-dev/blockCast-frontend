@@ -1507,35 +1507,34 @@ const MarketsDashboard: React.FC = () => {
                             <span className="text-red-500">{100 - yesPercent}%</span>
                           </div>
                         ) : (
-                          <Badge
-                            variant="outline"
-                            className="text-[10px] border-orange-500 text-orange-500 cursor-pointer hover:bg-orange-500/10"
-                            onClick={() => {
-                              const outcomes = market.outcomes?.map(o => {
-                                const totalPool = market.outcomes?.reduce((sum, out) => sum + out.pool, 0) || 1;
-                                const percent = Math.round((o.pool / totalPool) * 100);
-                                return `${o.label}: ${percent}%`;
-                              }).join('\n');
-                              toast(
-                                <div className="space-y-1">
-                                  <p className="font-medium text-xs text-muted-foreground mb-1">Outcome Odds</p>
-                                  {market.outcomes?.map((o, idx) => {
-                                    const totalPool = market.outcomes?.reduce((sum, out) => sum + out.pool, 0) || 1;
-                                    const percent = Math.round((o.pool / totalPool) * 100);
-                                    return (
-                                      <div key={idx} className="flex justify-between gap-4 text-sm">
-                                        <span>{o.label}</span>
-                                        <span className="text-[#06f6ff] font-semibold">{percent}%</span>
-                                      </div>
-                                    );
-                                  })}
-                                </div>,
-                                { duration: 4000 }
-                              );
-                            }}
-                          >
-                            {market.outcomes?.length || 0} outcomes
-                          </Badge>
+                          <Popover>
+                            <PopoverTrigger onClick={(e) => e.stopPropagation()}>
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] border-[#06f6ff] text-[#06f6ff] cursor-pointer hover:bg-[#06f6ff]/10 flex items-center gap-1"
+                              >
+                                {market.outcomes?.length || 0} outcomes
+                                <Info className="h-3 w-3" />
+                              </Badge>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-64 p-0" align="start" side="bottom">
+                              <div className="bg-primary text-primary-foreground px-3 py-2 rounded-t-md">
+                                <p className="font-semibold text-sm">Outcome Odds</p>
+                              </div>
+                              <div className="p-3 space-y-2">
+                                {market.outcomes?.map((o, idx) => {
+                                  const totalPool = market.outcomes?.reduce((sum, out) => sum + out.pool, 0) || 1;
+                                  const percent = Math.round((o.pool / totalPool) * 100);
+                                  return (
+                                    <div key={idx} className="flex justify-between items-center gap-4 text-sm">
+                                      <span className="text-muted-foreground">{o.label}</span>
+                                      <span className="text-[#06f6ff] font-semibold">{percent}%</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
                         )}
                       </TableCell>
                       <TableCell className="py-4">
