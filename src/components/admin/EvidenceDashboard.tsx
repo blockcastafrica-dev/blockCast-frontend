@@ -36,7 +36,7 @@ interface Evidence {
 interface DisputedMarket {
   id: string;
   claim: string;
-  currentResolution: 'YES' | 'NO';
+  currentResolution: 'TRUE' | 'FALSE';
   disputeCount: number;
   totalVolume: number;
   evidence: Evidence[];
@@ -51,7 +51,7 @@ const EvidenceDashboard: React.FC = () => {
     {
       id: '1',
       claim: 'Will Bitcoin reach $100K in 2024?',
-      currentResolution: 'YES',
+      currentResolution: 'TRUE',
       disputeCount: 3,
       totalVolume: 45000,
       evidence: [
@@ -99,7 +99,7 @@ const EvidenceDashboard: React.FC = () => {
     {
       id: '2',
       claim: 'Will the US pass a crypto regulation bill in 2024?',
-      currentResolution: 'NO',
+      currentResolution: 'FALSE',
       disputeCount: 1,
       totalVolume: 12000,
       evidence: [
@@ -203,7 +203,7 @@ const EvidenceDashboard: React.FC = () => {
                     <Badge variant="destructive">
                       {market.disputeCount} Dispute(s)
                     </Badge>
-                    <Badge className={market.currentResolution === 'YES' ? 'bg-green-600' : 'bg-red-600'}>
+                    <Badge className={market.currentResolution === 'TRUE' ? 'bg-green-600' : 'bg-red-600'}>
                       Current: {market.currentResolution}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
@@ -323,10 +323,10 @@ const EvidenceDashboard: React.FC = () => {
                     Uphold Current Resolution
                   </Button>
                   <Button className="bg-green-600 hover:bg-green-700">
-                    Change to YES
+                    Change to TRUE
                   </Button>
                   <Button variant="destructive">
-                    Change to NO
+                    Change to FALSE
                   </Button>
                   <Button variant="outline" className="text-yellow-500 border-yellow-500/30">
                     Request More Evidence

@@ -334,7 +334,7 @@ export default function TruthMarketsPage() {
                   <div className="flex justify-between items-center mb-3">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-green-500" />
-                      <span className="font-semibold text-green-500">YES</span>
+                      <span className="font-semibold text-green-500">TRUE</span>
                     </div>
                     <span className="text-lg font-bold text-green-500">{formatOdds(market.yesOdds)}</span>
                   </div>
@@ -376,7 +376,7 @@ export default function TruthMarketsPage() {
                   <div className="flex justify-between items-center mb-3">
                     <div className="flex items-center gap-2">
                       <XCircle className="h-5 w-5 text-red-500" />
-                      <span className="font-semibold text-red-500">NO</span>
+                      <span className="font-semibold text-red-500">FALSE</span>
                     </div>
                     <span className="text-lg font-bold text-red-500">{formatOdds(market.noOdds)}</span>
                   </div>

@@ -24,6 +24,11 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -83,6 +88,11 @@ interface Dispute {
   resolution?: 'upheld' | 'overturned' | 'voided';
 }
 
+interface MarketOutcome {
+  label: string;
+  pool: number;
+}
+
 interface Market {
   id: string;
   claim: string;
@@ -97,13 +107,15 @@ interface Market {
   participants: number;
   yesPool: number;
   noPool: number;
-  resolution?: 'YES' | 'NO';
+  outcomes?: MarketOutcome[];
+  resolution?: string;
   resolvedAt?: Date;
   resolvedBy?: string;
   resolutionSource?: string;
   disputeStatus?: 'none' | 'pending' | 'resolved';
   disputeCount?: number;
   disputes?: Dispute[];
+  aiConfidence?: number;
 }
 
 const disputeCategoryLabels: Record<DisputeCategory, string> = {
@@ -242,6 +254,74 @@ const MarketsDashboard: React.FC = () => {
       noPool: 1700,
       resolutionSource: 'Apple Official',
     },
+    // Multiple choice markets
+    {
+      id: 'mc1',
+      claim: 'Who will win the 2025 NBA Championship?',
+      description: 'Market resolves to the team that wins the 2025 NBA Finals.',
+      category: 'Sports',
+      creator: '0x4d5e...6f7g',
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2025-06-30'),
+      status: 'active',
+      marketType: 'multiple_choice',
+      totalVolume: 25000,
+      participants: 342,
+      yesPool: 0,
+      noPool: 0,
+      outcomes: [
+        { label: 'Boston Celtics', pool: 8500 },
+        { label: 'Denver Nuggets', pool: 6200 },
+        { label: 'LA Lakers', pool: 4800 },
+        { label: 'Golden State Warriors', pool: 3500 },
+        { label: 'Other', pool: 2000 },
+      ],
+      resolutionSource: 'NBA Official',
+    },
+    {
+      id: 'mc2',
+      claim: 'What will be the top AI model in 2025?',
+      description: 'Based on benchmark performance across major AI evaluations.',
+      category: 'Technology',
+      creator: '0x8h9i...0j1k',
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2025-12-31'),
+      status: 'active',
+      marketType: 'multiple_choice',
+      totalVolume: 18500,
+      participants: 267,
+      yesPool: 0,
+      noPool: 0,
+      outcomes: [
+        { label: 'Claude (Anthropic)', pool: 7200 },
+        { label: 'GPT-5 (OpenAI)', pool: 6100 },
+        { label: 'Gemini (Google)', pool: 3800 },
+        { label: 'Other', pool: 1400 },
+      ],
+      resolutionSource: 'AI Benchmarks',
+    },
+    {
+      id: 'mc3',
+      claim: 'Which party will win the 2025 UK General Election?',
+      description: 'Resolves to the party that forms the next government.',
+      category: 'Politics',
+      creator: '0x2l3m...4n5o',
+      createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2025-01-31'),
+      status: 'pending',
+      marketType: 'multiple_choice',
+      totalVolume: 0,
+      participants: 0,
+      yesPool: 0,
+      noPool: 0,
+      outcomes: [
+        { label: 'Labour', pool: 500 },
+        { label: 'Conservative', pool: 300 },
+        { label: 'Liberal Democrats', pool: 150 },
+        { label: 'Other', pool: 50 },
+      ],
+      resolutionSource: 'UK Electoral Commission',
+    },
     // Expired markets (awaiting resolution)
     {
       id: 'e1',
@@ -290,12 +370,12 @@ const MarketsDashboard: React.FC = () => {
       participants: 178,
       yesPool: 8500,
       noPool: 10000,
-      resolution: 'NO',
+      resolution: 'FALSE',
       resolutionSource: 'CoinGecko',
       resolvedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
-      resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
       disputeCount: 0,
+      aiConfidence: 46,
     },
     {
       id: 'd2',
@@ -311,12 +391,12 @@ const MarketsDashboard: React.FC = () => {
       participants: 67,
       yesPool: 6200,
       noPool: 3000,
-      resolution: 'YES',
+      resolution: 'TRUE',
       resolutionSource: 'Yahoo Finance',
       resolvedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
-      resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'pending',
       disputeCount: 1,
+      aiConfidence: 67,
       disputes: [
         {
           id: 'disp1',
@@ -347,7 +427,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 512,
       yesPool: 28000,
       noPool: 17000,
-      resolution: 'YES',
+      resolution: 'TRUE',
       resolutionSource: 'AP News',
       resolvedAt: new Date('2024-11-06'),
       resolvedBy: '0x7f3a...d4e5',
@@ -368,12 +448,39 @@ const MarketsDashboard: React.FC = () => {
       participants: 287,
       yesPool: 18000,
       noPool: 4000,
-      resolution: 'YES',
+      resolution: 'TRUE',
       resolutionSource: 'Apple.com',
       resolvedAt: new Date('2024-02-02'),
       resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'resolved',
       disputeCount: 2,
+    },
+    {
+      id: 'r3',
+      claim: 'Which AI company will reach $1T valuation first?',
+      description: 'Resolves to the AI company that reaches $1 trillion market cap first.',
+      category: 'Technology',
+      creator: '0x3p4q...5r6s',
+      createdAt: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2024-12-31'),
+      status: 'resolved',
+      marketType: 'multiple_choice',
+      totalVolume: 32000,
+      participants: 456,
+      yesPool: 0,
+      noPool: 0,
+      outcomes: [
+        { label: 'OpenAI', pool: 14500 },
+        { label: 'Anthropic', pool: 9800 },
+        { label: 'Google DeepMind', pool: 5200 },
+        { label: 'Other', pool: 2500 },
+      ],
+      resolution: 'OpenAI',
+      resolutionSource: 'Bloomberg',
+      resolvedAt: new Date('2024-11-15'),
+      resolvedBy: '0x9c5d...a8b9',
+      disputeStatus: 'none',
+      disputeCount: 0,
     },
     // Additional markets for pagination testing
     {
@@ -438,7 +545,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 345,
       yesPool: 19600,
       noPool: 8400,
-      resolution: 'YES',
+      resolution: 'TRUE',
       resolutionSource: 'FIFA Official',
       resolvedAt: new Date('2024-07-14'),
       resolvedBy: '0x7f3a...d4e5',
@@ -491,12 +598,33 @@ const MarketsDashboard: React.FC = () => {
       participants: 523,
       yesPool: 29400,
       noPool: 12600,
-      resolution: 'YES',
+      resolution: 'TRUE',
       resolutionSource: 'NASDAQ',
       resolvedAt: new Date(Date.now() - 18 * 60 * 60 * 1000),
-      resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
       disputeCount: 0,
+      aiConfidence: 82,
+    },
+    {
+      id: 'd4',
+      claim: 'Will Apple release a foldable iPhone in 2024?',
+      description: 'Resolves YES if Apple officially announces and releases a foldable iPhone device in 2024.',
+      category: 'Technology',
+      creator: '0x4e5f...6g7h',
+      createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date('2024-12-31'),
+      status: 'disputable',
+      marketType: 'binary',
+      totalVolume: 28000,
+      participants: 412,
+      yesPool: 5600,
+      noPool: 22400,
+      resolution: 'FALSE',
+      resolutionSource: 'Apple Official',
+      resolvedAt: new Date(Date.now() - 8 * 60 * 60 * 1000),
+      disputeStatus: 'none',
+      disputeCount: 0,
+      aiConfidence: 94,
     },
     {
       id: 'r4',
@@ -512,7 +640,7 @@ const MarketsDashboard: React.FC = () => {
       participants: 198,
       yesPool: 3100,
       noPool: 12400,
-      resolution: 'NO',
+      resolution: 'FALSE',
       resolutionSource: 'USGS',
       resolvedAt: new Date('2025-01-01'),
       resolvedBy: '0x8a4b...e7f8',
@@ -555,15 +683,18 @@ const MarketsDashboard: React.FC = () => {
   // Get unique categories from all markets
   const categories = Array.from(new Set(allMarkets.map(m => m.category))).sort();
 
-  // Calculate summary stats
+  // Calculate summary stats (excluding expired markets)
+  const nonExpiredMarkets = allMarkets.filter(m => m.status !== 'expired');
   const summaryStats = {
-    totalVolume: allMarkets.reduce((sum, m) => sum + m.totalVolume, 0),
-    totalUsers: allMarkets.reduce((sum, m) => sum + m.participants, 0),
-    needsAction: allMarkets.filter(m => m.status === 'pending' || m.status === 'expired').length,
-    pendingDisputes: allMarkets.filter(m => m.disputeStatus === 'pending').length,
+    totalVolume: nonExpiredMarkets.reduce((sum, m) => sum + m.totalVolume, 0),
+    totalUsers: nonExpiredMarkets.reduce((sum, m) => sum + m.participants, 0),
+    needsAction: nonExpiredMarkets.filter(m => m.status === 'pending').length,
+    pendingDisputes: nonExpiredMarkets.filter(m => m.disputeStatus === 'pending').length,
   };
 
   const filteredMarkets = allMarkets.filter(market => {
+    // Exclude expired markets from all views
+    if (market.status === 'expired') return false;
     const matchesSearch = market.claim.toLowerCase().includes(searchQuery.toLowerCase()) ||
       market.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || market.status === statusFilter;
@@ -623,11 +754,18 @@ const MarketsDashboard: React.FC = () => {
 
   const exportToExcel = () => {
     const exportData = sortedMarkets.map(market => {
-      const poolTotal = market.yesPool + market.noPool;
-      const yesPercent = poolTotal > 0 ? Math.round((market.yesPool / poolTotal) * 100) : 50;
-      const noPercent = poolTotal > 0 ? Math.round((market.noPool / poolTotal) * 100) : 50;
+      const poolTotal = market.marketType === 'binary'
+        ? market.yesPool + market.noPool
+        : (market.outcomes?.reduce((sum, o) => sum + o.pool, 0) || 0);
+      const yesPercent = market.marketType === 'binary' && poolTotal > 0
+        ? Math.round((market.yesPool / poolTotal) * 100)
+        : '-';
+      const noPercent = market.marketType === 'binary' && poolTotal > 0
+        ? Math.round((market.noPool / poolTotal) * 100)
+        : '-';
       return {
         'Status': statusConfig[market.status].label,
+        'Type': market.marketType === 'binary' ? 'Binary' : 'Multiple Choice',
         'Market': market.claim,
         'Description': market.description,
         'Category': market.category,
@@ -637,11 +775,12 @@ const MarketsDashboard: React.FC = () => {
         'Expires': formatDate(market.expiresAt),
         'Total Volume ($)': market.totalVolume,
         'Participants': market.participants,
-        'YES Pool ($)': market.yesPool,
-        'NO Pool ($)': market.noPool,
+        'TRUE Pool ($)': market.marketType === 'binary' ? market.yesPool : '-',
+        'FALSE Pool ($)': market.marketType === 'binary' ? market.noPool : '-',
+        'Outcomes': market.marketType === 'multiple_choice' ? market.outcomes?.map(o => `${o.label}: $${o.pool}`).join(', ') : '-',
         'Pool Total ($)': poolTotal,
-        'YES %': yesPercent,
-        'NO %': noPercent,
+        'TRUE %': yesPercent,
+        'FALSE %': noPercent,
         'Resolution': market.resolution || '-',
         'Resolved At': market.resolvedAt ? formatDate(market.resolvedAt) : '-',
         'Disputes': market.disputeCount || 0,
@@ -663,10 +802,9 @@ const MarketsDashboard: React.FC = () => {
   };
 
   const statusCounts = {
-    all: allMarkets.length,
+    all: allMarkets.filter(m => m.status !== 'expired').length,
     pending: allMarkets.filter(m => m.status === 'pending').length,
     active: allMarkets.filter(m => m.status === 'active').length,
-    expired: allMarkets.filter(m => m.status === 'expired').length,
     disputable: allMarkets.filter(m => m.status === 'disputable').length,
     resolved: allMarkets.filter(m => m.status === 'resolved').length,
   };
@@ -727,7 +865,7 @@ const MarketsDashboard: React.FC = () => {
     setAllowResubmit(true);
   };
 
-  const executeResolution = (outcome: 'YES' | 'NO') => {
+  const executeResolution = (outcome: 'TRUE' | 'FALSE') => {
     if (!resolveMarket) return;
     toast.success(`Market resolved as ${outcome}`);
     setResolveMarket(null);
@@ -950,7 +1088,7 @@ const MarketsDashboard: React.FC = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Needs Action</p>
                 <p className="text-2xl font-bold text-orange-500">{summaryStats.needsAction}</p>
-                <p className="text-xs text-muted-foreground">Pending + Expired</p>
+                <p className="text-xs text-muted-foreground">Pending approval</p>
               </div>
               <div className="h-10 w-10 rounded-full bg-orange-500/20 flex items-center justify-center">
                 <AlertCircle className="h-5 w-5 text-orange-500" />
@@ -1100,12 +1238,24 @@ const MarketsDashboard: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{market.claim}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        <Badge className={statusConfig[market.status].color}>
-                          {statusConfig[market.status].label}
-                        </Badge>
+                        {market.status === 'disputable' && market.aiConfidence !== undefined ? (
+                          market.aiConfidence >= 90 ? (
+                            <Badge className="bg-green-600 text-white">
+                              Auto-resolved ({market.aiConfidence}%)
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-purple-500 text-white">
+                              Disputable ({market.aiConfidence}%)
+                            </Badge>
+                          )
+                        ) : (
+                          <Badge className={statusConfig[market.status].color}>
+                            {statusConfig[market.status].label}
+                          </Badge>
+                        )}
                         <Badge variant="outline">{market.category}</Badge>
                         {market.resolution && (
-                          <Badge className={market.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'}>
+                          <Badge className={market.resolution === 'TRUE' ? 'bg-green-600' : 'bg-red-600'}>
                             {market.resolution}
                           </Badge>
                         )}
@@ -1172,7 +1322,7 @@ const MarketsDashboard: React.FC = () => {
                   </TableHead>
                   <TableHead className="w-[60px] text-center">Users</TableHead>
                   <TableHead className="w-[60px] text-center">Avg</TableHead>
-                  <TableHead className="w-[80px] text-center">YES/NO</TableHead>
+                  <TableHead className="w-[120px] text-center">Odds</TableHead>
                   <TableHead className="w-[110px]">
                     <button
                       onClick={() => handleSort('expires')}
@@ -1202,14 +1352,32 @@ const MarketsDashboard: React.FC = () => {
                           onCheckedChange={(checked) => handleSelectMarket(market.id, checked as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="py-4">
-                        <Badge className={`${statusConfig[market.status].color} text-xs`}>
-                          {statusConfig[market.status].label}
-                        </Badge>
+                      <TableCell className="py-4 text-left">
+                        {market.status === 'disputable' && market.aiConfidence !== undefined ? (
+                          market.aiConfidence >= 90 ? (
+                            <div className="inline-flex flex-col items-start gap-0.5">
+                              <Badge className="bg-green-600 text-white text-xs">
+                                Auto-resolved
+                              </Badge>
+                              <span className="text-xs text-green-500 font-medium">{market.aiConfidence}% AI</span>
+                            </div>
+                          ) : (
+                            <div className="inline-flex flex-col items-start gap-0.5">
+                              <Badge className="bg-purple-500 text-white text-xs">
+                                Disputable
+                              </Badge>
+                              <span className={`text-xs font-medium ${market.aiConfidence >= 70 ? 'text-yellow-500' : 'text-red-500'}`}>{market.aiConfidence}% AI</span>
+                            </div>
+                          )
+                        ) : (
+                          <Badge className={`${statusConfig[market.status].color} text-xs`}>
+                            {statusConfig[market.status].label}
+                          </Badge>
+                        )}
                       </TableCell>
-                      <TableCell className="py-4">
+                      <TableCell className="py-4 max-w-[300px]">
                         <div className="space-y-1">
-                          <p className="font-medium text-sm leading-tight">{market.claim}</p>
+                          <p className="font-medium text-sm leading-tight break-words whitespace-normal">{market.claim}</p>
                           <div className="flex items-center gap-2 flex-wrap">
                             <Badge variant="outline" className="text-xs px-1.5 py-0">{market.category}</Badge>
                             <span className="text-xs text-muted-foreground">by {market.creator}</span>
@@ -1231,11 +1399,43 @@ const MarketsDashboard: React.FC = () => {
                         <span className="text-sm">${market.participants > 0 ? Math.round(market.totalVolume / market.participants).toLocaleString() : 0}</span>
                       </TableCell>
                       <TableCell className="py-4 text-center">
-                        <div className="text-xs">
-                          <span className="text-green-500">{yesPercent}%</span>
-                          <span className="text-muted-foreground">/</span>
-                          <span className="text-red-500">{100 - yesPercent}%</span>
-                        </div>
+                        {market.marketType === 'binary' ? (
+                          <div className="text-xs">
+                            <span className="text-green-500">{yesPercent}%</span>
+                            <span className="text-muted-foreground">/</span>
+                            <span className="text-red-500">{100 - yesPercent}%</span>
+                          </div>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] border-orange-500 text-orange-500 cursor-pointer hover:bg-orange-500/10"
+                            onClick={() => {
+                              const outcomes = market.outcomes?.map(o => {
+                                const totalPool = market.outcomes?.reduce((sum, out) => sum + out.pool, 0) || 1;
+                                const percent = Math.round((o.pool / totalPool) * 100);
+                                return `${o.label}: ${percent}%`;
+                              }).join('\n');
+                              toast(
+                                <div className="space-y-1">
+                                  <p className="font-medium text-xs text-muted-foreground mb-1">Outcome Odds</p>
+                                  {market.outcomes?.map((o, idx) => {
+                                    const totalPool = market.outcomes?.reduce((sum, out) => sum + out.pool, 0) || 1;
+                                    const percent = Math.round((o.pool / totalPool) * 100);
+                                    return (
+                                      <div key={idx} className="flex justify-between gap-4 text-sm">
+                                        <span>{o.label}</span>
+                                        <span className="text-[#06f6ff] font-semibold">{percent}%</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>,
+                                { duration: 4000 }
+                              );
+                            }}
+                          >
+                            {market.outcomes?.length || 0} outcomes
+                          </Badge>
+                        )}
                       </TableCell>
                       <TableCell className="py-4">
                         <div className="text-xs space-y-1">
@@ -1251,9 +1451,15 @@ const MarketsDashboard: React.FC = () => {
                       </TableCell>
                       <TableCell className="py-4 text-center">
                         {market.resolution ? (
-                          <Badge className={`${market.resolution === 'YES' ? 'bg-green-600' : 'bg-red-600'} text-white text-xs`}>
-                            {market.resolution}
-                          </Badge>
+                          market.marketType === 'binary' ? (
+                            <Badge className={`${market.resolution === 'TRUE' ? 'bg-green-600' : 'bg-red-600'} text-white text-xs`}>
+                              {market.resolution}
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-[#06f6ff] text-black text-xs">
+                              {market.resolution}
+                            </Badge>
+                          )
                         ) : (
                           <span className="text-muted-foreground text-xs">-</span>
                         )}
@@ -1350,25 +1556,37 @@ const MarketsDashboard: React.FC = () => {
             <div className="space-y-4">
               {/* Header with badges */}
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className={statusConfig[viewMarket.status].color}>
-                  {statusConfig[viewMarket.status].label}
-                </Badge>
+                {viewMarket.status === 'disputable' && viewMarket.aiConfidence !== undefined ? (
+                  viewMarket.aiConfidence >= 90 ? (
+                    <Badge className="bg-green-600 text-white">
+                      Auto-resolved
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-purple-500 text-white">
+                      Disputable
+                    </Badge>
+                  )
+                ) : (
+                  <Badge className={statusConfig[viewMarket.status].color}>
+                    {statusConfig[viewMarket.status].label}
+                  </Badge>
+                )}
                 <Badge variant="outline">{viewMarket.category}</Badge>
                 {viewMarket.resolution && (
-                  <Badge className={viewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
+                  <Badge className={viewMarket.resolution === 'TRUE' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                     {viewMarket.resolution}
                   </Badge>
                 )}
               </div>
 
               {/* Title */}
-              <p className="font-semibold">{viewMarket.claim}</p>
+              <p className="font-semibold break-words">{viewMarket.claim}</p>
 
               {/* Pool Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-green-500 font-medium">YES ${viewMarket.yesPool.toLocaleString()}</span>
-                  <span className="text-red-500 font-medium">NO ${viewMarket.noPool.toLocaleString()}</span>
+                  <span className="text-green-500 font-medium">TRUE ${viewMarket.yesPool.toLocaleString()}</span>
+                  <span className="text-red-500 font-medium">FALSE ${viewMarket.noPool.toLocaleString()}</span>
                 </div>
                 <div className="h-3 bg-muted rounded-full overflow-hidden flex">
                   <div className="bg-green-500 h-full" style={{ width: `${(viewMarket.yesPool / (viewMarket.yesPool + viewMarket.noPool)) * 100}%` }} />
@@ -1410,10 +1628,10 @@ const MarketsDashboard: React.FC = () => {
                   <span className="text-muted-foreground">Creator</span>
                   <p><code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.creator}</code></p>
                 </div>
-                {viewMarket.resolvedBy && (
+                {viewMarket.aiConfidence !== undefined && (
                   <div>
-                    <span className="text-muted-foreground">Resolver</span>
-                    <p><code className="bg-muted px-1.5 py-0.5 rounded text-xs">{viewMarket.resolvedBy}</code></p>
+                    <span className="text-muted-foreground">AI Confidence</span>
+                    <p className={`font-semibold ${viewMarket.aiConfidence >= 70 ? 'text-green-500' : viewMarket.aiConfidence >= 50 ? 'text-yellow-500' : 'text-red-500'}`}>{viewMarket.aiConfidence}%</p>
                   </div>
                 )}
               </div>
@@ -1421,7 +1639,6 @@ const MarketsDashboard: React.FC = () => {
               {/* Dispute Info (if any) */}
               {viewMarket.disputes && viewMarket.disputes.length > 0 && (
                 <div className="border-t border-yellow-500/30 pt-3">
-                  <p className="text-sm text-yellow-500 font-medium mb-2">Dispute: {disputeCategoryLabels[viewMarket.disputes[0].category]}</p>
                   <p className="text-sm text-muted-foreground">{viewMarket.disputes[0].reason}</p>
                 </div>
               )}
@@ -1460,15 +1677,15 @@ const MarketsDashboard: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Market</label>
-                <p className="mt-1 font-medium">{resolveMarket.claim}</p>
+                <p className="mt-1 font-medium break-words">{resolveMarket.claim}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 bg-muted rounded-lg text-center">
-                  <p className="text-muted-foreground text-sm">YES Pool</p>
+                  <p className="text-muted-foreground text-sm">TRUE Pool</p>
                   <p className="text-xl font-bold text-green-500">${resolveMarket.yesPool.toLocaleString()}</p>
                 </div>
                 <div className="p-3 bg-muted rounded-lg text-center">
-                  <p className="text-muted-foreground text-sm">NO Pool</p>
+                  <p className="text-muted-foreground text-sm">FALSE Pool</p>
                   <p className="text-xl font-bold text-red-500">${resolveMarket.noPool.toLocaleString()}</p>
                 </div>
               </div>
@@ -1496,12 +1713,12 @@ const MarketsDashboard: React.FC = () => {
                   toast.error('Please provide evidence for the resolution');
                   return;
                 }
-                executeResolution('YES');
+                executeResolution('TRUE');
                 setResolutionEvidence('');
               }}
             >
               <CheckCircle className="h-4 w-4 mr-2" />
-              Resolve YES
+              Resolve TRUE
             </Button>
             <Button
               variant="destructive"
@@ -1510,12 +1727,12 @@ const MarketsDashboard: React.FC = () => {
                   toast.error('Please provide evidence for the resolution');
                   return;
                 }
-                executeResolution('NO');
+                executeResolution('FALSE');
                 setResolutionEvidence('');
               }}
             >
               <XCircle className="h-4 w-4 mr-2" />
-              Resolve NO
+              Resolve FALSE
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1536,10 +1753,10 @@ const MarketsDashboard: React.FC = () => {
           {disputeMarket && (
             <div className="space-y-4">
               <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm font-medium">{disputeMarket.claim}</p>
+                <p className="text-sm font-medium break-words">{disputeMarket.claim}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-sm text-muted-foreground">Current Resolution:</span>
-                  <Badge className={disputeMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
+                  <Badge className={disputeMarket.resolution === 'TRUE' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                     {disputeMarket.resolution}
                   </Badge>
                 </div>
@@ -1625,12 +1842,12 @@ const MarketsDashboard: React.FC = () => {
             <div className="space-y-4">
               {/* Market Info */}
               <div className="p-4 bg-muted rounded-lg">
-                <p className="font-medium">{reviewMarket.claim}</p>
+                <p className="font-medium break-words">{reviewMarket.claim}</p>
                 <p className="text-sm text-muted-foreground mt-1">{reviewMarket.description}</p>
                 <div className="flex flex-wrap items-center gap-4 mt-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Current Resolution:</span>
-                    <Badge className={reviewMarket.resolution === 'YES' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
+                    <Badge className={reviewMarket.resolution === 'TRUE' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                       {reviewMarket.resolution}
                     </Badge>
                   </div>
@@ -1861,8 +2078,8 @@ const MarketsDashboard: React.FC = () => {
             return market ? (
               <div className="p-4 bg-muted rounded-lg space-y-3">
                 <div>
-                  <p className="text-sm font-medium">{market.claim}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{market.description}</p>
+                  <p className="text-sm font-medium break-words">{market.claim}</p>
+                  <p className="text-xs text-muted-foreground mt-1 break-words">{market.description}</p>
                 </div>
                 <div className="flex flex-wrap gap-3 text-xs">
                   <div className="flex items-center gap-1">
@@ -1946,8 +2163,8 @@ const MarketsDashboard: React.FC = () => {
             return market ? (
               <div className="p-4 bg-muted rounded-lg space-y-3">
                 <div>
-                  <p className="text-sm font-medium">{market.claim}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{market.description}</p>
+                  <p className="text-sm font-medium break-words">{market.claim}</p>
+                  <p className="text-xs text-muted-foreground mt-1 break-words">{market.description}</p>
                 </div>
                 <div className="flex flex-wrap gap-3 text-xs">
                   <div className="flex items-center gap-1">

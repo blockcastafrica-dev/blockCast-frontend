@@ -155,6 +155,13 @@ const TreasuryDashboard: React.FC = () => {
   const [newFeeRate, setNewFeeRate] = useState('2.5');
   const [refreshKey, setRefreshKey] = useState(0);
   const [tvlPeriod, setTvlPeriod] = useState<'7d' | '30d' | '90d' | 'all' | 'custom'>('all');
+  const [tvlCustomDateFrom, setTvlCustomDateFrom] = useState<string>('');
+  const [tvlCustomDateTo, setTvlCustomDateTo] = useState<string>('');
+  const [tvlDatePopoverOpen, setTvlDatePopoverOpen] = useState(false);
+  const [feesPeriod, setFeesPeriod] = useState<'7d' | '30d' | '90d' | 'all' | 'custom'>('7d');
+  const [feesCustomDateFrom, setFeesCustomDateFrom] = useState<string>('');
+  const [feesCustomDateTo, setFeesCustomDateTo] = useState<string>('');
+  const [feesDatePopoverOpen, setFeesDatePopoverOpen] = useState(false);
   const transactionsPerPage = 10;
 
   // Multi-sig state
@@ -219,24 +226,9 @@ const TreasuryDashboard: React.FC = () => {
   const treasuryData = {
     totalBalance: treasuryStats?.totalBalance || 0,
     feesToday,
-    feesYesterday,
-    feesChangePercent,
     pendingPayouts: treasuryStats?.pendingPayouts || 0,
-    pendingPayoutsCount: treasuryStats?.pendingPayoutsCount || 0,
-    monthlyRevenue: treasuryStats?.last24hFees ? treasuryStats.last24hFees * 30 : 0,
     weeklyVolume: treasuryStats?.last24hVolume ? treasuryStats.last24hVolume * 7 : 0,
-    avgDailyVolume: treasuryStats?.last24hVolume || 0,
-    totalUsers: JSON.parse(localStorage.getItem('blockcast_users') || '[]').length,
     activeMarkets: poolStats.activePools,
-    feeRate: feeConfig ? feeConfig.platformFeeRate * 100 : 2.5,
-    profitMargin: treasuryStats?.totalVolume && treasuryStats.totalVolume > 0
-      ? (treasuryStats.totalFeesCollected / treasuryStats.totalVolume) * 100
-      : 0,
-    avgTransactionSize: allTransactions.length > 0
-      ? allTransactions.reduce((sum, t) => sum + t.amount, 0) / allTransactions.length
-      : 0,
-    totalTransactions: treasuryStats?.totalTransactions || 0,
-    totalMarketPoolValue: poolStats.totalValueLocked,
   };
 
   const revenueData = [
@@ -363,11 +355,45 @@ const TreasuryDashboard: React.FC = () => {
     status: 'pending' as const,
   }));
 
-  // Get recent fee collections
-  const recentFeeTransactions = allTransactions
-    .filter(tx => tx.type === 'fee')
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5);
+  // Get fee collections based on selected period
+  const getFeesDateFilter = () => {
+    const now = new Date();
+    switch (feesPeriod) {
+      case '7d':
+        return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      case '30d':
+        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case '90d':
+        return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      case 'custom':
+        return feesCustomDateFrom ? new Date(feesCustomDateFrom) : new Date(0);
+      default:
+        return new Date(0); // 'all' - no filter
+    }
+  };
+
+  const getFeesDateEnd = () => {
+    if (feesPeriod === 'custom' && feesCustomDateTo) {
+      const endDate = new Date(feesCustomDateTo);
+      endDate.setHours(23, 59, 59, 999);
+      return endDate;
+    }
+    return new Date();
+  };
+
+  const feesStartDate = getFeesDateFilter();
+  const feesEndDate = getFeesDateEnd();
+
+  const filteredFeeTransactions = allTransactions
+    .filter(tx => {
+      if (tx.type !== 'fee') return false;
+      const txDate = new Date(tx.createdAt);
+      return txDate >= feesStartDate && txDate <= feesEndDate;
+    })
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const totalFeesForPeriod = filteredFeeTransactions.reduce((sum, tx) => sum + tx.amount, 0);
+  const recentFeeTransactions = filteredFeeTransactions.slice(0, 5);
 
   // Filter and sort transactions
   const filteredTransactions = transactions.filter(tx => {
@@ -631,7 +657,7 @@ const TreasuryDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Summary Stats Cards - All in one row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {/* Total Balance */}
         <Card className="bg-gradient-to-br from-green-500/10 to-transparent border-green-500/20">
           <CardContent className="p-3">
@@ -692,116 +718,106 @@ const TreasuryDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Fee Rate */}
-        <Card
-          className="cursor-pointer hover:border-[#06f6ff]/50 transition-colors"
-          onClick={() => setAdjustFeeDialog(true)}
-        >
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <Percent className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs text-muted-foreground">Fee Rate</p>
-                <p className="text-lg font-bold truncate">{treasuryData.feeRate}%</p>
-              </div>
-              <Settings className="h-3 w-3 text-muted-foreground shrink-0" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Profit Margin */}
-        <Card>
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <TrendingUp className="h-4 w-4 text-green-500" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Profit Margin</p>
-                <p className="text-lg font-bold text-green-500 truncate">{treasuryData.profitMargin.toFixed(1)}%</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Avg Transaction */}
-        <Card>
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <Banknote className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Avg Transaction</p>
-                <p className="text-lg font-bold truncate">${treasuryData.avgTransactionSize.toFixed(2)}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Total Transactions */}
-        <Card>
-          <CardContent className="p-3">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <Activity className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Total Txns</p>
-                <p className="text-lg font-bold truncate">{treasuryData.totalTransactions.toLocaleString()}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Quick Actions & Pending Payouts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-        {/* Recent Fee Collections Card */}
+        {/* Fee Collections Card */}
         <Card className="border-green-500/30">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-green-500" />
-              Recent Fee Collections
-              {recentFeeTransactions.length > 0 && (
-                <span className="ml-auto text-xs font-normal text-muted-foreground">
-                  Today: <span className="text-green-500 font-semibold">${treasuryData.feesToday.toFixed(2)}</span>
-                </span>
-              )}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-green-500" />
+                Fee Collections
+              </CardTitle>
+              <div className="flex items-center gap-1">
+                {(['7d', '30d', '90d', 'all'] as const).map((period) => (
+                  <button
+                    key={period}
+                    onClick={() => setFeesPeriod(period)}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${
+                      feesPeriod === period
+                        ? 'bg-green-500 text-white'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    {period === 'all' ? 'All' : period.toUpperCase()}
+                  </button>
+                ))}
+                <Popover open={feesDatePopoverOpen} onOpenChange={setFeesDatePopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                        feesPeriod === 'custom'
+                          ? 'bg-green-500 text-white'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      }`}
+                    >
+                      Custom
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-4" align="end">
+                    <div className="space-y-4">
+                      <p className="text-sm font-medium">Select Date Range</p>
+                      <div className="space-y-2">
+                        <div>
+                          <label className="text-xs text-muted-foreground">From</label>
+                          <Input
+                            type="date"
+                            value={feesCustomDateFrom}
+                            onChange={(e) => setFeesCustomDateFrom(e.target.value)}
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-muted-foreground">To</label>
+                          <Input
+                            type="date"
+                            value={feesCustomDateTo}
+                            onChange={(e) => setFeesCustomDateTo(e.target.value)}
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="w-full bg-green-500 hover:bg-green-600"
+                        onClick={() => {
+                          if (feesCustomDateFrom && feesCustomDateTo) {
+                            setFeesPeriod('custom');
+                            setFeesDatePopoverOpen(false);
+                          } else {
+                            toast.error('Please select both dates');
+                          }
+                        }}
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            {recentFeeTransactions.length > 0 ? (
-              <div className="space-y-2">
-                {recentFeeTransactions.map((fee) => (
-                  <div
-                    key={fee.id}
-                    className="flex items-center justify-between p-2 bg-green-500/5 border border-green-500/20 rounded-lg animate-in fade-in slide-in-from-top-1 duration-300"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <ArrowDownRight className="h-3 w-3 text-green-500" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground truncate max-w-[120px]">
-                          {fee.description?.replace('Platform fee from winning payout (bet ', '').replace(')', '') || 'Fee'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">{formatTimeAgo(new Date(fee.createdAt))}</p>
-                      </div>
-                    </div>
-                    <p className="font-semibold text-green-500 text-sm">+${fee.amount.toFixed(2)}</p>
-                  </div>
-                ))}
+            <div className="text-center py-4">
+              <p className="text-3xl font-bold text-green-500">${totalFeesForPeriod.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {feesPeriod === 'all' ? 'All time' : feesPeriod === 'custom' && feesCustomDateFrom && feesCustomDateTo
+                  ? `${new Date(feesCustomDateFrom).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(feesCustomDateTo).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                  : `Last ${feesPeriod}`}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-lg font-semibold text-green-500">{filteredFeeTransactions.length}</p>
+                <p className="text-xs text-muted-foreground">Transactions</p>
               </div>
-            ) : (
-              <div className="text-center py-6 text-muted-foreground">
-                <DollarSign className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                <p className="text-sm">No fees collected yet</p>
-                <p className="text-xs mt-1">Fees are collected when winners are paid</p>
+              <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-lg font-semibold">${filteredFeeTransactions.length > 0 ? (totalFeesForPeriod / filteredFeeTransactions.length).toFixed(2) : '0.00'}</p>
+                <p className="text-xs text-muted-foreground">Avg fee</p>
               </div>
-            )}
+            </div>
           </CardContent>
         </Card>
 
@@ -814,7 +830,7 @@ const TreasuryDashboard: React.FC = () => {
                 Total Value Locked
               </CardTitle>
               <div className="flex items-center gap-1">
-                {(['7d', '30d', '90d', 'all', 'custom'] as const).map((period) => (
+                {(['7d', '30d', '90d', 'all'] as const).map((period) => (
                   <button
                     key={period}
                     onClick={() => setTvlPeriod(period)}
@@ -824,9 +840,61 @@ const TreasuryDashboard: React.FC = () => {
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                   >
-                    {period === 'all' ? 'All' : period === 'custom' ? 'Custom' : period.toUpperCase()}
+                    {period === 'all' ? 'All' : period.toUpperCase()}
                   </button>
                 ))}
+                <Popover open={tvlDatePopoverOpen} onOpenChange={setTvlDatePopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                        tvlPeriod === 'custom'
+                          ? 'bg-blue-500 text-white'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      }`}
+                    >
+                      Custom
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-4" align="end">
+                    <div className="space-y-4">
+                      <p className="text-sm font-medium">Select Date Range</p>
+                      <div className="space-y-2">
+                        <div>
+                          <label className="text-xs text-muted-foreground">From</label>
+                          <Input
+                            type="date"
+                            value={tvlCustomDateFrom}
+                            onChange={(e) => setTvlCustomDateFrom(e.target.value)}
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-muted-foreground">To</label>
+                          <Input
+                            type="date"
+                            value={tvlCustomDateTo}
+                            onChange={(e) => setTvlCustomDateTo(e.target.value)}
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="w-full bg-blue-500 hover:bg-blue-600"
+                        onClick={() => {
+                          if (tvlCustomDateFrom && tvlCustomDateTo) {
+                            setTvlPeriod('custom');
+                            setTvlDatePopoverOpen(false);
+                          } else {
+                            toast.error('Please select both dates');
+                          }
+                        }}
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           </CardHeader>
@@ -834,7 +902,9 @@ const TreasuryDashboard: React.FC = () => {
             <div className="text-center py-4">
               <p className="text-3xl font-bold text-blue-500">${treasuryData.pendingPayouts.toLocaleString()}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                {tvlPeriod === 'all' ? 'All time' : tvlPeriod === 'custom' ? 'Custom period' : `Last ${tvlPeriod}`}
+                {tvlPeriod === 'all' ? 'All time' : tvlPeriod === 'custom' && tvlCustomDateFrom && tvlCustomDateTo
+                  ? `${new Date(tvlCustomDateFrom).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(tvlCustomDateTo).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                  : `Last ${tvlPeriod}`}
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 mt-4">

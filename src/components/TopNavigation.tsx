@@ -189,17 +189,17 @@ export default function TopNavigation({
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.path)}
-                    className="flex items-center gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-2 h-9 md:h-10 lg:h-10 cursor-pointer text-sm md:text-base lg:text-base transition-colors"
-                    style={{ color: '#9ca3af' }}
+                    className="flex items-center gap-1.5 md:gap-2 lg:gap-2 px-3 md:px-4 lg:px-4 py-2 h-9 md:h-10 lg:h-10 cursor-pointer text-base transition-colors"
+                    style={{ color: '#ffffff' }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.color = '#22d3ee';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.color = '#9ca3af';
+                      e.currentTarget.style.color = '#ffffff';
                     }}
                   >
-                    <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 lg:h-4 lg:w-4" />
-                    <span className="font-medium">{item.label}</span>
+                    <Icon className="h-4 w-4" strokeWidth={1.5} />
+                    <span className="font-normal">{item.label}</span>
                   </button>
                 );
               })}
@@ -244,9 +244,8 @@ export default function TopNavigation({
                 onMouseLeave={(e) => e.currentTarget.style.border = '2px solid transparent'}
                 onClick={() => handleNavClick("/settings", "wallet")}
               >
-                <TokenUSDT variant="mono" size={20} color="#FFFFFF" />
                 <span className="text-sm font-semibold text-foreground">
-                  ${userBalance.toFixed(3)}
+                  ${userBalance.toFixed(3)} USDT
                 </span>
               </div>
             )}
