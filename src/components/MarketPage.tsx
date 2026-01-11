@@ -721,41 +721,66 @@ export default function MarketPage({
 
                   <div className="space-y-3">
                     <Label>What should the correct outcome be?</Label>
-                    <div className="flex gap-3">
-                      <button
-                        type="button"
-                        className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
-                        style={{
-                          backgroundColor: isTrue === "True" ? "#06f6ff" : "transparent",
-                          color: isTrue === "True" ? "black" : (hoveredPill === "True" ? "#06f6ff" : "#ffffff"),
-                          borderColor: isTrue === "True" ? "#06f6ff" : (hoveredPill === "True" ? "#06f6ff" : "#444"),
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleVerifyClaim("True");
-                        }}
-                        onMouseEnter={() => setHoveredPill("True")}
-                        onMouseLeave={() => setHoveredPill(null)}
-                      >
-                        True
-                      </button>
-                      <button
-                        type="button"
-                        className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
-                        style={{
-                          backgroundColor: isTrue === "False" ? "#A855F7" : "transparent",
-                          color: isTrue === "False" ? "white" : (hoveredPill === "False" ? "#A855F7" : "#ffffff"),
-                          borderColor: isTrue === "False" ? "#A855F7" : (hoveredPill === "False" ? "#A855F7" : "#444"),
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleVerifyClaim("False");
-                        }}
-                        onMouseEnter={() => setHoveredPill("False")}
-                        onMouseLeave={() => setHoveredPill(null)}
-                      >
-                        False
-                      </button>
+                    <div className="flex flex-wrap gap-3">
+                      {market.isMultipleChoice && market.outcomes ? (
+                        market.outcomes.map((outcome) => (
+                          <button
+                            key={outcome.id}
+                            type="button"
+                            className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                            style={{
+                              backgroundColor: isTrue === outcome.id ? outcome.color : "transparent",
+                              color: isTrue === outcome.id ? "black" : (hoveredPill === outcome.id ? outcome.color : "#ffffff"),
+                              borderColor: isTrue === outcome.id ? outcome.color : (hoveredPill === outcome.id ? outcome.color : "#444"),
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVerifyClaim(outcome.id);
+                            }}
+                            onMouseEnter={() => setHoveredPill(outcome.id)}
+                            onMouseLeave={() => setHoveredPill(null)}
+                          >
+                            {outcome.label}
+                          </button>
+                        ))
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                            style={{
+                              backgroundColor: isTrue === "True" ? "#06f6ff" : "transparent",
+                              color: isTrue === "True" ? "black" : (hoveredPill === "True" ? "#06f6ff" : "#ffffff"),
+                              borderColor: isTrue === "True" ? "#06f6ff" : (hoveredPill === "True" ? "#06f6ff" : "#444"),
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVerifyClaim("True");
+                            }}
+                            onMouseEnter={() => setHoveredPill("True")}
+                            onMouseLeave={() => setHoveredPill(null)}
+                          >
+                            True
+                          </button>
+                          <button
+                            type="button"
+                            className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                            style={{
+                              backgroundColor: isTrue === "False" ? "#A855F7" : "transparent",
+                              color: isTrue === "False" ? "white" : (hoveredPill === "False" ? "#A855F7" : "#ffffff"),
+                              borderColor: isTrue === "False" ? "#A855F7" : (hoveredPill === "False" ? "#A855F7" : "#444"),
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVerifyClaim("False");
+                            }}
+                            onMouseEnter={() => setHoveredPill("False")}
+                            onMouseLeave={() => setHoveredPill(null)}
+                          >
+                            False
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
 
