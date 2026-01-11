@@ -332,10 +332,10 @@ const MarketsDashboard: React.FC = () => {
       yesPool: 0,
       noPool: 0,
       outcomes: [
-        { label: 'Labour', pool: 500 },
-        { label: 'Conservative', pool: 300 },
-        { label: 'Liberal Democrats', pool: 150 },
-        { label: 'Other', pool: 50 },
+        { label: 'Labour', pool: 0 },
+        { label: 'Conservative', pool: 0 },
+        { label: 'Liberal Democrats', pool: 0 },
+        { label: 'Other', pool: 0 },
       ],
       resolutionSource: 'UK Electoral Commission',
     },
@@ -799,6 +799,7 @@ const MarketsDashboard: React.FC = () => {
         : '-';
       return {
         'Status': statusConfig[market.status].label,
+        'AI Confidence (%)': market.aiConfidence !== undefined ? market.aiConfidence : '-',
         'Type': market.marketType === 'binary' ? 'Binary' : 'Multiple Choice',
         'Market': market.claim,
         'Description': market.description,
@@ -1523,12 +1524,12 @@ const MarketsDashboard: React.FC = () => {
                               </div>
                               <div className="p-3 space-y-2">
                                 {market.outcomes?.map((o, idx) => {
-                                  const totalPool = market.outcomes?.reduce((sum, out) => sum + out.pool, 0) || 1;
-                                  const percent = Math.round((o.pool / totalPool) * 100);
+                                  const totalPool = market.outcomes?.reduce((sum, out) => sum + out.pool, 0) || 0;
+                                  const percent = totalPool > 0 ? Math.round((o.pool / totalPool) * 100) : null;
                                   return (
                                     <div key={idx} className="flex justify-between items-center gap-4 text-sm">
                                       <span className="text-muted-foreground">{o.label}</span>
-                                      <span className="text-[#06f6ff] font-semibold">{percent}%</span>
+                                      <span className="text-[#06f6ff] font-semibold">{percent !== null ? `${percent}%` : '-'}</span>
                                     </div>
                                   );
                                 })}
