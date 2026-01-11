@@ -287,12 +287,18 @@ const TreasuryDashboard: React.FC = () => {
   const categoryEndDate = getCategoryDateEnd();
 
   // Calculate stats per category from actual market data
-  const categoryStats: Record<string, { volume: number; markets: number; bets: number; users: Set<string> }> = {};
+  const categoryStats: Record<string, { volume: number; markets: number; bets: number; users: Set<string>; fees: number }> = {};
+
+  // Build a map of marketId to category for fee calculation
+  const marketCategoryMap: Record<string, string> = {};
+  markets.forEach((market: any) => {
+    marketCategoryMap[market.id] = market.category || 'Other';
+  });
 
   markets.forEach((market: any) => {
     const category = market.category || 'Other';
     if (!categoryStats[category]) {
-      categoryStats[category] = { volume: 0, markets: 0, bets: 0, users: new Set() };
+      categoryStats[category] = { volume: 0, markets: 0, bets: 0, users: new Set(), fees: 0 };
     }
 
     // Get pool and bets for this market
@@ -327,16 +333,32 @@ const TreasuryDashboard: React.FC = () => {
     }
   });
 
+  // Calculate fees per category from fee transactions
+  const feeTransactions = allTransactions.filter(tx => tx.type === 'fee');
+  feeTransactions.forEach((tx: any) => {
+    const txDate = new Date(tx.createdAt);
+    if (txDate >= categoryStartDate && txDate <= categoryEndDate) {
+      const marketId = tx.marketId;
+      const category = marketId ? (marketCategoryMap[marketId] || 'Other') : 'Other';
+      if (!categoryStats[category]) {
+        categoryStats[category] = { volume: 0, markets: 0, bets: 0, users: new Set(), fees: 0 };
+      }
+      categoryStats[category].fees += tx.amount || 0;
+    }
+  });
+
   const totalCategoryVolume = Object.values(categoryStats).reduce((sum, s) => sum + s.volume, 0);
+  const totalCategoryFees = Object.values(categoryStats).reduce((sum, s) => sum + s.fees, 0);
 
   const categoryBreakdown = Object.entries(categoryStats)
-    .filter(([_, stats]) => stats.markets > 0 || stats.bets > 0 || stats.volume > 0)
+    .filter(([_, stats]) => stats.markets > 0 || stats.bets > 0 || stats.volume > 0 || stats.fees > 0)
     .map(([category, stats]) => ({
       category,
       volume: stats.volume,
       markets: stats.markets,
       bets: stats.bets,
       users: stats.users.size,
+      fees: stats.fees,
       percentage: totalCategoryVolume > 0 ? Math.round((stats.volume / totalCategoryVolume) * 100) : 0,
     }))
     .sort((a, b) => b.volume - a.volume)
@@ -1140,6 +1162,10 @@ const TreasuryDashboard: React.FC = () => {
                         <div className="text-xs font-normal text-muted-foreground">Unique bettors</div>
                       </TableHead>
                       <TableHead className="text-center">
+                        <div>Fees</div>
+                        <div className="text-xs font-normal text-muted-foreground">Collected</div>
+                      </TableHead>
+                      <TableHead className="text-center">
                         <div>Share</div>
                         <div className="text-xs font-normal text-muted-foreground">% of total</div>
                       </TableHead>
@@ -1153,6 +1179,7 @@ const TreasuryDashboard: React.FC = () => {
                         <TableCell className="text-center">{category.markets}</TableCell>
                         <TableCell className="text-center">{category.bets}</TableCell>
                         <TableCell className="text-center">{category.users}</TableCell>
+                        <TableCell className="text-center text-green-500 font-medium">${category.fees.toLocaleString()}</TableCell>
                         <TableCell className="text-center text-muted-foreground">{category.percentage}%</TableCell>
                       </TableRow>
                     ))}
@@ -1163,6 +1190,7 @@ const TreasuryDashboard: React.FC = () => {
                       <TableCell className="text-center">{categoryBreakdown.reduce((sum, c) => sum + c.markets, 0)}</TableCell>
                       <TableCell className="text-center">{categoryBreakdown.reduce((sum, c) => sum + c.bets, 0)}</TableCell>
                       <TableCell className="text-center">{categoryBreakdown.reduce((sum, c) => sum + c.users, 0)}</TableCell>
+                      <TableCell className="text-center text-green-500">${totalCategoryFees.toLocaleString()}</TableCell>
                       <TableCell className="text-center">100%</TableCell>
                     </TableRow>
                   </TableBody>
