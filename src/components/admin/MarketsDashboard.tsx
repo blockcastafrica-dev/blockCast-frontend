@@ -23,6 +23,7 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
 import {
   Popover,
   PopoverContent,
@@ -65,7 +66,10 @@ import {
   FileQuestion,
   Tag,
   Plus,
-  FilePlus2
+  FilePlus2,
+  Sparkles,
+  Loader2,
+  Gavel
 } from 'lucide-react';
 import { toast } from 'sonner';
 import CreateMarketModal from '@/components/CreateMarketModal';
@@ -73,6 +77,15 @@ import CreateMarketModal from '@/components/CreateMarketModal';
 type MarketStatus = 'pending' | 'active' | 'expired' | 'disputable' | 'resolved';
 type DisputeCategory = 'incorrect_resolution' | 'market_manipulation' | 'invalid_market' | 'other';
 type RejectionCategory = 'violates_guidelines' | 'duplicate_market' | 'unclear_criteria' | 'spam' | 'other';
+
+// Market Resolution Status following the lifecycle
+type MarketResolutionStatus =
+  | 'TRADING'           // Active trading period
+  | 'EVIDENCE_COLLECTION' // 48-hour evidence submission window
+  | 'AI_ANALYSIS'       // AI analyzing with evidence
+  | 'PENDING_RESOLUTION' // Awaiting admin decision
+  | 'RESOLVED'          // Winners paid
+  | 'REFUNDED';         // All bets returned
 
 interface Dispute {
   id: string;
@@ -116,6 +129,9 @@ interface Market {
   disputeCount?: number;
   disputes?: Dispute[];
   aiConfidence?: number;
+  resolutionStatus?: MarketResolutionStatus;
+  evidenceWindowEnds?: Date;
+  aiSuggestedOutcome?: string;
 }
 
 const disputeCategoryLabels: Record<DisputeCategory, string> = {
@@ -169,6 +185,7 @@ const MarketsDashboard: React.FC = () => {
   const [createMarketOpen, setCreateMarketOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [marketVisibility, setMarketVisibility] = useState<Record<string, boolean>>({});
+  const [analyzingMarket, setAnalyzingMarket] = useState<string | null>(null);
   const marketsPerPage = 10;
 
   // Toggle market visibility (online/offline)
@@ -376,6 +393,9 @@ const MarketsDashboard: React.FC = () => {
       disputeStatus: 'none',
       disputeCount: 0,
       aiConfidence: 46,
+      resolutionStatus: 'EVIDENCE_COLLECTION',
+      evidenceWindowEnds: new Date(Date.now() + 36 * 60 * 60 * 1000), // 36 hours left
+      aiSuggestedOutcome: 'FALSE',
     },
     {
       id: 'd2',
@@ -397,6 +417,9 @@ const MarketsDashboard: React.FC = () => {
       disputeStatus: 'pending',
       disputeCount: 1,
       aiConfidence: 67,
+      resolutionStatus: 'PENDING_RESOLUTION',
+      evidenceWindowEnds: new Date(Date.now() - 2 * 60 * 60 * 1000), // Window ended
+      aiSuggestedOutcome: 'FALSE',
       disputes: [
         {
           id: 'disp1',
@@ -604,6 +627,9 @@ const MarketsDashboard: React.FC = () => {
       disputeStatus: 'none',
       disputeCount: 0,
       aiConfidence: 82,
+      resolutionStatus: 'PENDING_RESOLUTION',
+      evidenceWindowEnds: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      aiSuggestedOutcome: 'TRUE',
     },
     {
       id: 'd4',
@@ -625,6 +651,9 @@ const MarketsDashboard: React.FC = () => {
       disputeStatus: 'none',
       disputeCount: 0,
       aiConfidence: 94,
+      resolutionStatus: 'PENDING_RESOLUTION',
+      evidenceWindowEnds: new Date(Date.now() - 8 * 60 * 60 * 1000),
+      aiSuggestedOutcome: 'FALSE',
     },
     {
       id: 'r4',
@@ -936,6 +965,65 @@ const MarketsDashboard: React.FC = () => {
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
     return `${month}/${day.toString().padStart(2, '0')}/${year}`;
+  };
+
+  const formatTimeRemaining = (endDate: Date) => {
+    const diff = endDate.getTime() - Date.now();
+    if (diff <= 0) return 'Window Closed';
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (hours >= 24) {
+      const days = Math.floor(hours / 24);
+      return `${days}d ${hours % 24}h remaining`;
+    }
+    return `${hours}h ${minutes}m remaining`;
+  };
+
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence >= 90) return 'text-green-500';
+    if (confidence >= 70) return 'text-yellow-500';
+    return 'text-red-500';
+  };
+
+  const getResolutionStatusBadge = (status: MarketResolutionStatus) => {
+    switch (status) {
+      case 'TRADING':
+        return <Badge className="bg-green-600">Trading Active</Badge>;
+      case 'EVIDENCE_COLLECTION':
+        return <Badge className="bg-yellow-600 text-black">Evidence Collection</Badge>;
+      case 'AI_ANALYSIS':
+        return <Badge className="bg-[#06f6ff] text-black">AI Analysis</Badge>;
+      case 'PENDING_RESOLUTION':
+        return <Badge className="bg-orange-600">Pending Resolution</Badge>;
+      case 'RESOLVED':
+        return <Badge className="bg-green-600">Resolved</Badge>;
+      case 'REFUNDED':
+        return <Badge className="bg-gray-600">Refunded</Badge>;
+      default:
+        return <Badge variant="outline">Unknown</Badge>;
+    }
+  };
+
+  const handleRunAIAnalysis = (market: Market) => {
+    setAnalyzingMarket(market.id);
+    // Simulate AI analysis
+    setTimeout(() => {
+      setAnalyzingMarket(null);
+      // Update market status would happen here
+      toast.success('AI analysis complete. Review the confidence score.');
+    }, 2000);
+  };
+
+  const handleResolveMarketWithOutcome = (market: Market, outcome: string) => {
+    toast.success(`Market resolved as ${outcome}. Winners will be paid automatically.`);
+    closeReviewDialog();
+  };
+
+  const handleRefundMarket = (market: Market) => {
+    toast.success('Market refunded. All bets will be returned to users.');
+    closeReviewDialog();
   };
 
   const getActionButton = (market: Market) => {
@@ -1826,40 +1914,100 @@ const MarketsDashboard: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Review Dispute Dialog */}
+      {/* Review Dispute Dialog - Enhanced with Resolution Flow */}
       <Dialog open={!!reviewMarket} onOpenChange={closeReviewDialog}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Scale className="h-5 w-5 text-yellow-500" />
-              Review Dispute
+              <Gavel className="h-5 w-5 text-yellow-500" />
+              Market Resolution Review
             </DialogTitle>
             <DialogDescription>
-              Review the dispute details and decide on the resolution.
+              Review evidence and decide on the market resolution.
             </DialogDescription>
           </DialogHeader>
           {reviewMarket && (
             <div className="space-y-4">
-              {/* Market Info */}
+              {/* Market Info with Resolution Status */}
               <div className="p-4 bg-muted rounded-lg">
                 <p className="font-medium break-words">{reviewMarket.claim}</p>
                 <p className="text-sm text-muted-foreground mt-1">{reviewMarket.description}</p>
-                <div className="flex flex-wrap items-center gap-4 mt-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Current Resolution:</span>
+                <div className="flex flex-wrap items-center gap-3 mt-3">
+                  {reviewMarket.resolutionStatus && getResolutionStatusBadge(reviewMarket.resolutionStatus)}
+                  {reviewMarket.resolution && (
                     <Badge className={reviewMarket.resolution === 'TRUE' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
-                      {reviewMarket.resolution}
+                      Current: {reviewMarket.resolution}
                     </Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Volume:</span>
-                    <span className="font-semibold">${reviewMarket.totalVolume.toLocaleString()}</span>
-                  </div>
+                  )}
+                  <span className="text-sm text-muted-foreground flex items-center gap-1">
+                    <DollarSign className="h-3 w-3" />
+                    ${reviewMarket.totalVolume.toLocaleString()} volume
+                  </span>
+                  <span className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Users className="h-3 w-3" />
+                    {reviewMarket.participants} participants
+                  </span>
                 </div>
               </div>
 
+              {/* Evidence Window Timer */}
+              {reviewMarket.resolutionStatus === 'EVIDENCE_COLLECTION' && reviewMarket.evidenceWindowEnds && (
+                <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-yellow-500" />
+                      Evidence Submission Window
+                    </span>
+                    <span className="text-sm font-mono text-yellow-500">
+                      {formatTimeRemaining(reviewMarket.evidenceWindowEnds)}
+                    </span>
+                  </div>
+                  <Progress
+                    value={Math.max(0, Math.min(100,
+                      ((48 * 60 * 60 * 1000) - (reviewMarket.evidenceWindowEnds.getTime() - Date.now())) / (48 * 60 * 60 * 1000) * 100
+                    ))}
+                    className="h-2"
+                  />
+                </div>
+              )}
+
+              {/* AI Confidence Display */}
+              {reviewMarket.aiConfidence !== undefined && reviewMarket.aiConfidence > 0 && (
+                <div className={`p-4 rounded-lg border ${
+                  reviewMarket.aiConfidence >= 90 ? 'bg-green-500/10 border-green-500/30' : 'bg-orange-500/10 border-orange-500/30'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[#06f6ff]" />
+                      AI Analysis Result
+                    </span>
+                    <span className={`text-lg font-bold ${getConfidenceColor(reviewMarket.aiConfidence)}`}>
+                      {reviewMarket.aiConfidence}% Confidence
+                    </span>
+                  </div>
+                  <Progress
+                    value={reviewMarket.aiConfidence}
+                    className={`h-3 ${reviewMarket.aiConfidence >= 90 ? '[&>div]:bg-green-500' : '[&>div]:bg-orange-500'}`}
+                  />
+                  {reviewMarket.aiSuggestedOutcome && (
+                    <div className="mt-3 flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">AI Suggested Outcome:</span>
+                      <Badge className={reviewMarket.aiConfidence >= 90 ? 'bg-green-600' : 'bg-orange-600'}>
+                        {reviewMarket.aiSuggestedOutcome}
+                      </Badge>
+                    </div>
+                  )}
+                  {reviewMarket.aiConfidence < 90 && (
+                    <p className="text-sm text-orange-500 mt-2 flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      Confidence below 90%. Consider requesting more evidence or issuing refund.
+                    </p>
+                  )}
+                </div>
+              )}
+
               {/* Dispute Details */}
-              {reviewMarket.disputes && reviewMarket.disputes.length > 0 ? (
+              {reviewMarket.disputes && reviewMarket.disputes.length > 0 && (
                 <div className="border border-yellow-500/30 rounded-lg overflow-hidden">
                   <div className="bg-yellow-500/10 px-4 py-2 border-b border-yellow-500/30">
                     <p className="font-medium text-yellow-500 flex items-center gap-2">
@@ -1913,19 +2061,155 @@ const MarketsDashboard: React.FC = () => {
                     )}
                   </div>
                 </div>
-              ) : (
-                <div className="p-4 bg-muted/50 rounded-lg text-center">
-                  <p className="text-sm text-muted-foreground">No dispute details available</p>
-                </div>
               )}
 
-              {/* Resolution Warning */}
-              {reviewMarket.totalVolume > 5000 && !reviewAction && (
-                <div className="p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
-                  <p className="text-sm text-orange-500 flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4" />
-                    High-volume market. Resolution will affect {reviewMarket.participants} participants.
-                  </p>
+              {/* Resolution Actions based on confidence */}
+              {!reviewAction && (
+                <div className="p-4 bg-muted rounded-lg space-y-4">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <Gavel className="h-4 w-4" />
+                    Resolution Actions
+                  </h4>
+
+                  {/* Evidence Collection Phase */}
+                  {reviewMarket.resolutionStatus === 'EVIDENCE_COLLECTION' && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        Evidence collection in progress. Run AI analysis when ready.
+                      </p>
+                      <Button
+                        onClick={() => handleRunAIAnalysis(reviewMarket)}
+                        disabled={analyzingMarket === reviewMarket.id}
+                        className="bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90"
+                      >
+                        {analyzingMarket === reviewMarket.id ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4 mr-2" />
+                            Run AI Analysis
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Pending Resolution - High Confidence */}
+                  {reviewMarket.resolutionStatus === 'PENDING_RESOLUTION' && reviewMarket.aiConfidence !== undefined && reviewMarket.aiConfidence >= 90 && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-green-500 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" />
+                        High confidence ({reviewMarket.aiConfidence}%). Recommended to resolve.
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => handleResolveMarketWithOutcome(reviewMarket, 'TRUE')}
+                        >
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Resolve TRUE
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleResolveMarketWithOutcome(reviewMarket, 'FALSE')}
+                        >
+                          <XCircle className="h-4 w-4 mr-2" />
+                          Resolve FALSE
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pending Resolution - Low Confidence */}
+                  {reviewMarket.resolutionStatus === 'PENDING_RESOLUTION' && reviewMarket.aiConfidence !== undefined && reviewMarket.aiConfidence < 90 && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-orange-500 flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4" />
+                        Low confidence ({reviewMarket.aiConfidence}%). Consider refunding or requesting more evidence.
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          className="text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/10"
+                          onClick={() => setReviewAction('request_evidence')}
+                        >
+                          <Clock className="h-4 w-4 mr-2" />
+                          Request More Evidence
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleRefundMarket(reviewMarket)}
+                        >
+                          <RotateCcw className="h-4 w-4 mr-2" />
+                          Refund All Bets
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-2 pt-2 border-t border-border">
+                        <span className="text-sm text-muted-foreground">Or force resolve:</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleResolveMarketWithOutcome(reviewMarket, 'TRUE')}
+                        >
+                          TRUE
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleResolveMarketWithOutcome(reviewMarket, 'FALSE')}
+                        >
+                          FALSE
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Dispute Actions */}
+                  {reviewMarket.disputes && reviewMarket.disputes.length > 0 && (
+                    <div className="pt-3 border-t border-border space-y-3">
+                      <p className="text-sm font-medium">Dispute Actions:</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-blue-500/50 text-blue-500 hover:bg-blue-500/10"
+                          onClick={() => setReviewAction('request_evidence')}
+                        >
+                          <FileQuestion className="h-4 w-4 mr-1" />
+                          Request Info
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-green-500/50 text-green-500 hover:bg-green-500/10"
+                          onClick={() => setReviewAction('uphold')}
+                        >
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Uphold
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10"
+                          onClick={() => handleResolveDispute('overturned')}
+                        >
+                          <RotateCcw className="h-4 w-4 mr-1" />
+                          Overturn
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleResolveDispute('voided')}
+                        >
+                          <Ban className="h-4 w-4 mr-1" />
+                          Void
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1973,7 +2257,7 @@ const MarketsDashboard: React.FC = () => {
                     <p className="font-medium">Request More Evidence</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Specify what additional evidence is needed from the disputer.
+                    Specify what additional evidence is needed. This extends the evidence window.
                   </p>
                   <div>
                     <label className="text-sm font-medium">Evidence Request *</label>
@@ -2003,57 +2287,16 @@ const MarketsDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Footer Actions - Only show when no action selected */}
-          {!reviewAction && (
-            <div className="mt-4 space-y-3">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-blue-500/50 text-blue-500 hover:bg-blue-500/10"
-                  onClick={() => setReviewAction('request_evidence')}
-                >
-                  <FileQuestion className="h-4 w-4 mr-1" />
-                  Request Info
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-green-500/50 text-green-500 hover:bg-green-500/10"
-                  onClick={() => setReviewAction('uphold')}
-                >
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  Uphold
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/10"
-                  onClick={() => handleResolveDispute('overturned')}
-                >
-                  <RotateCcw className="h-4 w-4 mr-1" />
-                  Overturn
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleResolveDispute('voided')}
-                >
-                  <Ban className="h-4 w-4 mr-1" />
-                  Void
-                </Button>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1" onClick={() => { const market = reviewMarket; closeReviewDialog(); setViewMarket(market); }}>
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Back to Details
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1" onClick={closeReviewDialog}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
+          {/* Footer Actions */}
+          <div className="flex gap-2 mt-4">
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => { const market = reviewMarket; closeReviewDialog(); setViewMarket(market); }}>
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Back to Details
+            </Button>
+            <Button variant="outline" size="sm" className="flex-1" onClick={closeReviewDialog}>
+              Cancel
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
