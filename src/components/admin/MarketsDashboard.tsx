@@ -68,8 +68,7 @@ import {
   Plus,
   FilePlus2,
   Sparkles,
-  Loader2,
-  Gavel
+  Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import CreateMarketModal from '@/components/CreateMarketModal';
@@ -173,6 +172,7 @@ const MarketsDashboard: React.FC = () => {
   const [disputeEvidence, setDisputeEvidence] = useState('');
   const [reviewMarket, setReviewMarket] = useState<Market | null>(null);
   const [reviewAction, setReviewAction] = useState<'uphold' | 'request_evidence' | null>(null);
+  const [reviewStep, setReviewStep] = useState<1 | 2>(1);
   const [adminNotes, setAdminNotes] = useState('');
   const [confirmAction, setConfirmAction] = useState<{ type: 'approve' | 'reject'; markets: string[] } | null>(null);
   const [approvalNotes, setApprovalNotes] = useState('');
@@ -456,6 +456,7 @@ const MarketsDashboard: React.FC = () => {
       resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
       disputeCount: 0,
+      aiConfidence: 98,
     },
     {
       id: 'r2',
@@ -477,6 +478,7 @@ const MarketsDashboard: React.FC = () => {
       resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'resolved',
       disputeCount: 2,
+      aiConfidence: 96,
     },
     {
       id: 'r3',
@@ -504,6 +506,7 @@ const MarketsDashboard: React.FC = () => {
       resolvedBy: '0x9c5d...a8b9',
       disputeStatus: 'none',
       disputeCount: 0,
+      aiConfidence: 91,
     },
     // Additional markets for pagination testing
     {
@@ -555,7 +558,7 @@ const MarketsDashboard: React.FC = () => {
       resolutionSource: 'OpenAI Blog',
     },
     {
-      id: 'r3',
+      id: 'r4',
       claim: 'Will Argentina win Copa America 2024?',
       description: 'Resolves YES if Argentina national team wins Copa America 2024.',
       category: 'Sports',
@@ -574,6 +577,7 @@ const MarketsDashboard: React.FC = () => {
       resolvedBy: '0x7f3a...d4e5',
       disputeStatus: 'none',
       disputeCount: 0,
+      aiConfidence: 99,
     },
     {
       id: 'a5',
@@ -639,7 +643,7 @@ const MarketsDashboard: React.FC = () => {
       creator: '0x4e5f...6g7h',
       createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
       expiresAt: new Date('2024-12-31'),
-      status: 'disputable',
+      status: 'resolved',
       marketType: 'binary',
       totalVolume: 28000,
       participants: 412,
@@ -648,15 +652,15 @@ const MarketsDashboard: React.FC = () => {
       resolution: 'FALSE',
       resolutionSource: 'Apple Official',
       resolvedAt: new Date(Date.now() - 8 * 60 * 60 * 1000),
+      resolvedBy: '0x0000...auto',
       disputeStatus: 'none',
       disputeCount: 0,
       aiConfidence: 94,
-      resolutionStatus: 'PENDING_RESOLUTION',
-      evidenceWindowEnds: new Date(Date.now() - 8 * 60 * 60 * 1000),
+      resolutionStatus: 'RESOLVED',
       aiSuggestedOutcome: 'FALSE',
     },
     {
-      id: 'r4',
+      id: 'r5',
       claim: 'Will there be a major earthquake in California in 2024?',
       description: 'Resolves YES if a magnitude 7.0+ earthquake occurs in California in 2024.',
       category: 'Science',
@@ -675,6 +679,7 @@ const MarketsDashboard: React.FC = () => {
       resolvedBy: '0x8a4b...e7f8',
       disputeStatus: 'none',
       disputeCount: 0,
+      aiConfidence: 97,
     },
     {
       id: 'p4',
@@ -948,6 +953,7 @@ const MarketsDashboard: React.FC = () => {
   const closeReviewDialog = () => {
     setReviewMarket(null);
     setReviewAction(null);
+    setReviewStep(1);
     setAdminNotes('');
   };
 
@@ -1440,23 +1446,30 @@ const MarketsDashboard: React.FC = () => {
                           onCheckedChange={(checked) => handleSelectMarket(market.id, checked as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="py-4 text-left">
+                      <TableCell className="py-4">
                         {market.status === 'disputable' && market.aiConfidence !== undefined ? (
                           market.aiConfidence >= 90 ? (
-                            <div className="inline-flex flex-col items-start gap-0.5">
+                            <div className="flex flex-col items-center gap-0.5">
                               <Badge className="bg-green-600 text-white text-xs">
                                 Auto-resolved
                               </Badge>
                               <span className="text-xs text-green-500 font-medium">{market.aiConfidence}% AI</span>
                             </div>
                           ) : (
-                            <div className="inline-flex flex-col items-start gap-0.5">
+                            <div className="flex flex-col items-center gap-0.5">
                               <Badge className="bg-purple-500 text-white text-xs">
                                 Disputable
                               </Badge>
                               <span className={`text-xs font-medium ${market.aiConfidence >= 70 ? 'text-yellow-500' : 'text-red-500'}`}>{market.aiConfidence}% AI</span>
                             </div>
                           )
+                        ) : market.status === 'resolved' && market.aiConfidence !== undefined ? (
+                          <div className="flex flex-col items-center gap-0.5">
+                            <Badge className={`${statusConfig[market.status].color} text-xs`}>
+                              {statusConfig[market.status].label}
+                            </Badge>
+                            <span className="text-xs text-green-500 font-medium">{market.aiConfidence}% AI</span>
+                          </div>
                         ) : (
                           <Badge className={`${statusConfig[market.status].color} text-xs`}>
                             {statusConfig[market.status].label}
@@ -1539,15 +1552,9 @@ const MarketsDashboard: React.FC = () => {
                       </TableCell>
                       <TableCell className="py-4 text-center">
                         {market.resolution ? (
-                          market.marketType === 'binary' ? (
-                            <Badge className={`${market.resolution === 'TRUE' ? 'bg-green-600' : 'bg-red-600'} text-white text-xs`}>
-                              {market.resolution}
-                            </Badge>
-                          ) : (
-                            <Badge className="bg-[#06f6ff] text-black text-xs">
-                              {market.resolution}
-                            </Badge>
-                          )
+                          <span className="text-sm font-medium">
+                            {market.resolution}
+                          </span>
                         ) : (
                           <span className="text-muted-foreground text-xs">-</span>
                         )}
@@ -1644,26 +1651,23 @@ const MarketsDashboard: React.FC = () => {
             <div className="space-y-4">
               {/* Header with badges */}
               <div className="flex flex-wrap items-center gap-2">
-                {viewMarket.status === 'disputable' && viewMarket.aiConfidence !== undefined ? (
-                  viewMarket.aiConfidence >= 90 ? (
-                    <Badge className="bg-green-600 text-white">
-                      Auto-resolved
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-purple-500 text-white">
-                      Disputable
-                    </Badge>
-                  )
-                ) : (
-                  <Badge className={statusConfig[viewMarket.status].color}>
-                    {statusConfig[viewMarket.status].label}
-                  </Badge>
-                )}
+                <Badge className={statusConfig[viewMarket.status].color}>
+                  {statusConfig[viewMarket.status].label}
+                </Badge>
                 <Badge variant="outline">{viewMarket.category}</Badge>
                 {viewMarket.resolution && (
                   <Badge className={viewMarket.resolution === 'TRUE' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
                     {viewMarket.resolution}
                   </Badge>
+                )}
+                {viewMarket.resolutionStatus && viewMarket.resolutionStatus === 'EVIDENCE_COLLECTION' && (
+                  <Badge className="bg-yellow-600 text-black">Evidence Collection</Badge>
+                )}
+                {viewMarket.resolutionStatus && viewMarket.resolutionStatus === 'PENDING_RESOLUTION' && (
+                  <Badge className="bg-orange-600">Pending Resolution</Badge>
+                )}
+                {viewMarket.resolutionStatus && viewMarket.resolutionStatus === 'AI_ANALYSIS' && (
+                  <Badge className="bg-[#06f6ff] text-black">AI Analysis</Badge>
                 )}
               </div>
 
@@ -1719,10 +1723,31 @@ const MarketsDashboard: React.FC = () => {
                 {viewMarket.aiConfidence !== undefined && (
                   <div>
                     <span className="text-muted-foreground">AI Confidence</span>
-                    <p className={`font-semibold ${viewMarket.aiConfidence >= 70 ? 'text-green-500' : viewMarket.aiConfidence >= 50 ? 'text-yellow-500' : 'text-red-500'}`}>{viewMarket.aiConfidence}%</p>
+                    <p className={`font-semibold ${getConfidenceColor(viewMarket.aiConfidence)}`}>{viewMarket.aiConfidence}%</p>
                   </div>
                 )}
               </div>
+
+              {/* Evidence Window Timer */}
+              {viewMarket.resolutionStatus === 'EVIDENCE_COLLECTION' && viewMarket.evidenceWindowEnds && (
+                <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium flex items-center gap-2">
+                      <Clock className="h-3 w-3 text-yellow-500" />
+                      Evidence Window
+                    </span>
+                    <span className="text-xs font-mono text-yellow-500">
+                      {formatTimeRemaining(viewMarket.evidenceWindowEnds)}
+                    </span>
+                  </div>
+                  <Progress
+                    value={Math.max(0, Math.min(100,
+                      ((48 * 60 * 60 * 1000) - (viewMarket.evidenceWindowEnds.getTime() - Date.now())) / (48 * 60 * 60 * 1000) * 100
+                    ))}
+                    className="h-1.5"
+                  />
+                </div>
+              )}
 
               {/* Dispute Info (if any) */}
               {viewMarket.disputes && viewMarket.disputes.length > 0 && (
@@ -1914,154 +1939,165 @@ const MarketsDashboard: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Review Dispute Dialog - Enhanced with Resolution Flow */}
+      {/* Review Dispute Dialog - Two-Step Wizard */}
       <Dialog open={!!reviewMarket} onOpenChange={closeReviewDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <Gavel className="h-5 w-5 text-yellow-500" />
-              Market Resolution Review
+              {reviewStep === 1 ? 'Review Market Details' : 'Take Action'}
             </DialogTitle>
-            <DialogDescription>
-              Review evidence and decide on the market resolution.
+            <DialogDescription className="flex items-center justify-between">
+              <span>{reviewStep === 1 ? 'Review evidence and dispute information' : 'Decide on the market resolution'}</span>
+              <span className="text-xs text-muted-foreground">Step {reviewStep} of 2</span>
             </DialogDescription>
           </DialogHeader>
           {reviewMarket && (
-            <div className="space-y-4">
-              {/* Market Info with Resolution Status */}
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="font-medium break-words">{reviewMarket.claim}</p>
-                <p className="text-sm text-muted-foreground mt-1">{reviewMarket.description}</p>
-                <div className="flex flex-wrap items-center gap-3 mt-3">
-                  {reviewMarket.resolutionStatus && getResolutionStatusBadge(reviewMarket.resolutionStatus)}
-                  {reviewMarket.resolution && (
-                    <Badge className={reviewMarket.resolution === 'TRUE' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
-                      Current: {reviewMarket.resolution}
-                    </Badge>
-                  )}
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <DollarSign className="h-3 w-3" />
-                    ${reviewMarket.totalVolume.toLocaleString()} volume
-                  </span>
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" />
-                    {reviewMarket.participants} participants
-                  </span>
-                </div>
-              </div>
+            <div className="space-y-4 overflow-y-auto flex-1 pr-2">
 
-              {/* Evidence Window Timer */}
-              {reviewMarket.resolutionStatus === 'EVIDENCE_COLLECTION' && reviewMarket.evidenceWindowEnds && (
-                <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-yellow-500" />
-                      Evidence Submission Window
-                    </span>
-                    <span className="text-sm font-mono text-yellow-500">
-                      {formatTimeRemaining(reviewMarket.evidenceWindowEnds)}
-                    </span>
-                  </div>
-                  <Progress
-                    value={Math.max(0, Math.min(100,
-                      ((48 * 60 * 60 * 1000) - (reviewMarket.evidenceWindowEnds.getTime() - Date.now())) / (48 * 60 * 60 * 1000) * 100
-                    ))}
-                    className="h-2"
-                  />
-                </div>
-              )}
-
-              {/* AI Confidence Display */}
-              {reviewMarket.aiConfidence !== undefined && reviewMarket.aiConfidence > 0 && (
-                <div className={`p-4 rounded-lg border ${
-                  reviewMarket.aiConfidence >= 90 ? 'bg-green-500/10 border-green-500/30' : 'bg-orange-500/10 border-orange-500/30'
-                }`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-[#06f6ff]" />
-                      AI Analysis Result
-                    </span>
-                    <span className={`text-lg font-bold ${getConfidenceColor(reviewMarket.aiConfidence)}`}>
-                      {reviewMarket.aiConfidence}% Confidence
-                    </span>
-                  </div>
-                  <Progress
-                    value={reviewMarket.aiConfidence}
-                    className={`h-3 ${reviewMarket.aiConfidence >= 90 ? '[&>div]:bg-green-500' : '[&>div]:bg-orange-500'}`}
-                  />
-                  {reviewMarket.aiSuggestedOutcome && (
-                    <div className="mt-3 flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">AI Suggested Outcome:</span>
-                      <Badge className={reviewMarket.aiConfidence >= 90 ? 'bg-green-600' : 'bg-orange-600'}>
-                        {reviewMarket.aiSuggestedOutcome}
-                      </Badge>
+              {/* ========== STEP 1: Review Details ========== */}
+              {reviewStep === 1 && (
+                <>
+                  {/* Market Info with Resolution Status */}
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="font-medium break-words">{reviewMarket.claim}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{reviewMarket.description}</p>
+                    <div className="flex flex-wrap items-center gap-3 mt-3">
+                      {reviewMarket.resolutionStatus && getResolutionStatusBadge(reviewMarket.resolutionStatus)}
+                      {reviewMarket.resolution && (
+                        <Badge className={reviewMarket.resolution === 'TRUE' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}>
+                          Current: {reviewMarket.resolution}
+                        </Badge>
+                      )}
+                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                        <DollarSign className="h-3 w-3" />
+                        ${reviewMarket.totalVolume.toLocaleString()} volume
+                      </span>
+                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Users className="h-3 w-3" />
+                        {reviewMarket.participants} participants
+                      </span>
                     </div>
-                  )}
-                  {reviewMarket.aiConfidence < 90 && (
-                    <p className="text-sm text-orange-500 mt-2 flex items-center gap-1">
-                      <AlertCircle className="h-4 w-4" />
-                      Confidence below 90%. Consider requesting more evidence or issuing refund.
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Dispute Details */}
-              {reviewMarket.disputes && reviewMarket.disputes.length > 0 && (
-                <div className="border border-yellow-500/30 rounded-lg overflow-hidden">
-                  <div className="bg-yellow-500/10 px-4 py-2 border-b border-yellow-500/30">
-                    <p className="font-medium text-yellow-500 flex items-center gap-2">
-                      <Flag className="h-4 w-4" />
-                      Dispute #{reviewMarket.disputes.length}
-                    </p>
                   </div>
-                  <div className="p-4 space-y-3">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">Filed by:</span>
-                        <code className="bg-muted px-2 py-0.5 rounded text-xs">{reviewMarket.disputes[0].filedBy}</code>
+
+                  {/* Evidence Window Timer */}
+                  {reviewMarket.resolutionStatus === 'EVIDENCE_COLLECTION' && reviewMarket.evidenceWindowEnds && (
+                    <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-yellow-500" />
+                          Evidence Submission Window
+                        </span>
+                        <span className="text-sm font-mono text-yellow-500">
+                          {formatTimeRemaining(reviewMarket.evidenceWindowEnds)}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">Filed:</span>
-                        <span>{formatTimeAgo(reviewMarket.disputes[0].filedAt)}</span>
+                      <Progress
+                        value={Math.max(0, Math.min(100,
+                          ((48 * 60 * 60 * 1000) - (reviewMarket.evidenceWindowEnds.getTime() - Date.now())) / (48 * 60 * 60 * 1000) * 100
+                        ))}
+                        className="h-2"
+                      />
+                    </div>
+                  )}
+
+                  {/* AI Confidence Display */}
+                  {reviewMarket.aiConfidence !== undefined && reviewMarket.aiConfidence > 0 && (
+                    <div className={`p-4 rounded-lg border ${
+                      reviewMarket.aiConfidence >= 90 ? 'bg-green-500/10 border-green-500/30' : 'bg-orange-500/10 border-orange-500/30'
+                    }`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium flex items-center gap-2">
+                          <Sparkles className="h-4 w-4 text-[#06f6ff]" />
+                          AI Analysis Result
+                        </span>
+                        <span className={`text-lg font-bold ${getConfidenceColor(reviewMarket.aiConfidence)}`}>
+                          {reviewMarket.aiConfidence}% Confidence
+                        </span>
                       </div>
-                    </div>
-                    <div>
-                      <Badge variant="outline" className="text-yellow-500 border-yellow-500/30">
-                        {disputeCategoryLabels[reviewMarket.disputes[0].category]}
-                      </Badge>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium mb-1">Reason:</p>
-                      <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
-                        {reviewMarket.disputes[0].reason}
-                      </p>
-                    </div>
-                    {reviewMarket.disputes[0].evidence && reviewMarket.disputes[0].evidence.length > 0 && (
-                      <div>
-                        <p className="text-sm font-medium mb-2 flex items-center gap-2">
-                          <Link className="h-4 w-4" />
-                          Evidence ({reviewMarket.disputes[0].evidence.length})
-                        </p>
-                        <div className="space-y-1">
-                          {reviewMarket.disputes[0].evidence.map((url, idx) => (
-                            <a
-                              key={idx}
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-sm text-[#06f6ff] hover:underline"
-                            >
-                              <ExternalLink className="h-3 w-3 flex-shrink-0" />
-                              <span className="truncate">{url}</span>
-                            </a>
-                          ))}
+                      <Progress
+                        value={reviewMarket.aiConfidence}
+                        className={`h-3 ${reviewMarket.aiConfidence >= 90 ? '[&>div]:bg-green-500' : '[&>div]:bg-orange-500'}`}
+                      />
+                      {reviewMarket.aiSuggestedOutcome && (
+                        <div className="mt-3 flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">AI Suggested Outcome:</span>
+                          <Badge className={reviewMarket.aiConfidence >= 90 ? 'bg-green-600' : 'bg-orange-600'}>
+                            {reviewMarket.aiSuggestedOutcome}
+                          </Badge>
                         </div>
+                      )}
+                      {reviewMarket.aiConfidence < 90 && (
+                        <p className="text-sm text-orange-500 mt-2 flex items-center gap-1">
+                          <AlertCircle className="h-4 w-4" />
+                          Confidence below 90%. Consider requesting more evidence or issuing refund.
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Dispute Details */}
+                  {reviewMarket.disputes && reviewMarket.disputes.length > 0 && (
+                    <div className="border border-yellow-500/30 rounded-lg overflow-hidden">
+                      <div className="bg-yellow-500/10 px-4 py-2 border-b border-yellow-500/30">
+                        <p className="font-medium text-yellow-500 flex items-center gap-2">
+                          <Flag className="h-4 w-4" />
+                          Dispute #{reviewMarket.disputes.length}
+                        </p>
                       </div>
-                    )}
-                  </div>
-                </div>
+                      <div className="p-4 space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">Filed by:</span>
+                            <code className="bg-muted px-2 py-0.5 rounded text-xs">{reviewMarket.disputes[0].filedBy}</code>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">Filed:</span>
+                            <span>{formatTimeAgo(reviewMarket.disputes[0].filedAt)}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <Badge variant="outline" className="text-yellow-500 border-yellow-500/30">
+                            {disputeCategoryLabels[reviewMarket.disputes[0].category]}
+                          </Badge>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium mb-1">Reason:</p>
+                          <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+                            {reviewMarket.disputes[0].reason}
+                          </p>
+                        </div>
+                        {reviewMarket.disputes[0].evidence && reviewMarket.disputes[0].evidence.length > 0 && (
+                          <div>
+                            <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                              <Link className="h-4 w-4" />
+                              Evidence ({reviewMarket.disputes[0].evidence.length})
+                            </p>
+                            <div className="space-y-1">
+                              {reviewMarket.disputes[0].evidence.map((url, idx) => (
+                                <a
+                                  key={idx}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-2 text-sm text-[#06f6ff] hover:underline"
+                                >
+                                  <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                                  <span className="truncate">{url}</span>
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
+
+              {/* ========== STEP 2: Take Action ========== */}
+              {reviewStep === 2 && (
+                <>
 
               {/* Resolution Actions based on confidence */}
               {!reviewAction && (
@@ -2284,18 +2320,39 @@ const MarketsDashboard: React.FC = () => {
                   </div>
                 </div>
               )}
+              </>
+            )}
             </div>
           )}
 
           {/* Footer Actions */}
-          <div className="flex gap-2 mt-4">
-            <Button variant="outline" size="sm" className="flex-1" onClick={() => { const market = reviewMarket; closeReviewDialog(); setViewMarket(market); }}>
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Back to Details
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1" onClick={closeReviewDialog}>
-              Cancel
-            </Button>
+          <div className="flex gap-2 pt-4 border-t flex-shrink-0">
+            {reviewStep === 1 ? (
+              <>
+                <Button variant="outline" size="sm" className="flex-1" onClick={() => { const market = reviewMarket; closeReviewDialog(); setViewMarket(market); }}>
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back to Details
+                </Button>
+                <Button
+                  size="sm"
+                  className="flex-1 bg-[#06f6ff] text-black hover:bg-[#06f6ff]/90"
+                  onClick={() => setReviewStep(2)}
+                >
+                  Continue to Actions
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" className="flex-1" onClick={() => { setReviewStep(1); setReviewAction(null); setAdminNotes(''); }}>
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back to Review
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1" onClick={closeReviewDialog}>
+                  Cancel
+                </Button>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
