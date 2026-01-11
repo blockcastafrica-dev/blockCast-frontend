@@ -671,7 +671,7 @@ export default function MarketPage({
           {/* Dispute Tab */}
           {activeTab === "dispute" && market.disputable && (
             <>
-              <div className="border border-border rounded-xl bg-transparent" onClick={() => setIsTrue("")}>
+              <div className="border border-border rounded-xl bg-transparent">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-semibold">
                     <MessageCircle className="h-5 w-5" />
