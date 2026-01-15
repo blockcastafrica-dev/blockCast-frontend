@@ -727,7 +727,7 @@ export default function MarketPage({
                           <button
                             key={outcome.id}
                             type="button"
-                            className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                            className="px-6 py-3 rounded-full border-2 transition-all text-base font-bold outline-none"
                             style={{
                               backgroundColor: isTrue === outcome.id ? outcome.color : "transparent",
                               color: isTrue === outcome.id ? "black" : (hoveredPill === outcome.id ? outcome.color : "#ffffff"),
@@ -747,7 +747,7 @@ export default function MarketPage({
                         <>
                           <button
                             type="button"
-                            className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                            className="px-6 py-3 rounded-full border-2 transition-all text-base font-bold outline-none"
                             style={{
                               backgroundColor: isTrue === "True" ? "#06f6ff" : "transparent",
                               color: isTrue === "True" ? "black" : (hoveredPill === "True" ? "#06f6ff" : "#ffffff"),
@@ -764,7 +764,7 @@ export default function MarketPage({
                           </button>
                           <button
                             type="button"
-                            className="px-6 py-2 rounded-full border transition-all font-medium outline-none"
+                            className="px-6 py-3 rounded-full border-2 transition-all text-base font-bold outline-none"
                             style={{
                               backgroundColor: isTrue === "False" ? "#A855F7" : "transparent",
                               color: isTrue === "False" ? "white" : (hoveredPill === "False" ? "#A855F7" : "#ffffff"),
