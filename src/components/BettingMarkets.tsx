@@ -1771,7 +1771,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => setBetPosition("yes")}
-                        className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                        className={`min-h-[56px] py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           betPosition === "yes"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
@@ -1787,7 +1787,7 @@ export default function BettingMarkets({ onPlaceBet, userBalance, markets = real
                       </button>
                       <button
                         onClick={() => setBetPosition("no")}
-                        className={`py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
+                        className={`min-h-[56px] py-4 px-4 rounded-full text-base font-bold transition-all text-center cursor-pointer ${
                           betPosition === "no"
                             ? "border-2 shadow-lg"
                             : "bg-zinc-900/80 border-2 border-zinc-700/50 text-zinc-400 hover:bg-zinc-800/80"
